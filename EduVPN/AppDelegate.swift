@@ -11,7 +11,10 @@ import Cocoa
 @NSApplicationMain
 class AppDelegate: NSObject, NSApplicationDelegate {
 
-
+    func applicationWillFinishLaunching(_ notification: Notification) {
+        // Setup incoming URL handling
+        NSAppleEventManager.shared().setEventHandler(self, andSelector: #selector(AppDelegate.handleAppleEvent(event:with:)), forEventClass: AEEventClass(kInternetEventClass), andEventID: AEEventID(kAEGetURL))
+    }
 
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         // Insert code here to initialize your application
@@ -21,6 +24,13 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         // Insert code here to tear down your application
     }
 
+    func handleAppleEvent(event: NSAppleEventDescriptor, with: NSAppleEventDescriptor) {
+        if event.eventClass == AEEventClass(kInternetEventClass),
+            event.eventID == AEEventID(kAEGetURL),
+            let urlString = event.paramDescriptor(forKeyword: AEKeyword(keyDirectObject))?.stringValue {
+            ServiceContainer.connectionService.parseCallback(urlString: urlString)
+        }
+    }
 
 }
 
