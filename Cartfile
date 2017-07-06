@@ -1,1 +1,2 @@
 github "openid/AppAuth-iOS" "master"
+github "onevcat/Kingfisher" "master"

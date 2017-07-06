@@ -19,7 +19,7 @@ class MainWindowController: NSWindowController {
     
         // Implement this method to handle any initialization after your window controller's window has been loaded from its nib file.
         
-        authenticationCancelledObserver =  NotificationCenter.default.addObserver(forName: ConnectionService.AuthenticationCancelled, object: ServiceContainer.connectionService, queue: OperationQueue.main) { (_) in
+        authenticationCancelledObserver =  NotificationCenter.default.addObserver(forName: AuthenticationService.AuthenticationCancelled, object: ServiceContainer.connectionService, queue: OperationQueue.main) { (_) in
             self.showChooseProvider()
         }
         
@@ -32,6 +32,9 @@ class MainWindowController: NSWindowController {
         }
     }
     
+    func showChooseConnectType() {
+        contentViewController = storyboard?.instantiateController(withIdentifier: "ChooseConnectionType") as? NSViewController
+    }
 
     func showChooseProvider() {
         contentViewController = storyboard?.instantiateController(withIdentifier: "ChooseProvider") as? NSViewController

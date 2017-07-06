@@ -29,6 +29,6 @@ class AuthenticatingViewController: NSViewController {
     }
     
     @IBAction func goBack(_ sender: Any) {
-        ServiceContainer.connectionService.cancelAuthentication()
+        ServiceContainer.authenticationService.cancelAuthentication()
     }
 }

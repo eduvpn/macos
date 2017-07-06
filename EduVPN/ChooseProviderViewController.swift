@@ -7,6 +7,7 @@
 //
 
 import Cocoa
+import Kingfisher
 
 class ChooseProviderViewController: NSViewController {
 
@@ -16,8 +17,16 @@ class ChooseProviderViewController: NSViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do view setup here.
-        providers = ServiceContainer.connectionService.providers
+    }
+    
+    override func viewWillAppear() {
+        super.viewWillAppear()
+        providers = ServiceContainer.providerService.providers
         tableView.reloadData()
+    }
+    
+    @IBAction func goBack(_ sender: Any) {
+        (self.view.window?.windowController as? MainWindowController)?.showChooseConnectType()
     }
     
 }
@@ -32,16 +41,29 @@ extension ChooseProviderViewController: NSTableViewDataSource {
 
 extension ChooseProviderViewController: NSTableViewDelegate {
     
-    func tableView(_ tableView: NSTableView, willDisplayCell cell: Any, for tableColumn: NSTableColumn?, row: Int) {
-        (cell as! NSTableCellView).textField?.stringValue = providers[row].displayName
+    func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
+        let result = tableView.make(withIdentifier: "ProviderCell", owner: self) as? NSTableCellView
+        result?.imageView?.kf.setImage(with: providers[row].logoURL)
+        result?.textField?.stringValue = providers[row].displayName
+        return result
     }
     
     func tableViewSelectionDidChange(_ notification: Notification) {
-        (view.window?.windowController as? MainWindowController)?.showAuthenticating()
-        do {
-            try ServiceContainer.connectionService.connectTo(provider: providers[tableView.selectedRow])
-        } catch(let error) {
-            NSAlert(error: error).beginSheetModal(for: view.window!, completionHandler: nil)
+        ServiceContainer.providerService.fetchInfo(for: providers[tableView.selectedRow]) { result in
+            switch result {
+            case .success(let info):
+                DispatchQueue.main.async {
+                    (self.view.window?.windowController as? MainWindowController)?.showAuthenticating()
+                    ServiceContainer.authenticationService.authenticate(using: info)
+                }
+            case .failure(let error):
+                DispatchQueue.main.async {
+                    let alert = NSAlert(error: error)
+                    alert.beginSheetModal(for: self.view.window!) { (_) in
+                        //
+                    }
+                }
+            }
         }
     }
     

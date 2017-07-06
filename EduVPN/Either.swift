@@ -8,6 +8,10 @@
 
 import Foundation
 
+/// Either success or failure
+///
+/// - success: Success with associated value
+/// - failure: Failure with associated error
 enum Either<T> {
     case success(T)
     case failure(Error)

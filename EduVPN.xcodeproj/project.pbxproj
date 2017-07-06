@@ -7,6 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		C71847C01F0E49F100296C61 /* HelperService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C71847BF1F0E49F100296C61 /* HelperService.swift */; };
+		C71847C21F0E4A1B00296C61 /* ProviderService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C71847C11F0E4A1B00296C61 /* ProviderService.swift */; };
+		C71847C41F0E4A4A00296C61 /* AuthenticationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C71847C31F0E4A4A00296C61 /* AuthenticationService.swift */; };
+		C71847C61F0E5AC600296C61 /* ConfigurationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C71847C51F0E5AC600296C61 /* ConfigurationService.swift */; };
+		C71847C81F0E5E2800296C61 /* ChooseConnectionTypeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C71847C71F0E5E2800296C61 /* ChooseConnectionTypeViewController.swift */; };
+		C71847CC1F0E7C7700296C61 /* Kingfisher.framework.dSYM in CopyFiles */ = {isa = PBXBuildFile; fileRef = C71847CB1F0E7C7700296C61 /* Kingfisher.framework.dSYM */; };
+		C71847CF1F0E7EAF00296C61 /* Kingfisher.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = C71847CD1F0E7EAF00296C61 /* Kingfisher.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		C72A557A1F0D9FF2001DCA24 /* AppAuth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C72A55791F0D9FF2001DCA24 /* AppAuth.framework */; };
 		C72A557B1F0D9FF2001DCA24 /* AppAuth.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = C72A55791F0D9FF2001DCA24 /* AppAuth.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		C72A557F1F0DA01C001DCA24 /* AppAuth.framework.dSYM in CopyFiles */ = {isa = PBXBuildFile; fileRef = C72A557E1F0DA01C001DCA24 /* AppAuth.framework.dSYM */; };
@@ -16,7 +23,6 @@
 		C72AD7041F0A6AEE006DBDA5 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C72AD7031F0A6AEE006DBDA5 /* Security.framework */; };
 		C765819B1F063BC9003DEC92 /* ServiceContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = C765819A1F063BC9003DEC92 /* ServiceContainer.swift */; };
 		C765819D1F063C47003DEC92 /* ConnectionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C765819C1F063C47003DEC92 /* ConnectionService.swift */; };
-		C765819F1F063CCB003DEC92 /* Token.swift in Sources */ = {isa = PBXBuildFile; fileRef = C765819E1F063CCB003DEC92 /* Token.swift */; };
 		C7BEF5C91F03E0D80038605E /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7BEF5C81F03E0D80038605E /* AppDelegate.swift */; };
 		C7BEF5CD1F03E0D80038605E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C7BEF5CC1F03E0D80038605E /* Assets.xcassets */; };
 		C7BEF5D01F03E0D80038605E /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C7BEF5CE1F03E0D80038605E /* Main.storyboard */; };
@@ -50,6 +56,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				C71847CF1F0E7EAF00296C61 /* Kingfisher.framework in Embed Frameworks */,
 				C72A557B1F0D9FF2001DCA24 /* AppAuth.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
@@ -62,6 +69,7 @@
 			dstSubfolderSpec = 16;
 			files = (
 				C72A557F1F0DA01C001DCA24 /* AppAuth.framework.dSYM in CopyFiles */,
+				C71847CC1F0E7C7700296C61 /* Kingfisher.framework.dSYM in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -78,6 +86,13 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		C71847BF1F0E49F100296C61 /* HelperService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HelperService.swift; sourceTree = "<group>"; };
+		C71847C11F0E4A1B00296C61 /* ProviderService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProviderService.swift; sourceTree = "<group>"; };
+		C71847C31F0E4A4A00296C61 /* AuthenticationService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AuthenticationService.swift; sourceTree = "<group>"; };
+		C71847C51F0E5AC600296C61 /* ConfigurationService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConfigurationService.swift; sourceTree = "<group>"; };
+		C71847C71F0E5E2800296C61 /* ChooseConnectionTypeViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChooseConnectionTypeViewController.swift; sourceTree = "<group>"; };
+		C71847CB1F0E7C7700296C61 /* Kingfisher.framework.dSYM */ = {isa = PBXFileReference; lastKnownFileType = wrapper.dsym; name = Kingfisher.framework.dSYM; path = Carthage/Build/Mac/Kingfisher.framework.dSYM; sourceTree = "<group>"; };
+		C71847CD1F0E7EAF00296C61 /* Kingfisher.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Kingfisher.framework; path = Carthage/Build/Mac/Kingfisher.framework; sourceTree = "<group>"; };
 		C72A55791F0D9FF2001DCA24 /* AppAuth.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppAuth.framework; path = Carthage/Build/Mac/AppAuth.framework; sourceTree = "<group>"; };
 		C72A557E1F0DA01C001DCA24 /* AppAuth.framework.dSYM */ = {isa = PBXFileReference; lastKnownFileType = wrapper.dsym; name = AppAuth.framework.dSYM; path = Carthage/Build/Mac/AppAuth.framework.dSYM; sourceTree = "<group>"; };
 		C72AD6F31F0A692F006DBDA5 /* org.eduvpn.app.openvpnhelper */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = org.eduvpn.app.openvpnhelper; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -91,7 +106,6 @@
 		C72AD7051F0A6BFF006DBDA5 /* EduVPN-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "EduVPN-Bridging-Header.h"; sourceTree = "<group>"; };
 		C765819A1F063BC9003DEC92 /* ServiceContainer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceContainer.swift; sourceTree = "<group>"; };
 		C765819C1F063C47003DEC92 /* ConnectionService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = ConnectionService.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
-		C765819E1F063CCB003DEC92 /* Token.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Token.swift; sourceTree = "<group>"; };
 		C7BEF5C51F03E0D80038605E /* EduVPN.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = EduVPN.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C7BEF5C81F03E0D80038605E /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		C7BEF5CC1F03E0D80038605E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -149,6 +163,8 @@
 			children = (
 				C72A55791F0D9FF2001DCA24 /* AppAuth.framework */,
 				C72A557E1F0DA01C001DCA24 /* AppAuth.framework.dSYM */,
+				C71847CD1F0E7EAF00296C61 /* Kingfisher.framework */,
+				C71847CB1F0E7C7700296C61 /* Kingfisher.framework.dSYM */,
 				C7D15FD31F0D166800719F38 /* ServiceManagement.framework */,
 				C7D15FD01F0D165900719F38 /* Cocoa.framework */,
 				C72AD7031F0A6AEE006DBDA5 /* Security.framework */,
@@ -192,6 +208,7 @@
 			children = (
 				C7BEF5C81F03E0D80038605E /* AppDelegate.swift */,
 				C7BEF5DB1F03F2CA0038605E /* MainWindowController.swift */,
+				C71847C71F0E5E2800296C61 /* ChooseConnectionTypeViewController.swift */,
 				C7BEF5D71F03E4B50038605E /* ChooseProviderViewController.swift */,
 				C7BEF5DD1F03F4020038605E /* AuthenticatingViewController.swift */,
 				C7BEF5DF1F03F4220038605E /* ConnectionViewController.swift */,
@@ -203,6 +220,10 @@
 			isa = PBXGroup;
 			children = (
 				C765819A1F063BC9003DEC92 /* ServiceContainer.swift */,
+				C71847BF1F0E49F100296C61 /* HelperService.swift */,
+				C71847C11F0E4A1B00296C61 /* ProviderService.swift */,
+				C71847C31F0E4A4A00296C61 /* AuthenticationService.swift */,
+				C71847C51F0E5AC600296C61 /* ConfigurationService.swift */,
 				C765819C1F063C47003DEC92 /* ConnectionService.swift */,
 			);
 			name = Services;
@@ -211,7 +232,6 @@
 		C7FA90291F0BA9C50037FF88 /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				C765819E1F063CCB003DEC92 /* Token.swift */,
 				C7BEF5D91F03E4FD0038605E /* Provider.swift */,
 				C7FA902D1F0BD1A60037FF88 /* Either.swift */,
 			);
@@ -345,11 +365,15 @@
 			buildActionMask = 2147483647;
 			files = (
 				C7BEF5DA1F03E4FD0038605E /* Provider.swift in Sources */,
-				C765819F1F063CCB003DEC92 /* Token.swift in Sources */,
+				C71847C01F0E49F100296C61 /* HelperService.swift in Sources */,
+				C71847C21F0E4A1B00296C61 /* ProviderService.swift in Sources */,
+				C71847C41F0E4A4A00296C61 /* AuthenticationService.swift in Sources */,
 				C7BEF5E11F03F4220038605E /* ConnectionViewController.swift in Sources */,
 				C7BEF5D81F03E4B50038605E /* ChooseProviderViewController.swift in Sources */,
 				C7FA902E1F0BD1A60037FF88 /* Either.swift in Sources */,
+				C71847C81F0E5E2800296C61 /* ChooseConnectionTypeViewController.swift in Sources */,
 				C765819D1F063C47003DEC92 /* ConnectionService.swift in Sources */,
+				C71847C61F0E5AC600296C61 /* ConfigurationService.swift in Sources */,
 				C7BEF5C91F03E0D80038605E /* AppDelegate.swift in Sources */,
 				C765819B1F063BC9003DEC92 /* ServiceContainer.swift in Sources */,
 				C7BEF5DE1F03F4020038605E /* AuthenticatingViewController.swift in Sources */,
