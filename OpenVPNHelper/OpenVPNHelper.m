@@ -39,6 +39,11 @@
     [[NSRunLoop currentRunLoop] run];
 }
 
+- (void)dealloc
+{
+    
+}
+
 // Called by our XPC listener when a new connection comes in.  We configure the connection
 // with our protocol and ourselves as the main object.
 - (BOOL)listener:(NSXPCListener *)listener shouldAcceptNewConnection:(NSXPCConnection *)newConnection {
@@ -47,9 +52,9 @@
     assert(newConnection != nil);
     
     
-    
     newConnection.exportedInterface = [NSXPCInterface interfaceWithProtocol:@protocol(OpenVPNHelperProtocol)];
     newConnection.exportedObject = self;
+    
     self.remoteObject = newConnection.remoteObjectProxy;
     [newConnection resume];
     
@@ -64,7 +69,9 @@
 {
     // We specifically don't check for authorization here.  Everyone is always allowed to get
     // the version of the helper tool.
-    reply([[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"]);
+    NSLog(@"version");
+//    NSString *version = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"] ?: @"?";
+    reply(@"1.0-1");
 }
 
 - (void)startOpenVPNAtURL:(NSURL *)launchURL withConfig:(NSURL *)config reply:(void(^)(NSString * version))reply {
