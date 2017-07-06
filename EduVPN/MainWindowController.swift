@@ -7,42 +7,77 @@
 //
 
 import Cocoa
+import AppAuth
 
 class MainWindowController: NSWindowController {
 
-    private var authenticationCancelledObserver: AnyObject?
-    private var connectionEstablishedObserver: AnyObject?
-    private var connectionTerminatedObserver: AnyObject?
+    private var navigationStack: [NSViewController] = []
     
     override func windowDidLoad() {
         super.windowDidLoad()
     
-        // Implement this method to handle any initialization after your window controller's window has been loaded from its nib file.
-        
-        authenticationCancelledObserver =  NotificationCenter.default.addObserver(forName: ConnectionService.AuthenticationCancelled, object: ServiceContainer.connectionService, queue: OperationQueue.main) { (_) in
-            self.showChooseProvider()
-        }
-        
-        connectionEstablishedObserver =  NotificationCenter.default.addObserver(forName: ConnectionService.ConnectionEstablished, object: ServiceContainer.connectionService, queue: OperationQueue.main) { (_) in
-            self.showConnection()
-        }
-        
-        connectionTerminatedObserver =  NotificationCenter.default.addObserver(forName: ConnectionService.ConnectionTerminated, object: ServiceContainer.connectionService, queue: OperationQueue.main) { (_) in
-            self.showChooseProvider()
-        }
+        navigationStack.append(contentViewController!)
     }
     
+    func push(viewController: NSViewController) {
+        navigationStack.append(viewController)
+        contentViewController = viewController
+    }
+    
+    func pop() {
+        guard navigationStack.count > 1 else {
+            return
+        }
+        navigationStack.removeLast()
+        contentViewController = navigationStack.last
+    }
+    
+    func popToRoot() {
+        guard navigationStack.count > 1 else {
+            return
+        }
+        navigationStack = [navigationStack.first!]
+        contentViewController = navigationStack.last
+    }
+    
+    func showChooseConnectType() {
+        let chooseConnectionTypeViewController = storyboard!.instantiateController(withIdentifier: "ChooseConnectionType") as! ChooseConnectionTypeViewController
+        push(viewController: chooseConnectionTypeViewController)
+    }
 
-    func showChooseProvider() {
-        contentViewController = storyboard?.instantiateController(withIdentifier: "ChooseProvider") as? NSViewController
+    func showChooseProvider(for connectionType: ConnectionType, from providers: [Provider]) {
+        let chooseProviderViewController = storyboard!.instantiateController(withIdentifier: "ChooseProvider") as! ChooseProviderViewController
+        chooseProviderViewController.connectionType = connectionType
+        chooseProviderViewController.providers = providers
+        push(viewController: chooseProviderViewController)
     }
     
-    func showAuthenticating() {
-        contentViewController = storyboard?.instantiateController(withIdentifier: "Authenticating") as? NSViewController
+    func showAuthenticating(with info: ProviderInfo) {
+        let authenticatingViewController = storyboard!.instantiateController(withIdentifier: "Authenticating") as! AuthenticatingViewController
+        authenticatingViewController.info = info
+        push(viewController: authenticatingViewController)
     }
     
-    func showConnection() {
-        contentViewController = storyboard?.instantiateController(withIdentifier: "Connection") as? NSViewController
+    func showChooseProfile(from profiles: [Profile], authState: OIDAuthState) {
+        let chooseProfileViewController = storyboard!.instantiateController(withIdentifier: "ChooseProfile") as! ChooseProfileViewController
+        chooseProfileViewController.profiles = profiles
+        chooseProfileViewController.authState = authState
+        push(viewController: chooseProfileViewController)
+    }
+    
+    func showConnection(for profile: Profile, authState: OIDAuthState) {
+        let connectionViewController = storyboard!.instantiateController(withIdentifier: "Connection") as! ConnectionViewController
+        connectionViewController.profile = profile
+        connectionViewController.authState = authState
+        push(viewController: connectionViewController)
+    }
+    
+}
+
+extension NSViewController {
+    
+    var mainWindowController: MainWindowController? {
+        return view.window?.windowController as? MainWindowController
     }
     
 }

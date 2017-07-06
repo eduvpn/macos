@@ -7,17 +7,29 @@
 //
 
 import Cocoa
+import Kingfisher
 
 class ChooseProviderViewController: NSViewController {
 
     @IBOutlet var tableView: NSTableView!
-    fileprivate var providers: [Provider] = []
+    @IBOutlet var backButton: NSButton!
+    
+    var connectionType: ConnectionType!
+    var providers: [Provider]!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do view setup here.
-        providers = ServiceContainer.connectionService.providers
-        tableView.reloadData()
+    }
+    
+    override func viewDidAppear() {
+        super.viewDidAppear()
+        tableView.deselectAll(nil)
+        tableView.isEnabled = true
+    }
+    
+    @IBAction func goBack(_ sender: Any) {
+        mainWindowController?.pop()
     }
     
 }
@@ -32,16 +44,33 @@ extension ChooseProviderViewController: NSTableViewDataSource {
 
 extension ChooseProviderViewController: NSTableViewDelegate {
     
-    func tableView(_ tableView: NSTableView, willDisplayCell cell: Any, for tableColumn: NSTableColumn?, row: Int) {
-        (cell as! NSTableCellView).textField?.stringValue = providers[row].displayName
+    func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
+        let result = tableView.make(withIdentifier: "ProviderCell", owner: self) as? NSTableCellView
+        result?.imageView?.kf.setImage(with: providers[row].logoURL)
+        result?.textField?.stringValue = providers[row].displayName
+        return result
     }
     
     func tableViewSelectionDidChange(_ notification: Notification) {
-        (view.window?.windowController as? MainWindowController)?.showAuthenticating()
-        do {
-            try ServiceContainer.connectionService.connectTo(provider: providers[tableView.selectedRow])
-        } catch(let error) {
-            NSAlert(error: error).beginSheetModal(for: view.window!, completionHandler: nil)
+        guard tableView.selectedRow >= 0 else {
+            return
+        }
+        
+        tableView.isEnabled = false
+        ServiceContainer.providerService.fetchInfo(for: providers[tableView.selectedRow]) { result in
+            switch result {
+            case .success(let info):
+                DispatchQueue.main.async {
+                    self.mainWindowController?.showAuthenticating(with: info)
+                }
+            case .failure(let error):
+                DispatchQueue.main.async {
+                    let alert = NSAlert(error: error)
+                    alert.beginSheetModal(for: self.view.window!) { (_) in
+                        self.tableView.isEnabled = true
+                    }
+                }
+            }
         }
     }
     
