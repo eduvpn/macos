@@ -13,14 +13,14 @@ import AppAuth
 /// Authorizes user with provider
 class AuthenticationService {
     
-    static let AuthenticationInitiated: NSNotification.Name = NSNotification.Name("AuthenticationService.AuthenticationInitiated")
-    static let AuthenticationCancelled: NSNotification.Name = NSNotification.Name("AuthenticationService.AuthenticationCancelled")
-    static let AuthenticationSucceeded: NSNotification.Name = NSNotification.Name("AuthenticationService.AuthenticationSucceeded")
+//    static let AuthenticationInitiated: NSNotification.Name = NSNotification.Name("AuthenticationService.AuthenticationInitiated")
+//    static let AuthenticationCancelled: NSNotification.Name = NSNotification.Name("AuthenticationService.AuthenticationCancelled")
+//    static let AuthenticationSucceeded: NSNotification.Name = NSNotification.Name("AuthenticationService.AuthenticationSucceeded")
 
     private var redirectHTTPHandler: OIDRedirectHTTPHandler?
     private var authState: OIDAuthState?
     
-    func authenticate(using info: ProviderInfo) throws {
+    func authenticate(using info: ProviderInfo, handler: @escaping (Either<OIDAuthState>) -> ()) {
         
         let configuration = OIDServiceConfiguration(authorizationEndpoint: info.authorizationURL, tokenEndpoint: info.tokenURL)
         
@@ -36,22 +36,24 @@ class AuthenticationService {
             self.authState = authState
             
             if let authState = authState {
+                handler(.success(authState))
                 NSLog("Got authorization tokens. Access token: \(authState.lastTokenResponse?.accessToken)")
-                NotificationCenter.default.post(name: AuthenticationService.AuthenticationSucceeded, object: self)
+//                NotificationCenter.default.post(name: AuthenticationService.AuthenticationSucceeded, object: self)
                 
             //    self.authenticationSucceeded()
             } else if let error = error {
                 NSLog("Authorization error: \(error.localizedDescription)")
+                handler(.failure(error))
             }
         }
         
-        NotificationCenter.default.post(name: AuthenticationService.AuthenticationInitiated, object: self)
+//        NotificationCenter.default.post(name: AuthenticationService.AuthenticationInitiated, object: self)
         
     }
     
     func cancelAuthentication() {
         redirectHTTPHandler?.cancelHTTPListener()
-        NotificationCenter.default.post(name: AuthenticationService.AuthenticationCancelled, object: self)
+//        NotificationCenter.default.post(name: AuthenticationService.AuthenticationCancelled, object: self)
     }
     
 

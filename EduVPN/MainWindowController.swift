@@ -10,42 +10,54 @@ import Cocoa
 
 class MainWindowController: NSWindowController {
 
-    private var authenticationCancelledObserver: AnyObject?
-    private var connectionEstablishedObserver: AnyObject?
-    private var connectionTerminatedObserver: AnyObject?
+//    private var authenticationCancelledObserver: AnyObject?
+//    private var connectionEstablishedObserver: AnyObject?
+//    private var connectionTerminatedObserver: AnyObject?
     
     override func windowDidLoad() {
         super.windowDidLoad()
     
         // Implement this method to handle any initialization after your window controller's window has been loaded from its nib file.
         
-        authenticationCancelledObserver =  NotificationCenter.default.addObserver(forName: AuthenticationService.AuthenticationCancelled, object: ServiceContainer.connectionService, queue: OperationQueue.main) { (_) in
-            self.showChooseProvider()
-        }
-        
-        connectionEstablishedObserver =  NotificationCenter.default.addObserver(forName: ConnectionService.ConnectionEstablished, object: ServiceContainer.connectionService, queue: OperationQueue.main) { (_) in
-            self.showConnection()
-        }
-        
-        connectionTerminatedObserver =  NotificationCenter.default.addObserver(forName: ConnectionService.ConnectionTerminated, object: ServiceContainer.connectionService, queue: OperationQueue.main) { (_) in
-            self.showChooseProvider()
-        }
+//        authenticationCancelledObserver =  NotificationCenter.default.addObserver(forName: AuthenticationService.AuthenticationCancelled, object: ServiceContainer.connectionService, queue: OperationQueue.main) { (_) in
+//            self.showChooseProvider()
+//        }
+//        
+//        connectionEstablishedObserver =  NotificationCenter.default.addObserver(forName: ConnectionService.ConnectionEstablished, object: ServiceContainer.connectionService, queue: OperationQueue.main) { (_) in
+//            self.showConnection()
+//        }
+//        
+//        connectionTerminatedObserver =  NotificationCenter.default.addObserver(forName: ConnectionService.ConnectionTerminated, object: ServiceContainer.connectionService, queue: OperationQueue.main) { (_) in
+//            self.showChooseProvider()
+//        }
     }
     
     func showChooseConnectType() {
-        contentViewController = storyboard?.instantiateController(withIdentifier: "ChooseConnectionType") as? NSViewController
+        let chooseConnectionTypeViewController = storyboard!.instantiateController(withIdentifier: "ChooseConnectionType") as! ChooseConnectionTypeViewController
+        contentViewController = chooseConnectionTypeViewController
     }
 
-    func showChooseProvider() {
-        contentViewController = storyboard?.instantiateController(withIdentifier: "ChooseProvider") as? NSViewController
+    func showChooseProvider(for connectionType: ConnectionType, from providers: [Provider]) {
+        let chooseProviderViewController = storyboard!.instantiateController(withIdentifier: "ChooseProvider") as! ChooseProviderViewController
+        chooseProviderViewController.connectionType = connectionType
+        chooseProviderViewController.providers = providers
+        contentViewController = chooseProviderViewController
     }
     
-    func showAuthenticating() {
+    func showAuthenticating(with info: ProviderInfo) {
         contentViewController = storyboard?.instantiateController(withIdentifier: "Authenticating") as? NSViewController
     }
     
-    func showConnection() {
+    func showConnection(with profile: Profile) {
         contentViewController = storyboard?.instantiateController(withIdentifier: "Connection") as? NSViewController
+    }
+    
+}
+
+extension NSViewController {
+    
+    var mainWindowController: MainWindowController? {
+        return view.window?.windowController as? MainWindowController
     }
     
 }

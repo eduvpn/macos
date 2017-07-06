@@ -37,9 +37,9 @@ class ChooseConnectionTypeViewController: NSViewController {
         instituteAccessButton.isEnabled = false
         ServiceContainer.providerService.discoverProviders(connectionType: connectionType) { result in
             switch result {
-            case .success:
+            case .success(let providers):
                 DispatchQueue.main.async {
-                    (self.view.window?.windowController as? MainWindowController)?.showChooseProvider()
+                    self.mainWindowController?.showChooseProvider(for: connectionType, from: providers)
                 }
             case .failure(let error):
                 DispatchQueue.main.async {

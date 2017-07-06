@@ -12,21 +12,17 @@ import Kingfisher
 class ChooseProviderViewController: NSViewController {
 
     @IBOutlet var tableView: NSTableView!
-    fileprivate var providers: [Provider] = []
+    
+    var connectionType: ConnectionType!
+    var providers: [Provider]!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do view setup here.
     }
     
-    override func viewWillAppear() {
-        super.viewWillAppear()
-        providers = ServiceContainer.providerService.providers
-        tableView.reloadData()
-    }
-    
     @IBAction func goBack(_ sender: Any) {
-        (self.view.window?.windowController as? MainWindowController)?.showChooseConnectType()
+        mainWindowController?.showChooseConnectType()
     }
     
 }
@@ -49,18 +45,18 @@ extension ChooseProviderViewController: NSTableViewDelegate {
     }
     
     func tableViewSelectionDidChange(_ notification: Notification) {
+        tableView.isEnabled = false
         ServiceContainer.providerService.fetchInfo(for: providers[tableView.selectedRow]) { result in
             switch result {
             case .success(let info):
                 DispatchQueue.main.async {
-                    (self.view.window?.windowController as? MainWindowController)?.showAuthenticating()
-                    ServiceContainer.authenticationService.authenticate(using: info)
+                    self.mainWindowController?.showAuthenticating(with: info)
                 }
             case .failure(let error):
                 DispatchQueue.main.async {
                     let alert = NSAlert(error: error)
                     alert.beginSheetModal(for: self.view.window!) { (_) in
-                        //
+                        self.tableView.isEnabled = true
                     }
                 }
             }

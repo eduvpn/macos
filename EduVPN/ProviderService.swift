@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import AppAuth
 
 /// Discovers providers
 class ProviderService {
@@ -114,7 +115,7 @@ class ProviderService {
         task.resume()
     }
 
-    func fetchProfiles(for info: ProviderInfo, handler: @escaping (Either<[Profile]>) -> ()) {
+    func fetchProfiles(for info: ProviderInfo, authState: OIDAuthState, handler: @escaping (Either<[Profile]>) -> ()) {
     
     }
 }

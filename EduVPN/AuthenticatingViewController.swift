@@ -12,10 +12,34 @@ class AuthenticatingViewController: NSViewController {
 
     @IBOutlet var spinner: NSProgressIndicator!
 
+    var info: ProviderInfo!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do view setup here.
         
+        ServiceContainer.authenticationService.authenticate(using: info) { (result) in
+            switch result {
+            case .success(let authState):
+                ServiceContainer.providerService.fetchProfiles(for: self.info, authState: authState) { (result) in
+                    switch result {
+                    case .success(let profiles):
+                        if profiles.count == 1 {
+                            
+                        } else {
+                            // Choose profile
+                        }
+                        break
+                    case .failure(let error):
+                        break
+                    }
+                }
+            case .failure(let error):
+                let alert = NSAlert(error: error)
+                alert.beginSheetModal(for: self.view.window!) { (_) in
+                    
+                }
+            }
+        }
     }
     
     override func viewWillAppear() {
