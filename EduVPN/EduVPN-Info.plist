@@ -9,7 +9,7 @@
 	<key>CFBundleIconFile</key>
 	<string></string>
 	<key>CFBundleIdentifier</key>
-	<string>nl.eduvpn.app.macos</string>
+	<string>org.eduvpn.app</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
@@ -32,8 +32,8 @@
 	<string>NSApplication</string>
 	<key>SMPrivilegedExecutables</key>
 	<dict>
-		<key>nl.eduvpn.app.macos.openvpnhelper</key>
-		<string>identifier &quot;nl.eduvpn.app.macos.openvpnhelper&quot; and anchor apple generic and certificate leaf[subject.CN] = &quot;Mac Developer: Johan Kool (2W662WXNRW)&quot; and certificate 1[field.1.2.840.113635.100.6.2.1] /* exists */</string>
+		<key>org.eduvpn.app.openvpnhelper</key>
+		<string>identifier &quot;org.eduvpn.app.openvpnhelper&quot; and anchor apple generic and certificate leaf[subject.CN] = &quot;Mac Developer: Johan Kool (2W662WXNRW)&quot; and certificate 1[field.1.2.840.113635.100.6.2.1] /* exists */</string>
 	</dict>
 </dict>
 </plist>

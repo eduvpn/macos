@@ -28,7 +28,7 @@
 		C7D15FD11F0D165900719F38 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C7D15FD01F0D165900719F38 /* Cocoa.framework */; };
 		C7D15FD21F0D166100719F38 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C72AD7031F0A6AEE006DBDA5 /* Security.framework */; };
 		C7D15FD41F0D166800719F38 /* ServiceManagement.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C7D15FD31F0D166800719F38 /* ServiceManagement.framework */; };
-		C7D15FD51F0D183600719F38 /* nl.eduvpn.app.macos.openvpnhelper in CopyFiles */ = {isa = PBXBuildFile; fileRef = C72AD6F31F0A692F006DBDA5 /* nl.eduvpn.app.macos.openvpnhelper */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		C7D15FD51F0D183600719F38 /* org.eduvpn.app.openvpnhelper in CopyFiles */ = {isa = PBXBuildFile; fileRef = C72AD6F31F0A692F006DBDA5 /* org.eduvpn.app.openvpnhelper */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		C7FA902C1F0BC83E0037FF88 /* openvpn-2.4.3-openssl-1.0.2k in Resources */ = {isa = PBXBuildFile; fileRef = C7FA902B1F0BC83E0037FF88 /* openvpn-2.4.3-openssl-1.0.2k */; };
 		C7FA902E1F0BD1A60037FF88 /* Either.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7FA902D1F0BD1A60037FF88 /* Either.swift */; };
 /* End PBXBuildFile section */
@@ -71,7 +71,7 @@
 			dstPath = Contents/Library/LaunchServices;
 			dstSubfolderSpec = 1;
 			files = (
-				C7D15FD51F0D183600719F38 /* nl.eduvpn.app.macos.openvpnhelper in CopyFiles */,
+				C7D15FD51F0D183600719F38 /* org.eduvpn.app.openvpnhelper in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -80,9 +80,9 @@
 /* Begin PBXFileReference section */
 		C72A55791F0D9FF2001DCA24 /* AppAuth.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppAuth.framework; path = Carthage/Build/Mac/AppAuth.framework; sourceTree = "<group>"; };
 		C72A557E1F0DA01C001DCA24 /* AppAuth.framework.dSYM */ = {isa = PBXFileReference; lastKnownFileType = wrapper.dsym; name = AppAuth.framework.dSYM; path = Carthage/Build/Mac/AppAuth.framework.dSYM; sourceTree = "<group>"; };
-		C72AD6F31F0A692F006DBDA5 /* nl.eduvpn.app.macos.openvpnhelper */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = nl.eduvpn.app.macos.openvpnhelper; sourceTree = BUILT_PRODUCTS_DIR; };
-		C72AD6F51F0A692F006DBDA5 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		C72AD6FB1F0A69BF006DBDA5 /* OpenVPNHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OpenVPNHelper.h; sourceTree = "<group>"; };
+		C72AD6F31F0A692F006DBDA5 /* org.eduvpn.app.openvpnhelper */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = org.eduvpn.app.openvpnhelper; sourceTree = BUILT_PRODUCTS_DIR; };
+		C72AD6F51F0A692F006DBDA5 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = main.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
+		C72AD6FB1F0A69BF006DBDA5 /* OpenVPNHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = OpenVPNHelper.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		C72AD6FC1F0A69BF006DBDA5 /* OpenVPNHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OpenVPNHelper.m; sourceTree = "<group>"; };
 		C72AD6FE1F0A6AB2006DBDA5 /* OpenVPNHelper-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "OpenVPNHelper-Info.plist"; sourceTree = "<group>"; };
 		C72AD6FF1F0A6AB2006DBDA5 /* OpenVPNHelper-Launchd.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "OpenVPNHelper-Launchd.plist"; sourceTree = "<group>"; };
@@ -90,7 +90,7 @@
 		C72AD7031F0A6AEE006DBDA5 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		C72AD7051F0A6BFF006DBDA5 /* EduVPN-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "EduVPN-Bridging-Header.h"; sourceTree = "<group>"; };
 		C765819A1F063BC9003DEC92 /* ServiceContainer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceContainer.swift; sourceTree = "<group>"; };
-		C765819C1F063C47003DEC92 /* ConnectionService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConnectionService.swift; sourceTree = "<group>"; };
+		C765819C1F063C47003DEC92 /* ConnectionService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = ConnectionService.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		C765819E1F063CCB003DEC92 /* Token.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Token.swift; sourceTree = "<group>"; };
 		C7BEF5C51F03E0D80038605E /* EduVPN.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = EduVPN.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C7BEF5C81F03E0D80038605E /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -171,7 +171,7 @@
 			isa = PBXGroup;
 			children = (
 				C7BEF5C51F03E0D80038605E /* EduVPN.app */,
-				C72AD6F31F0A692F006DBDA5 /* nl.eduvpn.app.macos.openvpnhelper */,
+				C72AD6F31F0A692F006DBDA5 /* org.eduvpn.app.openvpnhelper */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -233,9 +233,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		C72AD6F21F0A692F006DBDA5 /* nl.eduvpn.app.macos.openvpnhelper */ = {
+		C72AD6F21F0A692F006DBDA5 /* org.eduvpn.app.openvpnhelper */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = C72AD6F71F0A692F006DBDA5 /* Build configuration list for PBXNativeTarget "nl.eduvpn.app.macos.openvpnhelper" */;
+			buildConfigurationList = C72AD6F71F0A692F006DBDA5 /* Build configuration list for PBXNativeTarget "org.eduvpn.app.openvpnhelper" */;
 			buildPhases = (
 				C72AD6EF1F0A692F006DBDA5 /* Sources */,
 				C72AD6F01F0A692F006DBDA5 /* Frameworks */,
@@ -244,9 +244,9 @@
 			);
 			dependencies = (
 			);
-			name = nl.eduvpn.app.macos.openvpnhelper;
+			name = org.eduvpn.app.openvpnhelper;
 			productName = com.egeniq.projects.eduvpn.openvpnhelper;
-			productReference = C72AD6F31F0A692F006DBDA5 /* nl.eduvpn.app.macos.openvpnhelper */;
+			productReference = C72AD6F31F0A692F006DBDA5 /* org.eduvpn.app.openvpnhelper */;
 			productType = "com.apple.product-type.tool";
 		};
 		C7BEF5C41F03E0D80038605E /* EduVPN */ = {
@@ -312,7 +312,7 @@
 			projectRoot = "";
 			targets = (
 				C7BEF5C41F03E0D80038605E /* EduVPN */,
-				C72AD6F21F0A692F006DBDA5 /* nl.eduvpn.app.macos.openvpnhelper */,
+				C72AD6F21F0A692F006DBDA5 /* org.eduvpn.app.openvpnhelper */,
 			);
 		};
 /* End PBXProject section */
@@ -362,7 +362,7 @@
 /* Begin PBXTargetDependency section */
 		C72AD70B1F0A7848006DBDA5 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = C72AD6F21F0A692F006DBDA5 /* nl.eduvpn.app.macos.openvpnhelper */;
+			target = C72AD6F21F0A692F006DBDA5 /* org.eduvpn.app.openvpnhelper */;
 			targetProxy = C72AD70A1F0A7848006DBDA5 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -560,7 +560,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		C72AD6F71F0A692F006DBDA5 /* Build configuration list for PBXNativeTarget "nl.eduvpn.app.macos.openvpnhelper" */ = {
+		C72AD6F71F0A692F006DBDA5 /* Build configuration list for PBXNativeTarget "org.eduvpn.app.openvpnhelper" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C72AD6F81F0A692F006DBDA5 /* Debug */,

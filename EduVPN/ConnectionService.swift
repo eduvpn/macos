@@ -435,7 +435,7 @@ class ConnectionService: NSObject {
     
     static let openVPNSubdirectory = "openvpn-2.4.3-openssl-1.0.2k"
     static let helperVersion = "1.0-1"
-    static let helperIdentifier = "nl.eduvpn.app.macos.openvpnhelper"
+    static let helperIdentifier = "org.eduvpn.app.openvpnhelper"
     
     private func activateConfig(at configURL: URL) {
         

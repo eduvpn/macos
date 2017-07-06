@@ -1,6 +1,6 @@
 //
 //  main.m
-//  nl.eduvpn.app.macos.openvpnhelper
+//  org.eduvpn.app.openvpnhelper
 //
 //  Created by Johan Kool on 03/07/2017.
 //  Copyright © 2017 EduVPN. All rights reserved.

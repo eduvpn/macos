@@ -3,10 +3,10 @@
 <plist version="1.0">
 <dict>
 	<key>Label</key>
-	<string>nl.eduvpn.app.macos.openvpnhelper</string>
+	<string>org.eduvpn.app.openvpnhelper</string>
 	<key>MachServices</key>
 	<dict>
-		<key>nl.eduvpn.app.macos.openvpnhelper</key>
+		<key>org.eduvpn.app.openvpnhelper</key>
 		<true/>
 	</dict>
 </dict>
