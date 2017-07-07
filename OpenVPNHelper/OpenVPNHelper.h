@@ -33,7 +33,7 @@ typedef NS_ENUM(NSInteger, OpenVPNError) {
 
 @required
 
-- (void)getVersionWithReply:(void(^)(NSString * version))reply;
+- (void)getVersionWithReply:(void(^_Nonnull)(NSString *_Nonnull version))reply;
 // This command simply returns the version number of the tool.  It's a good idea to include a
 // command line this so you can handle app upgrades cleanly.
 
@@ -58,15 +58,15 @@ typedef NS_ENUM(NSInteger, OpenVPNError) {
 //// authData must be an AuthorizationExternalForm embedded in an NSData and the sockets are
 //// returned wrapped up in NSFileHandles.
 
-- (void)startOpenVPNAtURL:(NSURL *)launchURL withConfig:(NSURL *)config reply:(void(^)(NSString *))reply;
+- (void)startOpenVPNAtURL:(NSURL *_Nonnull)launchURL withConfig:(NSURL *_Nonnull)config reply:(void(^_Nonnull)(NSString *_Nonnull))reply;
 
-- (void)closeWithReply:(void(^)())reply;
+- (void)closeWithReply:(void(^_Nonnull)())reply;
 
 @end
 
 @protocol ClientProtocol <NSObject>
 
-- (void)stateChanged:(OpenVPNState)state reply:(void(^)())reply;
+- (void)stateChanged:(OpenVPNState)state reply:(void(^_Nonnull)())reply;
 
 
 @end
@@ -77,7 +77,7 @@ typedef NS_ENUM(NSInteger, OpenVPNError) {
 
 @interface OpenVPNHelper : NSObject
 
-- (id)init;
+- (id _Nullable )init;
 
 - (void)run;
 
