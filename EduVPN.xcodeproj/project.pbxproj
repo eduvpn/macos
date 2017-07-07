@@ -21,6 +21,8 @@
 		C72AD6FD1F0A69BF006DBDA5 /* OpenVPNHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = C72AD6FC1F0A69BF006DBDA5 /* OpenVPNHelper.m */; };
 		C72AD7021F0A6AE9006DBDA5 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C72AD7011F0A6AE9006DBDA5 /* Foundation.framework */; };
 		C72AD7041F0A6AEE006DBDA5 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C72AD7031F0A6AEE006DBDA5 /* Security.framework */; };
+		C732CEA51F0F720800698F28 /* ChooseProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C732CEA31F0F720800698F28 /* ChooseProfileViewController.swift */; };
+		C732CEA81F0F7B7600698F28 /* String+URL.swift in Sources */ = {isa = PBXBuildFile; fileRef = C732CEA71F0F7B7600698F28 /* String+URL.swift */; };
 		C765819B1F063BC9003DEC92 /* ServiceContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = C765819A1F063BC9003DEC92 /* ServiceContainer.swift */; };
 		C765819D1F063C47003DEC92 /* ConnectionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C765819C1F063C47003DEC92 /* ConnectionService.swift */; };
 		C7BEF5C91F03E0D80038605E /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7BEF5C81F03E0D80038605E /* AppDelegate.swift */; };
@@ -104,6 +106,8 @@
 		C72AD7011F0A6AE9006DBDA5 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		C72AD7031F0A6AEE006DBDA5 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		C72AD7051F0A6BFF006DBDA5 /* EduVPN-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "EduVPN-Bridging-Header.h"; sourceTree = "<group>"; };
+		C732CEA31F0F720800698F28 /* ChooseProfileViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChooseProfileViewController.swift; sourceTree = "<group>"; };
+		C732CEA71F0F7B7600698F28 /* String+URL.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "String+URL.swift"; sourceTree = "<group>"; };
 		C765819A1F063BC9003DEC92 /* ServiceContainer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceContainer.swift; sourceTree = "<group>"; };
 		C765819C1F063C47003DEC92 /* ConnectionService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = ConnectionService.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		C7BEF5C51F03E0D80038605E /* EduVPN.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = EduVPN.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -211,6 +215,7 @@
 				C71847C71F0E5E2800296C61 /* ChooseConnectionTypeViewController.swift */,
 				C7BEF5D71F03E4B50038605E /* ChooseProviderViewController.swift */,
 				C7BEF5DD1F03F4020038605E /* AuthenticatingViewController.swift */,
+				C732CEA31F0F720800698F28 /* ChooseProfileViewController.swift */,
 				C7BEF5DF1F03F4220038605E /* ConnectionViewController.swift */,
 			);
 			name = Controllers;
@@ -234,6 +239,7 @@
 			children = (
 				C7BEF5D91F03E4FD0038605E /* Provider.swift */,
 				C7FA902D1F0BD1A60037FF88 /* Either.swift */,
+				C732CEA71F0F7B7600698F28 /* String+URL.swift */,
 			);
 			name = Models;
 			sourceTree = "<group>";
@@ -364,6 +370,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C732CEA81F0F7B7600698F28 /* String+URL.swift in Sources */,
 				C7BEF5DA1F03E4FD0038605E /* Provider.swift in Sources */,
 				C71847C01F0E49F100296C61 /* HelperService.swift in Sources */,
 				C71847C21F0E4A1B00296C61 /* ProviderService.swift in Sources */,
@@ -371,6 +378,7 @@
 				C7BEF5E11F03F4220038605E /* ConnectionViewController.swift in Sources */,
 				C7BEF5D81F03E4B50038605E /* ChooseProviderViewController.swift in Sources */,
 				C7FA902E1F0BD1A60037FF88 /* Either.swift in Sources */,
+				C732CEA51F0F720800698F28 /* ChooseProfileViewController.swift in Sources */,
 				C71847C81F0E5E2800296C61 /* ChooseConnectionTypeViewController.swift in Sources */,
 				C765819D1F063C47003DEC92 /* ConnectionService.swift in Sources */,
 				C71847C61F0E5AC600296C61 /* ConfigurationService.swift in Sources */,

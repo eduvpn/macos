@@ -12,6 +12,17 @@ import AppAuth
 /// Discovers providers
 class ProviderService {
     
+    enum Error: Swift.Error {
+        case unknown
+        case invalidProvider
+        case noProviders
+        case invalidProviders
+        case invalidProviderInfo
+        case noProfiles
+        case invalidProfiles
+        case missingToken
+    }
+    
     /// Returns discovery URL
     ///
     /// - Parameter connectionType: Connection type
@@ -39,31 +50,36 @@ class ProviderService {
     ///   - handler: List of providers or error
     func discoverProviders(connectionType: ConnectionType, handler: @escaping (Either<[Provider]>) -> ()) {
         let request = URLRequest(url: url(for: connectionType))
-        let task = URLSession.shared.dataTask(with: request) { (data, _, error) in
-            guard let data = data else {
-                handler(.failure(error ?? ProviderError.unknown))
+        let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
+            guard let data = data, let response = response as? HTTPURLResponse, 200..<300 ~= response.statusCode else {
+                handler(.failure(error ?? Error.unknown))
                 return
             }
             do {
                 guard let json = try JSONSerialization.jsonObject(with: data, options: []) as? NSDictionary else {
-                    handler(.failure(ProviderError.invalidProviders))
+                    handler(.failure(Error.invalidProviders))
                     return
                 }
                 
                 guard let instances = json.value(forKeyPath: "instances") as? [[String: AnyObject]] else {
-                    handler(.failure(ProviderError.invalidProviders))
+                    handler(.failure(Error.invalidProviders))
                     return
                 }
                 
                 let providers: [Provider] = instances.flatMap { (instance) -> Provider? in
                     guard let displayName = instance["display_name"] as? String,
-                        let baseURL = URL(string: instance["base_uri"] as? String ?? ""),
-                        let logoURL = URL(string: instance["logo_uri"] as? String ?? "") else {
+                        let baseURL = (instance["base_uri"] as? String)?.asURL(appendSlash: true),
+                        let logoURL = (instance["logo_uri"] as? String)?.asURL() else {
                             return nil
                     }
                     let publicKey = instance["public_key"] as? String
                     
-                    return Provider(displayName: displayName, baseURL: baseURL, logoURL: logoURL, publicKey: publicKey)
+                    return Provider(displayName: displayName, baseURL: baseURL, logoURL: logoURL, publicKey: publicKey, connectionType: connectionType)
+                }
+                
+                guard !providers.isEmpty else {
+                    handler(.failure(Error.noProviders))
+                    return
                 }
                 
                 handler(.success(providers))
@@ -81,31 +97,36 @@ class ProviderService {
     ///   - provider: Provider
     ///   - handler: Info about provider or error
     func fetchInfo(for provider: Provider, handler: @escaping (Either<ProviderInfo>) -> ()) {
-        let request = URLRequest(url: URL(string: "info.json", relativeTo:provider.baseURL)!)
-        let task = URLSession.shared.dataTask(with: request) { (data, _, error) in
-            guard let data = data else {
-                handler(.failure(error ?? ProviderError.unknown))
+        guard let url = URL(string: "info.json", relativeTo: provider.baseURL) else {
+            handler(.failure(Error.invalidProvider))
+            return
+        }
+        
+        let request = URLRequest(url:url)
+        let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
+            guard let data = data, let response = response as? HTTPURLResponse, 200..<300 ~= response.statusCode else {
+                handler(.failure(error ?? Error.unknown))
                 return
             }
             do {
                 guard let json = try JSONSerialization.jsonObject(with: data, options: []) as? NSDictionary else {
-                    handler(.failure(ProviderError.invalidProviders))
+                    handler(.failure(Error.invalidProviders))
                     return
                 }
                 
                 guard let api = json.value(forKeyPath: "api.http://eduvpn.org/api#2") as? [String: AnyObject] else {
-                    handler(.failure(ProviderError.invalidProviderInfo))
+                    handler(.failure(Error.invalidProviderInfo))
                     return
                 }
                 
-                guard let apiBaseURL = URL(string: api["api_base_uri"] as? String ?? ""),
-                    let authorizationURL = URL(string: api["authorization_endpoint"] as? String ?? ""),
-                    let tokenURL = URL(string: api["token_endpoint"] as? String ?? "") else {
-                        handler(.failure(ProviderError.invalidProviderInfo))
+                guard let apiBaseURL = (api["api_base_uri"] as? String)?.asURL(appendSlash: true),
+                    let authorizationURL = (api["authorization_endpoint"] as? String)?.asURL(),
+                    let tokenURL = (api["token_endpoint"] as? String)?.asURL() else {
+                        handler(.failure(Error.invalidProviderInfo))
                         return
                 }
                 
-                let providerInfo = ProviderInfo(apiBaseURL: apiBaseURL, authorizationURL: authorizationURL, tokenURL: tokenURL)
+                let providerInfo = ProviderInfo(apiBaseURL: apiBaseURL, authorizationURL: authorizationURL, tokenURL: tokenURL, provider: provider)
                 handler(.success(providerInfo))
             } catch(let error) {
                 handler(.failure(error))
@@ -115,13 +136,65 @@ class ProviderService {
         task.resume()
     }
 
+    /// Fetches profiles available for provider
+    ///
+    /// - Parameters:
+    ///   - info: Provider info
+    ///   - authState: Authencation token
+    ///   - handler: Profiles or error
     func fetchProfiles(for info: ProviderInfo, authState: OIDAuthState, handler: @escaping (Either<[Profile]>) -> ()) {
-    
+        guard let url = URL(string: "profile_list", relativeTo: info.apiBaseURL) else {
+            handler(.failure(Error.invalidProviderInfo))
+            return
+        }
+        
+        authState.performAction { (accessToken, idToken, error) in
+            guard let accessToken = accessToken else {
+                handler(.failure(error ?? Error.missingToken))
+                return
+            }
+            var request = URLRequest(url: url)
+            request.setValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
+            
+            let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
+                guard let data = data, let response = response as? HTTPURLResponse, 200..<300 ~= response.statusCode else {
+                    handler(.failure(error ?? Error.unknown))
+                    return
+                }
+                do {
+                    guard let json = try JSONSerialization.jsonObject(with: data, options: []) as? NSDictionary else {
+                        handler(.failure(Error.invalidProfiles))
+                        return
+                    }
+                    
+                    guard let instances = json.value(forKeyPath: "profile_list.data") as? [[String: AnyObject]] else {
+                        handler(.failure(Error.invalidProfiles))
+                        return
+                    }
+                    
+                    let profiles: [Profile] = instances.flatMap { (instance) -> Profile? in
+                        guard let displayName = instance["display_name"] as? String,
+                            let profileId = instance["profile_id"] as? String else {
+                                return nil
+                        }
+                        let twoFactor = instance["two_factor"] as? Bool
+                        
+                        return Profile(profileId: profileId, displayName: displayName, twoFactor: twoFactor ?? false, info: info)
+                    }
+                    
+                    guard !profiles.isEmpty else {
+                        handler(.failure(Error.noProfiles))
+                        return
+                    }
+                    
+                    handler(.success(profiles))
+                } catch(let error) {
+                    handler(.failure(error))
+                    return
+                }
+            }
+            task.resume()
+        }
     }
-}
-
-enum ProviderError: Error {
-    case unknown
-    case invalidProviders
-    case invalidProviderInfo
+    
 }

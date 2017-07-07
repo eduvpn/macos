@@ -12,6 +12,7 @@ import Kingfisher
 class ChooseProviderViewController: NSViewController {
 
     @IBOutlet var tableView: NSTableView!
+    @IBOutlet var backButton: NSButton!
     
     var connectionType: ConnectionType!
     var providers: [Provider]!
@@ -21,8 +22,14 @@ class ChooseProviderViewController: NSViewController {
         // Do view setup here.
     }
     
+    override func viewDidAppear() {
+        super.viewDidAppear()
+        tableView.deselectAll(nil)
+        tableView.isEnabled = true
+    }
+    
     @IBAction func goBack(_ sender: Any) {
-        mainWindowController?.showChooseConnectType()
+        mainWindowController?.pop()
     }
     
 }
@@ -45,6 +52,10 @@ extension ChooseProviderViewController: NSTableViewDelegate {
     }
     
     func tableViewSelectionDidChange(_ notification: Notification) {
+        guard tableView.selectedRow >= 0 else {
+            return
+        }
+        
         tableView.isEnabled = false
         ServiceContainer.providerService.fetchInfo(for: providers[tableView.selectedRow]) { result in
             switch result {

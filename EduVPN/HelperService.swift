@@ -17,6 +17,45 @@ class HelperService {
     static let helperVersion = "1.0-1"
     static let helperIdentifier = "org.eduvpn.app.openvpnhelper"
 
+    enum Error: Int, Swift.Error, LocalizedError {
+        case invalidProviderInfo
+        case invalidURL
+        case unexpectedState
+        case invalidKeyPair
+        case invalidConfiguration
+        case noHelperConnection
+        case authenticationFailed
+        case installationFailed
+        case unknown
+        
+        //    var errorDescription: String? {
+        //        switch self {
+        //        case .installationFailed:
+        //            return NSLocalizedString("Installation failed", comment: "")
+        //        default:
+        //            return NSLocalizedString("Connection error \(self)", comment: "")
+        //        }
+        //    }
+        
+        var failureReason: String? {
+            switch self {
+            case .installationFailed:
+                return NSLocalizedString("Installation failed", comment: "")
+            default:
+                return nil
+            }
+        }
+        
+        var recoverySuggestion: String? {
+            switch self {
+            case .installationFailed:
+                return NSLocalizedString("Try reinstalling EduVPN.", comment: "")
+            default:
+                return nil
+            }
+        }
+    }
+    
     private var connection: NSXPCConnection?
     private var authRef: AuthorizationRef?
     // private var authorization: Data!
@@ -44,7 +83,7 @@ class HelperService {
                         // Connected and up-to-date
                     } else {
                         // Something went haywhire
-                        let alert = NSAlert(error: ConnectionError.installationFailed)
+                        let alert = NSAlert(error: Error.installationFailed)
                         alert.runModal()
                     }
                 }
@@ -56,7 +95,7 @@ class HelperService {
         var status = AuthorizationCreate(nil, nil, AuthorizationFlags(), &authRef)
         if (status != OSStatus(errAuthorizationSuccess)) {
             print("AuthorizationCreate failed.")
-            throw ConnectionError.authenticationFailed
+            throw Error.authenticationFailed
         }
         
         var item = AuthorizationItem(name: kSMRightBlessPrivilegedHelper, valueLength: 0, value: nil, flags: 0)
@@ -66,7 +105,7 @@ class HelperService {
         status = AuthorizationCopyRights(authRef!, &rights, nil, flags, nil)
         if (status != errAuthorizationSuccess) {
             print("AuthorizationCopyRights failed.")
-            throw ConnectionError.authenticationFailed
+            throw Error.authenticationFailed
         }
         
         var error: Unmanaged<CFError>?
@@ -81,7 +120,7 @@ class HelperService {
             NSLog("job blessed")
         } else {
             NSLog("job NOT blessed \(String(describing: error))")
-            throw ConnectionError.installationFailed
+            throw Error.installationFailed
         }
     }
     
@@ -112,7 +151,7 @@ class HelperService {
 //            NSLog("connection error: \(error)")
 //          //  callback("")
 //        }) as? OpenVPNHelperProtocol else {
-//            throw ConnectionError.noHelperConnection
+//            throw Error.noHelperConnection
 //        }
 //        
 //        return helper
@@ -123,7 +162,7 @@ class HelperService {
             NSLog("connection error: \(error)")
             callback("")
         }) as? OpenVPNHelperProtocol else {
-            throw ConnectionError.noHelperConnection
+            throw Error.noHelperConnection
         }
         
         helper.getVersionWithReply() { (version) in

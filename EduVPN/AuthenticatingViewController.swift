@@ -7,10 +7,12 @@
 //
 
 import Cocoa
+import AppAuth
 
 class AuthenticatingViewController: NSViewController {
 
     @IBOutlet var spinner: NSProgressIndicator!
+    @IBOutlet var backButton: NSButton!
 
     var info: ProviderInfo!
     
@@ -18,25 +20,37 @@ class AuthenticatingViewController: NSViewController {
         super.viewDidLoad()
         
         ServiceContainer.authenticationService.authenticate(using: info) { (result) in
-            switch result {
-            case .success(let authState):
-                ServiceContainer.providerService.fetchProfiles(for: self.info, authState: authState) { (result) in
-                    switch result {
-                    case .success(let profiles):
-                        if profiles.count == 1 {
-                            
-                        } else {
-                            // Choose profile
-                        }
-                        break
-                    case .failure(let error):
-                        break
+            DispatchQueue.main.async {
+                // TODO: Disable goBack button
+                switch result {
+                case .success(let authState):
+                    self.fetchProfiles(authState: authState)
+                case .failure(let error):
+                    let alert = NSAlert(error: error)
+                    alert.beginSheetModal(for: self.view.window!) { (_) in
+                        self.mainWindowController?.pop()
                     }
                 }
-            case .failure(let error):
-                let alert = NSAlert(error: error)
-                alert.beginSheetModal(for: self.view.window!) { (_) in
-                    
+            }
+        }
+    }
+    
+    private func fetchProfiles(authState: OIDAuthState) {
+        ServiceContainer.providerService.fetchProfiles(for: self.info, authState: authState) { (result) in
+            DispatchQueue.main.async {
+                switch result {
+                case .success(let profiles):
+                    if profiles.count == 1 {
+                        self.mainWindowController?.showConnection(for: profiles[0], authState: authState)
+                    } else {
+                        // Choose profile
+                        self.mainWindowController?.showChooseProfile(from: profiles, authState: authState)
+                    }
+                case .failure(let error):
+                    let alert = NSAlert(error: error)
+                    alert.beginSheetModal(for: self.view.window!) { (_) in
+                        self.mainWindowController?.pop()
+                    }
                 }
             }
         }
@@ -54,5 +68,7 @@ class AuthenticatingViewController: NSViewController {
     
     @IBAction func goBack(_ sender: Any) {
         ServiceContainer.authenticationService.cancelAuthentication()
+        // Already triggerd? mainWindowController?.pop()
     }
+    
 }
