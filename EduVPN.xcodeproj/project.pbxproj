@@ -580,6 +580,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/Mac",
 				);
+				INFOPLIST_FILE = "$(SRCROOT)/EduVPN/EduVPN-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = nl.eduvpn.app.macos;
 				PRODUCT_NAME = "$(TARGET_NAME)";
