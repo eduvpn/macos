@@ -7,15 +7,53 @@
 //
 
 import Cocoa
+import AppAuth
 
 class AuthenticatingViewController: NSViewController {
 
     @IBOutlet var spinner: NSProgressIndicator!
+    @IBOutlet var backButton: NSButton!
 
+    var info: ProviderInfo!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do view setup here.
         
+        ServiceContainer.authenticationService.authenticate(using: info) { (result) in
+            DispatchQueue.main.async {
+                // TODO: Disable goBack button
+                switch result {
+                case .success(let authState):
+                    self.fetchProfiles(authState: authState)
+                case .failure(let error):
+                    let alert = NSAlert(error: error)
+                    alert.beginSheetModal(for: self.view.window!) { (_) in
+                        self.mainWindowController?.pop()
+                    }
+                }
+            }
+        }
+    }
+    
+    private func fetchProfiles(authState: OIDAuthState) {
+        ServiceContainer.providerService.fetchProfiles(for: self.info, authState: authState) { (result) in
+            DispatchQueue.main.async {
+                switch result {
+                case .success(let profiles):
+                    if profiles.count == 1 {
+                        self.mainWindowController?.showConnection(for: profiles[0], authState: authState)
+                    } else {
+                        // Choose profile
+                        self.mainWindowController?.showChooseProfile(from: profiles, authState: authState)
+                    }
+                case .failure(let error):
+                    let alert = NSAlert(error: error)
+                    alert.beginSheetModal(for: self.view.window!) { (_) in
+                        self.mainWindowController?.pop()
+                    }
+                }
+            }
+        }
     }
     
     override func viewWillAppear() {
@@ -29,6 +67,8 @@ class AuthenticatingViewController: NSViewController {
     }
     
     @IBAction func goBack(_ sender: Any) {
-        ServiceContainer.connectionService.cancelAuthentication()
+        ServiceContainer.authenticationService.cancelAuthentication()
+        // Already triggerd? mainWindowController?.pop()
     }
+    
 }

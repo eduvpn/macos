@@ -8,8 +8,22 @@
 
 import Foundation
 
+/// Entrypoint to services
 struct ServiceContainer {
     
-    static let connectionService = ConnectionService()
+    /// Installs and connects helper
+    static let helperService = HelperService()
+    
+    /// Discovers providers
+    static let providerService = ProviderService()
+    
+    /// Authenticates user with provider
+    static let authenticationService = AuthenticationService()
+   
+    /// Fetches configuration
+    static let configurationService = ConfigurationService()
+    
+    /// Connects to VPN
+    static let connectionService = ConnectionService(configurationService: configurationService, helperService: helperService)
     
 }

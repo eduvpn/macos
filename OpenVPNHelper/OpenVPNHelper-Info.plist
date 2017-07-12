@@ -9,11 +9,11 @@
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
-	<string>com.egeniq.projects.eduvpn.openvpnhelper</string>
+	<string>org.eduvpn.app.openvpnhelper</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>OpenVPNHelper</string>
+	<string>org.eduvpn.app.openvpnhelper</string>
 	<key>CFBundlePackageType</key>
 	<string>XPC!</string>
 	<key>CFBundleShortVersionString</key>
@@ -24,7 +24,7 @@
 	<string>Copyright © 2017 EduVPN. All rights reserved.</string>
 	<key>SMAuthorizedClients</key>
 	<array>
-		<string>identifier &quot;com.egeniq.projects.eduvpn&quot; and anchor apple generic and certificate leaf[subject.CN] = &quot;Mac Developer: Johan Kool (2CVZ3EAQ2M)&quot; and certificate 1[field.1.2.840.113635.100.6.2.1] /* exists */</string>
+		<string>identifier &quot;org.eduvpn.app&quot; and anchor apple generic and certificate leaf[subject.CN] = &quot;Mac Developer: Johan Kool (2W662WXNRW)&quot; and certificate 1[field.1.2.840.113635.100.6.2.1] /* exists */</string>
 	</array>
 </dict>
 </plist>

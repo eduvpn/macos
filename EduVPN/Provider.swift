@@ -8,14 +8,29 @@
 
 import Foundation
 
+enum ConnectionType {
+    case secureInternet
+    case instituteAccess
+}
+
 struct Provider {
     let displayName: String
     let baseURL: URL
     let logoURL: URL
+    let publicKey: String?
+    let connectionType: ConnectionType
 }
 
 struct ProviderInfo {
     let apiBaseURL: URL
     let authorizationURL: URL
     let tokenURL: URL
+    let provider: Provider
+}
+
+struct Profile {
+    let profileId: String
+    let displayName: String
+    let twoFactor: Bool
+    let info: ProviderInfo
 }
