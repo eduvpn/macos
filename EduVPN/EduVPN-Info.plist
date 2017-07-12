@@ -9,7 +9,7 @@
 	<key>CFBundleIconFile</key>
 	<string></string>
 	<key>CFBundleIdentifier</key>
-	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+	<string>org.eduvpn.app</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
@@ -18,17 +18,6 @@
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
 	<string>1.0</string>
-	<key>CFBundleURLTypes</key>
-	<array>
-		<dict>
-			<key>CFBundleTypeRole</key>
-			<string>Editor</string>
-			<key>CFBundleURLSchemes</key>
-			<array>
-				<string>nl.eduvpn.app</string>
-			</array>
-		</dict>
-	</array>
 	<key>CFBundleVersion</key>
 	<string>1</string>
 	<key>LSApplicationCategoryType</key>
@@ -43,8 +32,8 @@
 	<string>NSApplication</string>
 	<key>SMPrivilegedExecutables</key>
 	<dict>
-		<key>com.egeniq.projects.eduvpn.openvpnhelper</key>
-		<string>identifier &quot;com.egeniq.projects.eduvpn.openvpnhelper&quot; and anchor apple generic and certificate leaf[subject.CN] = &quot;Mac Developer: Johan Kool (2CVZ3EAQ2M)&quot; and certificate 1[field.1.2.840.113635.100.6.2.1] /* exists */</string>
+		<key>org.eduvpn.app.openvpnhelper</key>
+		<string>identifier &quot;org.eduvpn.app.openvpnhelper&quot; and anchor apple generic and certificate leaf[subject.CN] = &quot;Mac Developer: Johan Kool (2W662WXNRW)&quot; and certificate 1[field.1.2.840.113635.100.6.2.1] /* exists */</string>
 	</dict>
 </dict>
 </plist>

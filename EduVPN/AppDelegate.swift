@@ -12,8 +12,8 @@ import Cocoa
 class AppDelegate: NSObject, NSApplicationDelegate {
 
     func applicationWillFinishLaunching(_ notification: Notification) {
-        // Setup incoming URL handling
-        NSAppleEventManager.shared().setEventHandler(self, andSelector: #selector(AppDelegate.handleAppleEvent(event:with:)), forEventClass: AEEventClass(kInternetEventClass), andEventID: AEEventID(kAEGetURL))
+//        // Setup incoming URL handling
+//        NSAppleEventManager.shared().setEventHandler(self, andSelector: #selector(AppDelegate.handleAppleEvent(event:with:)), forEventClass: AEEventClass(kInternetEventClass), andEventID: AEEventID(kAEGetURL))
     }
 
     func applicationDidFinishLaunching(_ aNotification: Notification) {
@@ -25,11 +25,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     func handleAppleEvent(event: NSAppleEventDescriptor, with: NSAppleEventDescriptor) {
-        if event.eventClass == AEEventClass(kInternetEventClass),
-            event.eventID == AEEventID(kAEGetURL),
-            let urlString = event.paramDescriptor(forKeyword: AEKeyword(keyDirectObject))?.stringValue {
-            ServiceContainer.connectionService.parseCallback(urlString: urlString)
-        }
+//        if event.eventClass == AEEventClass(kInternetEventClass),
+//            event.eventID == AEEventID(kAEGetURL),
+//            let urlString = event.paramDescriptor(forKeyword: AEKeyword(keyDirectObject))?.stringValue {
+//            ServiceContainer.connectionService.parseCallback(urlString: urlString)
+//        }
     }
 
 }
