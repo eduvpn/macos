@@ -23,7 +23,11 @@
                                             </connections>
                                         </menuItem>
                                         <menuItem isSeparatorItem="YES" id="VOq-y0-SEH"/>
-                                        <menuItem title="Preferences…" keyEquivalent="," id="BOF-NM-1cW"/>
+                                        <menuItem title="Preferences…" keyEquivalent="," id="BOF-NM-1cW">
+                                            <connections>
+                                                <segue destination="QBP-pf-Gdt" kind="modal" id="AQc-sr-ok7"/>
+                                            </connections>
+                                        </menuItem>
                                         <menuItem isSeparatorItem="YES" id="wFC-TO-SCJ"/>
                                         <menuItem title="Services" id="NMo-om-nkz">
                                             <modifierMask key="keyEquivalentModifierMask"/>
@@ -658,7 +662,7 @@
                 <customObject id="Voe-Tx-rLC" customClass="AppDelegate" customModule="EduVPN" customModuleProvider="target"/>
                 <customObject id="Ady-hI-5gd" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="75" y="0.0"/>
+            <point key="canvasLocation" x="167" y="-96"/>
         </scene>
         <!--Window Controller-->
         <scene sceneID="R2V-B0-nI4">
@@ -677,6 +681,55 @@
                 <customObject id="Oky-zY-oP4" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="265" y="235"/>
+        </scene>
+        <!--Window Controller-->
+        <scene sceneID="jUN-uA-o3q">
+            <objects>
+                <windowController showSeguePresentationStyle="single" id="QBP-pf-Gdt" sceneMemberID="viewController">
+                    <window key="window" title="Preferences" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" frameAutosaveName="" animationBehavior="default" tabbingMode="disallowed" id="g8w-C1-RJw">
+                        <windowStyleMask key="styleMask" titled="YES" closable="YES"/>
+                        <windowCollectionBehavior key="collectionBehavior" fullScreenNone="YES"/>
+                        <rect key="contentRect" x="-159" y="1614" width="480" height="270"/>
+                        <rect key="screenRect" x="-675" y="1050" width="3008" height="1670"/>
+                        <value key="minSize" type="size" width="480" height="270"/>
+                        <value key="maxSize" type="size" width="480" height="270"/>
+                        <value key="minFullScreenContentSize" type="size" width="480" height="270"/>
+                        <value key="maxFullScreenContentSize" type="size" width="480" height="270"/>
+                    </window>
+                    <connections>
+                        <segue destination="TRM-HQ-ggb" kind="relationship" relationship="window.shadowedContentViewController" id="FRp-6Y-OBu"/>
+                    </connections>
+                </windowController>
+                <customObject id="cnA-fZ-F5y" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="902" y="-45"/>
+        </scene>
+        <!--Settings-->
+        <scene sceneID="xfC-iv-REz">
+            <objects>
+                <viewController title="Settings" showSeguePresentationStyle="single" id="TRM-HQ-ggb" sceneMemberID="viewController">
+                    <view key="view" id="TOs-5F-9Ou">
+                        <rect key="frame" x="0.0" y="0.0" width="480" height="270"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <subviews>
+                            <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="GEf-t5-7wD">
+                                <rect key="frame" x="18" y="234" width="149" height="18"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <buttonCell key="cell" type="check" title="Use Developer Mode" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="zSO-mA-g3Q">
+                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <binding destination="cF9-Lp-W07" name="value" keyPath="values.developerMode" id="GGb-K2-0Ia"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                    </view>
+                </viewController>
+                <customObject id="URQ-m7-vBM" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+                <userDefaultsController representsSharedInstance="YES" id="cF9-Lp-W07"/>
+            </objects>
+            <point key="canvasLocation" x="1517" y="-52"/>
         </scene>
         <!--Choose Provider View Controller-->
         <scene sceneID="hIz-AP-VOD">

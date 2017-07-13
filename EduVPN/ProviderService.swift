@@ -28,7 +28,7 @@ class ProviderService {
     /// - Parameter connectionType: Connection type
     /// - Returns: URL
     private func url(for connectionType: ConnectionType) -> URL {
-        let debug = true
+        let debug = UserDefaults.standard.bool(forKey: "developerMode")
         let path: String
         switch (connectionType, debug) {
         case (.secureInternet, false):
