@@ -113,7 +113,7 @@ class ConfigurationService {
                 switch result {
                 case .success((let certificate, let privateKey)):
                     // TODO: store key pair in keychain instead of user defaults
-                    let keyPair = ["provider": info.provider.displayName, "providerBaseURL": info.apiBaseURL.absoluteString, "certificate": certificate, "privateKey": privateKey]
+                    let keyPair = ["provider": info.provider.displayName, "providerBaseURL": info.provider.baseURL.absoluteString, "certificate": certificate, "privateKey": privateKey]
                     keyPairs.append(keyPair)
                     UserDefaults.standard.set(keyPairs, forKey: "keyPairs")
                     handler(.success((certificate: certificate, privateKey: privateKey)))
