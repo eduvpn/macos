@@ -62,6 +62,7 @@
     SecStaticCodeRef staticCodeRef = 0;
     OSStatus status = SecStaticCodeCreateWithPath((__bridge CFURLRef _Nonnull)(launchURL), kSecCSDefaultFlags, &staticCodeRef);
     if (status != errSecSuccess) {
+        NSLog(@"Static code error %d", status);
         reply(NO);
         return;
     }
@@ -69,15 +70,19 @@
     SecRequirementRef requirementRef = 0;
     status = SecRequirementCreateWithString((__bridge CFStringRef _Nonnull)@"anchor apple generic and certificate leaf[subject.CN] = \"Mac Developer: Johan Kool (2W662WXNRW)\" and certificate 1[field.1.2.840.113635.100.6.2.1]", kSecCSDefaultFlags, &requirementRef);
     if (status != errSecSuccess) {
+        NSLog(@"Requirement error %d", status);
         reply(NO);
         return;
     }
     
     status = SecStaticCodeCheckValidity(staticCodeRef, kSecCSDefaultFlags, requirementRef);
     if (status != errSecSuccess) {
+        NSLog(@"Validity error %d", status);
         reply(NO);
         return;
     }
+    
+    NSLog(@"Launching task");
     
     NSTask *task = [[NSTask alloc] init];
     task.launchPath = launchURL.path;

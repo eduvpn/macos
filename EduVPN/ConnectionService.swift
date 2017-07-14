@@ -18,11 +18,11 @@ class ConnectionService: NSObject {
     
     static let openVPNSubdirectory = "openvpn-2.4.3-openssl-1.0.2k"
     
-    enum Error: LocalizedError {
+    enum Error: Swift.Error, LocalizedError {
         case noHelperConnection
         case helperRejected
         
-        var localizedDescription: String {
+        var errorDescription: String? {
             switch self {
             case .noHelperConnection:
                 return NSLocalizedString("Installation failed", comment: "")
@@ -30,7 +30,7 @@ class ConnectionService: NSObject {
                 return NSLocalizedString("Helper rejected request", comment: "")
             }
         }
-        
+
         var recoverySuggestion: String? {
             switch self {
             case .noHelperConnection:

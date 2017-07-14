@@ -14,15 +14,15 @@ import ServiceManagement
 /// Installs and connects helper
 class HelperService {
     
-    static let helperVersion = "1.0-1"
+    static let helperVersion = "1.0-4"
     static let helperIdentifier = "org.eduvpn.app.openvpnhelper"
 
-    enum Error: Int, LocalizedError {
+    enum Error: Swift.Error, LocalizedError {
         case noHelperConnection
         case authenticationFailed
         case installationFailed
 
-        var localizedDescription: String {
+        var errorDescription: String? {
             switch self {
             case .noHelperConnection:
                 return NSLocalizedString("Installation failed", comment: "")

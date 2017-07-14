@@ -12,14 +12,14 @@ import AppAuth
 /// Fetches configuration
 class ConfigurationService {
     
-    enum Error: Int, LocalizedError {
+    enum Error: Swift.Error, LocalizedError {
         case unknown
         case invalidURL
         case missingToken
         case invalidKeyPair
         case invalidConfiguration
         
-        var localizedDescription: String {
+        var errorDescription: String? {
             switch self {
             case .unknown:
                 return NSLocalizedString("Configuration failed for unknown reason", comment: "")

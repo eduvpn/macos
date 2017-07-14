@@ -13,10 +13,10 @@ import AppAuth
 /// Authorizes user with provider
 class AuthenticationService {
     
-    enum Error: Int, LocalizedError{
+    enum Error: Swift.Error, LocalizedError {
         case unknown
         
-        var localizedDescription: String {
+        var errorDescription: String? {
             switch self {
             case .unknown:
                 return NSLocalizedString("Authorization failed for unknown reason", comment: "")
