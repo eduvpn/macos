@@ -38,7 +38,7 @@ class AuthenticationService {
     /// - Parameters:
     ///   - info: Provider info
     ///   - handler: Auth state or error
-    func authenticate(using info: ProviderInfo, handler: @escaping (Either<OIDAuthState>) -> ()) {
+    func authenticate(using info: ProviderInfo, handler: @escaping (Result<OIDAuthState>) -> ()) {
         let configuration = OIDServiceConfiguration(authorizationEndpoint: info.authorizationURL, tokenEndpoint: info.tokenURL)
         
         redirectHTTPHandler = OIDRedirectHTTPHandler(successURL: nil)

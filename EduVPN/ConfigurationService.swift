@@ -56,7 +56,7 @@ class ConfigurationService {
     ///   - profile: Profile
     ///   - authState: Authencation token
     ///   - handler: Config or error
-    func configure(for profile: Profile, authState: OIDAuthState, handler: @escaping (Either<Config>) -> ()) {
+    func configure(for profile: Profile, authState: OIDAuthState, handler: @escaping (Result<Config>) -> ()) {
         restoreOrCreateKeyPair(for: profile.info, authState:  authState) { (result) in
             switch result {
             case .success((let certificate, let privateKey)):
@@ -81,7 +81,7 @@ class ConfigurationService {
     ///   - info: Provider info
     ///   - authState: Authencation token
     ///   - handler: Keypair or error
-    private func restoreOrCreateKeyPair(for info: ProviderInfo, authState: OIDAuthState, handler: @escaping (Either<(certificate: String, privateKey: String)>) -> ()) {
+    private func restoreOrCreateKeyPair(for info: ProviderInfo, authState: OIDAuthState, handler: @escaping (Result<(certificate: String, privateKey: String)>) -> ()) {
         // TODO: restore key pair from keychain instead of user defaults
         var keyPairs = UserDefaults.standard.array(forKey: "keyPairs") ?? []
         
@@ -130,7 +130,7 @@ class ConfigurationService {
     ///   - info: Provider info
     ///   - authState: Authencation token
     ///   - handler: Keypair or error
-    private func createKeyPair(for info: ProviderInfo, authState: OIDAuthState, handler: @escaping (Either<(certificate: String, privateKey: String)>) -> ()) {
+    private func createKeyPair(for info: ProviderInfo, authState: OIDAuthState, handler: @escaping (Result<(certificate: String, privateKey: String)>) -> ()) {
         guard let url = URL(string: "create_keypair", relativeTo: info.apiBaseURL) else {
             handler(.failure(Error.invalidURL))
             return
@@ -186,7 +186,7 @@ class ConfigurationService {
     ///   - profile: Profile
     ///   - authState: Authencation token
     ///   - handler: Config or error
-    private func fetchConfig(for profile: Profile, authState: OIDAuthState, handler: @escaping (Either<Config>) -> ()) {
+    private func fetchConfig(for profile: Profile, authState: OIDAuthState, handler: @escaping (Result<Config>) -> ()) {
         guard let url = URL(string: "profile_config", relativeTo: profile.info.apiBaseURL) else {
             handler(.failure(Error.invalidURL))
             return

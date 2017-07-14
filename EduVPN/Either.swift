@@ -8,11 +8,20 @@
 
 import Foundation
 
-/// Either success or failure
+/// Either one or the other
+///
+/// - left: Left with associated value
+/// - right: Right with associated value
+enum Either<T, V> {
+    case left(T)
+    case right(V)
+}
+
+/// Result: success or failure
 ///
 /// - success: Success with associated value
 /// - failure: Failure with associated error
-enum Either<T> {
+enum Result<T> {
     case success(T)
     case failure(Error)
 }
