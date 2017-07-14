@@ -12,7 +12,7 @@ import AppAuth
 /// Discovers providers
 class ProviderService {
     
-    enum Error: Swift.Error {
+    enum Error: Int, LocalizedError {
         case unknown
         case invalidProvider
         case noProviders
@@ -21,6 +21,31 @@ class ProviderService {
         case noProfiles
         case invalidProfiles
         case missingToken
+        
+        var localizedDescription: String {
+            switch self {
+            case .unknown:
+                return NSLocalizedString("Discovering providers failed for unknown reason", comment: "")
+            case .invalidProvider:
+                return NSLocalizedString("Invalid provider", comment: "")
+            case .noProviders:
+                return NSLocalizedString("No providers were discovered", comment: "")
+            case .invalidProviders:
+                return NSLocalizedString("No valid providers were discovered", comment: "")
+            case .invalidProviderInfo:
+                return NSLocalizedString("Invalid provider info", comment: "")
+            case .noProfiles:
+                return NSLocalizedString("No profiles were found for this provider", comment: "")
+            case .invalidProfiles:
+                return NSLocalizedString("Invalid profiles were found for this provider", comment: "")
+            case .missingToken:
+                return NSLocalizedString("Profiles could not be retrieved because no valid token was available", comment: "")
+            }
+        }
+        
+        var recoverySuggestion: String? {
+            return NSLocalizedString("Try again later.", comment: "")
+        }
     }
     
     /// Returns discovery URL

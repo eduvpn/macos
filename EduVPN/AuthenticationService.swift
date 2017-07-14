@@ -13,8 +13,22 @@ import AppAuth
 /// Authorizes user with provider
 class AuthenticationService {
     
-    enum Error: Swift.Error {
+    enum Error: Int, LocalizedError{
         case unknown
+        
+        var localizedDescription: String {
+            switch self {
+            case .unknown:
+                return NSLocalizedString("Authorization failed for unknown reason", comment: "")
+            }
+        }
+        
+        var recoverySuggestion: String? {
+            switch self {
+            case .unknown:
+                return NSLocalizedString("Try to authorize again with your provider.", comment: "")
+            }
+        }
     }
     
     private var redirectHTTPHandler: OIDRedirectHTTPHandler?
