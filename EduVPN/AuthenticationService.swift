@@ -13,8 +13,22 @@ import AppAuth
 /// Authorizes user with provider
 class AuthenticationService {
     
-    enum Error: Swift.Error {
+    enum Error: Int, LocalizedError{
         case unknown
+        
+        var localizedDescription: String {
+            switch self {
+            case .unknown:
+                return NSLocalizedString("Authorization failed for unknown reason", comment: "")
+            }
+        }
+        
+        var recoverySuggestion: String? {
+            switch self {
+            case .unknown:
+                return NSLocalizedString("Try to authorize again with your provider.", comment: "")
+            }
+        }
     }
     
     private var redirectHTTPHandler: OIDRedirectHTTPHandler?
@@ -24,7 +38,7 @@ class AuthenticationService {
     /// - Parameters:
     ///   - info: Provider info
     ///   - handler: Auth state or error
-    func authenticate(using info: ProviderInfo, handler: @escaping (Either<OIDAuthState>) -> ()) {
+    func authenticate(using info: ProviderInfo, handler: @escaping (Result<OIDAuthState>) -> ()) {
         let configuration = OIDServiceConfiguration(authorizationEndpoint: info.authorizationURL, tokenEndpoint: info.tokenURL)
         
         redirectHTTPHandler = OIDRedirectHTTPHandler(successURL: nil)

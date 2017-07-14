@@ -36,15 +36,21 @@ class ConnectionService: NSObject {
         }
     }
  
-    let configurationService: ConfigurationService
-    let helperService: HelperService
+    private let configurationService: ConfigurationService
+    private let helperService: HelperService
     
     init(configurationService: ConfigurationService, helperService: HelperService) {
         self.configurationService = configurationService
         self.helperService = helperService
     }
 
-    func connect(to profile: Profile, authState: OIDAuthState, handler: @escaping (Either<Void>) -> ()) {
+    /// Asks helper service to start VPN connection after helper and config are ready and available
+    ///
+    /// - Parameters:
+    ///   - profile: Profile
+    ///   - authState: Authentication token
+    ///   - handler: Success or error
+    func connect(to profile: Profile, authState: OIDAuthState, handler: @escaping (Result<Void>) -> ()) {
         helperService.installHelperIfNeeded { (result) in
             switch result {
             case .success:
@@ -67,6 +73,11 @@ class ConnectionService: NSObject {
         }
     }
 
+    /// Installs configuration
+    ///
+    /// - Parameter config: Config
+    /// - Returns: URL where config was installed
+    /// - Throws: Error writing config to disk
     private func install(config: String) throws -> URL {
         let tempDir = NSTemporaryDirectory()
         let fileURL = URL(fileURLWithPath: tempDir + "/eduvpn.ovpn")
@@ -74,8 +85,12 @@ class ConnectionService: NSObject {
         return fileURL
     }
     
-    
-    private func activateConfig(at configURL: URL, handler: @escaping (Either<Void>) -> ()) {
+    /// Asks helper service to start VPN connection
+    ///
+    /// - Parameters:
+    ///   - configURL: URL of config file
+    ///   - handler: Succes or error
+    private func activateConfig(at configURL: URL, handler: @escaping (Result<Void>) -> ()) {
         guard let helper = helperService.connection?.remoteObjectProxy as? OpenVPNHelperProtocol else {
             handler(.failure(Error.noHelperConnection))
             return
@@ -89,7 +104,10 @@ class ConnectionService: NSObject {
         }
     }
     
-    func disconnect(_ handler: @escaping (Either<Void>) -> ()) {
+    /// Asks helper to disconnect VPN connection
+    ///
+    /// - Parameter handler: <#handler description#>
+    func disconnect(_ handler: @escaping (Result<Void>) -> ()) {
         guard let helper = helperService.connection?.remoteObjectProxy as? OpenVPNHelperProtocol else {
             handler(.failure(Error.noHelperConnection))
             return

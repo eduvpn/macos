@@ -12,6 +12,7 @@ import Cocoa
 class AppDelegate: NSObject, NSApplicationDelegate {
 
     func applicationWillFinishLaunching(_ notification: Notification) {
+        // Disabled until best approach to get token is determined
 //        // Setup incoming URL handling
 //        NSAppleEventManager.shared().setEventHandler(self, andSelector: #selector(AppDelegate.handleAppleEvent(event:with:)), forEventClass: AEEventClass(kInternetEventClass), andEventID: AEEventID(kAEGetURL))
     }
@@ -25,6 +26,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     func handleAppleEvent(event: NSAppleEventDescriptor, with: NSAppleEventDescriptor) {
+        // Disabled until best approach to get token is determined
 //        if event.eventClass == AEEventClass(kInternetEventClass),
 //            event.eventID == AEEventID(kAEGetURL),
 //            let urlString = event.paramDescriptor(forKeyword: AEKeyword(keyDirectObject))?.stringValue {

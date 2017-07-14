@@ -12,7 +12,7 @@ import AppAuth
 /// Discovers providers
 class ProviderService {
     
-    enum Error: Swift.Error {
+    enum Error: Int, LocalizedError {
         case unknown
         case invalidProvider
         case noProviders
@@ -21,6 +21,31 @@ class ProviderService {
         case noProfiles
         case invalidProfiles
         case missingToken
+        
+        var localizedDescription: String {
+            switch self {
+            case .unknown:
+                return NSLocalizedString("Discovering providers failed for unknown reason", comment: "")
+            case .invalidProvider:
+                return NSLocalizedString("Invalid provider", comment: "")
+            case .noProviders:
+                return NSLocalizedString("No providers were discovered", comment: "")
+            case .invalidProviders:
+                return NSLocalizedString("No valid providers were discovered", comment: "")
+            case .invalidProviderInfo:
+                return NSLocalizedString("Invalid provider info", comment: "")
+            case .noProfiles:
+                return NSLocalizedString("No profiles were found for this provider", comment: "")
+            case .invalidProfiles:
+                return NSLocalizedString("Invalid profiles were found for this provider", comment: "")
+            case .missingToken:
+                return NSLocalizedString("Profiles could not be retrieved because no valid token was available", comment: "")
+            }
+        }
+        
+        var recoverySuggestion: String? {
+            return NSLocalizedString("Try again later.", comment: "")
+        }
     }
     
     /// Returns discovery URL
@@ -28,7 +53,7 @@ class ProviderService {
     /// - Parameter connectionType: Connection type
     /// - Returns: URL
     private func url(for connectionType: ConnectionType) -> URL {
-        let debug = true
+        let debug = UserDefaults.standard.bool(forKey: "developerMode")
         let path: String
         switch (connectionType, debug) {
         case (.secureInternet, false):
@@ -48,7 +73,7 @@ class ProviderService {
     /// - Parameters:
     ///   - connectionType: Connection type
     ///   - handler: List of providers or error
-    func discoverProviders(connectionType: ConnectionType, handler: @escaping (Either<[Provider]>) -> ()) {
+    func discoverProviders(connectionType: ConnectionType, handler: @escaping (Result<[Provider]>) -> ()) {
         let request = URLRequest(url: url(for: connectionType))
         let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
             guard let data = data, let response = response as? HTTPURLResponse, 200..<300 ~= response.statusCode else {
@@ -96,7 +121,7 @@ class ProviderService {
     /// - Parameters:
     ///   - provider: Provider
     ///   - handler: Info about provider or error
-    func fetchInfo(for provider: Provider, handler: @escaping (Either<ProviderInfo>) -> ()) {
+    func fetchInfo(for provider: Provider, handler: @escaping (Result<ProviderInfo>) -> ()) {
         guard let url = URL(string: "info.json", relativeTo: provider.baseURL) else {
             handler(.failure(Error.invalidProvider))
             return
@@ -142,7 +167,7 @@ class ProviderService {
     ///   - info: Provider info
     ///   - authState: Authencation token
     ///   - handler: Profiles or error
-    func fetchProfiles(for info: ProviderInfo, authState: OIDAuthState, handler: @escaping (Either<[Profile]>) -> ()) {
+    func fetchProfiles(for info: ProviderInfo, authState: OIDAuthState, handler: @escaping (Result<[Profile]>) -> ()) {
         guard let url = URL(string: "profile_list", relativeTo: info.apiBaseURL) else {
             handler(.failure(Error.invalidProviderInfo))
             return
