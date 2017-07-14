@@ -84,30 +84,29 @@ class ConfigurationService {
     private func restoreOrCreateKeyPair(for info: ProviderInfo, authState: OIDAuthState, handler: @escaping (Either<(certificate: String, privateKey: String)>) -> ()) {
         // TODO: restore key pair from keychain instead of user defaults
         var keyPairs = UserDefaults.standard.array(forKey: "keyPairs") ?? []
-        let keyPair = keyPairs.first { (keyPair) -> Bool in
+        
+        let pairs = keyPairs.lazy.flatMap { keyPair -> (certificate: String, privateKey: String)? in
             guard let keyPair = keyPair as? [String: AnyObject] else {
-                return false
+                return nil
             }
             
             guard let providerBaseURL = keyPair["providerBaseURL"] as? String, info.provider.baseURL.absoluteString == providerBaseURL else {
-                return false
+                return nil
             }
             
-            guard let _ = keyPair["certificate"] as? String else {
-                return false
+            guard let certificate = keyPair["certificate"] as? String else {
+                return nil
             }
             
-            guard let _ = keyPair["privateKey"] as? String else {
-                return false
+            guard let privateKey = keyPair["privateKey"] as? String else {
+                return nil
             }
             
-            return true
+            return (certificate, privateKey)
         }
         
-        if let keyPair = keyPair as? [String: AnyObject] {
-            let certificate = keyPair["certificate"] as! String
-            let privateKey = keyPair["privateKey"] as! String
-            handler(.success((certificate: certificate, privateKey: privateKey)))
+        if let keyPair = pairs.first {
+            handler(.success(keyPair))
         } else {
             // No key pair found, create new one and store it
             createKeyPair(for: info, authState: authState) { result in
