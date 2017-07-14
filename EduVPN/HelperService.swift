@@ -67,9 +67,11 @@ class HelperService {
     
     /// Installs the helper if needed
     ///
-    /// - Parameter handler: Succes or error
-    func installHelperIfNeeded(_ handler: @escaping (Result<Void>) -> ()) {
-        connectToHelper { result in
+    /// - Parameters:
+    ///   - client: Client
+    ///   - handler: Success or error
+    func installHelperIfNeeded(client: ClientProtocol, handler: @escaping (Result<Void>) -> ()) {
+        connectToHelper(client: client) { result in
             switch result {
             case .success(let upToDate):
                 if upToDate {
@@ -83,7 +85,7 @@ class HelperService {
             self.installHelper { result in
                 switch result {
                 case .success:
-                    self.connectToHelper { result in
+                    self.connectToHelper(client: client) { result in
                         switch result {
                         case .success(let upToDate):
                             if upToDate {
@@ -139,12 +141,14 @@ class HelperService {
     
     /// Sets up a connection with the helper
     ///
-    /// - Parameter handler: True if up-to-date, false is older version or eror
-    private func connectToHelper(_ handler: @escaping (Result<Bool>) -> ()) {
+    /// - Parameters:
+    ///   - client: Client
+    ///   - handler: True if up-to-date, false is older version or eror
+    private func connectToHelper(client: ClientProtocol, handler: @escaping (Result<Bool>) -> ()) {
         connection = NSXPCConnection(machServiceName: HelperService.helperIdentifier, options: .privileged)
         connection?.remoteObjectInterface = NSXPCInterface(with: OpenVPNHelperProtocol.self)
         connection?.exportedInterface = NSXPCInterface(with: ClientProtocol.self)
-        connection?.exportedObject = self
+        connection?.exportedObject = client
         connection?.invalidationHandler = { _ in
             NSLog("connection invalidated!")
         }

@@ -20,17 +20,22 @@ class ConnectionService: NSObject {
     
     enum Error: LocalizedError {
         case noHelperConnection
+        case helperRejected
         
         var localizedDescription: String {
             switch self {
             case .noHelperConnection:
                 return NSLocalizedString("Installation failed", comment: "")
+            case .helperRejected:
+                return NSLocalizedString("Helper rejected request", comment: "")
             }
         }
         
         var recoverySuggestion: String? {
             switch self {
             case .noHelperConnection:
+                return NSLocalizedString("Try reinstalling EduVPN.", comment: "")
+            case .helperRejected:
                 return NSLocalizedString("Try reinstalling EduVPN.", comment: "")
             }
         }
@@ -50,8 +55,8 @@ class ConnectionService: NSObject {
     ///   - profile: Profile
     ///   - authState: Authentication token
     ///   - handler: Success or error
-    func connect(to profile: Profile, authState: OIDAuthState, handler: @escaping (Result<Void>) -> ()) {
-        helperService.installHelperIfNeeded { (result) in
+    func connect(to profile: Profile, authState: OIDAuthState, handler: @escaping (Either<Void>) -> ()) {
+        helperService.installHelperIfNeeded(client: self) { (result) in
             switch result {
             case .success:
                 self.configurationService.configure(for: profile, authState: authState) { (result) in
@@ -99,30 +104,35 @@ class ConnectionService: NSObject {
         let bundle = Bundle.init(for: ConnectionService.self)
         let openvpnURL = bundle.url(forResource: "openvpn", withExtension: nil, subdirectory: ConnectionService.openVPNSubdirectory)!
         
-        helper.startOpenVPN(at: openvpnURL, withConfig: configURL) { (message) in
-            handler(.success())
+        helper.startOpenVPN(at: openvpnURL, withConfig: configURL) { (success) in
+            if success {
+                handler(.success())
+            } else {
+                handler(.failure(Error.helperRejected))
+            }
         }
     }
     
     /// Asks helper to disconnect VPN connection
     ///
-    /// - Parameter handler: <#handler description#>
+    /// - Parameter handler: Success or error
     func disconnect(_ handler: @escaping (Result<Void>) -> ()) {
         guard let helper = helperService.connection?.remoteObjectProxy as? OpenVPNHelperProtocol else {
             handler(.failure(Error.noHelperConnection))
             return
         }
         
-        helper.close { (message) in
+        helper.close { (_) in
             handler(.success())
         }
     }
     
 }
 
-//extension ConnectionService: ClientProtocol {
-//    
-//    func stateChanged(_ state: OpenVPNState, reply: (() -> Void)) {
-//        NSLog("state \(state)")
-//    }
-//}
+extension ConnectionService: ClientProtocol {
+    
+    func taskTerminated(reply: @escaping () -> Void) {
+        reply()
+    }
+
+}
