@@ -55,7 +55,7 @@ class ConnectionService: NSObject {
     ///   - profile: Profile
     ///   - authState: Authentication token
     ///   - handler: Success or error
-    func connect(to profile: Profile, authState: OIDAuthState, handler: @escaping (Either<Void>) -> ()) {
+    func connect(to profile: Profile, authState: OIDAuthState, handler: @escaping (Result<Void>) -> ()) {
         helperService.installHelperIfNeeded(client: self) { (result) in
             switch result {
             case .success:
