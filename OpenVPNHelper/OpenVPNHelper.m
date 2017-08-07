@@ -18,7 +18,6 @@
 
 @implementation OpenVPNHelper
 
-
 - (id)init {
     self = [super init];
     if (self != nil) {
@@ -31,63 +30,73 @@
 
 - (void)run {
     // Tell the XPC listener to start processing requests.
-    
     [self.listener resume];
     
     // Run the run loop forever.
-    
     [[NSRunLoop currentRunLoop] run];
-}
-
-- (void)dealloc
-{
-    
 }
 
 // Called by our XPC listener when a new connection comes in.  We configure the connection
 // with our protocol and ourselves as the main object.
 - (BOOL)listener:(NSXPCListener *)listener shouldAcceptNewConnection:(NSXPCConnection *)newConnection {
     assert(listener == self.listener);
-#pragma unused(listener)
     assert(newConnection != nil);
-    
     
     newConnection.exportedInterface = [NSXPCInterface interfaceWithProtocol:@protocol(OpenVPNHelperProtocol)];
     newConnection.exportedObject = self;
-    
+    newConnection.remoteObjectInterface = [NSXPCInterface interfaceWithProtocol:@protocol(ClientProtocol)];
     self.remoteObject = newConnection.remoteObjectProxy;
     [newConnection resume];
     
     return YES;
 }
 
-
-
-- (void)getVersionWithReply:(void(^)(NSString * version))reply
-// Part of the HelperToolProtocol.  Returns the version number of the tool.  Note that never
-// requires authorization.
-{
-    // We specifically don't check for authorization here.  Everyone is always allowed to get
-    // the version of the helper tool.
-    NSLog(@"version");
-//    NSString *version = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"] ?: @"?";
-    reply(@"1.0-1");
+- (void)getVersionWithReply:(void(^)(NSString * version))reply {
+    NSString *version = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"] ?: @"?";
+    NSString *buildVersion = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"] ?: @"?";
+    reply([NSString stringWithFormat:@"%@-%@", version, buildVersion]);
 }
 
-- (void)startOpenVPNAtURL:(NSURL *)launchURL withConfig:(NSURL *)config reply:(void(^)(NSString * version))reply {
+- (void)startOpenVPNAtURL:(NSURL *)launchURL withConfig:(NSURL *)config reply:(void(^)(BOOL))reply {
+    // Verify that binary at URL is signed by me
+    SecStaticCodeRef staticCodeRef = 0;
+    OSStatus status = SecStaticCodeCreateWithPath((__bridge CFURLRef _Nonnull)(launchURL), kSecCSDefaultFlags, &staticCodeRef);
+    if (status != errSecSuccess) {
+        NSLog(@"Static code error %d", status);
+        reply(NO);
+        return;
+    }
+    
+    SecRequirementRef requirementRef = 0;
+    status = SecRequirementCreateWithString((__bridge CFStringRef _Nonnull)@"anchor apple generic and certificate leaf[subject.CN] = \"Mac Developer: Johan Kool (2W662WXNRW)\" and certificate 1[field.1.2.840.113635.100.6.2.1]", kSecCSDefaultFlags, &requirementRef);
+    if (status != errSecSuccess) {
+        NSLog(@"Requirement error %d", status);
+        reply(NO);
+        return;
+    }
+    
+    status = SecStaticCodeCheckValidity(staticCodeRef, kSecCSDefaultFlags, requirementRef);
+    if (status != errSecSuccess) {
+        NSLog(@"Validity error %d", status);
+        reply(NO);
+        return;
+    }
+    
+    NSLog(@"Launching task");
+    
     NSTask *task = [[NSTask alloc] init];
     task.launchPath = launchURL.path;
     task.arguments = @[@"--config", config.path];
     [task setTerminationHandler:^(NSTask *task){
-        [self.remoteObject stateChanged:OpenVPNStateUnknown reply:^{
-            NSLog(@"state changed");
+        [self.remoteObject taskTerminatedWithReply:^{
+           NSLog(@"task terminated");
         }];
     }];
     [task launch];
     
     self.openVPNTask = task;
 
-    reply(@"Connected!");
+    reply(YES);
 }
 
 - (void)closeWithReply:(void(^)())reply {

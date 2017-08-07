@@ -18,56 +18,38 @@
 
 @protocol OpenVPNHelperProtocol
 
-typedef NS_ENUM(NSInteger, OpenVPNState) {
-    OpenVPNStateUnknown,
-    OpenVPNStateIdle,
-    OpenVPNStateConnecting,
-    OpenVPNStateConnected,
-};
-
-typedef NS_ENUM(NSInteger, OpenVPNError) {
-    OpenVPNErrorNone,
-    OpenVPNErrorUnknown,
-    OpenVPNErrorAlreadyConnected,
-};
-
 @required
 
+/**
+ Returns the version number of the tool
+ 
+ @param reply Handler taking version number
+ */
 - (void)getVersionWithReply:(void(^_Nonnull)(NSString *_Nonnull version))reply;
-// This command simply returns the version number of the tool.  It's a good idea to include a
-// command line this so you can handle app upgrades cleanly.
 
-//// The next two commands imagine an app that needs to store a license key in some global location
-//// that's not writable by all users; thus, setting the license key requires elevated privileges.
-//// To manage this there's a 'read' command--which by default can be used by everyone--to return
-//// the key and a 'write' command--which requires admin authentication--to set the key.
-//
-//- (void)readLicenseKeyAuthorization:(NSData *)authData withReply:(void(^)(NSError * error, NSString * licenseKey))reply;
-//// Reads the current license key.  authData must be an AuthorizationExternalForm embedded
-//// in an NSData.
-//
-//- (void)writeLicenseKey:(NSString *)licenseKey authorization:(NSData *)authData withReply:(void(^)(NSError * error))reply;
-//// Writes a new license key.  licenseKey is the new license key string.  authData must be
-//// an AuthorizationExternalForm embedded in an NSData.
-//
-//- (void)bindToLowNumberPortAuthorization:(NSData *)authData withReply:(void(^)(NSError * error, NSFileHandle * ipv4Handle, NSFileHandle * ipv6Handle))reply;
-//// This command imagines an app that contains an embedded web server.  A web server has to
-//// bind to port 80, which is a privileged operation.  This command lets the app request that
-//// the privileged helper tool create sockets bound to port 80 and then pass them back to the
-//// app, thereby minimising the amount of code that has to run with elevated privileges.
-//// authData must be an AuthorizationExternalForm embedded in an NSData and the sockets are
-//// returned wrapped up in NSFileHandles.
+/**
+ Strarts OpenVPN connection
 
-- (void)startOpenVPNAtURL:(NSURL *_Nonnull)launchURL withConfig:(NSURL *_Nonnull)config reply:(void(^_Nonnull)(NSString *_Nonnull))reply;
+ @param launchURL URL to openvpn binary
+ @param config URL to config file
+ @param reply Success or not
+ */
+- (void)startOpenVPNAtURL:(NSURL *_Nonnull)launchURL withConfig:(NSURL *_Nonnull)config reply:(void(^_Nonnull)(BOOL))reply;
 
+/**
+ Closes OpenVPN connection
+
+ @param reply Success
+ */
 - (void)closeWithReply:(void(^_Nonnull)())reply;
 
 @end
 
 @protocol ClientProtocol <NSObject>
 
-- (void)stateChanged:(OpenVPNState)state reply:(void(^_Nonnull)())reply;
+@required
 
+- (void)taskTerminatedWithReply:(void(^_Nonnull)())reply;
 
 @end
 
@@ -76,8 +58,6 @@ typedef NS_ENUM(NSInteger, OpenVPNError) {
 // It's called by the helper tool's main() function, but not by the app directly.
 
 @interface OpenVPNHelper : NSObject
-
-- (id _Nullable )init;
 
 - (void)run;
 

@@ -12,14 +12,14 @@ import AppAuth
 /// Fetches configuration
 class ConfigurationService {
     
-    enum Error: Int, LocalizedError {
+    enum Error: Swift.Error, LocalizedError {
         case unknown
         case invalidURL
         case missingToken
         case invalidKeyPair
         case invalidConfiguration
         
-        var localizedDescription: String {
+        var errorDescription: String? {
             switch self {
             case .unknown:
                 return NSLocalizedString("Configuration failed for unknown reason", comment: "")
@@ -113,7 +113,7 @@ class ConfigurationService {
                 switch result {
                 case .success((let certificate, let privateKey)):
                     // TODO: store key pair in keychain instead of user defaults
-                    let keyPair = ["provider": info.provider.displayName, "providerBaseURL": info.apiBaseURL.absoluteString, "certificate": certificate, "privateKey": privateKey]
+                    let keyPair = ["provider": info.provider.displayName, "providerBaseURL": info.provider.baseURL.absoluteString, "certificate": certificate, "privateKey": privateKey]
                     keyPairs.append(keyPair)
                     UserDefaults.standard.set(keyPairs, forKey: "keyPairs")
                     handler(.success((certificate: certificate, privateKey: privateKey)))
