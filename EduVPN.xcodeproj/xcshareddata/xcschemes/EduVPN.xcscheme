@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "C7BEF5C41F03E0D80038605E"
-               BuildableName = "EduVPN.app"
-               BlueprintName = "EduVPN"
-               ReferencedContainer = "container:EduVPN.xcodeproj">
+               BuildableName = "eduVPN.app"
+               BlueprintName = "eduVPN"
+               ReferencedContainer = "container:eduVPN.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -33,9 +33,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "C7BEF5C41F03E0D80038605E"
-            BuildableName = "EduVPN.app"
-            BlueprintName = "EduVPN"
-            ReferencedContainer = "container:EduVPN.xcodeproj">
+            BuildableName = "eduVPN.app"
+            BlueprintName = "eduVPN"
+            ReferencedContainer = "container:eduVPN.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <AdditionalOptions>
@@ -56,9 +56,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "C7BEF5C41F03E0D80038605E"
-            BuildableName = "EduVPN.app"
-            BlueprintName = "EduVPN"
-            ReferencedContainer = "container:EduVPN.xcodeproj">
+            BuildableName = "eduVPN.app"
+            BlueprintName = "eduVPN"
+            ReferencedContainer = "container:eduVPN.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <AdditionalOptions>
@@ -75,9 +75,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "C7BEF5C41F03E0D80038605E"
-            BuildableName = "EduVPN.app"
-            BlueprintName = "EduVPN"
-            ReferencedContainer = "container:EduVPN.xcodeproj">
+            BuildableName = "eduVPN.app"
+            BlueprintName = "eduVPN"
+            ReferencedContainer = "container:eduVPN.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>
