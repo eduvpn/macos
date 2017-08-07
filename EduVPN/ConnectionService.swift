@@ -63,7 +63,7 @@ class ConnectionService: NSObject {
                     switch result {
                     case .success(let config):
                         do {
-                            let configURL = try self.install(config: config) // TODO: uninstall config
+                            let configURL = try self.install(config: config)
                             self.activateConfig(at: configURL, handler: handler)
                         } catch(let error) {
                             handler(.failure(error))
@@ -84,8 +84,9 @@ class ConnectionService: NSObject {
     /// - Returns: URL where config was installed
     /// - Throws: Error writing config to disk
     private func install(config: String) throws -> URL {
-        let tempDir = NSTemporaryDirectory()
-        let fileURL = URL(fileURLWithPath: tempDir + "/eduvpn.ovpn")
+        let tempDir = (NSTemporaryDirectory() as NSString).appendingPathComponent("org.eduvpn.app.temp") // Added .temp because .app lets the Finder show the folder as an app
+        try FileManager.default.createDirectory(atPath: tempDir, withIntermediateDirectories: true, attributes: nil)
+        let fileURL = URL(fileURLWithPath: (tempDir as NSString).appendingPathComponent("eduvpn.ovpn"))
         try config.write(to: fileURL, atomically: true, encoding: .utf8)
         return fileURL
     }
@@ -110,7 +111,21 @@ class ConnectionService: NSObject {
             } else {
                 handler(.failure(Error.helperRejected))
             }
+            // Remove config file
+            do {
+                try self.uninstall(configURL: configURL)
+            } catch(let error) {
+                print("Failed to remove config at URL %@ with error: %@", configURL, error)
+            }
         }
+    }
+    
+    /// Uninstalls configuration
+    ///
+    /// - Parameter configURL: URL where config was installed
+    /// - Throws: Error removing config from disk
+    private func uninstall(configURL: URL) throws {
+        try FileManager.default.removeItem(at: configURL)
     }
     
     /// Asks helper to disconnect VPN connection
