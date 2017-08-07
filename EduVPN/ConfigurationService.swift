@@ -1,9 +1,9 @@
 //
 //  ConfigurationService.swift
-//  EduVPN
+//  eduVPN
 //
 //  Created by Johan Kool on 06/07/2017.
-//  Copyright © 2017 EduVPN. All rights reserved.
+//  Copyright © 2017 eduVPN. All rights reserved.
 //
 
 import Foundation
@@ -145,7 +145,7 @@ class ConfigurationService {
             request.httpMethod = "POST"
             request.setValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
             request.setValue("application/x-www-form-urlencoded; charset=utf-8", forHTTPHeaderField: "Content-Type")
-            let data = "display_name=EduVPN%20(macOS)".data(using: .utf8)!
+            let data = "display_name=eduVPN%20(macOS)".data(using: .utf8)!
             request.httpBody = data
             request.setValue("\(data.count)", forHTTPHeaderField: "Content-Length")
             

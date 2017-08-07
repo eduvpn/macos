@@ -1,9 +1,9 @@
 //
 //  ServiceContainer.swift
-//  EduVPN
+//  eduVPN
 //
 //  Created by Johan Kool on 30/06/2017.
-//  Copyright © 2017 EduVPN. All rights reserved.
+//  Copyright © 2017 eduVPN. All rights reserved.
 //
 
 import Foundation
