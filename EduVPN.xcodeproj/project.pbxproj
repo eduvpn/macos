@@ -26,6 +26,8 @@
 		C74487061F194FAB0072B472 /* Sodium.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C74487051F194FAB0072B472 /* Sodium.framework */; };
 		C74487071F194FAB0072B472 /* Sodium.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = C74487051F194FAB0072B472 /* Sodium.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		C74487091F194FBA0072B472 /* Sodium.framework.dSYM in CopyFiles */ = {isa = PBXBuildFile; fileRef = C74487081F194FBA0072B472 /* Sodium.framework.dSYM */; };
+		C7610D441F3AFBF400D6C063 /* Statistics.m in Sources */ = {isa = PBXBuildFile; fileRef = C7610D431F3AFBF400D6C063 /* Statistics.m */; };
+		C7610D451F3AFBF400D6C063 /* Statistics.m in Sources */ = {isa = PBXBuildFile; fileRef = C7610D431F3AFBF400D6C063 /* Statistics.m */; };
 		C765819B1F063BC9003DEC92 /* ServiceContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = C765819A1F063BC9003DEC92 /* ServiceContainer.swift */; };
 		C765819D1F063C47003DEC92 /* ConnectionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C765819C1F063C47003DEC92 /* ConnectionService.swift */; };
 		C7BEF5C91F03E0D80038605E /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7BEF5C81F03E0D80038605E /* AppDelegate.swift */; };
@@ -115,6 +117,8 @@
 		C732CEA71F0F7B7600698F28 /* String+URL.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "String+URL.swift"; sourceTree = "<group>"; };
 		C74487051F194FAB0072B472 /* Sodium.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Sodium.framework; path = Carthage/Build/Mac/Sodium.framework; sourceTree = "<group>"; };
 		C74487081F194FBA0072B472 /* Sodium.framework.dSYM */ = {isa = PBXFileReference; lastKnownFileType = wrapper.dsym; name = Sodium.framework.dSYM; path = Carthage/Build/Mac/Sodium.framework.dSYM; sourceTree = "<group>"; };
+		C7610D421F3AFBF400D6C063 /* Statistics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Statistics.h; sourceTree = "<group>"; };
+		C7610D431F3AFBF400D6C063 /* Statistics.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Statistics.m; sourceTree = "<group>"; };
 		C765819A1F063BC9003DEC92 /* ServiceContainer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceContainer.swift; sourceTree = "<group>"; };
 		C765819C1F063C47003DEC92 /* ConnectionService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = ConnectionService.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		C7BEF5C51F03E0D80038605E /* eduVPN.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = eduVPN.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -166,6 +170,8 @@
 				C72AD6F51F0A692F006DBDA5 /* main.m */,
 				C72AD6FB1F0A69BF006DBDA5 /* OpenVPNHelper.h */,
 				C72AD6FC1F0A69BF006DBDA5 /* OpenVPNHelper.m */,
+				C7610D421F3AFBF400D6C063 /* Statistics.h */,
+				C7610D431F3AFBF400D6C063 /* Statistics.m */,
 			);
 			path = OpenVPNHelper;
 			sourceTree = "<group>";
@@ -374,6 +380,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C72AD6FD1F0A69BF006DBDA5 /* OpenVPNHelper.m in Sources */,
+				C7610D451F3AFBF400D6C063 /* Statistics.m in Sources */,
 				C72AD6F61F0A692F006DBDA5 /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -392,6 +399,7 @@
 				C7FA902E1F0BD1A60037FF88 /* Either.swift in Sources */,
 				C732CEA51F0F720800698F28 /* ChooseProfileViewController.swift in Sources */,
 				C71847C81F0E5E2800296C61 /* ChooseConnectionTypeViewController.swift in Sources */,
+				C7610D441F3AFBF400D6C063 /* Statistics.m in Sources */,
 				C765819D1F063C47003DEC92 /* ConnectionService.swift in Sources */,
 				C71847C61F0E5AC600296C61 /* ConfigurationService.swift in Sources */,
 				C7BEF5C91F03E0D80038605E /* AppDelegate.swift in Sources */,
