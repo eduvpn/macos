@@ -8,6 +8,7 @@
 
 import Foundation
 import AppAuth
+import Sodium
 
 /// Discovers providers
 class ProviderService {
@@ -18,6 +19,7 @@ class ProviderService {
         case noProviders
         case invalidProviders
         case invalidProviderInfo
+        case providerVerificationFailed
         case noProfiles
         case invalidProfiles
         case missingToken
@@ -34,6 +36,8 @@ class ProviderService {
                 return NSLocalizedString("No valid providers were discovered", comment: "")
             case .invalidProviderInfo:
                 return NSLocalizedString("Invalid provider info", comment: "")
+            case .providerVerificationFailed:
+                return NSLocalizedString("Could not verify providers", comment: "")
             case .noProfiles:
                 return NSLocalizedString("No profiles were found for this provider", comment: "")
             case .invalidProfiles:
@@ -68,52 +72,104 @@ class ProviderService {
         return URL(string: path + ".json", relativeTo: URL(string: "https://static.eduvpn.nl/")!)!
     }
     
+    /// Returns discovery signature URL
+    ///
+    /// - Parameter connectionType: Connection type
+    /// - Returns: URL
+    private func signatureUrl(for connectionType: ConnectionType) -> URL {
+        let debug = UserDefaults.standard.bool(forKey: "developerMode")
+        let path: String
+        switch (connectionType, debug) {
+        case (.secureInternet, false):
+            path = "federation"
+        case (.secureInternet, true):
+            path = "federation-dev"
+        case (.instituteAccess, false):
+            path = "instances"
+        case (.instituteAccess, true):
+            path = "instances-dev"
+        }
+        return URL(string: path + ".json.sig", relativeTo: URL(string: "https://static.eduvpn.nl/")!)!
+    }
+    
     /// Discovers providers for a connection type
     ///
     /// - Parameters:
     ///   - connectionType: Connection type
     ///   - handler: List of providers or error
     func discoverProviders(connectionType: ConnectionType, handler: @escaping (Result<[Provider]>) -> ()) {
-        let request = URLRequest(url: url(for: connectionType))
+        let request = URLRequest(url: signatureUrl(for: connectionType))
         let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
-            guard let data = data, let response = response as? HTTPURLResponse, 200..<300 ~= response.statusCode else {
+            guard let signature = data, let response = response as? HTTPURLResponse, 200..<300 ~= response.statusCode else {
                 handler(.failure(error ?? Error.unknown))
                 return
             }
-            do {
-                guard let json = try JSONSerialization.jsonObject(with: data, options: []) as? NSDictionary else {
-                    handler(.failure(Error.invalidProviders))
-                    return
-                }
-                
-                guard let instances = json.value(forKeyPath: "instances") as? [[String: AnyObject]] else {
-                    handler(.failure(Error.invalidProviders))
-                    return
-                }
-                
-                let providers: [Provider] = instances.flatMap { (instance) -> Provider? in
-                    guard let displayName = instance["display_name"] as? String,
-                        let baseURL = (instance["base_uri"] as? String)?.asURL(appendSlash: true),
-                        let logoURL = (instance["logo_uri"] as? String)?.asURL() else {
-                            return nil
-                    }
-                    let publicKey = instance["public_key"] as? String
-                    
-                    return Provider(displayName: displayName, baseURL: baseURL, logoURL: logoURL, publicKey: publicKey, connectionType: connectionType)
-                }
-                
-                guard !providers.isEmpty else {
-                    handler(.failure(Error.noProviders))
-                    return
-                }
-                
-                handler(.success(providers))
-            } catch(let error) {
-                handler(.failure(error))
-                return
-            }
+            discoverProviders(signature: signature)
         }
         task.resume()
+        
+        func discoverProviders(signature: Data) {
+            let request = URLRequest(url: url(for: connectionType))
+            let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
+                guard let data = data, let response = response as? HTTPURLResponse, 200..<300 ~= response.statusCode else {
+                    handler(.failure(error ?? Error.unknown))
+                    return
+                }
+                do {
+                    guard let sodium = Sodium() else {
+                        handler(.failure(Error.providerVerificationFailed))
+                        return
+                    }
+                    
+                    guard let signatureBin = NSData(base64Encoded: signature, options: []) as Data? else {
+                        handler(.failure(Error.providerVerificationFailed))
+                        return
+                    }
+                    
+                    guard let publicKey = NSData(base64Encoded: "E5On0JTtyUVZmcWd+I/FXRm32nSq8R2ioyW7dcu/U88=", options: []) as Data? else {
+                        handler(.failure(Error.providerVerificationFailed))
+                        return
+                    }
+                    
+                    guard sodium.sign.verify(message: data, publicKey: publicKey, signature: signatureBin) else {
+                        handler(.failure(Error.invalidProviders))
+                        return
+                    }
+                    
+                    guard let json = try JSONSerialization.jsonObject(with: data, options: []) as? NSDictionary else {
+                        handler(.failure(Error.invalidProviders))
+                        return
+                    }
+                    
+                    guard let instances = json.value(forKeyPath: "instances") as? [[String: AnyObject]] else {
+                        handler(.failure(Error.invalidProviders))
+                        return
+                    }
+                    
+                    let providers: [Provider] = instances.flatMap { (instance) -> Provider? in
+                        guard let displayName = instance["display_name"] as? String,
+                            let baseURL = (instance["base_uri"] as? String)?.asURL(appendSlash: true),
+                            let logoURL = (instance["logo_uri"] as? String)?.asURL() else {
+                                return nil
+                        }
+                        let publicKey = instance["public_key"] as? String
+                        
+                        return Provider(displayName: displayName, baseURL: baseURL, logoURL: logoURL, publicKey: publicKey, connectionType: connectionType)
+                    }
+                    
+                    guard !providers.isEmpty else {
+                        handler(.failure(Error.noProviders))
+                        return
+                    }
+                    
+                    handler(.success(providers))
+                } catch(let error) {
+                    handler(.failure(error))
+                    return
+                }
+            }
+            task.resume()
+        }
     }
     
     /// Fetches info about provider
