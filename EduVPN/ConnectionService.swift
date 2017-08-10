@@ -21,6 +21,7 @@ class ConnectionService: NSObject {
     enum Error: Swift.Error, LocalizedError {
         case noHelperConnection
         case helperRejected
+        case statisticsUnavailable
         
         var errorDescription: String? {
             switch self {
@@ -28,6 +29,8 @@ class ConnectionService: NSObject {
                 return NSLocalizedString("Installation failed", comment: "")
             case .helperRejected:
                 return NSLocalizedString("Helper rejected request", comment: "")
+            case .statisticsUnavailable:
+                return NSLocalizedString("No connection statistics available", comment: "")
             }
         }
 
@@ -37,6 +40,8 @@ class ConnectionService: NSObject {
                 return NSLocalizedString("Try reinstalling eduVPN.", comment: "")
             case .helperRejected:
                 return NSLocalizedString("Try reinstalling eduVPN.", comment: "")
+            case .statisticsUnavailable:
+                return NSLocalizedString("Try again later.", comment: "")
             }
         }
     }
@@ -142,6 +147,23 @@ class ConnectionService: NSObject {
         }
     }
     
+    /// Asks helper for statistics about current VPN connection
+    ///
+    /// - Parameter handler: Statistics or error
+    func readStatistics(_ handler: @escaping (Result<Statistics>) -> ()) {
+        guard let helper = helperService.connection?.remoteObjectProxy as? OpenVPNHelperProtocol else {
+            handler(.failure(Error.noHelperConnection))
+            return
+        }
+        
+        helper.readStatistics { (statistics) in
+            if let statistics = statistics {
+                handler(.success(statistics))
+            } else {
+                handler(.failure(Error.statisticsUnavailable))
+            }
+        }
+    }
 }
 
 extension ConnectionService: ClientProtocol {

@@ -14,7 +14,7 @@ import ServiceManagement
 /// Installs and connects helper
 class HelperService {
     
-    static let helperVersion = "1.0-4"
+    static let helperVersion = "1.0-8"
     static let helperIdentifier = "org.eduvpn.app.openvpnhelper"
 
     enum Error: Swift.Error, LocalizedError {
@@ -135,6 +135,7 @@ class HelperService {
         if success {
             handler(.success())
         } else {
+            NSLog("SMJobBless failed: \(String(describing: error))")
             handler(.failure(Error.installationFailed))
         }
     }
@@ -178,8 +179,26 @@ class HelperService {
             return
         }
         
+        var handled = false
+        
+        let deadlineTime = DispatchTime.now() + .seconds(5)
+        DispatchQueue.main.asyncAfter(deadline: deadlineTime) {
+            if handled {
+                // Do nothing
+            } else {
+                handled = true
+                handler(.failure(Error.noHelperConnection))
+            }
+        }
+        
         helper.getVersionWithReply() { (version) in
-            handler(.success(version))
+            if handled {
+                // Do nothing
+                NSLog("Getting version took longer than 5 seconds!")
+            } else {
+                handled = true
+                handler(.success(version))
+            }
         }
     }
 

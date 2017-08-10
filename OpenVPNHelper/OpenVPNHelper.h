@@ -16,6 +16,8 @@
 // HelperToolProtocol is the NSXPCConnection-based protocol implemented by the helper tool
 // and called by the app.
 
+#import "Statistics.h"
+
 @protocol OpenVPNHelperProtocol
 
 @required
@@ -42,6 +44,13 @@
  @param reply Success
  */
 - (void)closeWithReply:(void(^_Nonnull)())reply;
+
+/**
+ Retrieves statistics for the current OpenVPN connection
+ 
+ @param reply Statistics or nil
+ */
+- (void)readStatisticsWithReply:(void(^_Nonnull)(Statistics * _Nullable statistics))reply;
 
 @end
 

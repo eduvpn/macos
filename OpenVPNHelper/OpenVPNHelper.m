@@ -12,6 +12,8 @@
 
 @property (atomic, strong, readwrite) NSXPCListener *listener;
 @property (atomic, strong) NSTask *openVPNTask;
+@property (atomic, strong) NSDate *startDate;
+@property (atomic, copy) NSString *statisticsPath;
 @property (atomic, strong) id <ClientProtocol> remoteObject;
 
 @end
@@ -86,7 +88,10 @@
     
     NSTask *task = [[NSTask alloc] init];
     task.launchPath = launchURL.path;
-    task.arguments = @[@"--config", config.path];
+    NSString *statisticsPath = [config.path stringByAppendingString:@".status"];
+    task.arguments = @[@"--config", config.path,
+                       @"--log", [config.path stringByAppendingString:@".log"],
+                       @"--status", statisticsPath, @"1"];
     [task setTerminationHandler:^(NSTask *task){
         [self.remoteObject taskTerminatedWithReply:^{
            NSLog(@"task terminated");
@@ -95,7 +100,9 @@
     [task launch];
     
     self.openVPNTask = task;
-
+    self.startDate = [NSDate date];
+    self.statisticsPath = statisticsPath;
+    
     reply(YES);
 }
 
@@ -103,6 +110,67 @@
     [self.openVPNTask terminate];
     self.openVPNTask = nil;
     reply();
+}
+
+- (void)readStatisticsWithReply:(void (^)(Statistics * _Nullable))reply {
+    if (self.openVPNTask && self.statisticsPath) {
+        NSError *error = nil;
+        NSString *string = [NSString stringWithContentsOfFile:self.statisticsPath encoding:NSUTF8StringEncoding error:&error];
+        if (string == nil) {
+            NSLog(@"Read statistics file error: %@", error);
+            reply(nil);
+            return;
+        }
+        
+        // Sample file:
+        
+//        OpenVPN STATISTICS
+//        Updated,Wed Aug  9 12:32:46 2017
+//        TUN/TAP read bytes,151771
+//        TUN/TAP write bytes,269590
+//        TCP/UDP read bytes,290152
+//        TCP/UDP write bytes,176751
+//        Auth read bytes,269590
+//        pre-compress bytes,0
+//        post-compress bytes,0
+//        pre-decompress bytes,0
+//        post-decompress bytes,0
+//        END
+        
+        NSScanner *scanner = [[NSScanner alloc] initWithString:string];
+        [scanner scanString:@"OpenVPN STATISTICS" intoString:NULL];
+        NSString *dateString;
+        [scanner scanString:@"Updated," intoString:&dateString];
+        [scanner scanUpToString:@"\n" intoString:&dateString];
+        
+        NSDateComponents *duration = [[NSCalendar currentCalendar] components:NSCalendarUnitHour | NSCalendarUnitMinute | NSCalendarUnitSecond fromDate:self.startDate toDate:[NSDate date] options:0];
+        
+        Statistics *statistics = [[Statistics alloc] initWithDuration:duration
+                                                      tunTapReadBytes:[self bytesForKey:@"TUN/TAP read bytes," inScanner:scanner]
+                                                     tunTapWriteBytes:[self bytesForKey:@"TUN/TAP write bytes," inScanner:scanner]
+                                                      tcpUdpReadBytes:[self bytesForKey:@"TCP/UDP read bytes," inScanner:scanner]
+                                                     tcpUdpWriteBytes:[self bytesForKey:@"TCP/UDP write bytes," inScanner:scanner]
+                                                        authReadBytes:[self bytesForKey:@"Auth read bytes," inScanner:scanner]
+                                                     precompressBytes:[self bytesForKey:@"pre-compress bytes," inScanner:scanner]
+                                                    postcompressBytes:[self bytesForKey:@"post-compress bytes," inScanner:scanner]
+                                                   predecompressBytes:[self bytesForKey:@"pre-decompress bytes," inScanner:scanner]
+                                                  postdecompressBytes:[self bytesForKey:@"post-decompress bytes," inScanner:scanner]];
+        reply(statistics);
+    } else {
+        reply(nil);
+    }
+}
+
+- (NSInteger)bytesForKey:(NSString *)key inScanner:(NSScanner *)scanner {
+    if (![scanner scanString:key intoString:NULL]) {
+        return 0;
+    }
+    NSInteger bytes = 0;
+    if (![scanner scanInteger:&bytes]) {
+        return 0;
+    } else {
+        return bytes;
+    }
 }
 
 @end
