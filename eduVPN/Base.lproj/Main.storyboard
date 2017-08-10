@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="12121" systemVersion="16G29" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="12121" systemVersion="16G29" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment identifier="macosx"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="12121"/>
@@ -661,31 +661,99 @@
                         <outlet property="delegate" destination="Voe-Tx-rLC" id="PrD-fu-P6m"/>
                     </connections>
                 </application>
-                <customObject id="Voe-Tx-rLC" customClass="AppDelegate" customModule="eduVPN" customModuleProvider="target"/>
+                <customObject id="Voe-Tx-rLC" customClass="AppDelegate" customModule="eduVPN" customModuleProvider="target">
+                    <connections>
+                        <outlet property="statusMenu" destination="QdB-u5-YNJ" id="13s-wb-31K"/>
+                    </connections>
+                </customObject>
                 <customObject id="Ady-hI-5gd" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+                <menu id="QdB-u5-YNJ">
+                    <items>
+                        <menuItem title="Show eduVPN…" id="rZd-ic-Kxn">
+                            <modifierMask key="keyEquivalentModifierMask"/>
+                            <connections>
+                                <action selector="showWindow:" target="Voe-Tx-rLC" id="2DZ-KF-B7B"/>
+                            </connections>
+                        </menuItem>
+                        <menuItem isSeparatorItem="YES" id="hJs-Ga-0dn"/>
+                        <menuItem title="Connect" enabled="NO" id="EJ3-MH-95b">
+                            <modifierMask key="keyEquivalentModifierMask"/>
+                        </menuItem>
+                        <menuItem isSeparatorItem="YES" id="9kY-TE-Ws0"/>
+                        <menuItem title="Preferences…" id="Wxh-z5-5Rm">
+                            <modifierMask key="keyEquivalentModifierMask"/>
+                            <connections>
+                                <segue destination="QBP-pf-Gdt" kind="modal" id="7by-Rq-dgY"/>
+                            </connections>
+                        </menuItem>
+                        <menuItem title="Help" id="Prj-2b-kt4">
+                            <modifierMask key="keyEquivalentModifierMask"/>
+                            <connections>
+                                <action selector="showHelp:" target="Ady-hI-5gd" id="H06-If-ll6"/>
+                            </connections>
+                        </menuItem>
+                        <menuItem title="About" id="tZ1-X2-2r9">
+                            <modifierMask key="keyEquivalentModifierMask"/>
+                            <connections>
+                                <action selector="orderFrontStandardAboutPanel:" target="Ady-hI-5gd" id="5In-cV-lrS"/>
+                            </connections>
+                        </menuItem>
+                        <menuItem isSeparatorItem="YES" id="qAV-X3-e1S"/>
+                        <menuItem title="Quit eduVPN" id="SlW-Mx-kxi">
+                            <modifierMask key="keyEquivalentModifierMask"/>
+                            <connections>
+                                <action selector="terminate:" target="Ady-hI-5gd" id="xAb-76-R1d"/>
+                            </connections>
+                        </menuItem>
+                    </items>
+                </menu>
             </objects>
             <point key="canvasLocation" x="167" y="-96"/>
         </scene>
         <!--Window Controller-->
         <scene sceneID="R2V-B0-nI4">
             <objects>
-                <windowController id="B8D-0N-5wS" customClass="MainWindowController" customModule="eduVPN" customModuleProvider="target" sceneMemberID="viewController">
-                    <window key="window" title="eduVPN" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" animationBehavior="default" id="IQv-IB-iLA">
+                <windowController storyboardIdentifier="MainWindowController" showSeguePresentationStyle="single" id="B8D-0N-5wS" customClass="MainWindowController" customModule="eduVPN" customModuleProvider="target" sceneMemberID="viewController">
+                    <window key="window" title="eduVPN" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" frameAutosaveName="Main" animationBehavior="default" id="IQv-IB-iLA">
                         <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
-                        <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
-                        <rect key="contentRect" x="196" y="240" width="480" height="270"/>
+                        <rect key="contentRect" x="684" y="489" width="450" height="300"/>
                         <rect key="screenRect" x="0.0" y="0.0" width="1680" height="1027"/>
                         <connections>
                             <outlet property="delegate" destination="B8D-0N-5wS" id="08a-s7-Jl4"/>
                         </connections>
                     </window>
                     <connections>
-                        <segue destination="Lns-jv-Aqp" kind="relationship" relationship="window.shadowedContentViewController" id="vwc-S4-ZV8"/>
+                        <segue destination="khn-a8-CTC" kind="relationship" relationship="window.shadowedContentViewController" id="K6f-42-SbH"/>
                     </connections>
                 </windowController>
                 <customObject id="Oky-zY-oP4" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="265" y="235"/>
+            <point key="canvasLocation" x="-414" y="226"/>
+        </scene>
+        <!--Main View Controller-->
+        <scene sceneID="pls-UA-ly7">
+            <objects>
+                <viewController id="khn-a8-CTC" customClass="MainViewController" customModule="eduVPN" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" id="8OX-OJ-cMR">
+                        <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <subviews>
+                            <containerView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="J99-In-5OI">
+                                <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                <connections>
+                                    <segue destination="Lns-jv-Aqp" kind="embed" id="Ig4-f2-Loe"/>
+                                </connections>
+                            </containerView>
+                        </subviews>
+                    </view>
+                    <connections>
+                        <outlet property="containerView" destination="J99-In-5OI" id="UQf-Z5-Npz"/>
+                    </connections>
+                </viewController>
+                <customObject id="wTw-Oj-Nrh" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="190" y="220"/>
         </scene>
         <!--Window Controller-->
         <scene sceneID="jUN-uA-o3q">
@@ -694,12 +762,12 @@
                     <window key="window" title="Preferences" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" frameAutosaveName="" animationBehavior="default" tabbingMode="disallowed" id="g8w-C1-RJw">
                         <windowStyleMask key="styleMask" titled="YES" closable="YES"/>
                         <windowCollectionBehavior key="collectionBehavior" fullScreenNone="YES"/>
-                        <rect key="contentRect" x="-159" y="1614" width="480" height="270"/>
+                        <rect key="contentRect" x="-159" y="1614" width="480" height="332"/>
                         <rect key="screenRect" x="-675" y="1050" width="3008" height="1670"/>
-                        <value key="minSize" type="size" width="480" height="270"/>
-                        <value key="maxSize" type="size" width="480" height="270"/>
-                        <value key="minFullScreenContentSize" type="size" width="480" height="270"/>
-                        <value key="maxFullScreenContentSize" type="size" width="480" height="270"/>
+                        <value key="minSize" type="size" width="480" height="332"/>
+                        <value key="maxSize" type="size" width="480" height="332"/>
+                        <value key="minFullScreenContentSize" type="size" width="480" height="332"/>
+                        <value key="maxFullScreenContentSize" type="size" width="480" height="332"/>
                         <connections>
                             <outlet property="delegate" destination="QBP-pf-Gdt" id="s6V-Dt-HpX"/>
                         </connections>
@@ -717,11 +785,11 @@
             <objects>
                 <viewController title="Preferences" showSeguePresentationStyle="single" id="TRM-HQ-ggb" sceneMemberID="viewController">
                     <view key="view" id="TOs-5F-9Ou">
-                        <rect key="frame" x="0.0" y="0.0" width="480" height="270"/>
+                        <rect key="frame" x="0.0" y="0.0" width="480" height="332"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="GEf-t5-7wD">
-                                <rect key="frame" x="18" y="234" width="149" height="18"/>
+                                <rect key="frame" x="18" y="192" width="149" height="18"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <buttonCell key="cell" type="check" title="Use Developer Mode" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="zSO-mA-g3Q">
                                     <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -731,15 +799,64 @@
                                     <binding destination="cF9-Lp-W07" name="value" keyPath="values.developerMode" id="GGb-K2-0Ia"/>
                                 </connections>
                             </button>
+                            <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ikE-fS-AfB">
+                                <rect key="frame" x="18" y="244" width="136" height="18"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <buttonCell key="cell" type="check" title="Show in Status Bar" bezelStyle="regularSquare" imagePosition="left" inset="2" id="cBe-YZ-5lV">
+                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <binding destination="cF9-Lp-W07" name="enabled" keyPath="values.showInDock" id="Mck-Xj-8qG"/>
+                                    <binding destination="cF9-Lp-W07" name="value" keyPath="values.showInStatusBar" id="m1m-No-1go"/>
+                                </connections>
+                            </button>
+                            <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Adq-lA-U3V">
+                                <rect key="frame" x="18" y="296" width="119" height="18"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <buttonCell key="cell" type="check" title="Launch at Login" bezelStyle="regularSquare" imagePosition="left" inset="2" id="d17-8e-A58">
+                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                            </button>
+                            <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="RPB-k0-psB">
+                                <rect key="frame" x="18" y="270" width="105" height="18"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <buttonCell key="cell" type="check" title="Show in Dock" bezelStyle="regularSquare" imagePosition="left" inset="2" id="ok3-5H-Dt0">
+                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <binding destination="cF9-Lp-W07" name="value" keyPath="values.showInDock" id="3Qn-5O-hjQ"/>
+                                    <binding destination="cF9-Lp-W07" name="enabled" keyPath="values.showInStatusBar" id="4AU-0F-GTo"/>
+                                </connections>
+                            </button>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" allowsCharacterPickerTouchBarItem="NO" translatesAutoresizingMaskIntoConstraints="NO" id="yvD-in-gmY">
+                                <rect key="frame" x="18" y="165" width="60" height="17"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Key Pairs" id="J4w-7w-2NM">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="3e1-No-Xza">
+                                <rect key="frame" x="18" y="218" width="136" height="18"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <buttonCell key="cell" type="check" title="Check for Updates" bezelStyle="regularSquare" imagePosition="left" enabled="NO" inset="2" id="i9O-fc-ZtB">
+                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                            </button>
                             <scrollView fixedFrame="YES" autohidesScrollers="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Djn-30-jlr">
-                                <rect key="frame" x="16" y="48" width="440" height="138"/>
+                                <rect key="frame" x="20" y="48" width="440" height="109"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <clipView key="contentView" ambiguous="YES" id="C8f-mg-sD8">
-                                    <rect key="frame" x="1" y="0.0" width="438" height="137"/>
+                                    <rect key="frame" x="1" y="0.0" width="438" height="108"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" alternatingRowBackgroundColors="YES" columnReordering="NO" columnResizing="NO" autosaveColumns="NO" headerView="Pif-N7-flZ" id="277-ff-rBp">
-                                            <rect key="frame" x="0.0" y="0.0" width="438" height="114"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="438" height="85"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <size key="intercellSpacing" width="3" height="2"/>
                                             <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -790,7 +907,7 @@
                                 </tableHeaderView>
                             </scrollView>
                             <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="k8T-Bi-mme">
-                                <rect key="frame" x="10" y="13" width="89" height="32"/>
+                                <rect key="frame" x="14" y="13" width="89" height="32"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <buttonCell key="cell" type="push" title="Remove" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="RWq-kx-jlo">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -801,15 +918,6 @@
                                     <binding destination="Nor-Pd-Yr2" name="enabled" keyPath="canRemove" id="9lO-k1-hEu"/>
                                 </connections>
                             </button>
-                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" allowsCharacterPickerTouchBarItem="NO" translatesAutoresizingMaskIntoConstraints="NO" id="yvD-in-gmY">
-                                <rect key="frame" x="18" y="194" width="60" height="17"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Key Pairs" id="J4w-7w-2NM">
-                                    <font key="font" metaFont="system"/>
-                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                </textFieldCell>
-                            </textField>
                         </subviews>
                     </view>
                 </viewController>
@@ -821,7 +929,7 @@
                 </arrayController>
                 <userDefaultsController representsSharedInstance="YES" id="cF9-Lp-W07"/>
             </objects>
-            <point key="canvasLocation" x="1517" y="-52"/>
+            <point key="canvasLocation" x="1517" y="-21"/>
         </scene>
         <!--Choose Provider View Controller-->
         <scene sceneID="hIz-AP-VOD">
@@ -1438,4 +1546,7 @@
     <resources>
         <image name="NSActionTemplate" width="14" height="14"/>
     </resources>
+    <inferredMetricsTieBreakers>
+        <segue reference="AQc-sr-ok7"/>
+    </inferredMetricsTieBreakers>
 </document>

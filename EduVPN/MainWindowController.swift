@@ -16,12 +16,16 @@ class MainWindowController: NSWindowController {
     override func windowDidLoad() {
         super.windowDidLoad()
     
-        navigationStack.append(contentViewController!)
+        navigationStack.append(mainViewController.currentViewController)
+    }
+    
+    private var mainViewController: MainViewController {
+        return contentViewController as! MainViewController
     }
     
     func push(viewController: NSViewController) {
         navigationStack.append(viewController)
-        contentViewController = viewController
+        mainViewController.show(viewController: viewController, options: .slideForward)
     }
     
     func pop() {
@@ -29,7 +33,7 @@ class MainWindowController: NSWindowController {
             return
         }
         navigationStack.removeLast()
-        contentViewController = navigationStack.last
+        mainViewController.show(viewController: navigationStack.last!, options: .slideBackward)
     }
     
     func popToRoot() {
@@ -37,7 +41,7 @@ class MainWindowController: NSWindowController {
             return
         }
         navigationStack = [navigationStack.first!]
-        contentViewController = navigationStack.last
+        mainViewController.show(viewController: navigationStack.last!, options: .slideBackward)
     }
     
     func showChooseConnectType() {

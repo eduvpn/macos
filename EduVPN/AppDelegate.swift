@@ -11,6 +11,10 @@ import Cocoa
 @NSApplicationMain
 class AppDelegate: NSObject, NSApplicationDelegate {
 
+    var mainWindowController: MainWindowController!
+    var statusItem: NSStatusItem?
+    @IBOutlet var statusMenu: NSMenu!
+    
     func applicationWillFinishLaunching(_ notification: Notification) {
         // Disabled until best approach to get token is determined
 //        // Setup incoming URL handling
@@ -19,6 +23,17 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         // Insert code here to initialize your application
+        UserDefaults.standard.register(defaults: NSDictionary(contentsOf: Bundle.main.url(forResource: "Defaults", withExtension: "plist")!)! as! [String : Any])
+        
+        statusItem = NSStatusBar.system().statusItem(withLength: 60)
+        statusItem?.title = "eduVPN"
+        statusItem?.menu = statusMenu
+ 
+        
+        ServiceContainer.preferencesService.updateForUIPreferences()
+        
+        mainWindowController = NSStoryboard(name: "Main", bundle: nil).instantiateController(withIdentifier: "MainWindowController") as! MainWindowController
+        mainWindowController.window?.makeKeyAndOrderFront(nil)
     }
 
     func applicationWillTerminate(_ aNotification: Notification) {
@@ -34,5 +49,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 //        }
     }
 
+    @IBAction func showWindow(_ sender: Any) {
+        guard let window = mainWindowController.window else {
+            return
+        }
+        window.setIsVisible(true)
+    }
+    
 }
 
