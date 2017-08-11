@@ -14,6 +14,8 @@
 		C71847C81F0E5E2800296C61 /* ChooseConnectionTypeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C71847C71F0E5E2800296C61 /* ChooseConnectionTypeViewController.swift */; };
 		C71847CC1F0E7C7700296C61 /* Kingfisher.framework.dSYM in CopyFiles */ = {isa = PBXBuildFile; fileRef = C71847CB1F0E7C7700296C61 /* Kingfisher.framework.dSYM */; };
 		C71847CF1F0E7EAF00296C61 /* Kingfisher.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = C71847CD1F0E7EAF00296C61 /* Kingfisher.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		C71912561F3C6942005409E0 /* PreferencesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C71912551F3C6942005409E0 /* PreferencesViewController.swift */; };
+		C71912581F3C8486005409E0 /* Defaults.plist in Resources */ = {isa = PBXBuildFile; fileRef = C71912571F3C8486005409E0 /* Defaults.plist */; };
 		C72A557A1F0D9FF2001DCA24 /* AppAuth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C72A55791F0D9FF2001DCA24 /* AppAuth.framework */; };
 		C72A557B1F0D9FF2001DCA24 /* AppAuth.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = C72A55791F0D9FF2001DCA24 /* AppAuth.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		C72A557F1F0DA01C001DCA24 /* AppAuth.framework.dSYM in CopyFiles */ = {isa = PBXBuildFile; fileRef = C72A557E1F0DA01C001DCA24 /* AppAuth.framework.dSYM */; };
@@ -26,6 +28,13 @@
 		C74487061F194FAB0072B472 /* Sodium.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C74487051F194FAB0072B472 /* Sodium.framework */; };
 		C74487071F194FAB0072B472 /* Sodium.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = C74487051F194FAB0072B472 /* Sodium.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		C74487091F194FBA0072B472 /* Sodium.framework.dSYM in CopyFiles */ = {isa = PBXBuildFile; fileRef = C74487081F194FBA0072B472 /* Sodium.framework.dSYM */; };
+		C75527DC1F3B55B700076078 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C75527DB1F3B55B700076078 /* MainViewController.swift */; };
+		C75527E51F3C531B00076078 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = C75527E41F3C531B00076078 /* AppDelegate.m */; };
+		C75527E81F3C531B00076078 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = C75527E71F3C531B00076078 /* main.m */; };
+		C75527ED1F3C531B00076078 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C75527EC1F3C531B00076078 /* Assets.xcassets */; };
+		C75527F01F3C531B00076078 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C75527EE1F3C531B00076078 /* Main.storyboard */; };
+		C75527F61F3C545800076078 /* LoginItemHelper.app in CopyFiles */ = {isa = PBXBuildFile; fileRef = C75527E11F3C531B00076078 /* LoginItemHelper.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		C75527FA1F3C55F100076078 /* PreferencesService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C75527F91F3C55F100076078 /* PreferencesService.swift */; };
 		C7610D441F3AFBF400D6C063 /* Statistics.m in Sources */ = {isa = PBXBuildFile; fileRef = C7610D431F3AFBF400D6C063 /* Statistics.m */; };
 		C7610D451F3AFBF400D6C063 /* Statistics.m in Sources */ = {isa = PBXBuildFile; fileRef = C7610D431F3AFBF400D6C063 /* Statistics.m */; };
 		C765819B1F063BC9003DEC92 /* ServiceContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = C765819A1F063BC9003DEC92 /* ServiceContainer.swift */; };
@@ -53,6 +62,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = C72AD6F21F0A692F006DBDA5;
 			remoteInfo = com.egeniq.projects.eduvpn.openvpnhelper;
+		};
+		C75527F71F3C546900076078 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C7BEF5BD1F03E0D70038605E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C75527E01F3C531B00076078;
+			remoteInfo = LoginItemHelper;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -92,6 +108,16 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		C75527F51F3C543600076078 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = Contents/Library/LoginItems;
+			dstSubfolderSpec = 1;
+			files = (
+				C75527F61F3C545800076078 /* LoginItemHelper.app in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
@@ -102,6 +128,8 @@
 		C71847C71F0E5E2800296C61 /* ChooseConnectionTypeViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChooseConnectionTypeViewController.swift; sourceTree = "<group>"; };
 		C71847CB1F0E7C7700296C61 /* Kingfisher.framework.dSYM */ = {isa = PBXFileReference; lastKnownFileType = wrapper.dsym; name = Kingfisher.framework.dSYM; path = Carthage/Build/Mac/Kingfisher.framework.dSYM; sourceTree = "<group>"; };
 		C71847CD1F0E7EAF00296C61 /* Kingfisher.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Kingfisher.framework; path = Carthage/Build/Mac/Kingfisher.framework; sourceTree = "<group>"; };
+		C71912551F3C6942005409E0 /* PreferencesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PreferencesViewController.swift; sourceTree = "<group>"; };
+		C71912571F3C8486005409E0 /* Defaults.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Defaults.plist; sourceTree = "<group>"; };
 		C72A55791F0D9FF2001DCA24 /* AppAuth.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppAuth.framework; path = Carthage/Build/Mac/AppAuth.framework; sourceTree = "<group>"; };
 		C72A557E1F0DA01C001DCA24 /* AppAuth.framework.dSYM */ = {isa = PBXFileReference; lastKnownFileType = wrapper.dsym; name = AppAuth.framework.dSYM; path = Carthage/Build/Mac/AppAuth.framework.dSYM; sourceTree = "<group>"; };
 		C72AD6F31F0A692F006DBDA5 /* org.eduvpn.app.openvpnhelper */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = org.eduvpn.app.openvpnhelper; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -117,6 +145,15 @@
 		C732CEA71F0F7B7600698F28 /* String+URL.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "String+URL.swift"; sourceTree = "<group>"; };
 		C74487051F194FAB0072B472 /* Sodium.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Sodium.framework; path = Carthage/Build/Mac/Sodium.framework; sourceTree = "<group>"; };
 		C74487081F194FBA0072B472 /* Sodium.framework.dSYM */ = {isa = PBXFileReference; lastKnownFileType = wrapper.dsym; name = Sodium.framework.dSYM; path = Carthage/Build/Mac/Sodium.framework.dSYM; sourceTree = "<group>"; };
+		C75527DB1F3B55B700076078 /* MainViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MainViewController.swift; path = eduVPN/MainViewController.swift; sourceTree = SOURCE_ROOT; };
+		C75527E11F3C531B00076078 /* LoginItemHelper.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LoginItemHelper.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		C75527E31F3C531B00076078 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		C75527E41F3C531B00076078 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		C75527E71F3C531B00076078 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		C75527EC1F3C531B00076078 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		C75527EF1F3C531B00076078 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		C75527F11F3C531B00076078 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		C75527F91F3C55F100076078 /* PreferencesService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PreferencesService.swift; sourceTree = "<group>"; };
 		C7610D421F3AFBF400D6C063 /* Statistics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Statistics.h; sourceTree = "<group>"; };
 		C7610D431F3AFBF400D6C063 /* Statistics.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Statistics.m; sourceTree = "<group>"; };
 		C765819A1F063BC9003DEC92 /* ServiceContainer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceContainer.swift; sourceTree = "<group>"; };
@@ -144,6 +181,13 @@
 			files = (
 				C72AD7021F0A6AE9006DBDA5 /* Foundation.framework in Frameworks */,
 				C72AD7041F0A6AEE006DBDA5 /* Security.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C75527DE1F3C531B00076078 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -193,11 +237,33 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		C75527E21F3C531B00076078 /* LoginItemHelper */ = {
+			isa = PBXGroup;
+			children = (
+				C75527E31F3C531B00076078 /* AppDelegate.h */,
+				C75527E41F3C531B00076078 /* AppDelegate.m */,
+				C75527EC1F3C531B00076078 /* Assets.xcassets */,
+				C75527EE1F3C531B00076078 /* Main.storyboard */,
+				C75527F11F3C531B00076078 /* Info.plist */,
+				C75527E61F3C531B00076078 /* Supporting Files */,
+			);
+			path = LoginItemHelper;
+			sourceTree = "<group>";
+		};
+		C75527E61F3C531B00076078 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				C75527E71F3C531B00076078 /* main.m */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
 		C7BEF5BC1F03E0D70038605E = {
 			isa = PBXGroup;
 			children = (
 				C7BEF5C71F03E0D80038605E /* eduVPN */,
 				C72AD6F41F0A692F006DBDA5 /* OpenVPNHelper */,
+				C75527E21F3C531B00076078 /* LoginItemHelper */,
 				C7BEF5C61F03E0D80038605E /* Products */,
 				C72AD7001F0A6AE8006DBDA5 /* Frameworks */,
 			);
@@ -208,6 +274,7 @@
 			children = (
 				C7BEF5C51F03E0D80038605E /* eduVPN.app */,
 				C72AD6F31F0A692F006DBDA5 /* org.eduvpn.app.openvpnhelper */,
+				C75527E11F3C531B00076078 /* LoginItemHelper.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -229,11 +296,13 @@
 			children = (
 				C7BEF5C81F03E0D80038605E /* AppDelegate.swift */,
 				C7BEF5DB1F03F2CA0038605E /* MainWindowController.swift */,
+				C75527DB1F3B55B700076078 /* MainViewController.swift */,
 				C71847C71F0E5E2800296C61 /* ChooseConnectionTypeViewController.swift */,
 				C7BEF5D71F03E4B50038605E /* ChooseProviderViewController.swift */,
 				C7BEF5DD1F03F4020038605E /* AuthenticatingViewController.swift */,
 				C732CEA31F0F720800698F28 /* ChooseProfileViewController.swift */,
 				C7BEF5DF1F03F4220038605E /* ConnectionViewController.swift */,
+				C71912551F3C6942005409E0 /* PreferencesViewController.swift */,
 			);
 			name = Controllers;
 			sourceTree = "<group>";
@@ -247,6 +316,7 @@
 				C71847C31F0E4A4A00296C61 /* AuthenticationService.swift */,
 				C71847C51F0E5AC600296C61 /* ConfigurationService.swift */,
 				C765819C1F063C47003DEC92 /* ConnectionService.swift */,
+				C75527F91F3C55F100076078 /* PreferencesService.swift */,
 			);
 			name = Services;
 			sourceTree = "<group>";
@@ -269,6 +339,7 @@
 				C7BEF5D11F03E0D80038605E /* eduVPN-Info.plist */,
 				C72AD7051F0A6BFF006DBDA5 /* EduVPN-Bridging-Header.h */,
 				C7FA902B1F0BC83E0037FF88 /* openvpn-2.4.3-openssl-1.0.2k */,
+				C71912571F3C8486005409E0 /* Defaults.plist */,
 			);
 			name = Resources;
 			path = ../eduVPN;
@@ -293,6 +364,23 @@
 			productReference = C72AD6F31F0A692F006DBDA5 /* org.eduvpn.app.openvpnhelper */;
 			productType = "com.apple.product-type.tool";
 		};
+		C75527E01F3C531B00076078 /* LoginItemHelper */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C75527F21F3C531B00076078 /* Build configuration list for PBXNativeTarget "LoginItemHelper" */;
+			buildPhases = (
+				C75527DD1F3C531B00076078 /* Sources */,
+				C75527DE1F3C531B00076078 /* Frameworks */,
+				C75527DF1F3C531B00076078 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = LoginItemHelper;
+			productName = LoginItemHelper;
+			productReference = C75527E11F3C531B00076078 /* LoginItemHelper.app */;
+			productType = "com.apple.product-type.application";
+		};
 		C7BEF5C41F03E0D80038605E /* eduVPN */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = C7BEF5D41F03E0D80038605E /* Build configuration list for PBXNativeTarget "eduVPN" */;
@@ -301,12 +389,14 @@
 				C7BEF5C21F03E0D80038605E /* Frameworks */,
 				C7BEF5C31F03E0D80038605E /* Resources */,
 				C72AD6ED1F0A6641006DBDA5 /* CopyFiles */,
+				C75527F51F3C543600076078 /* CopyFiles */,
 				C72A557C1F0D9FF2001DCA24 /* Embed Frameworks */,
 				C72A557D1F0DA005001DCA24 /* CopyFiles */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				C75527F81F3C546900076078 /* PBXTargetDependency */,
 				C72AD70B1F0A7848006DBDA5 /* PBXTargetDependency */,
 			);
 			name = eduVPN;
@@ -325,6 +415,11 @@
 				ORGANIZATIONNAME = EduVPN;
 				TargetAttributes = {
 					C72AD6F21F0A692F006DBDA5 = {
+						CreatedOnToolsVersion = 8.3.3;
+						DevelopmentTeam = ZYJ4TZX4UU;
+						ProvisioningStyle = Automatic;
+					};
+					C75527E01F3C531B00076078 = {
 						CreatedOnToolsVersion = 8.3.3;
 						DevelopmentTeam = ZYJ4TZX4UU;
 						ProvisioningStyle = Automatic;
@@ -357,15 +452,26 @@
 			targets = (
 				C7BEF5C41F03E0D80038605E /* eduVPN */,
 				C72AD6F21F0A692F006DBDA5 /* org.eduvpn.app.openvpnhelper */,
+				C75527E01F3C531B00076078 /* LoginItemHelper */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		C75527DF1F3C531B00076078 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C75527ED1F3C531B00076078 /* Assets.xcassets in Resources */,
+				C75527F01F3C531B00076078 /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		C7BEF5C31F03E0D80038605E /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C71912581F3C8486005409E0 /* Defaults.plist in Resources */,
 				C7BEF5CD1F03E0D80038605E /* Assets.xcassets in Resources */,
 				C7BEF5D01F03E0D80038605E /* Main.storyboard in Resources */,
 				C7FA902C1F0BC83E0037FF88 /* openvpn-2.4.3-openssl-1.0.2k in Resources */,
@@ -385,6 +491,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		C75527DD1F3C531B00076078 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C75527E81F3C531B00076078 /* main.m in Sources */,
+				C75527E51F3C531B00076078 /* AppDelegate.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		C7BEF5C11F03E0D80038605E /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -400,10 +515,13 @@
 				C732CEA51F0F720800698F28 /* ChooseProfileViewController.swift in Sources */,
 				C71847C81F0E5E2800296C61 /* ChooseConnectionTypeViewController.swift in Sources */,
 				C7610D441F3AFBF400D6C063 /* Statistics.m in Sources */,
+				C75527FA1F3C55F100076078 /* PreferencesService.swift in Sources */,
 				C765819D1F063C47003DEC92 /* ConnectionService.swift in Sources */,
 				C71847C61F0E5AC600296C61 /* ConfigurationService.swift in Sources */,
 				C7BEF5C91F03E0D80038605E /* AppDelegate.swift in Sources */,
+				C71912561F3C6942005409E0 /* PreferencesViewController.swift in Sources */,
 				C765819B1F063BC9003DEC92 /* ServiceContainer.swift in Sources */,
+				C75527DC1F3B55B700076078 /* MainViewController.swift in Sources */,
 				C7BEF5DE1F03F4020038605E /* AuthenticatingViewController.swift in Sources */,
 				C7BEF5DC1F03F2CA0038605E /* MainWindowController.swift in Sources */,
 			);
@@ -417,9 +535,22 @@
 			target = C72AD6F21F0A692F006DBDA5 /* org.eduvpn.app.openvpnhelper */;
 			targetProxy = C72AD70A1F0A7848006DBDA5 /* PBXContainerItemProxy */;
 		};
+		C75527F81F3C546900076078 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C75527E01F3C531B00076078 /* LoginItemHelper */;
+			targetProxy = C75527F71F3C546900076078 /* PBXContainerItemProxy */;
+		};
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
+		C75527EE1F3C531B00076078 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				C75527EF1F3C531B00076078 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
 		C7BEF5CE1F03E0D80038605E /* Main.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -469,6 +600,38 @@
 					"OpenVPNHelper/OpenVPNHelper-Launchd.plist",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
+		C75527F31F3C531B00076078 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = ZYJ4TZX4UU;
+				INFOPLIST_FILE = LoginItemHelper/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = org.eduvpn.app.LoginItemHelper;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		C75527F41F3C531B00076078 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = ZYJ4TZX4UU;
+				INFOPLIST_FILE = LoginItemHelper/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = org.eduvpn.app.LoginItemHelper;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 			};
 			name = Release;
@@ -618,6 +781,15 @@
 			buildConfigurations = (
 				C72AD6F81F0A692F006DBDA5 /* Debug */,
 				C72AD6F91F0A692F006DBDA5 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C75527F21F3C531B00076078 /* Build configuration list for PBXNativeTarget "LoginItemHelper" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C75527F31F3C531B00076078 /* Debug */,
+				C75527F41F3C531B00076078 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
