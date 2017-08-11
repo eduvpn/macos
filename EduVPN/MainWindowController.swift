@@ -12,10 +12,17 @@ import AppAuth
 class MainWindowController: NSWindowController {
 
     private var navigationStack: [NSViewController] = []
+    @IBOutlet var topView: NSBox!
     
     override func windowDidLoad() {
         super.windowDidLoad()
-    
+        
+        window?.backgroundColor = .white
+        // Disabled, clips
+//        window?.titlebarAppearsTransparent = true
+//        topView.frame = CGRect(x: 0, y: 539, width: 378, height: 60)
+//        window?.contentView?.addSubview(topView)
+
         navigationStack.append(mainViewController.currentViewController)
     }
     

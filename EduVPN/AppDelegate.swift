@@ -25,11 +25,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         // Insert code here to initialize your application
         UserDefaults.standard.register(defaults: NSDictionary(contentsOf: Bundle.main.url(forResource: "Defaults", withExtension: "plist")!)! as! [String : Any])
         
-        statusItem = NSStatusBar.system().statusItem(withLength: 60)
-        statusItem?.title = "eduVPN"
+        statusItem = NSStatusBar.system().statusItem(withLength: 26)
+        statusItem?.image = #imageLiteral(resourceName: "disconnected-1")
         statusItem?.menu = statusMenu
  
-        
         ServiceContainer.preferencesService.updateForUIPreferences()
         
         mainWindowController = NSStoryboard(name: "Main", bundle: nil).instantiateController(withIdentifier: "MainWindowController") as! MainWindowController

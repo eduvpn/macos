@@ -8,11 +8,14 @@
 
 import Cocoa
 import AppAuth
+import Kingfisher
 
 class ConnectionViewController: NSViewController {
     
     @IBOutlet var backButton: NSButton!
-    @IBOutlet var stateLabel: NSTextField!
+    @IBOutlet var stateImageView: NSImageView!
+    @IBOutlet var locationImageView: NSImageView!
+    @IBOutlet var profileLabel: NSTextField!
     @IBOutlet var spinner: NSProgressIndicator!
     @IBOutlet var disconnectButton: NSButton!
     @IBOutlet var connectButton: NSButton!
@@ -39,6 +42,16 @@ class ConnectionViewController: NSViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        // Change title color
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.alignment = .center
+        let attributes = [NSFontAttributeName: NSFont.systemFont(ofSize: 17), NSForegroundColorAttributeName : NSColor.white, NSParagraphStyleAttributeName : paragraphStyle]
+        connectButton.attributedTitle = NSAttributedString(string: connectButton.title, attributes: attributes)
+        disconnectButton.attributedTitle = NSAttributedString(string: disconnectButton.title, attributes: attributes)
+        
+        locationImageView?.kf.setImage(with: profile.info.provider.logoURL)
+        profileLabel.stringValue = profile.displayName
+        
         connect()
     }
     
@@ -46,7 +59,8 @@ class ConnectionViewController: NSViewController {
         switch state {
         case .connecting:
             backButton.isHidden = true
-            stateLabel.stringValue = NSLocalizedString("Connecting", comment: "")
+            stateImageView.image = #imageLiteral(resourceName: "connecting")
+            (NSApp.delegate as! AppDelegate).statusItem?.image = #imageLiteral(resourceName: "disconnected-1")
             spinner.startAnimation(self)
             disconnectButton.isHidden = true
             connectButton.isHidden = true
@@ -54,7 +68,8 @@ class ConnectionViewController: NSViewController {
             
         case .connected:
             backButton.isHidden = true
-            stateLabel.stringValue = NSLocalizedString("Connected", comment: "")
+            stateImageView.image = #imageLiteral(resourceName: "connected")
+            (NSApp.delegate as! AppDelegate).statusItem?.image = #imageLiteral(resourceName: "connected_bw")
             spinner.stopAnimation(self)
             disconnectButton.isHidden = false
             connectButton.isHidden = true
@@ -63,7 +78,8 @@ class ConnectionViewController: NSViewController {
             
         case .disconnecting:
             backButton.isHidden = true
-            stateLabel.stringValue = NSLocalizedString("Disonnecting", comment: "")
+            stateImageView.image = #imageLiteral(resourceName: "connecting")
+            (NSApp.delegate as! AppDelegate).statusItem?.image = #imageLiteral(resourceName: "disconnected-1")
             spinner.startAnimation(self)
             disconnectButton.isHidden = true
             connectButton.isHidden = true
@@ -72,7 +88,8 @@ class ConnectionViewController: NSViewController {
             
         case .disconnected:
             backButton.isHidden = false
-            stateLabel.stringValue = NSLocalizedString("Disconnected", comment: "")
+            stateImageView.image = #imageLiteral(resourceName: "disconnected")
+            (NSApp.delegate as! AppDelegate).statusItem?.image = #imageLiteral(resourceName: "disconnected-1")
             spinner.stopAnimation(self)
             disconnectButton.isHidden = true
             connectButton.isHidden = false
@@ -144,11 +161,11 @@ class ConnectionViewController: NSViewController {
         }
     }
     
-    @IBAction func connect(_ sender: Any) {
+    @objc @IBAction func connect(_ sender: Any) {
         connect()
     }
     
-    @IBAction func disconnect(_ sender: Any) {
+    @objc @IBAction func disconnect(_ sender: Any) {
         disconnect()
     }
     

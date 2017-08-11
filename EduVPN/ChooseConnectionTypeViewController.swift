@@ -16,6 +16,7 @@ class ChooseConnectionTypeViewController: NSViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do view setup here.
+        view.layer?.backgroundColor = NSColor.white.cgColor
     }
     
     override func viewWillAppear() {
