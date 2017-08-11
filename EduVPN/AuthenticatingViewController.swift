@@ -21,11 +21,20 @@ class AuthenticatingViewController: NSViewController {
         
         ServiceContainer.authenticationService.authenticate(using: info) { (result) in
             DispatchQueue.main.async {
-                // TODO: Disable goBack button
                 switch result {
                 case .success(let authState):
                     self.fetchProfiles(authState: authState)
                 case .failure(let error):
+                    // User knows he cancelled, no alert needed
+                    if (error as NSError).domain == "org.openid.appauth.general" && (error as NSError).code == -4 {
+                        self.mainWindowController?.pop()
+                        return
+                    }
+                    // User knows he rejected, no alert needed
+                    if (error as NSError).domain == "org.openid.appauth.oauth_authorization" && (error as NSError).code == -4 {
+                        self.mainWindowController?.pop()
+                        return
+                    }
                     let alert = NSAlert(error: error)
                     alert.beginSheetModal(for: self.view.window!) { (_) in
                         self.mainWindowController?.pop()
@@ -36,6 +45,7 @@ class AuthenticatingViewController: NSViewController {
     }
     
     private func fetchProfiles(authState: OIDAuthState) {
+        backButton.isEnabled = false
         ServiceContainer.providerService.fetchProfiles(for: self.info, authState: authState) { (result) in
             DispatchQueue.main.async {
                 switch result {
@@ -52,6 +62,7 @@ class AuthenticatingViewController: NSViewController {
                         self.mainWindowController?.pop()
                     }
                 }
+                self.backButton.isEnabled = true
             }
         }
     }
