@@ -179,27 +179,32 @@ class HelperService {
             return
         }
         
-        var handled = false
-        
-        let deadlineTime = DispatchTime.now() + .seconds(5)
-        DispatchQueue.main.asyncAfter(deadline: deadlineTime) {
-            if handled {
-                // Do nothing
-            } else {
-                handled = true
-                handler(.failure(Error.noHelperConnection))
-            }
-        }
-        
         helper.getVersionWithReply() { (version) in
-            if handled {
-                // Do nothing
-                NSLog("Getting version took longer than 5 seconds!")
-            } else {
-                handled = true
-                handler(.success(version))
-            }
+            handler(.success(version))
         }
+       
+        // Timeout workaround because reply not received, but disabled because it caused other installation issues
+//        var handled = false
+//        
+//        let deadlineTime = DispatchTime.now() + .seconds(5)
+//        DispatchQueue.main.asyncAfter(deadline: deadlineTime) {
+//            if handled {
+//                // Do nothing
+//            } else {
+//                handled = true
+//                handler(.failure(Error.noHelperConnection))
+//            }
+//        }
+//        
+//        helper.getVersionWithReply() { (version) in
+//            if handled {
+//                // Do nothing
+//                NSLog("Getting version took longer than 5 seconds!")
+//            } else {
+//                handled = true
+//                handler(.success(version))
+//            }
+//        }
     }
 
 }
