@@ -18,6 +18,22 @@ class ConnectionService: NSObject {
     
     static let openVPNSubdirectory = "openvpn-2.4.3-openssl-1.0.2k"
     
+    /// Notification posted when connection state changes
+    static let stateChanged = NSNotification.Name("ConnectionService.stateChanged")
+    
+    /// Connection state
+    ///
+    /// - connecting: Service is attempting to connect
+    /// - connected: Service is connected
+    /// - disconnecting: Service is attempting to disconnect
+    /// - disconnected: Service is disconnected
+    enum State {
+        case connecting
+        case connected
+        case disconnecting
+        case disconnected
+    }
+    
     enum Error: Swift.Error, LocalizedError {
         case noHelperConnection
         case helperRejected
@@ -49,6 +65,15 @@ class ConnectionService: NSObject {
     private let configurationService: ConfigurationService
     private let helperService: HelperService
     
+    /// Describes current connection state
+    private(set) var state: State = .disconnected {
+        didSet {
+            if oldValue != state {
+                NotificationCenter.default.post(name: ConnectionService.stateChanged, object: self)
+            }
+        }
+    }
+    
     init(configurationService: ConfigurationService, helperService: HelperService) {
         self.configurationService = configurationService
         self.helperService = helperService
@@ -61,6 +86,9 @@ class ConnectionService: NSObject {
     ///   - authState: Authentication token
     ///   - handler: Success or error
     func connect(to profile: Profile, authState: OIDAuthState, handler: @escaping (Result<Void>) -> ()) {
+        assert(state == .disconnected)
+        state = .connecting
+        
         helperService.installHelperIfNeeded(client: self) { (result) in
             switch result {
             case .success:
@@ -71,13 +99,16 @@ class ConnectionService: NSObject {
                             let configURL = try self.install(config: config)
                             self.activateConfig(at: configURL, handler: handler)
                         } catch(let error) {
+                            self.state = .disconnected
                             handler(.failure(error))
                         }
                     case .failure(let error):
+                        self.state = .disconnected
                         handler(.failure(error))
                     }
                 }
             case .failure(let error):
+                self.state = .disconnected
                 handler(.failure(error))
             }
         }
@@ -102,6 +133,8 @@ class ConnectionService: NSObject {
     ///   - configURL: URL of config file
     ///   - handler: Succes or error
     private func activateConfig(at configURL: URL, handler: @escaping (Result<Void>) -> ()) {
+        assert(state == .connecting)
+        
         guard let helper = helperService.connection?.remoteObjectProxy as? OpenVPNHelperProtocol else {
             handler(.failure(Error.noHelperConnection))
             return
@@ -112,8 +145,10 @@ class ConnectionService: NSObject {
         
         helper.startOpenVPN(at: openvpnURL, withConfig: configURL) { (success) in
             if success {
+                self.state = .connected
                 handler(.success())
             } else {
+                self.state = .disconnected
                 handler(.failure(Error.helperRejected))
             }
             // Remove config file
@@ -137,12 +172,17 @@ class ConnectionService: NSObject {
     ///
     /// - Parameter handler: Success or error
     func disconnect(_ handler: @escaping (Result<Void>) -> ()) {
+        assert(state == .connected)
+        state = .disconnecting
+        
         guard let helper = helperService.connection?.remoteObjectProxy as? OpenVPNHelperProtocol else {
+            self.state = .connected
             handler(.failure(Error.noHelperConnection))
             return
         }
         
         helper.close { (_) in
+            self.state = .disconnected
             handler(.success())
         }
     }

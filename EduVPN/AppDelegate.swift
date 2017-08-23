@@ -25,11 +25,15 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         // Insert code here to initialize your application
         UserDefaults.standard.register(defaults: NSDictionary(contentsOf: Bundle.main.url(forResource: "Defaults", withExtension: "plist")!)! as! [String : Any])
         
-        statusItem = NSStatusBar.system().statusItem(withLength: 26)
-        statusItem?.image = #imageLiteral(resourceName: "disconnected-1")
-        statusItem?.menu = statusMenu
- 
+        if #available(OSX 10.12, *) {
+            createStatusItem()
+        }
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(connectionStateChanged(notification:)), name: ConnectionService.stateChanged, object: ServiceContainer.connectionService)
+      
         ServiceContainer.preferencesService.updateForUIPreferences()
+        
+        ValueTransformer.setValueTransformer(DurationTransformer(), forName: NSValueTransformerName(rawValue: "DurationTransformer"))
         
         mainWindowController = NSStoryboard(name: "Main", bundle: nil).instantiateController(withIdentifier: "MainWindowController") as! MainWindowController
         mainWindowController.window?.makeKeyAndOrderFront(nil)
@@ -55,5 +59,47 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         window.setIsVisible(true)
     }
     
+    private func createStatusItem() {
+        statusItem = NSStatusBar.system().statusItem(withLength: 26)
+        statusItem?.menu = statusMenu
+        updateStatusItemImage()
+    }
+    
+    private func updateStatusItemImage() {
+        switch ServiceContainer.connectionService.state {
+        case .connecting:
+            statusItem?.image = #imageLiteral(resourceName: "disconnected-1")
+        case .connected:
+            statusItem?.image = #imageLiteral(resourceName: "connected_bw")
+        case .disconnecting:
+            statusItem?.image = #imageLiteral(resourceName: "disconnected-1")
+        case .disconnected:
+            statusItem?.image = #imageLiteral(resourceName: "disconnected-1")
+        }
+    }
+    
+    var statusItemIsVisible: Bool = false {
+        didSet {
+            if #available(OSX 10.12, *) {
+                statusItem?.isVisible = statusItemIsVisible
+            } else {
+                // Fallback on earlier versions
+                if oldValue != statusItemIsVisible {
+                    if statusItemIsVisible {
+                        createStatusItem()
+                    } else {
+                        if let statusItem = statusItem {
+                            NSStatusBar.system().removeStatusItem(statusItem)
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    @objc private func connectionStateChanged(notification: NSNotification) {
+        updateStatusItemImage()
+    }
+
 }
 

@@ -22,8 +22,6 @@ class MainViewController: NSViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.wantsLayer = true
-        view.wantsDefaultClipping
-    
     }
     
     func show(viewController: NSViewController, options: NSViewControllerTransitionOptions = []) {
