@@ -61,15 +61,15 @@ class ProviderService {
         let path: String
         switch (connectionType, debug) {
         case (.secureInternet, false):
-            path = "federation"
+            path = "secure_internet"
         case (.secureInternet, true):
-            path = "federation-dev"
+            path = "secure_internet_dev"
         case (.instituteAccess, false):
-            path = "instances"
+            path = "institute_access"
         case (.instituteAccess, true):
-            path = "instances-dev"
+            path = "institute_access_dev"
         }
-        return URL(string: path + ".json", relativeTo: URL(string: "https://static.eduvpn.nl/")!)!
+        return URL(string: path + ".json", relativeTo: URL(string: "https://static.eduvpn.nl/disco/")!)!
     }
     
     /// Returns discovery signature URL
@@ -81,15 +81,15 @@ class ProviderService {
         let path: String
         switch (connectionType, debug) {
         case (.secureInternet, false):
-            path = "federation"
+            path = "secure_internet"
         case (.secureInternet, true):
-            path = "federation-dev"
+            path = "secure_internet_dev"
         case (.instituteAccess, false):
-            path = "instances"
+            path = "institute_access"
         case (.instituteAccess, true):
-            path = "instances-dev"
+            path = "institute_access_dev"
         }
-        return URL(string: path + ".json.sig", relativeTo: URL(string: "https://static.eduvpn.nl/")!)!
+        return URL(string: path + ".json.sig", relativeTo: URL(string: "https://static.eduvpn.nl/disco/")!)!
     }
     
     /// Discovers providers for a connection type
