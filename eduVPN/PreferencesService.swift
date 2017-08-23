@@ -76,7 +76,7 @@ class PreferencesService: NSObject {
             NSApp.setActivationPolicy(.accessory)
         }
         
-        (NSApp.delegate as! AppDelegate).statusItem?.isVisible = showInStatusBar
+        (NSApp.delegate as! AppDelegate).statusItemIsVisible = showInStatusBar
     }
     
 }

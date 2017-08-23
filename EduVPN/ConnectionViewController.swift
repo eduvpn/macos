@@ -20,24 +20,12 @@ class ConnectionViewController: NSViewController {
     @IBOutlet var disconnectButton: NSButton!
     @IBOutlet var connectButton: NSButton!
     @IBOutlet var statisticsBox: NSBox!
- 
+    
     var profile: Profile!
     var authState: OIDAuthState!
     var statistics: Statistics?
     
     @IBOutlet var statisticsController: NSObjectController!
-    private enum State {
-        case connecting
-        case connected
-        case disconnecting
-        case disconnected
-    }
-    
-    private var state: State = .disconnected {
-        didSet {
-            setupForState()
-        }
-    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -55,61 +43,67 @@ class ConnectionViewController: NSViewController {
         connect()
     }
     
-    private func setupForState() {
-        switch state {
-        case .connecting:
-            backButton.isHidden = true
-            stateImageView.image = #imageLiteral(resourceName: "connecting")
-            (NSApp.delegate as! AppDelegate).statusItem?.image = #imageLiteral(resourceName: "disconnected-1")
-            spinner.startAnimation(self)
-            disconnectButton.isHidden = true
-            connectButton.isHidden = true
-            statisticsBox.isHidden = true
-            
-        case .connected:
-            backButton.isHidden = true
-            stateImageView.image = #imageLiteral(resourceName: "connected")
-            (NSApp.delegate as! AppDelegate).statusItem?.image = #imageLiteral(resourceName: "connected_bw")
-            spinner.stopAnimation(self)
-            disconnectButton.isHidden = false
-            connectButton.isHidden = true
-            statisticsBox.isHidden = false
-            startUpdatingStatistics()
-            
-        case .disconnecting:
-            backButton.isHidden = true
-            stateImageView.image = #imageLiteral(resourceName: "connecting")
-            (NSApp.delegate as! AppDelegate).statusItem?.image = #imageLiteral(resourceName: "disconnected-1")
-            spinner.startAnimation(self)
-            disconnectButton.isHidden = true
-            connectButton.isHidden = true
-            statisticsBox.isHidden = true
-            stopUpdatingStatistics()
-            
-        case .disconnected:
-            backButton.isHidden = false
-            stateImageView.image = #imageLiteral(resourceName: "disconnected")
-            (NSApp.delegate as! AppDelegate).statusItem?.image = #imageLiteral(resourceName: "disconnected-1")
-            spinner.stopAnimation(self)
-            disconnectButton.isHidden = true
-            connectButton.isHidden = false
-            statisticsBox.isHidden = true
-
+    override func viewWillAppear() {
+        super.viewWillAppear()
+        NotificationCenter.default.addObserver(self, selector: #selector(stateChanged(notification:)), name: ConnectionService.stateChanged, object: ServiceContainer.connectionService)
+    }
+    
+    override func viewDidDisappear() {
+        super.viewDidDisappear()
+        NotificationCenter.default.removeObserver(self, name: ConnectionService.stateChanged, object: ServiceContainer.connectionService)
+    }
+    
+    @objc private func stateChanged(notification: NSNotification) {
+        DispatchQueue.main.async {
+            switch ServiceContainer.connectionService.state {
+            case .connecting:
+                self.backButton.isHidden = true
+                self.stateImageView.image = #imageLiteral(resourceName: "connecting")
+                self.spinner.startAnimation(self)
+                self.disconnectButton.isHidden = true
+                self.connectButton.isHidden = true
+                self.statisticsBox.isHidden = true
+                
+            case .connected:
+                self.backButton.isHidden = true
+                self.stateImageView.image = #imageLiteral(resourceName: "connected")
+                self.spinner.stopAnimation(self)
+                self.disconnectButton.isHidden = false
+                self.connectButton.isHidden = true
+                self.statisticsBox.isHidden = false
+                self.startUpdatingStatistics()
+                
+            case .disconnecting:
+                self.backButton.isHidden = true
+                self.stateImageView.image = #imageLiteral(resourceName: "connecting")
+                self.spinner.startAnimation(self)
+                self.disconnectButton.isHidden = true
+                self.connectButton.isHidden = true
+                self.statisticsBox.isHidden = true
+                self.stopUpdatingStatistics()
+                
+            case .disconnected:
+                self.backButton.isHidden = false
+                self.stateImageView.image = #imageLiteral(resourceName: "disconnected")
+                self.spinner.stopAnimation(self)
+                self.disconnectButton.isHidden = true
+                self.connectButton.isHidden = false
+                self.statisticsBox.isHidden = true
+                
+            }
         }
     }
     
     private func connect() {
-        assert(state == .disconnected)
-        state = .connecting
         ServiceContainer.connectionService.connect(to: profile, authState: authState) { (result) in
             DispatchQueue.main.async {
                 switch result {
                 case .success:
-                    self.state = .connected
+                    break
                 case .failure(let error):
                     let alert = NSAlert(error: error)
                     alert.beginSheetModal(for: self.view.window!) { (_) in
-                        self.state = .disconnected
+                        
                     }
                 }
             }
@@ -117,17 +111,15 @@ class ConnectionViewController: NSViewController {
     }
     
     private func disconnect() {
-        assert(state == .connected)
-        state = .disconnecting
         ServiceContainer.connectionService.disconnect() { (result) in
             DispatchQueue.main.async {
                 switch result {
                 case .success:
-                    self.state = .disconnected
+                    break
                 case .failure(let error):
                     let alert = NSAlert(error: error)
                     alert.beginSheetModal(for: self.view.window!) { (_) in
-                        self.state = .connected
+                        
                     }
                 }
             }
@@ -138,8 +130,22 @@ class ConnectionViewController: NSViewController {
     
     private func startUpdatingStatistics() {
         statisticsTimer?.invalidate()
-        statisticsTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { (_) in
-            self.readStatistics()
+        if #available(OSX 10.12, *) {
+            statisticsTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { (_) in
+                self.readStatistics()
+            }
+        } else {
+            // Fallback on earlier versions
+            statisticsTimer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(updateStatistics(timer:)), userInfo: nil, repeats: true)
+        }
+    }
+    
+    @objc private func updateStatistics(timer: Timer) {
+        if #available(OSX 10.12, *) {
+            fatalError("This method is for backwards compatability only. Remove when deployment target is increased to 10.12 or later.")
+        } else {
+            // Fallback on earlier versions
+            readStatistics()
         }
     }
     
@@ -170,7 +176,7 @@ class ConnectionViewController: NSViewController {
     }
     
     @IBAction func goBack(_ sender: Any) {
-        assert(state == .disconnected)
+        assert(ServiceContainer.connectionService.state == .disconnected)
         mainWindowController?.popToRoot()
     }
     
