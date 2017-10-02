@@ -116,10 +116,7 @@ class ProviderService {
                     return
                 }
                 do {
-                    guard let sodium = Sodium() else {
-                        handler(.failure(Error.providerVerificationFailed))
-                        return
-                    }
+                    let sodium = Sodium()
                     
                     guard let signatureBin = NSData(base64Encoded: signature, options: []) as Data? else {
                         handler(.failure(Error.providerVerificationFailed))
@@ -146,12 +143,23 @@ class ProviderService {
                         return
                     }
                     
+                    let locales = Locale.preferredLanguages
+                    
                     let providers: [Provider] = instances.flatMap { (instance) -> Provider? in
-                        guard let displayName = instance["display_name"] as? String,
+                        guard let localizedDisplayNames = instance["display_name"] as? [String: String] else {
+                            return nil
+                        }
+                        
+                        let displayNames = locales.flatMap { (locale) in
+                            return localizedDisplayNames[locale]
+                        }
+                        
+                        guard let displayName = displayNames.first,
                             let baseURL = (instance["base_uri"] as? String)?.asURL(appendSlash: true),
-                            let logoURL = (instance["logo_uri"] as? String)?.asURL() else {
+                            let logoURL = (instance["logo"] as? String)?.asURL() else {
                                 return nil
                         }
+                        
                         let publicKey = instance["public_key"] as? String
                         
                         return Provider(displayName: displayName, baseURL: baseURL, logoURL: logoURL, publicKey: publicKey, connectionType: connectionType)
