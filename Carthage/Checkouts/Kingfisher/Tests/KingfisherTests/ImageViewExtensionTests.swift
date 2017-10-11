@@ -332,17 +332,17 @@ class ImageViewExtensionTests: XCTestCase {
             
         }) { (image, error, cacheType, imageURL) -> () in
             
-            XCTAssertTrue(cache1.isImageCached(forKey: URLString).cached, "This image should be cached in cache1.")
-            XCTAssertFalse(cache2.isImageCached(forKey: URLString).cached, "This image should not be cached in cache2.")
-            XCTAssertFalse(KingfisherManager.shared.cache.isImageCached(forKey: URLString).cached, "This image should not be cached in default cache.")
+            XCTAssertTrue(cache1.imageCachedType(forKey: URLString).cached, "This image should be cached in cache1.")
+            XCTAssertFalse(cache2.imageCachedType(forKey: URLString).cached, "This image should not be cached in cache2.")
+            XCTAssertFalse(KingfisherManager.shared.cache.imageCachedType(forKey: URLString).cached, "This image should not be cached in default cache.")
             
             self.imageView.kf.setImage(with: url, placeholder: nil, options: [.targetCache(cache2)], progressBlock: { (receivedSize, totalSize) -> () in
                 
             }, completionHandler: { (image, error, cacheType, imageURL) -> () in
                 
-                XCTAssertTrue(cache1.isImageCached(forKey: URLString).cached, "This image should be cached in cache1.")
-                XCTAssertTrue(cache2.isImageCached(forKey: URLString).cached, "This image should be cached in cache2.")
-                XCTAssertFalse(KingfisherManager.shared.cache.isImageCached(forKey: URLString).cached, "This image should not be cached in default cache.")
+                XCTAssertTrue(cache1.imageCachedType(forKey: URLString).cached, "This image should be cached in cache1.")
+                XCTAssertTrue(cache2.imageCachedType(forKey: URLString).cached, "This image should be cached in cache2.")
+                XCTAssertFalse(KingfisherManager.shared.cache.imageCachedType(forKey: URLString).cached, "This image should not be cached in default cache.")
                 
                 clearCaches([cache1, cache2])
                 
@@ -507,6 +507,29 @@ class ImageViewExtensionTests: XCTestCase {
         imageView.kf.setImage(with: url, placeholder: nil, options: [.keepCurrentImageWhileLoading])
         XCTAssertEqual(testImage, imageView.image)
         
+        // Wait request finished. Ensure tests timing order.
+        delay(0.1, block: expectation.fulfill)
+        waitForExpectations(timeout: 5, handler: nil)
+    }
+    
+    func testSettingImageKeepingRespectingPlaceholder() {
+        let expectation = self.expectation(description: "wait for downloading image")
+        let URLString = testKeys[0]
+        _ = stubRequest("GET", URLString).andReturn(200)?.withBody(testImageData)
+        let url = URL(string: URLString)!
+        
+        // While current image is nil, set placeholder
+        imageView.kf.setImage(with: url, placeholder: testImage, options: [.keepCurrentImageWhileLoading])
+        XCTAssertNotNil(imageView.image)
+        XCTAssertEqual(testImage, imageView.image)
+        
+        // While current image is not nil, keep it
+        let anotherImage = Image(data: testImageJEPGData)
+        imageView.image = anotherImage
+        imageView.kf.setImage(with: url, placeholder: testImage, options: [.keepCurrentImageWhileLoading])
+        XCTAssertNotNil(imageView.image)
+        XCTAssertEqual(anotherImage, imageView.image)
+
         // Wait request finished. Ensure tests timing order.
         delay(0.1, block: expectation.fulfill)
         waitForExpectations(timeout: 5, handler: nil)

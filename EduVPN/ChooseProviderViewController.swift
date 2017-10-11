@@ -45,7 +45,7 @@ extension ChooseProviderViewController: NSTableViewDataSource {
 extension ChooseProviderViewController: NSTableViewDelegate {
     
     func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
-        let result = tableView.make(withIdentifier: "ProviderCell", owner: self) as? NSTableCellView
+        let result = tableView.makeView(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: "ProviderCell"), owner: self) as? NSTableCellView
         result?.imageView?.kf.setImage(with: providers[row].logoURL)
         result?.textField?.stringValue = providers[row].displayName
         return result

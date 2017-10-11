@@ -1,11 +1,3 @@
-//
-//  SodiumTests.swift
-//  SodiumTests
-//
-//  Created by Frank Denis on 12/27/14.
-//  Copyright (c) 2014 Frank Denis. All rights reserved.
-//
-
 import XCTest
 import Sodium
 
@@ -22,7 +14,7 @@ extension Data {
 }
 
 class SodiumTests: XCTestCase {
-    let sodium = Sodium(())!
+    let sodium = Sodium()
 
     override func setUp() {
         super.setUp()
@@ -56,7 +48,7 @@ class SodiumTests: XCTestCase {
 
         let encryptedMessageToBob: Data = sodium.box.seal(message: message, recipientPublicKey: bobKeyPair.publicKey)!
         let decrypted5 = sodium.box.open(anonymousCipherText: encryptedMessageToBob, recipientPublicKey: bobKeyPair.publicKey,
-            recipientSecretKey: bobKeyPair.secretKey)
+                                         recipientSecretKey: bobKeyPair.secretKey)
         XCTAssertEqual(decrypted5, message)
 
         // beforenm tests
@@ -217,25 +209,8 @@ class SodiumTests: XCTestCase {
         XCTAssertEqual(bin2, bin)
     }
 
-    func testScrypt() {
-        let passwordLen = Int(sodium.randomBytes.uniform(upperBound: 64))
-        let password = sodium.randomBytes.buf(length: passwordLen)!
-        let hash = sodium.pwHash.scrypt.str(passwd: password, opsLimit: sodium.pwHash.scrypt.OpsLimitInteractive, memLimit: sodium.pwHash.scrypt.MemLimitInteractive)
-        XCTAssertEqual(hash?.lengthOfBytes(using: String.Encoding.utf8), sodium.pwHash.scrypt.StrBytes)
-        let verify = sodium.pwHash.scrypt.strVerify(hash: hash!, passwd: password)
-        XCTAssertTrue(verify)
-        let password2 = sodium.randomBytes.buf(length: passwordLen)!
-        let verify2 = sodium.pwHash.scrypt.strVerify(hash: hash!, passwd: password2)
-        XCTAssertFalse(verify2)
-
-        let password3 = "My Test Message".toData()!
-        let salt = Data(bytes: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32] as [UInt8])
-        let hash2 = sodium.pwHash.scrypt.hash(outputLength: 64, passwd: password3, salt: salt, opsLimit: sodium.pwHash.scrypt.OpsLimitInteractive, memLimit: sodium.pwHash.scrypt.MemLimitInteractive)
-        XCTAssertEqual(sodium.utils.bin2hex(hash2!)!, "6f00c5630b0a113be73721d2bab7800c0fce4b4e7a74451704b53afcded3d9e85fbe1acea7d2aa0fecb3027e35d745547b1041d6c51f731bd0aa934da89f7adf")
-    }
-
     func testPwHash() {
-        let passwordLen = Int(sodium.randomBytes.uniform(upperBound: 64))
+        let passwordLen = 4 + Int(sodium.randomBytes.uniform(upperBound: 64))
         let password = sodium.randomBytes.buf(length: passwordLen)!
         let hash = sodium.pwHash.str(passwd: password, opsLimit: sodium.pwHash.OpsLimitInteractive, memLimit: sodium.pwHash.MemLimitInteractive)
         XCTAssertEqual(hash?.lengthOfBytes(using: String.Encoding.utf8), sodium.pwHash.StrBytes)
@@ -248,15 +223,18 @@ class SodiumTests: XCTestCase {
         let password3 = "My Test Message".toData()!
         let salt = Data(bytes: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16] as [UInt8])
         let hash2 = sodium.pwHash.hash(outputLength: 64, passwd: password3, salt: salt, opsLimit: sodium.pwHash.OpsLimitInteractive, memLimit: sodium.pwHash.MemLimitInteractive)
-        XCTAssertEqual(sodium.utils.bin2hex(hash2!)!, "51d659ee6f8790042688274c5bc8a6296390cdc786d2341c3553b01a5c3f7ff1190e04b86a878538b17ef10e74baa19295479f3e3ee587ce571f366fc66e2fdc")
+        XCTAssertEqual(sodium.utils.bin2hex(hash2!)!, "cc80dee6a19da46ed6ea11507dd709ce52519ddd1fd2d823ce85b9e9b4fd96d06583de2ca8bcc5998f3483a8a424c4e93ddb500968b0dbefb667d56d421d5a6c")
+
+        XCTAssertFalse(sodium.pwHash.strNeedsRehash(hash: hash!, opsLimit: sodium.pwHash.OpsLimitInteractive, memLimit: sodium.pwHash.MemLimitInteractive))
+        XCTAssertTrue(sodium.pwHash.strNeedsRehash(hash: hash!, opsLimit: sodium.pwHash.OpsLimitSensitive, memLimit: sodium.pwHash.MemLimitSensitive))
     }
 
     func testKeyExchange() {
         let aliceKeyPair = sodium.keyExchange.keyPair()!
         let bobKeyPair = sodium.keyExchange.keyPair()!
 
-        let sessionKeyPairForAlice = sodium.keyExchange.sessionKeyPair(publicKey: aliceKeyPair.publicKey, secretKey: aliceKeyPair.secretKey, otherPublicKey: bobKeyPair.publicKey, side: .client)!
-        let sessionKeyPairForBob = sodium.keyExchange.sessionKeyPair(publicKey: bobKeyPair.publicKey, secretKey: bobKeyPair.secretKey, otherPublicKey: aliceKeyPair.publicKey, side: .server)!
+        let sessionKeyPairForAlice = sodium.keyExchange.sessionKeyPair(publicKey: aliceKeyPair.publicKey, secretKey: aliceKeyPair.secretKey, otherPublicKey: bobKeyPair.publicKey, side: .CLIENT)!
+        let sessionKeyPairForBob = sodium.keyExchange.sessionKeyPair(publicKey: bobKeyPair.publicKey, secretKey: bobKeyPair.secretKey, otherPublicKey: aliceKeyPair.publicKey, side: .SERVER)!
 
         XCTAssertEqual(sessionKeyPairForAlice.rx, sessionKeyPairForBob.tx)
         XCTAssertEqual(sessionKeyPairForAlice.tx, sessionKeyPairForBob.rx)
@@ -332,5 +310,49 @@ class SodiumTests: XCTestCase {
 
         XCTAssertEqual(sodium.utils.bin2hex(subKey1)!, "40d69c5e6e8b46e399433c9b5c3a7713")
         XCTAssertEqual(sodium.utils.bin2hex(subKey2)!, "8ba83c1cd5a3be912a80ef2abe1457c5")
+    }
+
+    func testSecretStream() {
+        let secretKey = sodium.secretStream.xchacha20poly1305.key()!
+        XCTAssertEqual(secretKey.count, 32)
+
+        let stream = sodium.secretStream.xchacha20poly1305.initPush(secretKey: secretKey)!
+        let header = stream.header()
+        let encrypted1 = stream.push(message: "message 1".toData()!)!
+        let encrypted2 = stream.push(message: "message 2".toData()!)!
+        let encrypted3 = stream.push(message: "message 3".toData()!, tag: .FINAL)!
+
+        let stream2 = sodium.secretStream.xchacha20poly1305.initPull(secretKey: secretKey, header: header)!
+        let (message1, tag1) = stream2.pull(cipherText: encrypted1)!
+        let (message2, tag2) = stream2.pull(cipherText: encrypted2)!
+        let (message3, tag3) = stream2.pull(cipherText: encrypted3)!
+        XCTAssertEqual(tag1, .MESSAGE)
+        XCTAssertEqual(tag2, .MESSAGE)
+        XCTAssertEqual(tag3, .FINAL)
+        XCTAssertEqual(message1, "message 1".toData()!)
+        XCTAssertEqual(message2, "message 2".toData()!)
+        XCTAssertEqual(message3, "message 3".toData()!)
+        XCTAssertNil(stream2.pull(cipherText: encrypted3))
+    }
+
+    func testBase64() {
+        let bin = "test".toData()!
+        let b64 = sodium.utils.bin2base64(bin)!
+        let bin2 = sodium.utils.base642bin(b64)!
+        XCTAssertEqual(b64, "dGVzdA==")
+        XCTAssertEqual(bin2, bin)
+
+        let b64_nopad = sodium.utils.bin2base64(bin, variant: .URLSAFE_NO_PADDING)!
+        let bin2_nopad = sodium.utils.base642bin(b64_nopad, variant: .URLSAFE_NO_PADDING)!
+        XCTAssertEqual(b64_nopad, "dGVzdA")
+        XCTAssertEqual(bin2_nopad, bin)
+    }
+
+    func testPad() {
+        var data = "test".toData()!
+        sodium.utils.pad(data: &data, blockSize: 16)!
+        XCTAssertTrue(data.count % 16 == 0)
+        sodium.utils.unpad(data: &data, blockSize: 16)!
+        XCTAssertTrue(data.count == 4)
     }
 }

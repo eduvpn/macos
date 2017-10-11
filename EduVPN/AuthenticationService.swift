@@ -46,7 +46,7 @@ class AuthenticationService {
         let request = OIDAuthorizationRequest(configuration: configuration, clientId: "org.eduvpn.app", clientSecret: nil, scopes: ["config"], redirectURL: redirectURL, responseType: OIDResponseTypeCode, additionalParameters: nil)
         
         redirectHTTPHandler!.currentAuthorizationFlow = OIDAuthState.authState(byPresenting: request) { (authState, error) in
-            NSRunningApplication.current().activate(options: [.activateAllWindows, .activateIgnoringOtherApps])
+            NSRunningApplication.current.activate(options: [.activateAllWindows, .activateIgnoringOtherApps])
             
             if let authState = authState {
                 handler(.success(authState))

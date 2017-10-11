@@ -1,11 +1,3 @@
-//
-//  ShortHash.swift
-//  Sodium
-//
-//  Created by Frank Denis on 12/28/14.
-//  Copyright (c) 2014 Frank Denis. All rights reserved.
-//
-
 import Foundation
 import libsodium
 
@@ -34,27 +26,24 @@ public class ShortHash {
      - Parameter message: The data to be hashed.
      - Parameter key: The hash key.  Must be of length `KeyBytes`. Can be created using `RandomBytes.buf()`.
 
-     - Returns: The computed fingerprint.  Will be of length `Bytes`.
+     - Returns: The computed fingerprint.
      */
     public func hash(message: Data, key: Data) -> Data? {
         if key.count != KeyBytes {
             return nil
         }
-
         var output = Data(count: Bytes)
 
         let result = output.withUnsafeMutableBytes { outputPtr in
-            return message.withUnsafeBytes { messagePtr in
-                return key.withUnsafeBytes { keyPtr in
-                    return crypto_shorthash(outputPtr, messagePtr, CUnsignedLongLong(message.count), keyPtr)
+            message.withUnsafeBytes { messagePtr in
+                key.withUnsafeBytes { keyPtr in
+                    crypto_shorthash(outputPtr, messagePtr, CUnsignedLongLong(message.count), keyPtr)
                 }
             }
         }
-
         if result != 0 {
             return nil
         }
-
         return output
     }
 }

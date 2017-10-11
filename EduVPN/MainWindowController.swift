@@ -52,32 +52,32 @@ class MainWindowController: NSWindowController {
     }
     
     func showChooseConnectType() {
-        let chooseConnectionTypeViewController = storyboard!.instantiateController(withIdentifier: "ChooseConnectionType") as! ChooseConnectionTypeViewController
+        let chooseConnectionTypeViewController = storyboard!.instantiateController(withIdentifier: NSStoryboard.SceneIdentifier(rawValue: "ChooseConnectionType")) as! ChooseConnectionTypeViewController
         push(viewController: chooseConnectionTypeViewController)
     }
 
     func showChooseProvider(for connectionType: ConnectionType, from providers: [Provider]) {
-        let chooseProviderViewController = storyboard!.instantiateController(withIdentifier: "ChooseProvider") as! ChooseProviderViewController
+        let chooseProviderViewController = storyboard!.instantiateController(withIdentifier: NSStoryboard.SceneIdentifier(rawValue: "ChooseProvider")) as! ChooseProviderViewController
         chooseProviderViewController.connectionType = connectionType
         chooseProviderViewController.providers = providers
         push(viewController: chooseProviderViewController)
     }
     
     func showAuthenticating(with info: ProviderInfo) {
-        let authenticatingViewController = storyboard!.instantiateController(withIdentifier: "Authenticating") as! AuthenticatingViewController
+        let authenticatingViewController = storyboard!.instantiateController(withIdentifier: NSStoryboard.SceneIdentifier(rawValue: "Authenticating")) as! AuthenticatingViewController
         authenticatingViewController.info = info
         push(viewController: authenticatingViewController)
     }
     
     func showChooseProfile(from profiles: [Profile], authState: OIDAuthState) {
-        let chooseProfileViewController = storyboard!.instantiateController(withIdentifier: "ChooseProfile") as! ChooseProfileViewController
+        let chooseProfileViewController = storyboard!.instantiateController(withIdentifier: NSStoryboard.SceneIdentifier(rawValue: "ChooseProfile")) as! ChooseProfileViewController
         chooseProfileViewController.profiles = profiles
         chooseProfileViewController.authState = authState
         push(viewController: chooseProfileViewController)
     }
     
     func showConnection(for profile: Profile, authState: OIDAuthState) {
-        let connectionViewController = storyboard!.instantiateController(withIdentifier: "Connection") as! ConnectionViewController
+        let connectionViewController = storyboard!.instantiateController(withIdentifier: NSStoryboard.SceneIdentifier(rawValue: "Connection")) as! ConnectionViewController
         connectionViewController.profile = profile
         connectionViewController.authState = authState
         push(viewController: connectionViewController)

@@ -1,11 +1,3 @@
-//
-//  KeyDerivation.swift
-//  Sodium
-//
-//  Created by Patrick Salami (https://www.github.com/psalami) on 7/7/17.
-//  Copyright © 2017 Frank Denis. All rights reserved.
-//
-
 import Foundation
 import libsodium
 
@@ -39,6 +31,7 @@ public class KeyDerivation {
      - Parameter index: the index of the subkey to generate (allowed range: 0 to (2^64) - 1)
      - Parameter length: the desired length of the subkey in bytes (allowed range: BytesMin to BytesMax)
      - Parameter context: a String that identifies the context; use a different value for different types of keys (should be exactly 8 characters long but must be no longer than 8 characters)
+
      - Returns: the derived key or nil on error.
 
      - Note: Output keys must have a length between BytesMin and BytesMax bytes (inclusive), otherwise an error is returned. Context must be at most 8 characters long. If the specified context is shorter than 8 characters, it will be padded to 8 characters. The master key is KeyBytes long.
@@ -54,7 +47,6 @@ public class KeyDerivation {
         if contextBin.count > ContextBytes {
             return nil
         }
-
         while contextBin.count < ContextBytes {
             contextBin += [0]
         }
@@ -62,9 +54,9 @@ public class KeyDerivation {
         var output = Data(count: length)
 
         let result = output.withUnsafeMutableBytes { outputPtr in
-            return secretKey.withUnsafeBytes { secretKeyPtr in
-                return contextBin.withUnsafeBytes { contextBinPtr in
-                    return crypto_kdf_derive_from_key(outputPtr, length, index, contextBinPtr, secretKeyPtr)
+            secretKey.withUnsafeBytes { secretKeyPtr in
+                contextBin.withUnsafeBytes { contextBinPtr in
+                    crypto_kdf_derive_from_key(outputPtr, length, index, contextBinPtr, secretKeyPtr)
                 }
             }
         }

@@ -1,11 +1,3 @@
-//
-//  Auth.swift
-//  Sodium
-//
-//  Created by WANG Jie on 03/04/2017.
-//  Copyright © 2017 Frank Denis. All rights reserved.
-//
-
 import Foundation
 import libsodium
 
@@ -43,21 +35,17 @@ public class Auth {
 
         var tag = Data(count: Bytes)
         let result = tag.withUnsafeMutableBytes { tagPtr in
-            return message.withUnsafeBytes { messagePtr in
-                return secretKey.withUnsafeBytes { secretKeyPtr in
-                    return crypto_auth(
-                        tagPtr,
-                        messagePtr,
-                        CUnsignedLongLong(message.count),
-                        secretKeyPtr)
+            message.withUnsafeBytes { messagePtr in
+                secretKey.withUnsafeBytes { secretKeyPtr in
+                    crypto_auth( tagPtr,
+                                 messagePtr, CUnsignedLongLong(message.count),
+                                 secretKeyPtr)
                 }
             }
         }
-
         if result != 0 {
             return nil
         }
-
         return tag
     }
 
@@ -68,20 +56,18 @@ public class Auth {
      - Parameter secretKey: The key required to create and verify messages.
      - Parameter tag: The authentication tag.
 
-     - Returns: `true` if verification is successful.
+     - Returns: `true` if the verification is successful.
      */
     public func verify(message: Data, secretKey: SecretKey, tag: Data) -> Bool {
         if secretKey.count != KeyBytes {
             return false
         }
-
         return tag.withUnsafeBytes { tagPtr in
-            return message.withUnsafeBytes { messagePtr in
-                return secretKey.withUnsafeBytes { secretKeyPtr in
-                    return crypto_auth_verify(
+            message.withUnsafeBytes { messagePtr in
+                secretKey.withUnsafeBytes { secretKeyPtr in
+                    crypto_auth_verify(
                         tagPtr,
-                        messagePtr,
-                        CUnsignedLongLong(message.count), secretKeyPtr) == 0
+                        messagePtr, CUnsignedLongLong(message.count), secretKeyPtr) == 0
                 }
             }
         }

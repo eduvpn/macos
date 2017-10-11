@@ -65,8 +65,7 @@ class ImageExtensionTests: XCTestCase {
         XCTAssertEqual(count, 8, "There should be 8 frames.")
 #else
         XCTAssertEqual(image!.kf.images!.count, 8, "There should be 8 frames.")
-        
-        XCTAssertEqualWithAccuracy(image!.kf.duration, 0.8, accuracy: 0.001, "The image duration should be 0.8s")
+        XCTAssertEqual(image!.kf.duration, 0.8, accuracy: 0.001, "The image duration should be 0.8s")
 #endif
     }
     
@@ -183,5 +182,30 @@ class ImageExtensionTests: XCTestCase {
         XCTAssertEqual(size.kf.constrainedRect(for: outX, anchor: invalidAnchor), CGRect(x: 0, y: 80, width: 100, height: 20))
         XCTAssertEqual(size.kf.constrainedRect(for: outY, anchor: invalidAnchor), CGRect(x:0, y: 0, width: 20, height: 100))
         XCTAssertEqual(size.kf.constrainedRect(for: outSize, anchor: invalidAnchor), CGRect(x: 0, y: 0, width: 100, height: 100))
+    }
+    
+    func testDecodeScale() {
+        #if os(iOS) || os(tvOS)
+        let image = testImage
+        XCTAssertEqual(image.size, CGSize(width: 64, height: 64))
+        XCTAssertEqual(image.scale, 1.0)
+
+        let image_2x = Kingfisher<Image>.image(cgImage: image.cgImage!, scale: 2.0, refImage: image)
+        XCTAssertEqual(image_2x.size, CGSize(width: 32, height: 32))
+        XCTAssertEqual(image_2x.scale, 2.0)
+        
+        let decoded = image.kf.decoded
+        XCTAssertEqual(decoded.size, CGSize(width: 64, height: 64))
+        XCTAssertEqual(decoded.scale, 1.0)
+        
+        let decodedDifferentScale = image.kf.decoded(scale: 2.0)
+        XCTAssertEqual(decodedDifferentScale.size, CGSize(width: 32, height: 32))
+        XCTAssertEqual(decodedDifferentScale.scale, 2.0)
+        
+        let decoded_2x = image_2x.kf.decoded
+        XCTAssertEqual(decoded_2x.size, CGSize(width: 32, height: 32))
+        XCTAssertEqual(decoded_2x.scale, 2.0)
+        #endif
+        
     }
 }

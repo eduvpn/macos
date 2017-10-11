@@ -35,7 +35,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         
         ValueTransformer.setValueTransformer(DurationTransformer(), forName: NSValueTransformerName(rawValue: "DurationTransformer"))
         
-        mainWindowController = NSStoryboard(name: "Main", bundle: nil).instantiateController(withIdentifier: "MainWindowController") as! MainWindowController
+        mainWindowController = NSStoryboard(name: NSStoryboard.Name(rawValue: "Main"), bundle: nil).instantiateController(withIdentifier: NSStoryboard.SceneIdentifier(rawValue: "MainWindowController")) as! MainWindowController
         mainWindowController.window?.makeKeyAndOrderFront(nil)
     }
 
@@ -60,7 +60,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
     
     private func createStatusItem() {
-        statusItem = NSStatusBar.system().statusItem(withLength: 26)
+        statusItem = NSStatusBar.system.statusItem(withLength: 26)
         statusItem?.menu = statusMenu
         updateStatusItemImage()
     }
@@ -89,7 +89,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                         createStatusItem()
                     } else {
                         if let statusItem = statusItem {
-                            NSStatusBar.system().removeStatusItem(statusItem)
+                            NSStatusBar.system.removeStatusItem(statusItem)
                         }
                     }
                 }
@@ -98,7 +98,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
     
     @objc private func connectionStateChanged(notification: NSNotification) {
-        updateStatusItemImage()
+        DispatchQueue.main.async {
+            self.updateStatusItemImage()
+        }
     }
 
 }

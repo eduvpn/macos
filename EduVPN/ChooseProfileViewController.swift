@@ -45,7 +45,7 @@ extension ChooseProfileViewController: NSTableViewDataSource {
 extension ChooseProfileViewController: NSTableViewDelegate {
     
     func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
-        let result = tableView.make(withIdentifier: "ProfileCell", owner: self) as? NSTableCellView
+        let result = tableView.makeView(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: "ProfileCell"), owner: self) as? NSTableCellView
         result?.textField?.stringValue = profiles[row].displayName
         return result
     }

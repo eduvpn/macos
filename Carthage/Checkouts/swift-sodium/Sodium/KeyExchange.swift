@@ -1,16 +1,7 @@
-//
-//  KeyExchange.swift
-//  Sodium
-//
-//  Created by Andreas Ganske on 17.03.17.
-//  Copyright © 2017 Frank Denis. All rights reserved.
-//
-
 import Foundation
 import libsodium
 
 public class KeyExchange {
-
     public let PublicKeyBytes = Int(crypto_kx_publickeybytes())
     public let SecretKeyBytes = Int(crypto_kx_secretkeybytes())
     public let SessionKeyBytes = Int(crypto_kx_sessionkeybytes())
@@ -40,8 +31,8 @@ public class KeyExchange {
     }
 
     public enum Side {
-        case client
-        case server
+        case CLIENT
+        case SERVER
     }
 
     /**
@@ -50,21 +41,17 @@ public class KeyExchange {
      - Returns: A key pair containing the secret key and public key.
      */
     public func keyPair() -> KeyPair? {
-
         var publicKey = Data(count: PublicKeyBytes)
         var secretKey = Data(count: SecretKeyBytes)
 
-        var result: Int32 = -1
-        result = publicKey.withUnsafeMutableBytes { publicKeyPtr in
-            return secretKey.withUnsafeMutableBytes { secretKeyPtr in
-                return crypto_kx_keypair(publicKeyPtr, secretKeyPtr)
+        let result = publicKey.withUnsafeMutableBytes { publicKeyPtr in
+            secretKey.withUnsafeMutableBytes { secretKeyPtr in
+                crypto_kx_keypair(publicKeyPtr, secretKeyPtr)
             }
         }
-
         guard result == 0 else {
             return nil
         }
-
         return KeyPair(publicKey: publicKey, secretKey: secretKey)
     }
 
@@ -76,26 +63,22 @@ public class KeyExchange {
      - Returns: A key pair containing the secret key and public key.
      */
     public func keyPair(seed: Data) -> KeyPair? {
-
         if seed.count != SeedBytes {
             return nil
         }
-
         var pk = Data(count: PublicKeyBytes)
         var sk = Data(count: SecretKeyBytes)
 
         let result = pk.withUnsafeMutableBytes { pkPtr in
-            return sk.withUnsafeMutableBytes { skPtr in
-                return seed.withUnsafeBytes { seedPtr in
-                    return crypto_kx_seed_keypair(pkPtr, skPtr, seedPtr)
+            sk.withUnsafeMutableBytes { skPtr in
+                seed.withUnsafeBytes { seedPtr in
+                    crypto_kx_seed_keypair(pkPtr, skPtr, seedPtr)
                 }
             }
         }
-
         if result != 0 {
             return nil
         }
-
         return KeyPair(publicKey: pk, secretKey: sk)
     }
 
@@ -113,34 +96,31 @@ public class KeyExchange {
      - Note: `rx` on client side equals `tx` on server side and vice versa.
      */
     public func sessionKeyPair(publicKey: PublicKey, secretKey: SecretKey, otherPublicKey: PublicKey, side: Side) -> SessionKeyPair? {
-
         if publicKey.count != PublicKeyBytes ||
-           secretKey.count != SecretKeyBytes ||
-           otherPublicKey.count != PublicKeyBytes {
+            secretKey.count != SecretKeyBytes ||
+            otherPublicKey.count != PublicKeyBytes {
             return nil
         }
 
         var rx = Data(count: SessionKeyBytes)
         var tx = Data(count: SessionKeyBytes)
 
-        let session_keys = (side == .client) ? crypto_kx_client_session_keys : crypto_kx_server_session_keys
+        let session_keys = (side == .CLIENT) ? crypto_kx_client_session_keys : crypto_kx_server_session_keys
 
         let result = rx.withUnsafeMutableBytes { rxPtr in
-            return tx.withUnsafeMutableBytes { txPtr in
-                return secretKey.withUnsafeBytes { secretKeyPtr in
-                    return publicKey.withUnsafeBytes { publicKeyPtr in
-                        return otherPublicKey.withUnsafeBytes { otherPublicKeyPtr in
-                            return session_keys(rxPtr, txPtr, publicKeyPtr, secretKeyPtr, otherPublicKeyPtr)
+            tx.withUnsafeMutableBytes { txPtr in
+                secretKey.withUnsafeBytes { secretKeyPtr in
+                    publicKey.withUnsafeBytes { publicKeyPtr in
+                        otherPublicKey.withUnsafeBytes { otherPublicKeyPtr in
+                            session_keys(rxPtr, txPtr, publicKeyPtr, secretKeyPtr, otherPublicKeyPtr)
                         }
                     }
                 }
             }
         }
-
         if result != 0 {
             return nil
         }
-
         return SessionKeyPair(rx: rx, tx: tx)
     }
 }
