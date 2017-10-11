@@ -143,18 +143,22 @@ class ProviderService {
                         return
                     }
                     
-                    let locales = Locale.preferredLanguages
+                    func displayName(for instance: [String: AnyObject]) -> String? {
+                        if let displayName = instance["display_name"] as? String {
+                            return displayName
+                        } else if let localizedDisplayNames = instance["display_name"] as? [String: String] {
+                            for (_, locale) in Locale.preferredLanguages.enumerated() {
+                                if let displayName = localizedDisplayNames[locale] {
+                                    return displayName
+                                }
+                            }
+                        }
+                        
+                        return nil
+                    }
                     
-                    let providers: [Provider] = instances.flatMap { (instance) -> Provider? in
-                        guard let localizedDisplayNames = instance["display_name"] as? [String: String] else {
-                            return nil
-                        }
-                        
-                        let displayNames = locales.flatMap { (locale) in
-                            return localizedDisplayNames[locale]
-                        }
-                        
-                        guard let displayName = displayNames.first,
+                    let providers: [Provider] = instances.flatMap { (instance) -> Provider? in                        
+                        guard let displayName = displayName(for: instance),
                             let baseURL = (instance["base_uri"] as? String)?.asURL(appendSlash: true),
                             let logoURL = (instance["logo"] as? String)?.asURL() else {
                                 return nil
@@ -285,5 +289,4 @@ class ProviderService {
             task.resume()
         }
     }
-    
 }
