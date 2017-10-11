@@ -116,10 +116,7 @@ class ProviderService {
                     return
                 }
                 do {
-                    guard let sodium = Sodium() else {
-                        handler(.failure(Error.providerVerificationFailed))
-                        return
-                    }
+                    let sodium = Sodium()
                     
                     guard let signatureBin = NSData(base64Encoded: signature, options: []) as Data? else {
                         handler(.failure(Error.providerVerificationFailed))
@@ -146,12 +143,27 @@ class ProviderService {
                         return
                     }
                     
-                    let providers: [Provider] = instances.flatMap { (instance) -> Provider? in
-                        guard let displayName = instance["display_name"] as? String,
+                    func displayName(for instance: [String: AnyObject]) -> String? {
+                        if let displayName = instance["display_name"] as? String {
+                            return displayName
+                        } else if let localizedDisplayNames = instance["display_name"] as? [String: String] {
+                            for (_, locale) in Locale.preferredLanguages.enumerated() {
+                                if let displayName = localizedDisplayNames[locale] {
+                                    return displayName
+                                }
+                            }
+                        }
+                        
+                        return nil
+                    }
+                    
+                    let providers: [Provider] = instances.flatMap { (instance) -> Provider? in                        
+                        guard let displayName = displayName(for: instance),
                             let baseURL = (instance["base_uri"] as? String)?.asURL(appendSlash: true),
-                            let logoURL = (instance["logo_uri"] as? String)?.asURL() else {
+                            let logoURL = (instance["logo"] as? String)?.asURL() else {
                                 return nil
                         }
+                        
                         let publicKey = instance["public_key"] as? String
                         
                         return Provider(displayName: displayName, baseURL: baseURL, logoURL: logoURL, publicKey: publicKey, connectionType: connectionType)
@@ -277,5 +289,4 @@ class ProviderService {
             task.resume()
         }
     }
-    
 }
