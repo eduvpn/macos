@@ -1,11 +1,3 @@
-//
-//  GenericHash.swift
-//  Sodium
-//
-//  Created by Frank Denis on 12/27/14.
-//  Copyright (c) 2014 Frank Denis. All rights reserved.
-//
-
 import Foundation
 import libsodium
 
@@ -60,36 +52,28 @@ public class GenericHash {
 
         if let key = key {
             result = output.withUnsafeMutableBytes { outputPtr in
-                return message.withUnsafeBytes { messagePtr in
-                    return key.withUnsafeBytes { keyPtr in
-                        return crypto_generichash(
-                          outputPtr,
-                          output.count,
-                          messagePtr,
-                          CUnsignedLongLong(message.count),
-                          keyPtr,
-                          key.count)
+                message.withUnsafeBytes { messagePtr in
+                    key.withUnsafeBytes { keyPtr in
+                        crypto_generichash(
+                            outputPtr, output.count,
+                            messagePtr, CUnsignedLongLong(message.count),
+                            keyPtr, key.count)
                     }
                 }
             }
         } else {
             result = output.withUnsafeMutableBytes { outputPtr in
-                return message.withUnsafeBytes { messagePtr in
-                    return crypto_generichash(
-                      outputPtr,
-                      output.count,
-                      messagePtr,
-                      CUnsignedLongLong(message.count),
-                      nil,
-                      0)
+                message.withUnsafeBytes { messagePtr in
+                    crypto_generichash(
+                        outputPtr, output.count,
+                        messagePtr, CUnsignedLongLong(message.count),
+                        nil, 0)
                 }
             }
         }
-
         if result != 0 {
             return nil
         }
-
         return output
     }
 
@@ -149,9 +133,7 @@ public class GenericHash {
             guard let state = state else {
                 return nil
             }
-
             var result: Int32 = -1
-
             if let key = key {
                 result = key.withUnsafeBytes { keyPtr in
                     crypto_generichash_init(state, keyPtr, key.count, outputLength)
@@ -159,20 +141,24 @@ public class GenericHash {
             } else {
                 result = crypto_generichash_init(state, nil, 0, outputLength)
             }
-
             if result != 0 {
+                free()
                 return nil
             }
-
             self.outputLength = outputLength
         }
 
-        deinit {
+        private func free() {
             guard let state = state else {
                 return
             }
             let rawState = UnsafeMutableRawPointer(state).bindMemory(to: UInt8.self, capacity: crypto_generichash_statebytes())
             rawState.deallocate(capacity: 1)
+            self.state = nil
+        }
+
+        deinit {
+            free()
         }
 
         /**
@@ -184,7 +170,7 @@ public class GenericHash {
          */
         public func update(input: Data) -> Bool {
             return input.withUnsafeBytes { inputPtr in
-                return crypto_generichash_update(state!, inputPtr, CUnsignedLongLong(input.count)) == 0
+                crypto_generichash_update(state!, inputPtr, CUnsignedLongLong(input.count)) == 0
             }
         }
 
@@ -198,11 +184,9 @@ public class GenericHash {
             let result = output.withUnsafeMutableBytes { outputPtr in
                 crypto_generichash_final(state!, outputPtr, output.count)
             }
-
             if result != 0 {
                 return nil
             }
-
             return output
         }
     }

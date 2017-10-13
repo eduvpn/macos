@@ -106,7 +106,7 @@
     reply(YES);
 }
 
-- (void)closeWithReply:(void(^)())reply {
+- (void)closeWithReply:(void(^)(void))reply {
     [self.openVPNTask terminate];
     self.openVPNTask = nil;
     reply();

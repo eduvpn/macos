@@ -146,7 +146,7 @@ class ConnectionService: NSObject {
         helper.startOpenVPN(at: openvpnURL, withConfig: configURL) { (success) in
             if success {
                 self.state = .connected
-                handler(.success())
+                handler(.success(Void()))
             } else {
                 self.state = .disconnected
                 handler(.failure(Error.helperRejected))
@@ -181,9 +181,9 @@ class ConnectionService: NSObject {
             return
         }
         
-        helper.close { (_) in
+        helper.close { 
             self.state = .disconnected
-            handler(.success())
+            handler(.success(Void()))
         }
     }
     

@@ -23,7 +23,7 @@ class ConnectionViewController: NSViewController {
     
     var profile: Profile!
     var authState: OIDAuthState!
-    var statistics: Statistics?
+    @objc var statistics: Statistics?
     
     @IBOutlet var statisticsController: NSObjectController!
     
@@ -33,7 +33,7 @@ class ConnectionViewController: NSViewController {
         // Change title color
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.alignment = .center
-        let attributes = [NSFontAttributeName: NSFont.systemFont(ofSize: 17), NSForegroundColorAttributeName : NSColor.white, NSParagraphStyleAttributeName : paragraphStyle]
+        let attributes = [NSAttributedStringKey.font: NSFont.systemFont(ofSize: 17), NSAttributedStringKey.foregroundColor : NSColor.white, NSAttributedStringKey.paragraphStyle : paragraphStyle]
         connectButton.attributedTitle = NSAttributedString(string: connectButton.title, attributes: attributes)
         disconnectButton.attributedTitle = NSAttributedString(string: disconnectButton.title, attributes: attributes)
         

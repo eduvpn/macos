@@ -1,11 +1,3 @@
-//
-//  RandomBytes.swift
-//  Sodium
-//
-//  Created by Frank Denis on 12/27/14.
-//  Copyright (c) 2014 Frank Denis. All rights reserved.
-//
-
 import Foundation
 import libsodium
 
@@ -57,12 +49,12 @@ public class RandomBytes {
      - Returns: The generated data.
      */
     public func deterministic(length: Int, seed: Data) -> Data? {
-        if length < 0 || seed.count != SeedBytes {
+        if length < 0 || seed.count != SeedBytes || Int64(length) > 0x4000000000 as Int64 {
             return nil
         }
         var output = Data(count: length)
         output.withUnsafeMutableBytes { outputPtr in
-            return seed.withUnsafeBytes { seedPtr in
+            seed.withUnsafeBytes { seedPtr in
                 randombytes_buf_deterministic(outputPtr, output.count, seedPtr)
             }
         }

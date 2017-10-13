@@ -152,6 +152,22 @@ class ProviderService {
                                     return displayName
                                 }
                             }
+                            
+                            // Language region combo, e.g. en-NL is not available, try to match on language only
+                            for (_, locale) in Locale.preferredLanguages.enumerated() {
+                                guard let languageSubstring = locale.split(separator: "-").first else {
+                                    continue
+                                }
+                                let language = String(languageSubstring) 
+                                for (key, displayName) in localizedDisplayNames {
+                                    if key.hasPrefix(language) {
+                                        return displayName
+                                    }
+                                }
+                            }
+                            
+                            // Fallback
+                            return localizedDisplayNames.values.first
                         }
                         
                         return nil

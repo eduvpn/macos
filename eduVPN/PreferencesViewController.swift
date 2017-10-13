@@ -14,14 +14,14 @@ class PreferencesViewController: NSViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        launchAtLoginCheckbox.state = ServiceContainer.preferencesService.launchAtLogin ? NSOnState : NSOffState
+        launchAtLoginCheckbox.state = ServiceContainer.preferencesService.launchAtLogin ? .on : .off
     }
     
     @IBAction func toggleLaunchAtLogin(_ sender: NSButton) {
         switch sender.state {
-        case NSOnState:
+        case .on:
             ServiceContainer.preferencesService.launchAtLogin = true
-        case NSOffState:
+        case .off:
             ServiceContainer.preferencesService.launchAtLogin = false
         default:
             break

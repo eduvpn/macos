@@ -24,7 +24,7 @@ class MainViewController: NSViewController {
         view.wantsLayer = true
     }
     
-    func show(viewController: NSViewController, options: NSViewControllerTransitionOptions = []) {
+    func show(viewController: NSViewController, options: NSViewController.TransitionOptions = []) {
         let currentViewController = self.currentViewController
         addChildViewController(viewController)
         transition(from: currentViewController, to: viewController, options: options) {

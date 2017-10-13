@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
 
   s.name         = "Kingfisher"
-  s.version      = "3.10.3"
+  s.version      = "4.1.0"
   s.summary      = "A lightweight and pure Swift implemented library for downloading and cacheing image from the web."
 
   s.description  = <<-DESC
@@ -36,12 +36,19 @@ Pod::Spec.new do |s|
   s.public_header_files = ["Sources/Kingfisher.h"]
   
   s.osx.exclude_files = ["Sources/AnimatedImageView.swift", "Sources/UIButton+Kingfisher.swift"]
-  s.watchos.exclude_files = ["Sources/AnimatedImageView.swift", "Sources/UIButton+Kingfisher.swift", "Sources/ImageView+Kingfisher.swift", "Sources/NSButton+Kingfisher.swift", "Sources/Indicator.swift", "Sources/Filter.swift"]
+  s.watchos.exclude_files = ["Sources/AnimatedImageView.swift", 
+                             "Sources/UIButton+Kingfisher.swift", 
+                             "Sources/ImageView+Kingfisher.swift", 
+                             "Sources/NSButton+Kingfisher.swift", 
+                             "Sources/Indicator.swift", 
+                             "Sources/Filter.swift",
+                             "Sources/Placeholder.swift"
+                            ]
   s.ios.exclude_files = "Sources/NSButton+Kingfisher.swift"
   s.tvos.exclude_files = "Sources/NSButton+Kingfisher.swift"
   
   s.requires_arc = true
   s.framework = "CFNetwork"
 
-  s.pod_target_xcconfig = { 'SWIFT_VERSION' => '3.0' }
+  s.pod_target_xcconfig = { 'SWIFT_VERSION' => '4.0' }
 end

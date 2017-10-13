@@ -43,7 +43,7 @@
 
  @param reply Success
  */
-- (void)closeWithReply:(void(^_Nonnull)())reply;
+- (void)closeWithReply:(void(^_Nonnull)(void))reply;
 
 /**
  Retrieves statistics for the current OpenVPN connection
@@ -58,7 +58,7 @@
 
 @required
 
-- (void)taskTerminatedWithReply:(void(^_Nonnull)())reply;
+- (void)taskTerminatedWithReply:(void(^_Nonnull)(void))reply;
 
 @end
 

@@ -75,7 +75,7 @@ class HelperService {
             switch result {
             case .success(let upToDate):
                 if upToDate {
-                    handler(.success())
+                    handler(.success(Void()))
                     return
                 }
             case .failure:
@@ -89,7 +89,7 @@ class HelperService {
                         switch result {
                         case .success(let upToDate):
                             if upToDate {
-                                handler(.success())
+                                handler(.success(Void()))
                             } else {
                                 handler(.failure(Error.installationFailed))
                             }
@@ -133,7 +133,7 @@ class HelperService {
         )
         
         if success {
-            handler(.success())
+            handler(.success(Void()))
         } else {
             NSLog("SMJobBless failed: \(String(describing: error))")
             handler(.failure(Error.installationFailed))
@@ -150,10 +150,10 @@ class HelperService {
         connection?.remoteObjectInterface = NSXPCInterface(with: OpenVPNHelperProtocol.self)
         connection?.exportedInterface = NSXPCInterface(with: ClientProtocol.self)
         connection?.exportedObject = client
-        connection?.invalidationHandler = { _ in
+        connection?.invalidationHandler = { () in
             NSLog("connection invalidated!")
         }
-        connection?.interruptionHandler = { _ in
+        connection?.interruptionHandler = { () in
             NSLog("connection interrupted!")
         }
         connection?.resume()

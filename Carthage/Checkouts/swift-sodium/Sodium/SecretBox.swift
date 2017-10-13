@@ -1,11 +1,3 @@
-//
-//  SecretBox.swift
-//  Sodium
-//
-//  Created by Devin Chalmers on 1/4/15.
-//  Copyright (c) 2015 Frank Denis. All rights reserved.
-//
-
 import Foundation
 import libsodium
 
@@ -56,9 +48,9 @@ public class SecretBox {
         guard let (authenticatedCipherText, nonce): (Data, Nonce) = seal(message: message, secretKey: secretKey) else {
             return nil
         }
-
         var nonceAndAuthenticatedCipherText = nonce
         nonceAndAuthenticatedCipherText.append(authenticatedCipherText)
+
         return nonceAndAuthenticatedCipherText
     }
 
@@ -74,29 +66,24 @@ public class SecretBox {
         if secretKey.count != KeyBytes {
             return nil
         }
-
         var authenticatedCipherText = Data(count: message.count + MacBytes)
         let nonce = self.nonce()
 
         let result = authenticatedCipherText.withUnsafeMutableBytes { authenticatedCipherTextPtr in
-            return message.withUnsafeBytes { messagePtr in
-                return nonce.withUnsafeBytes { noncePtr in
-                    return secretKey.withUnsafeBytes { secretKeyPtr in
-                        return crypto_secretbox_easy(
-                          authenticatedCipherTextPtr,
-                          messagePtr,
-                          UInt64(message.count),
-                          noncePtr,
-                          secretKeyPtr)
+            message.withUnsafeBytes { messagePtr in
+                nonce.withUnsafeBytes { noncePtr in
+                    secretKey.withUnsafeBytes { secretKeyPtr in
+                        crypto_secretbox_easy(
+                            authenticatedCipherTextPtr,
+                            messagePtr, UInt64(message.count),
+                            noncePtr, secretKeyPtr)
                     }
                 }
             }
         }
-
         if result != 0 {
             return nil
         }
-
         return (authenticatedCipherText: authenticatedCipherText, nonce: nonce)
     }
 
@@ -112,33 +99,27 @@ public class SecretBox {
         if secretKey.count != KeyBytes {
             return nil
         }
-
         var cipherText = Data(count: message.count)
         var mac = Data(count: MacBytes)
         let nonce = self.nonce()
 
         let result = cipherText.withUnsafeMutableBytes { cipherTextPtr in
-            return mac.withUnsafeMutableBytes { macPtr in
-                return message.withUnsafeBytes { messagePtr in
-                    return nonce.withUnsafeBytes { noncePtr in
-                        return secretKey.withUnsafeBytes { secretKeyPtr in
-                            return crypto_secretbox_detached(
-                              cipherTextPtr,
-                              macPtr,
-                              messagePtr,
-                              UInt64(message.count),
-                              noncePtr,
-                              secretKeyPtr)
+            mac.withUnsafeMutableBytes { macPtr in
+                message.withUnsafeBytes { messagePtr in
+                    nonce.withUnsafeBytes { noncePtr in
+                        secretKey.withUnsafeBytes { secretKeyPtr in
+                            crypto_secretbox_detached(
+                                cipherTextPtr, macPtr,
+                                messagePtr, UInt64(message.count),
+                                noncePtr, secretKeyPtr)
                         }
                     }
                 }
             }
         }
-
         if result != 0 {
             return nil
         }
-
         return (cipherText: cipherText, nonce: nonce, mac: mac)
     }
 
@@ -154,9 +135,9 @@ public class SecretBox {
         if nonceAndAuthenticatedCipherText.count < MacBytes + NonceBytes {
             return nil
         }
-
         let nonce = nonceAndAuthenticatedCipherText.subdata(in: 0..<NonceBytes) as Nonce
         let authenticatedCipherText = nonceAndAuthenticatedCipherText.subdata(in: NonceBytes..<nonceAndAuthenticatedCipherText.count)
+
         return open(authenticatedCipherText: authenticatedCipherText, secretKey: secretKey, nonce: nonce)
     }
 
@@ -173,28 +154,23 @@ public class SecretBox {
         if authenticatedCipherText.count < MacBytes {
             return nil
         }
-
         var message = Data(count: authenticatedCipherText.count - MacBytes)
 
         let result = message.withUnsafeMutableBytes { messagePtr in
-            return authenticatedCipherText.withUnsafeBytes { authenticatedCipherTextPtr in
-                return nonce.withUnsafeBytes { noncePtr in
-                    return secretKey.withUnsafeBytes { secretKeyPtr in
-                        return crypto_secretbox_open_easy(
-                          messagePtr,
-                          authenticatedCipherTextPtr,
-                          UInt64(authenticatedCipherText.count),
-                          noncePtr,
-                          secretKeyPtr)
+            authenticatedCipherText.withUnsafeBytes { authenticatedCipherTextPtr in
+                nonce.withUnsafeBytes { noncePtr in
+                    secretKey.withUnsafeBytes { secretKeyPtr in
+                        crypto_secretbox_open_easy(
+                            messagePtr,
+                            authenticatedCipherTextPtr, UInt64(authenticatedCipherText.count),
+                            noncePtr, secretKeyPtr)
                     }
                 }
             }
         }
-
         if result != 0 {
             return nil
         }
-
         return message
     }
 
@@ -211,34 +187,28 @@ public class SecretBox {
         if nonce.count != NonceBytes || mac.count != MacBytes {
             return nil
         }
-
         if secretKey.count != KeyBytes {
             return nil
         }
-
         var message = Data(count: cipherText.count)
+
         let result = message.withUnsafeMutableBytes { messagePtr in
-            return cipherText.withUnsafeBytes { cipherTextPtr in
-                return mac.withUnsafeBytes { macPtr in
-                    return nonce.withUnsafeBytes { noncePtr in
-                        return secretKey.withUnsafeBytes { secretKeyPtr in
-                            return crypto_secretbox_open_detached(
-                              messagePtr,
-                              cipherTextPtr,
-                              macPtr,
-                              UInt64(cipherText.count),
-                              noncePtr,
-                              secretKeyPtr)
+            cipherText.withUnsafeBytes { cipherTextPtr in
+                mac.withUnsafeBytes { macPtr in
+                    nonce.withUnsafeBytes { noncePtr in
+                        secretKey.withUnsafeBytes { secretKeyPtr in
+                            crypto_secretbox_open_detached(
+                                messagePtr,
+                                cipherTextPtr, macPtr, UInt64(cipherText.count),
+                                noncePtr, secretKeyPtr)
                         }
                     }
                 }
             }
         }
-
         if result != 0 {
             return nil
         }
-
         return message
     }
 }

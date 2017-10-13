@@ -1,13 +1,3 @@
-//
-//  Stream.swift
-//  Sodium
-//
-//  Created by Frank Denis on 5/30/17.
-//  Copyright © 2017 Frank Denis. All rights reserved.
-//
-
-import Foundation
-
 import Foundation
 import libsodium
 
@@ -52,6 +42,10 @@ public class Stream {
      In order to encrypt data using a secret key, the SecretBox class is likely to be what you are looking for.
      In order to generate a deterministic stream out of a seed, the RandomBytes.deterministic_rand() function is likely to be what you need.
 
+     - Parameter input: Input data
+     - Parameter nonce: Nonce
+     - Parameter secretKey: The secret key
+
      -  Returns: input XOR keystream(secretKey, nonce)
      */
     public func xor(input: Data, nonce: Nonce, secretKey: Key) -> Data? {
@@ -61,18 +55,16 @@ public class Stream {
         var output = Data(count: input.count)
         let result = output.withUnsafeMutableBytes { outputPtr in
             input.withUnsafeBytes { inputPtr in
-                return nonce.withUnsafeBytes { noncePtr in
-                    return secretKey.withUnsafeBytes { secretKeyPtr in
-                        return crypto_stream_xor(outputPtr, inputPtr, UInt64(input.count), noncePtr, secretKeyPtr)
+                nonce.withUnsafeBytes { noncePtr in
+                    secretKey.withUnsafeBytes { secretKeyPtr in
+                        crypto_stream_xor(outputPtr, inputPtr, UInt64(input.count), noncePtr, secretKeyPtr)
                     }
                 }
             }
         }
-
         if result != 0 {
             return nil
         }
-
         return output
     }
 
@@ -82,6 +74,10 @@ public class Stream {
      No authentication tag is added to the output. The data can be tampered with; an adversary can flip arbitrary bits.
      In order to encrypt data using a secret key, the SecretBox class is likely to be what you are looking for.
      In order to generate a deterministic stream out of a seed, the RandomBytes.deterministic_rand() function is likely to be what you need.
+
+     - Parameter input: Input data
+     - Parameter nonce: Nonce
+     - Parameter secretKey: The secret key
 
      -  Returns: (input XOR keystream(secretKey, nonce), nonce)
      */
