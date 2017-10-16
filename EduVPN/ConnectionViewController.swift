@@ -45,6 +45,7 @@ class ConnectionViewController: NSViewController {
     
     override func viewWillAppear() {
         super.viewWillAppear()
+        updateForStateChange()
         NotificationCenter.default.addObserver(self, selector: #selector(stateChanged(notification:)), name: ConnectionService.stateChanged, object: ServiceContainer.connectionService)
     }
     
@@ -53,44 +54,48 @@ class ConnectionViewController: NSViewController {
         NotificationCenter.default.removeObserver(self, name: ConnectionService.stateChanged, object: ServiceContainer.connectionService)
     }
     
+    private func updateForStateChange() {
+        switch ServiceContainer.connectionService.state {
+        case .connecting:
+            self.backButton.isHidden = true
+            self.stateImageView.image = #imageLiteral(resourceName: "connecting")
+            self.spinner.startAnimation(self)
+            self.disconnectButton.isHidden = true
+            self.connectButton.isHidden = true
+            self.statisticsBox.isHidden = true
+            
+        case .connected:
+            self.backButton.isHidden = true
+            self.stateImageView.image = #imageLiteral(resourceName: "connected")
+            self.spinner.stopAnimation(self)
+            self.disconnectButton.isHidden = false
+            self.connectButton.isHidden = true
+            self.statisticsBox.isHidden = false
+            self.startUpdatingStatistics()
+            
+        case .disconnecting:
+            self.backButton.isHidden = true
+            self.stateImageView.image = #imageLiteral(resourceName: "connecting")
+            self.spinner.startAnimation(self)
+            self.disconnectButton.isHidden = true
+            self.connectButton.isHidden = true
+            self.statisticsBox.isHidden = true
+            self.stopUpdatingStatistics()
+            
+        case .disconnected:
+            self.backButton.isHidden = false
+            self.stateImageView.image = #imageLiteral(resourceName: "disconnected")
+            self.spinner.stopAnimation(self)
+            self.disconnectButton.isHidden = true
+            self.connectButton.isHidden = false
+            self.statisticsBox.isHidden = true
+            
+        }
+    }
+    
     @objc private func stateChanged(notification: NSNotification) {
         DispatchQueue.main.async {
-            switch ServiceContainer.connectionService.state {
-            case .connecting:
-                self.backButton.isHidden = true
-                self.stateImageView.image = #imageLiteral(resourceName: "connecting")
-                self.spinner.startAnimation(self)
-                self.disconnectButton.isHidden = true
-                self.connectButton.isHidden = true
-                self.statisticsBox.isHidden = true
-                
-            case .connected:
-                self.backButton.isHidden = true
-                self.stateImageView.image = #imageLiteral(resourceName: "connected")
-                self.spinner.stopAnimation(self)
-                self.disconnectButton.isHidden = false
-                self.connectButton.isHidden = true
-                self.statisticsBox.isHidden = false
-                self.startUpdatingStatistics()
-                
-            case .disconnecting:
-                self.backButton.isHidden = true
-                self.stateImageView.image = #imageLiteral(resourceName: "connecting")
-                self.spinner.startAnimation(self)
-                self.disconnectButton.isHidden = true
-                self.connectButton.isHidden = true
-                self.statisticsBox.isHidden = true
-                self.stopUpdatingStatistics()
-                
-            case .disconnected:
-                self.backButton.isHidden = false
-                self.stateImageView.image = #imageLiteral(resourceName: "disconnected")
-                self.spinner.stopAnimation(self)
-                self.disconnectButton.isHidden = true
-                self.connectButton.isHidden = false
-                self.statisticsBox.isHidden = true
-                
-            }
+            self.updateForStateChange()
         }
     }
     

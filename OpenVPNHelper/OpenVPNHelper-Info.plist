@@ -19,12 +19,12 @@
 	<key>CFBundleShortVersionString</key>
 	<string>1.0</string>
 	<key>CFBundleVersion</key>
-	<string>8</string>
+	<string>0.0.9</string>
 	<key>NSHumanReadableCopyright</key>
 	<string>Copyright © 2017 eduVPN. All rights reserved.</string>
 	<key>SMAuthorizedClients</key>
 	<array>
-		<string>identifier "org.eduvpn.app" and anchor apple generic and certificate leaf[subject.CN] = "Mac Developer: Johan Kool (2W662WXNRW)" and certificate 1[field.1.2.840.113635.100.6.2.1] /* exists */</string>
+		<string>identifier &quot;org.eduvpn.app&quot; and anchor apple generic and certificate leaf[subject.CN] = &quot;Mac Developer: Johan Kool (2W662WXNRW)&quot; and certificate 1[field.1.2.840.113635.100.6.2.1] /* exists */</string>
 	</array>
 </dict>
 </plist>
