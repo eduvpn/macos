@@ -52,6 +52,19 @@ class ProviderService {
         }
     }
     
+    private(set) var storedProfiles: [ConnectionType: [Profile]] = [:]
+    
+//    func storedProfiles() -> [ConnectionType: [Profile]] {
+//        return storedProfiles
+//    }
+    
+    func storeProfile(profile: Profile) {
+        let connectionType = profile.info.provider.connectionType
+        var profiles = storedProfiles[connectionType] ?? []
+        profiles.append(profile)
+        storedProfiles[connectionType] = profiles
+    }
+    
     /// Returns discovery URL
     ///
     /// - Parameter connectionType: Connection type

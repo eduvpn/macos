@@ -11,6 +11,15 @@ import Foundation
 enum ConnectionType {
     case secureInternet
     case instituteAccess
+    
+    var localizedDescription: String {
+        switch self {
+        case .secureInternet:
+            return NSLocalizedString("Secure Internet", comment: "")
+        case .instituteAccess:
+            return NSLocalizedString("Institute Access", comment: "")
+        }
+    }
 }
 
 struct Provider {

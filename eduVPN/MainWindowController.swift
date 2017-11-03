@@ -11,7 +11,16 @@ import AppAuth
 
 class MainWindowController: NSWindowController {
 
-    private var navigationStack: [NSViewController] = []
+    private var navigationStackStack: [[NSViewController]] = [[]]
+    private var navigationStack: [NSViewController] {
+        get {
+            return navigationStackStack.last!
+        }
+        set {
+            navigationStackStack.removeLast()
+            navigationStackStack.append(newValue)
+        }
+    }
     @IBOutlet var topView: NSBox!
     
     override func windowDidLoad() {
@@ -51,9 +60,22 @@ class MainWindowController: NSWindowController {
         mainViewController.show(viewController: navigationStack.last!, options: .slideBackward)
     }
     
-    func showChooseConnectType() {
+    func present(viewController: NSViewController, animated: Bool = true) {
+        navigationStackStack.append([viewController])
+        mainViewController.show(viewController: viewController, options: .slideUp)
+    }
+    
+    func dismiss() {
+        guard navigationStackStack.count > 1 else {
+            return
+        }
+        navigationStackStack.removeLast()
+        mainViewController.show(viewController: navigationStack.last!, options: .slideDown)
+    }
+    
+    func showChooseConnectionType(animated: Bool, allowClose: Bool) {
         let chooseConnectionTypeViewController = storyboard!.instantiateController(withIdentifier: NSStoryboard.SceneIdentifier(rawValue: "ChooseConnectionType")) as! ChooseConnectionTypeViewController
-        push(viewController: chooseConnectionTypeViewController)
+        present(viewController: chooseConnectionTypeViewController, animated: animated)
     }
 
     func showChooseProvider(for connectionType: ConnectionType, from providers: [Provider]) {
