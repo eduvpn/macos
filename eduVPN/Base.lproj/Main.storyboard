@@ -1025,6 +1025,9 @@
                                 <buttonCell key="cell" type="smallSquare" bezelStyle="smallSquare" image="Back" imagePosition="only" alignment="center" imageScaling="proportionallyDown" inset="2" id="DmI-WL-Q91">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="system"/>
+                                    <string key="keyEquivalent" base64-UTF8="YES">
+CA
+</string>
                                 </buttonCell>
                                 <connections>
                                     <action selector="goBack:" target="XfG-lQ-9wD" id="olR-Le-PRn"/>
@@ -1068,6 +1071,9 @@
                                 <buttonCell key="cell" type="smallSquare" bezelStyle="smallSquare" image="Back" imagePosition="only" alignment="center" imageScaling="proportionallyDown" inset="2" id="gKU-S5-YFX">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="system"/>
+                                    <string key="keyEquivalent" base64-UTF8="YES">
+CA
+</string>
                                 </buttonCell>
                                 <connections>
                                     <action selector="goBack:" target="UOS-Lh-Hiq" id="7VC-mZ-8wg"/>
@@ -1116,6 +1122,9 @@
                                 <buttonCell key="cell" type="smallSquare" bezelStyle="smallSquare" image="Back" imagePosition="only" alignment="center" imageScaling="proportionallyDown" inset="2" id="9uP-xv-3y9">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="system"/>
+                                    <string key="keyEquivalent" base64-UTF8="YES">
+CA
+</string>
                                 </buttonCell>
                                 <connections>
                                     <action selector="goBack:" target="f5D-Eq-JOa" id="swl-Cx-Npa"/>
@@ -1273,6 +1282,7 @@
                                             <buttonCell key="cell" type="roundRect" title="View Log" bezelStyle="roundedRect" alignment="center" enabled="NO" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="hfa-Gc-j1c">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                 <font key="font" metaFont="cellTitle"/>
+                                                <string key="keyEquivalent">l</string>
                                             </buttonCell>
                                         </button>
                                     </subviews>
@@ -1306,6 +1316,9 @@
                                 <buttonCell key="cell" type="smallSquare" title="Connect" bezelStyle="smallSquare" image="Button" imagePosition="overlaps" alignment="center" imageScaling="proportionallyDown" inset="2" id="jFR-d1-QJJ">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="system" size="17"/>
+                                    <string key="keyEquivalent" base64-UTF8="YES">
+DQ
+</string>
                                 </buttonCell>
                                 <connections>
                                     <action selector="connect:" target="f5D-Eq-JOa" id="2eA-hX-9d8"/>
@@ -1354,6 +1367,7 @@
                                     <string key="title">Institute Access
 </string>
                                     <font key="font" metaFont="system"/>
+                                    <string key="keyEquivalent">2</string>
                                 </buttonCell>
                                 <connections>
                                     <action selector="chooseInstituteAccess:" target="Lns-jv-Aqp" id="UAE-R1-AbG"/>
@@ -1367,6 +1381,7 @@
                                     <string key="title">Connect to the internet securely, for 
 example when using public WiFi</string>
                                     <font key="font" metaFont="system"/>
+                                    <string key="keyEquivalent">1</string>
                                 </buttonCell>
                                 <connections>
                                     <action selector="chooseSecureInternet:" target="Lns-jv-Aqp" id="ZTE-Mp-NeD"/>
@@ -1378,6 +1393,9 @@ example when using public WiFi</string>
                                 <buttonCell key="cell" type="smallSquare" bezelStyle="smallSquare" image="Back" imagePosition="only" alignment="center" imageScaling="proportionallyDown" inset="2" id="xAl-Qa-KkI">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="system"/>
+                                    <string key="keyEquivalent" base64-UTF8="YES">
+CA
+</string>
                                 </buttonCell>
                                 <connections>
                                     <action selector="close:" target="Lns-jv-Aqp" id="8Kn-FN-skb"/>
@@ -1386,9 +1404,10 @@ example when using public WiFi</string>
                             <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Qcy-zA-XYg">
                                 <rect key="frame" x="84" y="20" width="210" height="44"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <buttonCell key="cell" type="smallSquare" title="Use Custom URI" bezelStyle="smallSquare" image="Button" imagePosition="overlaps" alignment="center" imageScaling="proportionallyDown" inset="2" id="Pyt-hE-lLA">
+                                <buttonCell key="cell" type="smallSquare" title="Use Custom URL" bezelStyle="smallSquare" image="Button" imagePosition="overlaps" alignment="center" imageScaling="proportionallyDown" inset="2" id="Pyt-hE-lLA">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="system" size="17"/>
+                                    <string key="keyEquivalent">3</string>
                                 </buttonCell>
                                 <connections>
                                     <action selector="enterProviderURL:" target="Lns-jv-Aqp" id="bfK-7J-Uyf"/>
@@ -1486,6 +1505,9 @@ example when using public WiFi</string>
                                 <buttonCell key="cell" type="smallSquare" bezelStyle="smallSquare" image="Back" imagePosition="only" alignment="center" imageScaling="proportionallyDown" inset="2" id="oT1-ZD-ne2">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="system"/>
+                                    <string key="keyEquivalent" base64-UTF8="YES">
+CA
+</string>
                                 </buttonCell>
                                 <connections>
                                     <action selector="goBack:" target="xQP-Pr-Baz" id="gQm-vD-ihh"/>
@@ -1630,6 +1652,9 @@ example when using public WiFi</string>
                                 <buttonCell key="cell" type="smallSquare" title="Add Provider" bezelStyle="smallSquare" image="Button" imagePosition="overlaps" alignment="center" imageScaling="proportionallyDown" inset="2" id="edN-2T-PQc">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="system" size="17"/>
+                                    <string key="keyEquivalent" base64-UTF8="YES">
+DQ
+</string>
                                     <connections>
                                         <action selector="addOtherProvider:" target="d3v-OK-Unm" id="EcF-Cc-zeU"/>
                                     </connections>
@@ -1660,6 +1685,9 @@ example when using public WiFi</string>
                                 <buttonCell key="cell" type="smallSquare" bezelStyle="smallSquare" image="Back" imagePosition="only" alignment="center" imageScaling="proportionallyDown" inset="2" id="hHa-h2-L5v">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="system"/>
+                                    <string key="keyEquivalent" base64-UTF8="YES">
+CA
+</string>
                                 </buttonCell>
                                 <connections>
                                     <action selector="goBack:" target="JTX-Fe-25d" id="Hkz-Qj-bEZ"/>
@@ -1677,28 +1705,35 @@ example when using public WiFi</string>
                             <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="BYj-0N-vL7">
                                 <rect key="frame" x="84" y="20" width="210" height="44"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <buttonCell key="cell" type="smallSquare" title="Done" bezelStyle="smallSquare" image="Button" imagePosition="overlaps" alignment="center" imageScaling="proportionallyDown" inset="2" id="o5J-9g-j5b">
+                                <buttonCell key="cell" type="smallSquare" title="Done" bezelStyle="smallSquare" image="Button" imagePosition="overlaps" alignment="center" enabled="NO" imageScaling="proportionallyDown" inset="2" id="o5J-9g-j5b">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="system" size="17"/>
-                                    <connections>
-                                        <action selector="addOtherProvider:" target="d3v-OK-Unm" id="vdA-fU-wiX"/>
-                                    </connections>
+                                    <string key="keyEquivalent" base64-UTF8="YES">
+DQ
+</string>
                                 </buttonCell>
+                                <connections>
+                                    <action selector="done:" target="JTX-Fe-25d" id="1Je-yk-l9a"/>
+                                </connections>
                             </button>
                             <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="AyI-7a-sGz">
                                 <rect key="frame" x="20" y="97" width="338" height="368"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                <textFieldCell key="cell" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="CpD-AF-Od5">
+                                <textFieldCell key="cell" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" placeholderString="Enter URL here" drawsBackground="YES" id="CpD-AF-Od5">
                                     <font key="font" metaFont="system"/>
-                                    <string key="title">https://vpn.tuxed.net/vpn-user-portal/_oauth/authorize?response_type=code&amp;code_challenge_method=S256&amp;scope=config&amp;code_challenge=iZuDJElCFyxZJZG2bLQtR_MSySX_j1kbRnr-UgtePSs&amp;redirect_uri=http://127.0.0.1:49392/callback&amp;client_id=org.eduvpn.app&amp;state=vv6S4D9ITN_Z5S_57yMrGJ3I1vs9FvmPZPPH8ejojro</string>
                                     <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
+                                <connections>
+                                    <outlet property="delegate" destination="JTX-Fe-25d" id="jn0-NC-KnH"/>
+                                </connections>
                             </textField>
                         </subviews>
                     </view>
                     <connections>
-                        <outlet property="backButton" destination="Fjg-kc-vUW" id="wTr-tx-ghb"/>
+                        <outlet property="backButton" destination="Fjg-kc-vUW" id="Sti-hu-Ug1"/>
+                        <outlet property="doneButton" destination="BYj-0N-vL7" id="3Fm-M1-CXr"/>
+                        <outlet property="textField" destination="AyI-7a-sGz" id="qL4-SX-NRY"/>
                     </connections>
                 </viewController>
                 <customObject id="ivm-tg-6o0" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>

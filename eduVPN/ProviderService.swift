@@ -16,6 +16,7 @@ class ProviderService {
     enum Error: Swift.Error, LocalizedError {
         case unknown
         case invalidProvider
+        case invalidProviderURL
         case noProviders
         case invalidProviders
         case invalidProviderInfo
@@ -30,6 +31,8 @@ class ProviderService {
                 return NSLocalizedString("Discovering providers failed for unknown reason", comment: "")
             case .invalidProvider:
                 return NSLocalizedString("Invalid provider", comment: "")
+            case .invalidProviderURL:
+                return NSLocalizedString("Invalid provider URL", comment: "")
             case .noProviders:
                 return NSLocalizedString("No providers were discovered", comment: "")
             case .invalidProviders:
@@ -48,7 +51,12 @@ class ProviderService {
         }
         
         var recoverySuggestion: String? {
-            return NSLocalizedString("Try again later.", comment: "")
+            switch self {
+            case .invalidProviderURL:
+                return NSLocalizedString("Verify URL.", comment: "")
+            default:
+                return NSLocalizedString("Try again later.", comment: "")
+            }
         }
     }
     
@@ -139,6 +147,8 @@ class ProviderService {
             path = "institute_access"
         case (.instituteAccess, true):
             path = "institute_access_dev"
+        case (.custom, _):
+            fatalError("Can't discover custom providers")
         }
         return URL(string: path + ".json", relativeTo: URL(string: "https://static.eduvpn.nl/disco/")!)!
     }
@@ -159,6 +169,8 @@ class ProviderService {
             path = "institute_access"
         case (.instituteAccess, true):
             path = "institute_access_dev"
+        case (.custom, _):
+            fatalError("Can't discover custom provider signatures")
         }
         return URL(string: path + ".json.sig", relativeTo: URL(string: "https://static.eduvpn.nl/disco/")!)!
     }
@@ -285,7 +297,12 @@ class ProviderService {
         let request = URLRequest(url:url)
         let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
             guard let data = data, let response = response as? HTTPURLResponse, 200..<300 ~= response.statusCode else {
-                handler(.failure(error ?? Error.unknown))
+                switch provider.connectionType {
+                case .secureInternet, .instituteAccess:
+                    handler(.failure(error ?? Error.unknown))
+                case .custom:
+                    handler(.failure(error ?? Error.invalidProviderURL))
+                }
                 return
             }
             do {

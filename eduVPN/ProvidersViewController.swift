@@ -28,6 +28,7 @@ class ProvidersViewController: NSViewController {
             
             addRows(connectionType: .secureInternet)
             addRows(connectionType: .instituteAccess)
+            addRows(connectionType: .custom)
             
             self.rows = rows
         }
@@ -97,7 +98,7 @@ extension ProvidersViewController: NSTableViewDelegate {
         case .profile(let profile):
             let result = tableView.makeView(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: "ProfileCell"), owner: self) as? NSTableCellView
             result?.imageView?.kf.setImage(with: profile.info.provider.logoURL)
-            result?.textField?.stringValue = profile.displayName
+            result?.textField?.stringValue = profile.info.provider.displayName + ": " + profile.displayName
             return result
         }
     }

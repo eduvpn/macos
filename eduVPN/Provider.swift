@@ -11,6 +11,7 @@ import Foundation
 enum ConnectionType: String, Codable {
     case secureInternet
     case instituteAccess
+    case custom
     
     var localizedDescription: String {
         switch self {
@@ -18,6 +19,8 @@ enum ConnectionType: String, Codable {
             return NSLocalizedString("Secure Internet", comment: "")
         case .instituteAccess:
             return NSLocalizedString("Institute Access", comment: "")
+        case .custom:
+            return NSLocalizedString("Custom", comment: "")
         }
     }
 }
@@ -25,7 +28,7 @@ enum ConnectionType: String, Codable {
 struct Provider: Codable {
     let displayName: String
     let baseURL: URL
-    let logoURL: URL
+    let logoURL: URL?
     let publicKey: String?
     let connectionType: ConnectionType
     
