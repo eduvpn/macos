@@ -18,8 +18,8 @@ class ProvidersViewController: NSViewController {
             var rows: [TableRow] = []
             
             func addRows(connectionType: ConnectionType) {
-                if let connectionProfiles = profiles[.secureInternet], !connectionProfiles.isEmpty {
-                    rows.append(.section(.secureInternet))
+                if let connectionProfiles = profiles[connectionType], !connectionProfiles.isEmpty {
+                    rows.append(.section(connectionType))
                     connectionProfiles.forEach { (profile) in
                         rows.append(.profile(profile))
                     }
@@ -44,7 +44,8 @@ class ProvidersViewController: NSViewController {
         super.viewDidLoad()
         // Do view setup here.
         
- 
+        profiles = ServiceContainer.providerService.storedProfiles
+        
     }
     
     override func viewWillAppear() {
@@ -57,7 +58,6 @@ class ProvidersViewController: NSViewController {
         tableView.deselectAll(nil)
         tableView.isEnabled = true
         
-        profiles = ServiceContainer.providerService.storedProfiles
         if profiles.isEmpty {
             addOtherProvider(animated: false)
         }
@@ -68,7 +68,7 @@ class ProvidersViewController: NSViewController {
     }
     
     private func addOtherProvider(animated: Bool) {
-        mainWindowController?.showChooseConnectionType(animated: animated, allowClose: !rows.isEmpty)
+        mainWindowController?.showChooseConnectionType(allowClose: !rows.isEmpty, animated: animated)
     }
     
 }
@@ -98,12 +98,24 @@ extension ProvidersViewController: NSTableViewDelegate {
     }
     
     func tableViewSelectionDidChange(_ notification: Notification) {
-        guard tableView.selectedRow >= 0 else {
+        let row = tableView.selectedRow
+        guard row >= 0 else {
             return
         }
         
-        tableView.isEnabled = false
-      //  self.mainWindowController?.showConnection(for: profiles[tableView.selectedRow], authState: authState)
+        let tableRow = rows[row]
+        switch tableRow {
+        case .section:
+            // Ignore
+            break
+        case .profile(let profile):
+            tableView.isEnabled = false
+            if let authState = ServiceContainer.authenticationService.authStates[profile.info.provider.id] {
+                mainWindowController?.showConnection(for: profile, authState: authState)
+            } else {
+                mainWindowController?.showAuthenticating(with: profile.info, profile: profile)
+            }
+        }
     }
     
 }

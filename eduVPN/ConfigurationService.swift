@@ -54,10 +54,10 @@ class ConfigurationService {
     ///
     /// - Parameters:
     ///   - profile: Profile
-    ///   - authState: Authencation token
+    ///   - authState: Authentication token
     ///   - handler: Config or error
     func configure(for profile: Profile, authState: OIDAuthState, handler: @escaping (Result<Config>) -> ()) {
-        restoreOrCreateKeyPair(for: profile.info, authState:  authState) { (result) in
+        restoreOrCreateKeyPair(for: profile.info, authState: authState) { (result) in
             switch result {
             case .success((let certificate, let privateKey)):
                 self.fetchConfig(for: profile, authState: authState) { (result) in
@@ -79,7 +79,7 @@ class ConfigurationService {
     ///
     /// - Parameters:
     ///   - info: Provider info
-    ///   - authState: Authencation token
+    ///   - authState: Authentication token
     ///   - handler: Keypair or error
     private func restoreOrCreateKeyPair(for info: ProviderInfo, authState: OIDAuthState, handler: @escaping (Result<(certificate: String, privateKey: String)>) -> ()) {
         // TODO: restore key pair from keychain instead of user defaults
@@ -128,7 +128,7 @@ class ConfigurationService {
     ///
     /// - Parameters:
     ///   - info: Provider info
-    ///   - authState: Authencation token
+    ///   - authState: Authentication token
     ///   - handler: Keypair or error
     private func createKeyPair(for info: ProviderInfo, authState: OIDAuthState, handler: @escaping (Result<(certificate: String, privateKey: String)>) -> ()) {
         guard let url = URL(string: "create_keypair", relativeTo: info.apiBaseURL) else {
@@ -184,7 +184,7 @@ class ConfigurationService {
     ///
     /// - Parameters:
     ///   - profile: Profile
-    ///   - authState: Authencation token
+    ///   - authState: Authentication token
     ///   - handler: Config or error
     private func fetchConfig(for profile: Profile, authState: OIDAuthState, handler: @escaping (Result<Config>) -> ()) {
         guard let url = URL(string: "profile_config", relativeTo: profile.info.apiBaseURL) else {

@@ -52,17 +52,75 @@ class ProviderService {
         }
     }
     
+    init() {
+        readFromDisk()
+    }
+    
+    /// Profiles
     private(set) var storedProfiles: [ConnectionType: [Profile]] = [:]
     
-//    func storedProfiles() -> [ConnectionType: [Profile]] {
-//        return storedProfiles
-//    }
-    
+    /// Stores profile and saves it to disk
+    ///
+    /// - Parameter profile: profile
     func storeProfile(profile: Profile) {
         let connectionType = profile.info.provider.connectionType
         var profiles = storedProfiles[connectionType] ?? []
         profiles.append(profile)
         storedProfiles[connectionType] = profiles
+        saveToDisk()
+    }
+    
+    /// Removes profile and saves to disk
+    ///
+    /// - Parameter profile: profile
+    func deleteProfile(profile: Profile) {
+        let connectionType = profile.info.provider.connectionType
+        var profiles = storedProfiles[connectionType] ?? []
+        let index = profiles.index(where: { (otherProfile) -> Bool in
+            return otherProfile.profileId == profile.profileId
+        })
+        if let index = index {
+            profiles.remove(at: index)
+            storedProfiles[connectionType] = profiles
+            saveToDisk()
+        }
+    }
+    
+    /// URL for saving profiles to disk
+    ///
+    /// - Returns: URL
+    /// - Throws: Error finding or creating directory
+    private func storedProfilesFileURL() throws -> URL  {
+        var applicationSupportDirectory = try FileManager.default.url(for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
+        applicationSupportDirectory.appendPathComponent("eduVPN")
+        try FileManager.default.createDirectory(at: applicationSupportDirectory, withIntermediateDirectories: true, attributes: nil)
+        applicationSupportDirectory.appendPathComponent("Profiles.plist")
+        return applicationSupportDirectory
+    }
+    
+    /// Reads profiles from disk
+    private func readFromDisk() {
+        let decoder = PropertyListDecoder()
+        do {
+            let url = try storedProfilesFileURL()
+            let data = try Data(contentsOf: url)
+            let restoredProfiles = try decoder.decode([ConnectionType: [Profile]].self, from: data)
+            storedProfiles = restoredProfiles
+        } catch (let error) {
+            NSLog("Failed to read stored profiles from disk at \(url): \(error)")
+        }
+    }
+    
+    /// Saves profiles to disk
+    private func saveToDisk() {
+        let encoder = PropertyListEncoder()
+        do {
+            let data = try encoder.encode(storedProfiles)
+            let url = try storedProfilesFileURL()
+            try data.write(to: url, options: .atomic)
+        } catch (let error) {
+            NSLog("Failed to write stored profiles to disk at \(url): \(error)")
+        }
     }
     
     /// Returns discovery URL
@@ -262,7 +320,7 @@ class ProviderService {
     ///
     /// - Parameters:
     ///   - info: Provider info
-    ///   - authState: Authencation token
+    ///   - authState: Authentication token
     ///   - handler: Profiles or error
     func fetchProfiles(for info: ProviderInfo, authState: OIDAuthState, handler: @escaping (Result<[Profile]>) -> ()) {
         guard let url = URL(string: "profile_list", relativeTo: info.apiBaseURL) else {

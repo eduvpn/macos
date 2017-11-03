@@ -53,7 +53,7 @@
 		C7D15FD41F0D166800719F38 /* ServiceManagement.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C7D15FD31F0D166800719F38 /* ServiceManagement.framework */; };
 		C7D15FD51F0D183600719F38 /* org.eduvpn.app.openvpnhelper in CopyFiles */ = {isa = PBXBuildFile; fileRef = C72AD6F31F0A692F006DBDA5 /* org.eduvpn.app.openvpnhelper */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		C7F345171F955473002120B9 /* ProvidersViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7F345161F955473002120B9 /* ProvidersViewController.swift */; };
-		C7FA902C1F0BC83E0037FF88 /* openvpn-2.4.3-openssl-1.0.2k in Resources */ = {isa = PBXBuildFile; fileRef = C7FA902B1F0BC83E0037FF88 /* openvpn-2.4.3-openssl-1.0.2k */; };
+		C7FA902C1F0BC83E0037FF88 /* openvpn-2.4.4-openssl-1.0.2k in Resources */ = {isa = PBXBuildFile; fileRef = C7FA902B1F0BC83E0037FF88 /* openvpn-2.4.4-openssl-1.0.2k */; };
 		C7FA902E1F0BD1A60037FF88 /* Either.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7FA902D1F0BD1A60037FF88 /* Either.swift */; };
 /* End PBXBuildFile section */
 
@@ -174,7 +174,7 @@
 		C7D15FD01F0D165900719F38 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		C7D15FD31F0D166800719F38 /* ServiceManagement.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ServiceManagement.framework; path = System/Library/Frameworks/ServiceManagement.framework; sourceTree = SDKROOT; };
 		C7F345161F955473002120B9 /* ProvidersViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ProvidersViewController.swift; path = eduVPN/ProvidersViewController.swift; sourceTree = SOURCE_ROOT; };
-		C7FA902B1F0BC83E0037FF88 /* openvpn-2.4.3-openssl-1.0.2k */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "openvpn-2.4.3-openssl-1.0.2k"; sourceTree = SOURCE_ROOT; };
+		C7FA902B1F0BC83E0037FF88 /* openvpn-2.4.4-openssl-1.0.2k */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "openvpn-2.4.4-openssl-1.0.2k"; sourceTree = SOURCE_ROOT; };
 		C7FA902D1F0BD1A60037FF88 /* Either.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Either.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -344,7 +344,7 @@
 				C7BEF5CE1F03E0D80038605E /* Main.storyboard */,
 				C7BEF5D11F03E0D80038605E /* eduVPN-Info.plist */,
 				C72AD7051F0A6BFF006DBDA5 /* EduVPN-Bridging-Header.h */,
-				C7FA902B1F0BC83E0037FF88 /* openvpn-2.4.3-openssl-1.0.2k */,
+				C7FA902B1F0BC83E0037FF88 /* openvpn-2.4.4-openssl-1.0.2k */,
 				C71912571F3C8486005409E0 /* Defaults.plist */,
 			);
 			name = Resources;
@@ -480,7 +480,7 @@
 				C71912581F3C8486005409E0 /* Defaults.plist in Resources */,
 				C7BEF5CD1F03E0D80038605E /* Assets.xcassets in Resources */,
 				C7BEF5D01F03E0D80038605E /* Main.storyboard in Resources */,
-				C7FA902C1F0BC83E0037FF88 /* openvpn-2.4.3-openssl-1.0.2k in Resources */,
+				C7FA902C1F0BC83E0037FF88 /* openvpn-2.4.4-openssl-1.0.2k in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -770,7 +770,6 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "eduVPN/eduVPN-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_SWIFT3_OBJC_INFERENCE = On;
 				SWIFT_VERSION = 4.0;
 			};
 			name = Debug;
@@ -794,7 +793,6 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "eduVPN/eduVPN-Bridging-Header.h";
-				SWIFT_SWIFT3_OBJC_INFERENCE = On;
 				SWIFT_VERSION = 4.0;
 			};
 			name = Release;

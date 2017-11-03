@@ -8,7 +8,7 @@
 
 import Foundation
 
-enum ConnectionType {
+enum ConnectionType: String, Codable {
     case secureInternet
     case instituteAccess
     
@@ -22,24 +22,29 @@ enum ConnectionType {
     }
 }
 
-struct Provider {
+struct Provider: Codable {
     let displayName: String
     let baseURL: URL
     let logoURL: URL
     let publicKey: String?
     let connectionType: ConnectionType
+    
+    var id: String {
+        return connectionType.rawValue + ":" + baseURL.absoluteString
+    }
 }
 
-struct ProviderInfo {
+struct ProviderInfo: Codable {
     let apiBaseURL: URL
     let authorizationURL: URL
     let tokenURL: URL
     let provider: Provider
 }
 
-struct Profile {
+struct Profile: Codable {
     let profileId: String
     let displayName: String
     let twoFactor: Bool
     let info: ProviderInfo
 }
+

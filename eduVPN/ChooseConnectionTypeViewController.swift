@@ -13,6 +13,8 @@ class ChooseConnectionTypeViewController: NSViewController {
     @IBOutlet var secureInternetButton: NSButton!
     @IBOutlet var instituteAccessButton: NSButton!
     
+    var allowClose: Bool = true
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do view setup here.

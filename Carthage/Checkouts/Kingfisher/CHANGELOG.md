@@ -2,6 +2,20 @@
 
 -----
 
+## [4.2.0 - A Tale of Two Caches](https://github.com/onevcat/Kingfisher/releases/tag/4.2.0) (2017-10-22)
+
+#### Add
+* An option to provice a specific cache for original image. This gives us a change to caching original iamges on a different cache. [#794](https://github.com/onevcat/Kingfisher/pull/794)
+
+---
+
+## [4.1.1 - Love Barrier Again](https://github.com/onevcat/Kingfisher/releases/tag/4.1.1) (2017-10-17)
+
+#### Fix
+* A potential race condition in `ImageDownloader`. [#763](https://github.com/onevcat/Kingfisher/issues/763)
+
+---
+
 ## [4.1.0 - Data in Hand](https://github.com/onevcat/Kingfisher/releases/tag/4.1.0) (2017-09-28)
 
 #### Add

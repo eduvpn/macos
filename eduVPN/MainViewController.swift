@@ -24,11 +24,24 @@ class MainViewController: NSViewController {
         view.wantsLayer = true
     }
     
-    func show(viewController: NSViewController, options: NSViewController.TransitionOptions = []) {
+    func show(viewController: NSViewController, options: NSViewController.TransitionOptions = [], animated: Bool = true) {
         let currentViewController = self.currentViewController
         addChildViewController(viewController)
-        transition(from: currentViewController, to: viewController, options: options) {
-            currentViewController.removeFromParentViewController()
+        
+        // Ensure the layer is available
+        currentViewController.view.superview?.wantsLayer = true
+        
+        if animated {
+            transition(from: currentViewController, to: viewController, options: options) {
+                currentViewController.removeFromParentViewController()
+            }
+        } else {
+            NSAnimationContext.runAnimationGroup({ (context) in
+                context.duration = 0
+                transition(from: currentViewController, to: viewController, options: options) {
+                    currentViewController.removeFromParentViewController()
+                }
+            }, completionHandler: nil)
         }
     }
     

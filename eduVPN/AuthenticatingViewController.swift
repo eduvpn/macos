@@ -15,6 +15,7 @@ class AuthenticatingViewController: NSViewController {
     @IBOutlet var backButton: NSButton!
 
     var info: ProviderInfo!
+    var profile: Profile? = nil
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -23,7 +24,11 @@ class AuthenticatingViewController: NSViewController {
             DispatchQueue.main.async {
                 switch result {
                 case .success(let authState):
-                    self.fetchProfiles(authState: authState)
+                    if let profile = self.profile {
+                        self.mainWindowController?.showConnection(for: profile, authState: authState)
+                    } else {
+                        self.fetchProfiles(authState: authState)
+                    }
                 case .failure(let error):
                     // User knows he cancelled, no alert needed
                     if (error as NSError).domain == "org.openid.appauth.general" && (error as NSError).code == -4 {
@@ -51,6 +56,8 @@ class AuthenticatingViewController: NSViewController {
                 switch result {
                 case .success(let profiles):
                     if profiles.count == 1 {
+                        let profile = profiles[0]
+                        ServiceContainer.providerService.storeProfile(profile: profile)
                         self.mainWindowController?.showConnection(for: profiles[0], authState: authState)
                     } else {
                         // Choose profile

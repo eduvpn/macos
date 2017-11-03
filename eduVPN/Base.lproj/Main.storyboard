@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="13196" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="13529" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="13196"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="13529"/>
         <capability name="box content view" minToolsVersion="7.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -709,7 +709,7 @@
         <scene sceneID="R2V-B0-nI4">
             <objects>
                 <windowController storyboardIdentifier="MainWindowController" showSeguePresentationStyle="single" id="B8D-0N-5wS" customClass="MainWindowController" customModule="eduVPN" customModuleProvider="target" sceneMemberID="viewController">
-                    <window key="window" title="eduVPN" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" frameAutosaveName="Main" animationBehavior="default" id="IQv-IB-iLA">
+                    <window key="window" title="eduVPN" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" frameAutosaveName="Main" animationBehavior="default" tabbingMode="disallowed" titlebarAppearsTransparent="YES" id="IQv-IB-iLA" customClass="MainWindow" customModule="eduVPN">
                         <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES"/>
                         <rect key="contentRect" x="684" y="489" width="378" height="575"/>
                         <rect key="screenRect" x="0.0" y="0.0" width="1680" height="1027"/>
@@ -738,7 +738,7 @@
         <!--Main View Controller-->
         <scene sceneID="pls-UA-ly7">
             <objects>
-                <viewController id="khn-a8-CTC" customClass="MainViewController" customModule="eduVPN" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="MainViewController" id="khn-a8-CTC" customClass="MainViewController" customModule="eduVPN" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="8OX-OJ-cMR">
                         <rect key="frame" x="0.0" y="0.0" width="378" height="575"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -747,7 +747,7 @@
                                 <rect key="frame" x="0.0" y="0.0" width="378" height="575"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <connections>
-                                    <segue destination="d3v-OK-Unm" kind="embed" id="c9H-rY-aJM"/>
+                                    <segue destination="d3v-OK-Unm" kind="embed" id="2u7-wx-JfW"/>
                                 </connections>
                             </containerView>
                         </subviews>
@@ -764,7 +764,7 @@
         <scene sceneID="jUN-uA-o3q">
             <objects>
                 <windowController showSeguePresentationStyle="single" id="QBP-pf-Gdt" sceneMemberID="viewController">
-                    <window key="window" title="Preferences" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" frameAutosaveName="" animationBehavior="default" tabbingMode="disallowed" id="g8w-C1-RJw">
+                    <window key="window" title="Preferences" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" frameAutosaveName="" animationBehavior="default" tabbingMode="disallowed" id="g8w-C1-RJw" customClass="MainWindow">
                         <windowStyleMask key="styleMask" titled="YES" closable="YES"/>
                         <windowCollectionBehavior key="collectionBehavior" fullScreenNone="YES"/>
                         <rect key="contentRect" x="-159" y="1614" width="480" height="332"/>
@@ -1487,7 +1487,7 @@ example when using public WiFi</string>
         <!--Providers View Controller-->
         <scene sceneID="4WM-oH-o6s">
             <objects>
-                <viewController storyboardIdentifier="ChooseProvider" id="d3v-OK-Unm" customClass="ProvidersViewController" customModule="eduVPN" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="Providers" id="d3v-OK-Unm" customClass="ProvidersViewController" customModule="eduVPN" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" wantsLayer="YES" id="mHf-nK-qZy">
                         <rect key="frame" x="0.0" y="0.0" width="378" height="575"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -1520,7 +1520,7 @@ example when using public WiFi</string>
                                                     </textFieldCell>
                                                     <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                     <prototypeCellViews>
-                                                        <tableCellView identifier="ProviderCell" id="KXq-3O-xyc">
+                                                        <tableCellView identifier="ProfileCell" id="KXq-3O-xyc">
                                                             <rect key="frame" x="1" y="1" width="335" height="44"/>
                                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                             <subviews>
@@ -1544,7 +1544,7 @@ example when using public WiFi</string>
                                                                 <outlet property="textField" destination="KOt-Dl-T81" id="geB-D3-015"/>
                                                             </connections>
                                                         </tableCellView>
-                                                        <tableCellView identifier="HeaderCell" id="G9A-1B-QFt">
+                                                        <tableCellView identifier="SectionCell" id="G9A-1B-QFt">
                                                             <rect key="frame" x="1" y="47" width="335" height="44"/>
                                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                             <subviews>
