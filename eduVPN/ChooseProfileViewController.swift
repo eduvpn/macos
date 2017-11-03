@@ -59,7 +59,7 @@ extension ChooseProfileViewController: NSTableViewDelegate {
         
         let profile = profiles[tableView.selectedRow]
         ServiceContainer.providerService.storeProfile(profile: profile)
-        mainWindowController?.showConnection(for: profile, authState: authState)
+        mainWindowController?.dismiss()
     }
     
 }

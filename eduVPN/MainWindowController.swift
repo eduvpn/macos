@@ -107,6 +107,15 @@ class MainWindowController: NSWindowController {
         push(viewController: chooseProviderViewController, animated: animated)
     }
     
+    /// Prompts user to enter URL for a provider
+    ///
+    /// - Parameters:
+    ///   - animated: Wether to show with animation
+    func showEnterProviderURL(animated: Bool = true) {
+        let enterProviderURLViewController = storyboard!.instantiateController(withIdentifier: NSStoryboard.SceneIdentifier(rawValue: "EnterProviderURL")) as! EnterProviderURLViewController
+        push(viewController: enterProviderURLViewController, animated: animated)
+    }
+    
     /// Prompts user to authenticate with provider
     ///
     /// - Parameters:

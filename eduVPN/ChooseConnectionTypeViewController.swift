@@ -12,6 +12,8 @@ class ChooseConnectionTypeViewController: NSViewController {
 
     @IBOutlet var secureInternetButton: NSButton!
     @IBOutlet var instituteAccessButton: NSButton!
+    @IBOutlet var closeButton: NSButton!
+    @IBOutlet var enterProviderButton: NSButton!
     
     var allowClose: Bool = true
     
@@ -19,6 +21,13 @@ class ChooseConnectionTypeViewController: NSViewController {
         super.viewDidLoad()
         // Do view setup here.
         view.layer?.backgroundColor = NSColor.white.cgColor
+        closeButton.isHidden = !allowClose
+        
+        // Change title color
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.alignment = .center
+        let attributes = [NSAttributedStringKey.font: NSFont.systemFont(ofSize: 17), NSAttributedStringKey.foregroundColor : NSColor.white, NSAttributedStringKey.paragraphStyle : paragraphStyle]
+        enterProviderButton.attributedTitle = NSAttributedString(string: enterProviderButton.title, attributes: attributes)
     }
     
     override func viewWillAppear() {
@@ -33,6 +42,14 @@ class ChooseConnectionTypeViewController: NSViewController {
    
     @IBAction func chooseInstituteAccess(_ sender: Any) {
         discoverProviders(connectionType: .instituteAccess)
+    }
+    
+    @IBAction func close(_ sender: Any) {
+        mainWindowController?.dismiss()
+    }
+    
+    @IBAction func enterProviderURL(_ sender: Any) {
+        mainWindowController?.showEnterProviderURL()
     }
     
     private func discoverProviders(connectionType: ConnectionType) {

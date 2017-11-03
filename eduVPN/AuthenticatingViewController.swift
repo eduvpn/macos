@@ -58,7 +58,7 @@ class AuthenticatingViewController: NSViewController {
                     if profiles.count == 1 {
                         let profile = profiles[0]
                         ServiceContainer.providerService.storeProfile(profile: profile)
-                        self.mainWindowController?.showConnection(for: profiles[0], authState: authState)
+                        self.mainWindowController?.dismiss()
                     } else {
                         // Choose profile
                         self.mainWindowController?.showChooseProfile(from: profiles, authState: authState)

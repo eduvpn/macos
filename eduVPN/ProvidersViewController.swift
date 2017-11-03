@@ -42,15 +42,19 @@ class ProvidersViewController: NSViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do view setup here.
         
-        profiles = ServiceContainer.providerService.storedProfiles
-        
+        // Change title color
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.alignment = .center
+        let attributes = [NSAttributedStringKey.font: NSFont.systemFont(ofSize: 17), NSAttributedStringKey.foregroundColor : NSColor.white, NSAttributedStringKey.paragraphStyle : paragraphStyle]
+        otherProviderButton.attributedTitle = NSAttributedString(string: otherProviderButton.title, attributes: attributes)
     }
     
     override func viewWillAppear() {
         super.viewWillAppear()
     
+        profiles = ServiceContainer.providerService.storedProfiles
+        tableView.reloadData()
     }
     
     override func viewDidAppear() {
@@ -92,8 +96,19 @@ extension ProvidersViewController: NSTableViewDelegate {
             return result
         case .profile(let profile):
             let result = tableView.makeView(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: "ProfileCell"), owner: self) as? NSTableCellView
+            result?.imageView?.kf.setImage(with: profile.info.provider.logoURL)
             result?.textField?.stringValue = profile.displayName
             return result
+        }
+    }
+    
+    func tableView(_ tableView: NSTableView, shouldSelectRow row: Int) -> Bool {
+        let tableRow = rows[row]
+        switch tableRow {
+        case .section:
+            return false
+        case .profile:
+            return true
         }
     }
     

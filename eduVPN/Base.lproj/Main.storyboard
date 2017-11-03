@@ -703,7 +703,7 @@
                     </items>
                 </menu>
             </objects>
-            <point key="canvasLocation" x="160" y="-60"/>
+            <point key="canvasLocation" x="119" y="-407"/>
         </scene>
         <!--Window Controller-->
         <scene sceneID="R2V-B0-nI4">
@@ -758,13 +758,13 @@
                 </viewController>
                 <customObject id="wTw-Oj-Nrh" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="34" y="307.5"/>
+            <point key="canvasLocation" x="34" y="335"/>
         </scene>
         <!--Window Controller-->
         <scene sceneID="jUN-uA-o3q">
             <objects>
                 <windowController showSeguePresentationStyle="single" id="QBP-pf-Gdt" sceneMemberID="viewController">
-                    <window key="window" title="Preferences" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" frameAutosaveName="" animationBehavior="default" tabbingMode="disallowed" id="g8w-C1-RJw" customClass="MainWindow">
+                    <window key="window" title="Preferences" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" frameAutosaveName="" animationBehavior="default" tabbingMode="disallowed" id="g8w-C1-RJw" customClass="MainWindow" customModule="eduVPN" customModuleProvider="target">
                         <windowStyleMask key="styleMask" titled="YES" closable="YES"/>
                         <windowCollectionBehavior key="collectionBehavior" fullScreenNone="YES"/>
                         <rect key="contentRect" x="-159" y="1614" width="480" height="332"/>
@@ -783,7 +783,7 @@
                 </windowController>
                 <customObject id="cnA-fZ-F5y" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="902" y="-45"/>
+            <point key="canvasLocation" x="820" y="-276"/>
         </scene>
         <!--Preferences-->
         <scene sceneID="xfC-iv-REz">
@@ -823,6 +823,9 @@
                                     <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                     <font key="font" metaFont="system"/>
                                 </buttonCell>
+                                <connections>
+                                    <binding destination="cF9-Lp-W07" name="value" keyPath="values.launchAtLogin" id="0vd-dx-N5m"/>
+                                </connections>
                             </button>
                             <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="RPB-k0-psB">
                                 <rect key="frame" x="18" y="270" width="105" height="18"/>
@@ -934,7 +937,7 @@
                 </arrayController>
                 <userDefaultsController representsSharedInstance="YES" id="cF9-Lp-W07"/>
             </objects>
-            <point key="canvasLocation" x="1517" y="-21"/>
+            <point key="canvasLocation" x="1431" y="-282"/>
         </scene>
         <!--Choose Provider View Controller-->
         <scene sceneID="hIz-AP-VOD">
@@ -1060,7 +1063,7 @@
                                 <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
                             </progressIndicator>
                             <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="d88-Wj-8lc">
-                                <rect key="frame" x="40" y="505" width="30" height="30"/>
+                                <rect key="frame" x="39" y="505" width="30" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <buttonCell key="cell" type="smallSquare" bezelStyle="smallSquare" image="Back" imagePosition="only" alignment="center" imageScaling="proportionallyDown" inset="2" id="gKU-S5-YFX">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -1088,7 +1091,7 @@
                 </viewController>
                 <customObject id="X9Y-Wh-iul" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="497" y="1046.5"/>
+            <point key="canvasLocation" x="969" y="335"/>
         </scene>
         <!--Connection View Controller-->
         <scene sceneID="rmV-Wn-uOa">
@@ -1108,7 +1111,7 @@
                         </userGuides>
                         <subviews>
                             <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="6bp-mx-zdF">
-                                <rect key="frame" x="40" y="505" width="30" height="30"/>
+                                <rect key="frame" x="39" y="505" width="30" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <buttonCell key="cell" type="smallSquare" bezelStyle="smallSquare" image="Back" imagePosition="only" alignment="center" imageScaling="proportionallyDown" inset="2" id="9uP-xv-3y9">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -1330,7 +1333,7 @@
                     </connections>
                 </objectController>
             </objects>
-            <point key="canvasLocation" x="1441" y="1046.5"/>
+            <point key="canvasLocation" x="1403" y="335"/>
         </scene>
         <!--Choose Connection Type View Controller-->
         <scene sceneID="R5C-VG-0tb">
@@ -1369,9 +1372,33 @@ example when using public WiFi</string>
                                     <action selector="chooseSecureInternet:" target="Lns-jv-Aqp" id="ZTE-Mp-NeD"/>
                                 </connections>
                             </button>
+                            <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Dgk-N8-JjD">
+                                <rect key="frame" x="50" y="495" width="30" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <buttonCell key="cell" type="smallSquare" bezelStyle="smallSquare" image="Back" imagePosition="only" alignment="center" imageScaling="proportionallyDown" inset="2" id="xAl-Qa-KkI">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="close:" target="Lns-jv-Aqp" id="8Kn-FN-skb"/>
+                                </connections>
+                            </button>
+                            <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Qcy-zA-XYg">
+                                <rect key="frame" x="84" y="20" width="210" height="44"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <buttonCell key="cell" type="smallSquare" title="Use Custom URI" bezelStyle="smallSquare" image="Button" imagePosition="overlaps" alignment="center" imageScaling="proportionallyDown" inset="2" id="Pyt-hE-lLA">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system" size="17"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="enterProviderURL:" target="Lns-jv-Aqp" id="bfK-7J-Uyf"/>
+                                </connections>
+                            </button>
                         </subviews>
                     </view>
                     <connections>
+                        <outlet property="closeButton" destination="Dgk-N8-JjD" id="rVC-P5-Q9O"/>
+                        <outlet property="enterProviderButton" destination="Qcy-zA-XYg" id="dyw-oR-xzP"/>
                         <outlet property="instituteAccessButton" destination="bVa-Ah-Opn" id="JJq-Gf-81o"/>
                         <outlet property="secureInternetButton" destination="2PS-WV-Mnd" id="iza-mD-rNn"/>
                     </connections>
@@ -1482,7 +1509,7 @@ example when using public WiFi</string>
                 </viewController>
                 <customObject id="s0N-bc-PRr" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="969" y="1046.5"/>
+            <point key="canvasLocation" x="520" y="1047"/>
         </scene>
         <!--Providers View Controller-->
         <scene sceneID="4WM-oH-o6s">
@@ -1493,14 +1520,14 @@ example when using public WiFi</string>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <scrollView fixedFrame="YES" borderType="none" autohidesScrollers="YES" horizontalLineScroll="46" horizontalPageScroll="10" verticalLineScroll="46" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Iks-vv-acs">
-                                <rect key="frame" x="20" y="20" width="338" height="445"/>
+                                <rect key="frame" x="20" y="97" width="338" height="368"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <clipView key="contentView" ambiguous="YES" drawsBackground="NO" id="AY8-7W-WOh">
-                                    <rect key="frame" x="0.0" y="0.0" width="338" height="445"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="338" height="368"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnReordering="NO" columnResizing="NO" multipleSelection="NO" autosaveColumns="NO" rowHeight="44" viewBased="YES" id="GYp-9D-CGo">
-                                            <rect key="frame" x="0.0" y="0.0" width="338" height="445"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="338" height="368"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <size key="intercellSpacing" width="3" height="2"/>
                                             <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -1520,8 +1547,32 @@ example when using public WiFi</string>
                                                     </textFieldCell>
                                                     <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                     <prototypeCellViews>
-                                                        <tableCellView identifier="ProfileCell" id="KXq-3O-xyc">
+                                                        <tableCellView identifier="SectionCell" id="G9A-1B-QFt">
                                                             <rect key="frame" x="1" y="1" width="335" height="44"/>
+                                                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                            <subviews>
+                                                                <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="uQK-Th-8W6">
+                                                                    <rect key="frame" x="3" y="0.0" width="44" height="44"/>
+                                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                                    <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" id="Qo6-AI-y4p"/>
+                                                                </imageView>
+                                                                <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" allowsExpansionToolTips="YES" translatesAutoresizingMaskIntoConstraints="NO" id="k7N-48-BwA">
+                                                                    <rect key="frame" x="49" y="11" width="275" height="21"/>
+                                                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
+                                                                    <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="Table View Cell" id="2jL-Vy-gnJ">
+                                                                        <font key="font" metaFont="systemBold" size="17"/>
+                                                                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                                                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                                                    </textFieldCell>
+                                                                </textField>
+                                                            </subviews>
+                                                            <connections>
+                                                                <outlet property="imageView" destination="uQK-Th-8W6" id="RiJ-Sw-YI6"/>
+                                                                <outlet property="textField" destination="k7N-48-BwA" id="Ynx-Hs-aHz"/>
+                                                            </connections>
+                                                        </tableCellView>
+                                                        <tableCellView identifier="ProfileCell" id="KXq-3O-xyc">
+                                                            <rect key="frame" x="1" y="47" width="335" height="44"/>
                                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                             <subviews>
                                                                 <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="vsi-LX-g12">
@@ -1542,30 +1593,6 @@ example when using public WiFi</string>
                                                             <connections>
                                                                 <outlet property="imageView" destination="vsi-LX-g12" id="TQM-Bo-2dp"/>
                                                                 <outlet property="textField" destination="KOt-Dl-T81" id="geB-D3-015"/>
-                                                            </connections>
-                                                        </tableCellView>
-                                                        <tableCellView identifier="SectionCell" id="G9A-1B-QFt">
-                                                            <rect key="frame" x="1" y="47" width="335" height="44"/>
-                                                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                                            <subviews>
-                                                                <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="uQK-Th-8W6">
-                                                                    <rect key="frame" x="3" y="0.0" width="44" height="44"/>
-                                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                                                    <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="NSActionTemplate" id="Qo6-AI-y4p"/>
-                                                                </imageView>
-                                                                <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" allowsExpansionToolTips="YES" translatesAutoresizingMaskIntoConstraints="NO" id="k7N-48-BwA">
-                                                                    <rect key="frame" x="49" y="11" width="275" height="21"/>
-                                                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
-                                                                    <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="Table View Cell" id="2jL-Vy-gnJ">
-                                                                        <font key="font" metaFont="systemBold" size="17"/>
-                                                                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                                                                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                                                    </textFieldCell>
-                                                                </textField>
-                                                            </subviews>
-                                                            <connections>
-                                                                <outlet property="imageView" destination="uQK-Th-8W6" id="RiJ-Sw-YI6"/>
-                                                                <outlet property="textField" destination="k7N-48-BwA" id="Ynx-Hs-aHz"/>
                                                             </connections>
                                                         </tableCellView>
                                                     </prototypeCellViews>
@@ -1597,15 +1624,86 @@ example when using public WiFi</string>
                                     <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
+                            <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="bTk-Dk-EYg">
+                                <rect key="frame" x="84" y="20" width="210" height="44"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <buttonCell key="cell" type="smallSquare" title="Add Provider" bezelStyle="smallSquare" image="Button" imagePosition="overlaps" alignment="center" imageScaling="proportionallyDown" inset="2" id="edN-2T-PQc">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system" size="17"/>
+                                    <connections>
+                                        <action selector="addOtherProvider:" target="d3v-OK-Unm" id="EcF-Cc-zeU"/>
+                                    </connections>
+                                </buttonCell>
+                            </button>
                         </subviews>
                     </view>
                     <connections>
+                        <outlet property="otherProviderButton" destination="bTk-Dk-EYg" id="4fh-EO-PEZ"/>
                         <outlet property="tableView" destination="GYp-9D-CGo" id="oui-Bb-rmX"/>
                     </connections>
                 </viewController>
                 <customObject id="QRg-fU-WkS" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="520" y="394"/>
+            <point key="canvasLocation" x="520" y="334.5"/>
+        </scene>
+        <!--Enter Provider URL View Controller-->
+        <scene sceneID="D1l-yj-M3U">
+            <objects>
+                <viewController storyboardIdentifier="EnterProviderURL" id="JTX-Fe-25d" customClass="EnterProviderURLViewController" customModule="eduVPN" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" wantsLayer="YES" id="C5T-y0-cXd">
+                        <rect key="frame" x="0.0" y="0.0" width="378" height="575"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Fjg-kc-vUW">
+                                <rect key="frame" x="40" y="505" width="30" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <buttonCell key="cell" type="smallSquare" bezelStyle="smallSquare" image="Back" imagePosition="only" alignment="center" imageScaling="proportionallyDown" inset="2" id="hHa-h2-L5v">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="goBack:" target="JTX-Fe-25d" id="Hkz-Qj-bEZ"/>
+                                </connections>
+                            </button>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="VTz-eb-Hy5">
+                                <rect key="frame" x="147" y="509" width="85" height="21"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="Enter URL" id="8fW-yY-tNC">
+                                    <font key="font" metaFont="system" size="17"/>
+                                    <color key="textColor" red="0.3162727058" green="0.69435155390000003" blue="0.80810165410000001" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="BYj-0N-vL7">
+                                <rect key="frame" x="84" y="20" width="210" height="44"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <buttonCell key="cell" type="smallSquare" title="Done" bezelStyle="smallSquare" image="Button" imagePosition="overlaps" alignment="center" imageScaling="proportionallyDown" inset="2" id="o5J-9g-j5b">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system" size="17"/>
+                                    <connections>
+                                        <action selector="addOtherProvider:" target="d3v-OK-Unm" id="vdA-fU-wiX"/>
+                                    </connections>
+                                </buttonCell>
+                            </button>
+                            <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="AyI-7a-sGz">
+                                <rect key="frame" x="20" y="97" width="338" height="368"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                <textFieldCell key="cell" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="CpD-AF-Od5">
+                                    <font key="font" metaFont="system"/>
+                                    <string key="title">https://vpn.tuxed.net/vpn-user-portal/_oauth/authorize?response_type=code&amp;code_challenge_method=S256&amp;scope=config&amp;code_challenge=iZuDJElCFyxZJZG2bLQtR_MSySX_j1kbRnr-UgtePSs&amp;redirect_uri=http://127.0.0.1:49392/callback&amp;client_id=org.eduvpn.app&amp;state=vv6S4D9ITN_Z5S_57yMrGJ3I1vs9FvmPZPPH8ejojro</string>
+                                    <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                        </subviews>
+                    </view>
+                    <connections>
+                        <outlet property="backButton" destination="Fjg-kc-vUW" id="wTr-tx-ghb"/>
+                    </connections>
+                </viewController>
+                <customObject id="ivm-tg-6o0" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="34" y="1694"/>
         </scene>
     </scenes>
     <resources>
