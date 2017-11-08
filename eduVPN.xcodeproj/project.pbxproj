@@ -40,6 +40,7 @@
 		C7610D451F3AFBF400D6C063 /* Statistics.m in Sources */ = {isa = PBXBuildFile; fileRef = C7610D431F3AFBF400D6C063 /* Statistics.m */; };
 		C765819B1F063BC9003DEC92 /* ServiceContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = C765819A1F063BC9003DEC92 /* ServiceContainer.swift */; };
 		C765819D1F063C47003DEC92 /* ConnectionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C765819C1F063C47003DEC92 /* ConnectionService.swift */; };
+		C7A4E1221FACD09C00B21262 /* EnterProviderURLViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7A4E1211FACD09C00B21262 /* EnterProviderURLViewController.swift */; };
 		C7BEF5C91F03E0D80038605E /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7BEF5C81F03E0D80038605E /* AppDelegate.swift */; };
 		C7BEF5CD1F03E0D80038605E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C7BEF5CC1F03E0D80038605E /* Assets.xcassets */; };
 		C7BEF5D01F03E0D80038605E /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C7BEF5CE1F03E0D80038605E /* Main.storyboard */; };
@@ -52,6 +53,7 @@
 		C7D15FD21F0D166100719F38 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C72AD7031F0A6AEE006DBDA5 /* Security.framework */; };
 		C7D15FD41F0D166800719F38 /* ServiceManagement.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C7D15FD31F0D166800719F38 /* ServiceManagement.framework */; };
 		C7D15FD51F0D183600719F38 /* org.eduvpn.app.openvpnhelper in CopyFiles */ = {isa = PBXBuildFile; fileRef = C72AD6F31F0A692F006DBDA5 /* org.eduvpn.app.openvpnhelper */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		C7F345171F955473002120B9 /* ProvidersViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7F345161F955473002120B9 /* ProvidersViewController.swift */; };
 		C7FA902C1F0BC83E0037FF88 /* openvpn-2.4.4-openssl-1.0.2k in Resources */ = {isa = PBXBuildFile; fileRef = C7FA902B1F0BC83E0037FF88 /* openvpn-2.4.4-openssl-1.0.2k */; };
 		C7FA902E1F0BD1A60037FF88 /* Either.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7FA902D1F0BD1A60037FF88 /* Either.swift */; };
 /* End PBXBuildFile section */
@@ -160,7 +162,7 @@
 		C7610D431F3AFBF400D6C063 /* Statistics.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Statistics.m; sourceTree = "<group>"; };
 		C765819A1F063BC9003DEC92 /* ServiceContainer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceContainer.swift; sourceTree = "<group>"; };
 		C765819C1F063C47003DEC92 /* ConnectionService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = ConnectionService.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
-		C78B7E081F8E68F600961657 /* ReadMe.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = ReadMe.md; sourceTree = "<group>"; };
+		C7A4E1211FACD09C00B21262 /* EnterProviderURLViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = EnterProviderURLViewController.swift; path = eduVPN/EnterProviderURLViewController.swift; sourceTree = SOURCE_ROOT; };
 		C7BEF5C51F03E0D80038605E /* eduVPN.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = eduVPN.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C7BEF5C81F03E0D80038605E /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		C7BEF5CC1F03E0D80038605E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -173,6 +175,7 @@
 		C7BEF5DF1F03F4220038605E /* ConnectionViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConnectionViewController.swift; sourceTree = "<group>"; };
 		C7D15FD01F0D165900719F38 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		C7D15FD31F0D166800719F38 /* ServiceManagement.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ServiceManagement.framework; path = System/Library/Frameworks/ServiceManagement.framework; sourceTree = SDKROOT; };
+		C7F345161F955473002120B9 /* ProvidersViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ProvidersViewController.swift; path = eduVPN/ProvidersViewController.swift; sourceTree = SOURCE_ROOT; };
 		C7FA902B1F0BC83E0037FF88 /* openvpn-2.4.4-openssl-1.0.2k */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "openvpn-2.4.4-openssl-1.0.2k"; sourceTree = SOURCE_ROOT; };
 		C7FA902D1F0BD1A60037FF88 /* Either.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Either.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -264,7 +267,6 @@
 		C7BEF5BC1F03E0D70038605E = {
 			isa = PBXGroup;
 			children = (
-				C78B7E081F8E68F600961657 /* ReadMe.md */,
 				C7BEF5C71F03E0D80038605E /* eduVPN */,
 				C72AD6F41F0A692F006DBDA5 /* OpenVPNHelper */,
 				C75527E21F3C531B00076078 /* LoginItemHelper */,
@@ -301,7 +303,9 @@
 				C7BEF5C81F03E0D80038605E /* AppDelegate.swift */,
 				C7BEF5DB1F03F2CA0038605E /* MainWindowController.swift */,
 				C75527DB1F3B55B700076078 /* MainViewController.swift */,
+				C7F345161F955473002120B9 /* ProvidersViewController.swift */,
 				C71847C71F0E5E2800296C61 /* ChooseConnectionTypeViewController.swift */,
+				C7A4E1211FACD09C00B21262 /* EnterProviderURLViewController.swift */,
 				C7BEF5D71F03E4B50038605E /* ChooseProviderViewController.swift */,
 				C7BEF5DD1F03F4020038605E /* AuthenticatingViewController.swift */,
 				C732CEA31F0F720800698F28 /* ChooseProfileViewController.swift */,
@@ -509,6 +513,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C7A4E1221FACD09C00B21262 /* EnterProviderURLViewController.swift in Sources */,
 				C732CEA81F0F7B7600698F28 /* String+URL.swift in Sources */,
 				C7BEF5DA1F03E4FD0038605E /* Provider.swift in Sources */,
 				C71847C01F0E49F100296C61 /* HelperService.swift in Sources */,
@@ -528,6 +533,7 @@
 				C71912561F3C6942005409E0 /* PreferencesViewController.swift in Sources */,
 				C765819B1F063BC9003DEC92 /* ServiceContainer.swift in Sources */,
 				C75527DC1F3B55B700076078 /* MainViewController.swift in Sources */,
+				C7F345171F955473002120B9 /* ProvidersViewController.swift in Sources */,
 				C7BEF5DE1F03F4020038605E /* AuthenticatingViewController.swift in Sources */,
 				C7BEF5DC1F03F2CA0038605E /* MainWindowController.swift in Sources */,
 			);

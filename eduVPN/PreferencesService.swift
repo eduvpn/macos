@@ -12,28 +12,27 @@ import ServiceManagement
 class PreferencesService: NSObject {
     
     override init() {
+        launchAtLogin = PreferencesService.launchAtLogin(bundle: PreferencesService.loginHelperBundle)
+        UserDefaults.standard.set(launchAtLogin, forKey: "launchAtLogin")
         super.init()
+        UserDefaults.standard.addObserver(self, forKeyPath: "launchAtLogin", options: .new, context: nil)
         UserDefaults.standard.addObserver(self, forKeyPath: "showInDock", options: .new, context: nil)
         UserDefaults.standard.addObserver(self, forKeyPath: "showInStatusBar", options: .new, context: nil)
     }
     
     var launchAtLogin: Bool {
-        get {
-            return launchAtLogin(bundle: loginHelperBundle)
-        }
-        
-        set {
-            setLaunchAtLogin(bundle: loginHelperBundle, enabled: newValue)
+        didSet {
+            setLaunchAtLogin(bundle: PreferencesService.loginHelperBundle, enabled: launchAtLogin)
         }
     }
     
-    private var loginHelperBundle: Bundle {
+    private static var loginHelperBundle: Bundle {
         let mainBundle = Bundle.main
         let bundlePath = (mainBundle.bundlePath as NSString).appendingPathComponent("Contents/Library/LoginItems/LoginItemHelper.app")
         return Bundle(path: bundlePath)!
     }
     
-    private func launchAtLogin(bundle: Bundle) -> Bool {
+    private static func launchAtLogin(bundle: Bundle) -> Bool {
         // From the docs regarding deprecation:
         // For the specific use of testing the state of a login item that may have been
         // enabled with SMLoginItemSetEnabled() in order to show that state to the
@@ -61,8 +60,11 @@ class PreferencesService: NSObject {
     }
 
     func updateForUIPreferences() {
+        let launchAtLogin = UserDefaults.standard.bool(forKey: "launchAtLogin")
         var showInDock = UserDefaults.standard.bool(forKey: "showInDock")
         let showInStatusBar = UserDefaults.standard.bool(forKey: "showInStatusBar")
+        
+        self.launchAtLogin = launchAtLogin
         
         // We should always be visible somewhere
         if !showInDock && !showInStatusBar {

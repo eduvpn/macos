@@ -16,6 +16,7 @@ class ProviderService {
     enum Error: Swift.Error, LocalizedError {
         case unknown
         case invalidProvider
+        case invalidProviderURL
         case noProviders
         case invalidProviders
         case invalidProviderInfo
@@ -30,6 +31,8 @@ class ProviderService {
                 return NSLocalizedString("Discovering providers failed for unknown reason", comment: "")
             case .invalidProvider:
                 return NSLocalizedString("Invalid provider", comment: "")
+            case .invalidProviderURL:
+                return NSLocalizedString("Invalid provider URL", comment: "")
             case .noProviders:
                 return NSLocalizedString("No providers were discovered", comment: "")
             case .invalidProviders:
@@ -48,7 +51,83 @@ class ProviderService {
         }
         
         var recoverySuggestion: String? {
-            return NSLocalizedString("Try again later.", comment: "")
+            switch self {
+            case .invalidProviderURL:
+                return NSLocalizedString("Verify URL.", comment: "")
+            default:
+                return NSLocalizedString("Try again later.", comment: "")
+            }
+        }
+    }
+    
+    init() {
+        readFromDisk()
+    }
+    
+    /// Profiles
+    private(set) var storedProfiles: [ConnectionType: [Profile]] = [:]
+    
+    /// Stores profile and saves it to disk
+    ///
+    /// - Parameter profile: profile
+    func storeProfile(profile: Profile) {
+        let connectionType = profile.info.provider.connectionType
+        var profiles = storedProfiles[connectionType] ?? []
+        profiles.append(profile)
+        storedProfiles[connectionType] = profiles
+        saveToDisk()
+    }
+    
+    /// Removes profile and saves to disk
+    ///
+    /// - Parameter profile: profile
+    func deleteProfile(profile: Profile) {
+        let connectionType = profile.info.provider.connectionType
+        var profiles = storedProfiles[connectionType] ?? []
+        let index = profiles.index(where: { (otherProfile) -> Bool in
+            return otherProfile.profileId == profile.profileId
+        })
+        if let index = index {
+            profiles.remove(at: index)
+            storedProfiles[connectionType] = profiles
+            saveToDisk()
+        }
+    }
+    
+    /// URL for saving profiles to disk
+    ///
+    /// - Returns: URL
+    /// - Throws: Error finding or creating directory
+    private func storedProfilesFileURL() throws -> URL  {
+        var applicationSupportDirectory = try FileManager.default.url(for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
+        applicationSupportDirectory.appendPathComponent("eduVPN")
+        try FileManager.default.createDirectory(at: applicationSupportDirectory, withIntermediateDirectories: true, attributes: nil)
+        applicationSupportDirectory.appendPathComponent("Profiles.plist")
+        return applicationSupportDirectory
+    }
+    
+    /// Reads profiles from disk
+    private func readFromDisk() {
+        let decoder = PropertyListDecoder()
+        do {
+            let url = try storedProfilesFileURL()
+            let data = try Data(contentsOf: url)
+            let restoredProfiles = try decoder.decode([ConnectionType: [Profile]].self, from: data)
+            storedProfiles = restoredProfiles
+        } catch (let error) {
+            NSLog("Failed to read stored profiles from disk at \(url): \(error)")
+        }
+    }
+    
+    /// Saves profiles to disk
+    private func saveToDisk() {
+        let encoder = PropertyListEncoder()
+        do {
+            let data = try encoder.encode(storedProfiles)
+            let url = try storedProfilesFileURL()
+            try data.write(to: url, options: .atomic)
+        } catch (let error) {
+            NSLog("Failed to write stored profiles to disk at \(url): \(error)")
         }
     }
     
@@ -68,6 +147,8 @@ class ProviderService {
             path = "institute_access"
         case (.instituteAccess, true):
             path = "institute_access_dev"
+        case (.custom, _):
+            fatalError("Can't discover custom providers")
         }
         return URL(string: path + ".json", relativeTo: URL(string: "https://static.eduvpn.nl/disco/")!)!
     }
@@ -88,6 +169,8 @@ class ProviderService {
             path = "institute_access"
         case (.instituteAccess, true):
             path = "institute_access_dev"
+        case (.custom, _):
+            fatalError("Can't discover custom provider signatures")
         }
         return URL(string: path + ".json.sig", relativeTo: URL(string: "https://static.eduvpn.nl/disco/")!)!
     }
@@ -214,7 +297,12 @@ class ProviderService {
         let request = URLRequest(url:url)
         let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
             guard let data = data, let response = response as? HTTPURLResponse, 200..<300 ~= response.statusCode else {
-                handler(.failure(error ?? Error.unknown))
+                switch provider.connectionType {
+                case .secureInternet, .instituteAccess:
+                    handler(.failure(error ?? Error.unknown))
+                case .custom:
+                    handler(.failure(error ?? Error.invalidProviderURL))
+                }
                 return
             }
             do {
@@ -249,7 +337,7 @@ class ProviderService {
     ///
     /// - Parameters:
     ///   - info: Provider info
-    ///   - authState: Authencation token
+    ///   - authState: Authentication token
     ///   - handler: Profiles or error
     func fetchProfiles(for info: ProviderInfo, authState: OIDAuthState, handler: @escaping (Result<[Profile]>) -> ()) {
         guard let url = URL(string: "profile_list", relativeTo: info.apiBaseURL) else {

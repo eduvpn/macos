@@ -1,3 +1,3 @@
-github "jedisct1/swift-sodium" "197b16a2d43a8eb2219660c724e3574a905db162"
-github "onevcat/Kingfisher" "e9d4a44afbc1c45e043959f3524a6330ab2260c3"
-github "openid/AppAuth-iOS" "f21eaa3c774236839f3d2e20d802334a9a85e342"
+github "jedisct1/swift-sodium" "9b1f104ad8313618e5f9c33474faf159af0897c0"
+github "onevcat/Kingfisher" "c69e103635caa82238fcb1dbc75bcf94c21cf3cd"
+github "openid/AppAuth-iOS" "83e58f0fcc78ef3820cd276d7ca70ea9f7f2df28"
