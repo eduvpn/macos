@@ -27,11 +27,35 @@ class ConnectionService: NSObject {
     /// - connected: Service is connected
     /// - disconnecting: Service is attempting to disconnect
     /// - disconnected: Service is disconnected
-    enum State {
+    enum State: Equatable {
         case connecting
-        case connected
+        case connected(configURL: URL)
         case disconnecting
         case disconnected
+        
+        static func ==(lhs: ConnectionService.State, rhs: ConnectionService.State) -> Bool {
+            switch (lhs, rhs) {
+            case (.connecting, .connecting):
+                return true
+            case (.connected(let lhsConfigUrl), .connected(let rhsConfigUrl)):
+                return lhsConfigUrl == rhsConfigUrl
+            case (.disconnecting, .disconnecting):
+                return true
+            case (.disconnected, .disconnected):
+                return true
+            default:
+                return false
+            }
+        }
+        
+        /// Convenience property needed to handle associated value
+        var isConnected: Bool {
+            if case .connected = self {
+                return true
+            } else {
+                return false
+            }
+        }
     }
     
     enum Error: Swift.Error, LocalizedError {
@@ -145,7 +169,7 @@ class ConnectionService: NSObject {
         
         helper.startOpenVPN(at: openvpnURL, withConfig: configURL) { (success) in
             if success {
-                self.state = .connected
+                self.state = .connected(configURL: configURL)
                 handler(.success(Void()))
             } else {
                 self.state = .disconnected
@@ -172,11 +196,12 @@ class ConnectionService: NSObject {
     ///
     /// - Parameter handler: Success or error
     func disconnect(_ handler: @escaping (Result<Void>) -> ()) {
-        assert(state == .connected)
+        let oldState = state
+        assert(state.isConnected)
         state = .disconnecting
         
         guard let helper = helperService.connection?.remoteObjectProxy as? OpenVPNHelperProtocol else {
-            self.state = .connected
+            self.state = oldState
             handler(.failure(Error.noHelperConnection))
             return
         }

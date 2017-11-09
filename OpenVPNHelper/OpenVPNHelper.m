@@ -88,9 +88,10 @@
     
     NSTask *task = [[NSTask alloc] init];
     task.launchPath = launchURL.path;
+    NSString *logFilePath = [config.path stringByAppendingString:@".log"];
     NSString *statisticsPath = [config.path stringByAppendingString:@".status"];
     task.arguments = @[@"--config", config.path,
-                       @"--log", [config.path stringByAppendingString:@".log"],
+                       @"--log", logFilePath,
                        @"--status", statisticsPath, @"1"];
     [task setTerminationHandler:^(NSTask *task){
         [self.remoteObject taskTerminatedWithReply:^{
@@ -98,6 +99,12 @@
         }];
     }];
     [task launch];
+    
+    // Make log file readable
+    NSError *error;
+    if (![[NSFileManager defaultManager] setAttributes:@{NSFilePosixPermissions: [NSNumber numberWithShort:0644]} ofItemAtPath:logFilePath error:&error]) {
+        NSLog(@"Error making log file %@ readable (chmod 644): %@", logFilePath, error);
+    }
     
     self.openVPNTask = task;
     self.startDate = [NSDate date];

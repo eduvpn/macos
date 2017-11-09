@@ -1111,7 +1111,7 @@ CA
                             <userLayoutGuide location="358" affinity="minX"/>
                             <userLayoutGuide location="141" affinity="minX"/>
                             <userLayoutGuide location="119" affinity="minX"/>
-                            <userLayoutGuide location="260" affinity="minX"/>
+                            <userLayoutGuide location="258" affinity="minX"/>
                             <userLayoutGuide location="240" affinity="minX"/>
                             <userLayoutGuide location="179" affinity="minX"/>
                         </userGuides>
@@ -1279,11 +1279,14 @@ CA
                                         <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Yjd-E0-Eam">
                                             <rect key="frame" x="189" y="70" width="97" height="19"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                            <buttonCell key="cell" type="roundRect" title="View Log" bezelStyle="roundedRect" alignment="center" enabled="NO" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="hfa-Gc-j1c">
+                                            <buttonCell key="cell" type="roundRect" title="View Log" bezelStyle="roundedRect" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="hfa-Gc-j1c">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                 <font key="font" metaFont="cellTitle"/>
                                                 <string key="keyEquivalent">l</string>
                                             </buttonCell>
+                                            <connections>
+                                                <action selector="viewLog:" target="f5D-Eq-JOa" id="E3A-pV-7Ls"/>
+                                            </connections>
                                         </button>
                                     </subviews>
                                 </view>

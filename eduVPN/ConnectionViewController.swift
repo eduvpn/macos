@@ -180,6 +180,13 @@ class ConnectionViewController: NSViewController {
         disconnect()
     }
     
+    @objc @IBAction func viewLog(_ sender: Any) {
+        guard case .connected(let configURL) = ServiceContainer.connectionService.state else {
+            return
+        }
+        NSWorkspace.shared.open(configURL.appendingPathExtension("log"))
+    }
+    
     @IBAction func goBack(_ sender: Any) {
         assert(ServiceContainer.connectionService.state == .disconnected)
         mainWindowController?.popToRoot()
