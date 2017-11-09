@@ -29,39 +29,16 @@ class ConnectionService: NSObject {
     /// - disconnected: Service is disconnected
     enum State: Equatable {
         case connecting
-        case connected(configURL: URL)
+        case connected
         case disconnecting
         case disconnected
-        
-        static func ==(lhs: ConnectionService.State, rhs: ConnectionService.State) -> Bool {
-            switch (lhs, rhs) {
-            case (.connecting, .connecting):
-                return true
-            case (.connected(let lhsConfigUrl), .connected(let rhsConfigUrl)):
-                return lhsConfigUrl == rhsConfigUrl
-            case (.disconnecting, .disconnecting):
-                return true
-            case (.disconnected, .disconnected):
-                return true
-            default:
-                return false
-            }
-        }
-        
-        /// Convenience property needed to handle associated value
-        var isConnected: Bool {
-            if case .connected = self {
-                return true
-            } else {
-                return false
-            }
-        }
     }
     
     enum Error: Swift.Error, LocalizedError {
         case noHelperConnection
         case helperRejected
         case statisticsUnavailable
+        case unexpectedState
         
         var errorDescription: String? {
             switch self {
@@ -71,6 +48,8 @@ class ConnectionService: NSObject {
                 return NSLocalizedString("Helper rejected request", comment: "")
             case .statisticsUnavailable:
                 return NSLocalizedString("No connection statistics available", comment: "")
+            case .unexpectedState:
+                return NSLocalizedString("Connection in unexpected state", comment: "")
             }
         }
 
@@ -82,6 +61,8 @@ class ConnectionService: NSObject {
                 return NSLocalizedString("Try reinstalling eduVPN.", comment: "")
             case .statisticsUnavailable:
                 return NSLocalizedString("Try again later.", comment: "")
+            case .unexpectedState:
+                return NSLocalizedString("Try again.", comment: "")
             }
         }
     }
@@ -110,7 +91,10 @@ class ConnectionService: NSObject {
     ///   - authState: Authentication token
     ///   - handler: Success or error
     func connect(to profile: Profile, authState: OIDAuthState, handler: @escaping (Result<Void>) -> ()) {
-        assert(state == .disconnected)
+        guard state == .disconnected else {
+            handler(.failure(Error.unexpectedState))
+            return
+        }
         state = .connecting
         
         helperService.installHelperIfNeeded(client: self) { (result) in
@@ -157,7 +141,10 @@ class ConnectionService: NSObject {
     ///   - configURL: URL of config file
     ///   - handler: Succes or error
     private func activateConfig(at configURL: URL, handler: @escaping (Result<Void>) -> ()) {
-        assert(state == .connecting)
+        guard state == .connecting else {
+            handler(.failure(Error.unexpectedState))
+            return
+        }
         
         guard let helper = helperService.connection?.remoteObjectProxy as? OpenVPNHelperProtocol else {
             handler(.failure(Error.noHelperConnection))
@@ -166,10 +153,11 @@ class ConnectionService: NSObject {
         
         let bundle = Bundle.init(for: ConnectionService.self)
         let openvpnURL = bundle.url(forResource: "openvpn", withExtension: nil, subdirectory: ConnectionService.openVPNSubdirectory)!
+        self.configURL = configURL
         
         helper.startOpenVPN(at: openvpnURL, withConfig: configURL) { (success) in
             if success {
-                self.state = .connected(configURL: configURL)
+                self.state = .connected
                 handler(.success(Void()))
             } else {
                 self.state = .disconnected
@@ -196,12 +184,15 @@ class ConnectionService: NSObject {
     ///
     /// - Parameter handler: Success or error
     func disconnect(_ handler: @escaping (Result<Void>) -> ()) {
-        let oldState = state
-        assert(state.isConnected)
+        guard state == .connected else {
+            handler(.failure(Error.unexpectedState))
+            return
+        }
+        
         state = .disconnecting
         
         guard let helper = helperService.connection?.remoteObjectProxy as? OpenVPNHelperProtocol else {
-            self.state = oldState
+            self.state = .connected
             handler(.failure(Error.noHelperConnection))
             return
         }
@@ -229,12 +220,23 @@ class ConnectionService: NSObject {
             }
         }
     }
+    
+    /// URL to the last loaded config (which may have been deleted already!)
+    private(set) var configURL: URL?
+    
+    
+    /// URL to the log file
+    var logURL: URL? {
+        return configURL?.appendingPathExtension("log")
+    }
 }
 
 extension ConnectionService: ClientProtocol {
     
     func taskTerminated(reply: @escaping () -> Void) {
+        self.state = .disconnecting
         reply()
+        self.state = .disconnected
     }
 
 }

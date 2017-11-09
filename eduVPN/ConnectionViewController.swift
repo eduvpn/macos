@@ -62,7 +62,7 @@ class ConnectionViewController: NSViewController {
             self.spinner.startAnimation(self)
             self.disconnectButton.isHidden = true
             self.connectButton.isHidden = true
-            self.statisticsBox.isHidden = true
+            self.statisticsBox.isHidden = false
             
         case .connected:
             self.backButton.isHidden = true
@@ -79,7 +79,7 @@ class ConnectionViewController: NSViewController {
             self.spinner.startAnimation(self)
             self.disconnectButton.isHidden = true
             self.connectButton.isHidden = true
-            self.statisticsBox.isHidden = true
+            self.statisticsBox.isHidden = false
             self.stopUpdatingStatistics()
             
         case .disconnected:
@@ -88,7 +88,8 @@ class ConnectionViewController: NSViewController {
             self.spinner.stopAnimation(self)
             self.disconnectButton.isHidden = true
             self.connectButton.isHidden = false
-            self.statisticsBox.isHidden = true
+            self.statisticsBox.isHidden = false
+            self.stopUpdatingStatistics()
             
         }
     }
@@ -100,6 +101,7 @@ class ConnectionViewController: NSViewController {
     }
     
     private func connect() {
+        statisticsController.content = nil
         ServiceContainer.connectionService.connect(to: profile, authState: authState) { (result) in
             DispatchQueue.main.async {
                 switch result {
@@ -108,7 +110,7 @@ class ConnectionViewController: NSViewController {
                 case .failure(let error):
                     let alert = NSAlert(error: error)
                     alert.beginSheetModal(for: self.view.window!) { (_) in
-                        
+                        self.updateForStateChange()
                     }
                 }
             }
@@ -124,7 +126,7 @@ class ConnectionViewController: NSViewController {
                 case .failure(let error):
                     let alert = NSAlert(error: error)
                     alert.beginSheetModal(for: self.view.window!) { (_) in
-                        
+                        self.updateForStateChange()
                     }
                 }
             }
@@ -166,7 +168,7 @@ class ConnectionViewController: NSViewController {
                 case .success(let statistics):
                     self.statisticsController.content = statistics
                 case .failure:
-                    self.statisticsController.content = nil
+                    break
                 }
             }
         }
@@ -181,10 +183,11 @@ class ConnectionViewController: NSViewController {
     }
     
     @objc @IBAction func viewLog(_ sender: Any) {
-        guard case .connected(let configURL) = ServiceContainer.connectionService.state else {
+        guard let logURL = ServiceContainer.connectionService.logURL else {
+            NSSound.beep()
             return
         }
-        NSWorkspace.shared.open(configURL.appendingPathExtension("log"))
+        NSWorkspace.shared.open(logURL)
     }
     
     @IBAction func goBack(_ sender: Any) {
