@@ -41,6 +41,7 @@
 		C765819B1F063BC9003DEC92 /* ServiceContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = C765819A1F063BC9003DEC92 /* ServiceContainer.swift */; };
 		C765819D1F063C47003DEC92 /* ConnectionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C765819C1F063C47003DEC92 /* ConnectionService.swift */; };
 		C7A4E1221FACD09C00B21262 /* EnterProviderURLViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7A4E1211FACD09C00B21262 /* EnterProviderURLViewController.swift */; };
+		C7A9F1D11FB448D2007A752F /* ReadMe.md in Resources */ = {isa = PBXBuildFile; fileRef = C7A9F1D01FB3C81B007A752F /* ReadMe.md */; };
 		C7BEF5C91F03E0D80038605E /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7BEF5C81F03E0D80038605E /* AppDelegate.swift */; };
 		C7BEF5CD1F03E0D80038605E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C7BEF5CC1F03E0D80038605E /* Assets.xcassets */; };
 		C7BEF5D01F03E0D80038605E /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C7BEF5CE1F03E0D80038605E /* Main.storyboard */; };
@@ -475,6 +476,7 @@
 			files = (
 				C75527ED1F3C531B00076078 /* Assets.xcassets in Resources */,
 				C75527F01F3C531B00076078 /* Main.storyboard in Resources */,
+				C7A9F1D11FB448D2007A752F /* ReadMe.md in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
