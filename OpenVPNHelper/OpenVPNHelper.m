@@ -110,7 +110,7 @@
     self.startDate = [NSDate date];
     self.statisticsPath = statisticsPath;
     
-    reply(YES);
+    reply(task.isRunning);
 }
 
 - (void)closeWithReply:(void(^)(void))reply {
