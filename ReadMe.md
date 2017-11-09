@@ -6,10 +6,10 @@ The helper will only run binaries that are signed by me.
 
     $ codesign -f -s "Mac Developer: Johan Kool (2W662WXNRW)" /Users/jkool/Developer/Egeniq/eduvpn-macos/openvpn-2.4.4-openssl-1.0.2k/openvpn
 
-To verify code signing and priviliged helper settings use the SMJobBlessUtil.py too.
+To verify code signing and priviliged helper settings use the SMJobBlessUtil.py tool.
 
     $ Tools/SMJobBlessUtil.py check eduVPN.app
 
-Another tool that can be used to verify settings is [RB App Checker Lite](https://itunes.apple.com/nl/app/rb-app-checker-lite/id519421117?l=en&mt=12). (It currently crashes when you launch the app directly on macOS 10.13. Workaround: drag the eduVPN.app onto the RB App Checker Lite.app icon. )
+Another tool that can be used to verify settings is [RB App Checker Lite](https://itunes.apple.com/nl/app/rb-app-checker-lite/id519421117?l=en&mt=12). (It currently crashes when you launch the app directly on macOS 10.13. Workaround: drag the eduVPN.app onto the RB App Checker Lite.app icon.)
 
 The bundle identifier (`CFBundleIdentifier`) in the helper's Info.plist should be spelled out. Correct: `org.eduvpn.app.openvpnhelper`, wrong: `$(PRODUCT_BUNDLE_IDENTIFIER)`.
