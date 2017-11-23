@@ -23,6 +23,7 @@ class ProviderService {
         case providerVerificationFailed
         case noProfiles
         case invalidProfiles
+        case invalidMessages
         case missingToken
         
         var errorDescription: String? {
@@ -45,6 +46,8 @@ class ProviderService {
                 return NSLocalizedString("No profiles were found for this provider", comment: "")
             case .invalidProfiles:
                 return NSLocalizedString("Invalid profiles were found for this provider", comment: "")
+            case .invalidMessages:
+                return NSLocalizedString("Invalid messages were received from this provider", comment: "")
             case .missingToken:
                 return NSLocalizedString("Profiles could not be retrieved because no valid token was available", comment: "")
             }
@@ -483,6 +486,82 @@ class ProviderService {
                     }
                     
                     handler(.success(profiles))
+                } catch(let error) {
+                    handler(.failure(error))
+                    return
+                }
+            }
+            task.resume()
+        }
+    }
+    
+    private lazy var dateFormatter = ISO8601DateFormatter()
+    
+    /// Fetch system or user messages
+    ///
+    /// - Parameters:
+    ///   - info: Provider info
+    ///   - audience: System or user
+    ///   - authState: Authentication token
+    ///   - handler: Messages or error
+    func fetchMessages(for info: ProviderInfo, audience: MessageAudience, authState: OIDAuthState, handler: @escaping (Result<[Message]>) -> ()) {
+        let path: String
+        switch audience {
+        case .system:
+            path = "system_messages"
+        case .user:
+            path = "user_messages"
+        }
+        
+        guard let url = URL(string: path, relativeTo: info.apiBaseURL) else {
+            handler(.failure(Error.invalidProviderInfo))
+            return
+        }
+        
+        
+        authState.performAction { (accessToken, idToken, error) in
+            guard let accessToken = accessToken else {
+                handler(.failure(error ?? Error.missingToken))
+                return
+            }
+            var request = URLRequest(url: url)
+            request.setValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
+            
+            let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
+                guard let data = data, let response = response as? HTTPURLResponse, 200..<300 ~= response.statusCode else {
+                    handler(.failure(error ?? Error.unknown))
+                    return
+                }
+                do {
+                    guard let json = try JSONSerialization.jsonObject(with: data, options: []) as? NSDictionary else {
+                        handler(.failure(Error.invalidMessages))
+                        return
+                    }
+                    
+                    guard let instances = json.value(forKeyPath: path + ".data") as? [[String: AnyObject]] else {
+                        handler(.failure(Error.invalidMessages))
+                        return
+                    }
+                    
+                    let messages: [Message] = instances.flatMap { (instance) -> Message? in
+                        guard let typeString = instance["type"] as? String, let type = MessageType(rawValue: typeString) else {
+                            return nil
+                        }
+                        guard let message = instance["message"] as? String else {
+                            return nil
+                        }
+                        guard let dateString = instance["date_time"] as? String, let date = self.dateFormatter.date(from: dateString) else {
+                            return nil
+                        }
+                        let beginDateString = instance["begin"] as? String
+                        let beginDate = self.dateFormatter.date(from: beginDateString ?? "")
+                        let endDateString = instance["end"] as? String
+                        let endDate = self.dateFormatter.date(from: endDateString ?? "")
+                        
+                        return Message(type: type, audience: audience, message: message, date: date, beginDate: beginDate, endDate: endDate)
+                    }
+                    
+                    handler(.success(messages))
                 } catch(let error) {
                     handler(.failure(error))
                     return

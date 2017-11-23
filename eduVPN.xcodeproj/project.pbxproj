@@ -44,6 +44,7 @@
 		C7610D451F3AFBF400D6C063 /* Statistics.m in Sources */ = {isa = PBXBuildFile; fileRef = C7610D431F3AFBF400D6C063 /* Statistics.m */; };
 		C765819B1F063BC9003DEC92 /* ServiceContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = C765819A1F063BC9003DEC92 /* ServiceContainer.swift */; };
 		C765819D1F063C47003DEC92 /* ConnectionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C765819C1F063C47003DEC92 /* ConnectionService.swift */; };
+		C78250A61FC7291000B33892 /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = C78250A51FC7291000B33892 /* Message.swift */; };
 		C7A4E1221FACD09C00B21262 /* EnterProviderURLViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7A4E1211FACD09C00B21262 /* EnterProviderURLViewController.swift */; };
 		C7BEF5C91F03E0D80038605E /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7BEF5C81F03E0D80038605E /* AppDelegate.swift */; };
 		C7BEF5CD1F03E0D80038605E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C7BEF5CC1F03E0D80038605E /* Assets.xcassets */; };
@@ -170,6 +171,7 @@
 		C7610D431F3AFBF400D6C063 /* Statistics.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Statistics.m; sourceTree = "<group>"; };
 		C765819A1F063BC9003DEC92 /* ServiceContainer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceContainer.swift; sourceTree = "<group>"; };
 		C765819C1F063C47003DEC92 /* ConnectionService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = ConnectionService.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
+		C78250A51FC7291000B33892 /* Message.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Message.swift; path = eduVPN/Message.swift; sourceTree = SOURCE_ROOT; };
 		C7A4E1211FACD09C00B21262 /* EnterProviderURLViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = EnterProviderURLViewController.swift; path = eduVPN/EnterProviderURLViewController.swift; sourceTree = SOURCE_ROOT; };
 		C7A9F1D01FB3C81B007A752F /* ReadMe.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = ReadMe.md; sourceTree = "<group>"; };
 		C7BEF5C51F03E0D80038605E /* eduVPN.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = eduVPN.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -347,6 +349,7 @@
 			isa = PBXGroup;
 			children = (
 				C7BEF5D91F03E4FD0038605E /* Provider.swift */,
+				C78250A51FC7291000B33892 /* Message.swift */,
 				C7FA902D1F0BD1A60037FF88 /* Either.swift */,
 				C732CEA71F0F7B7600698F28 /* String+URL.swift */,
 			);
@@ -550,6 +553,7 @@
 				C765819B1F063BC9003DEC92 /* ServiceContainer.swift in Sources */,
 				C75527DC1F3B55B700076078 /* MainViewController.swift in Sources */,
 				C7F345171F955473002120B9 /* ProvidersViewController.swift in Sources */,
+				C78250A61FC7291000B33892 /* Message.swift in Sources */,
 				C7BEF5DE1F03F4020038605E /* AuthenticatingViewController.swift in Sources */,
 				C7BEF5DC1F03F2CA0038605E /* MainWindowController.swift in Sources */,
 			);
@@ -784,7 +788,6 @@
 				);
 				INFOPLIST_FILE = "eduVPN/eduVPN-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				PRODUCT_BUNDLE_IDENTIFIER = nl.eduvpn.app.macos;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -808,7 +811,6 @@
 				);
 				INFOPLIST_FILE = "eduVPN/eduVPN-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				PRODUCT_BUNDLE_IDENTIFIER = nl.eduvpn.app.macos;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";

@@ -47,6 +47,25 @@ class ConnectionViewController: NSViewController {
         super.viewWillAppear()
         updateForStateChange()
         NotificationCenter.default.addObserver(self, selector: #selector(stateChanged(notification:)), name: ConnectionService.stateChanged, object: ServiceContainer.connectionService)
+        
+        // TODO: Display messages
+        ServiceContainer.providerService.fetchMessages(for: profile.info, audience: .system, authState: authState) { (result) in
+            switch result {
+            case .success(let messages):
+                dump(messages)
+            case .failure(let error):
+                dump(error)
+            }
+        }
+        
+        ServiceContainer.providerService.fetchMessages(for: profile.info, audience: .user, authState: authState) { (result) in
+            switch result {
+            case .success(let messages):
+                dump(messages)
+            case .failure(let error):
+                dump(error)
+            }
+        }
     }
     
     override func viewDidDisappear() {
