@@ -30,6 +30,7 @@
 		C741F43E1FC6DE9000B1EB83 /* Sparkle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C741F43C1FC6DE9000B1EB83 /* Sparkle.framework */; };
 		C741F43F1FC6DEED00B1EB83 /* Sparkle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C741F43C1FC6DE9000B1EB83 /* Sparkle.framework */; };
 		C741F4401FC6DEED00B1EB83 /* Sparkle.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = C741F43C1FC6DE9000B1EB83 /* Sparkle.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		C741F4421FC6E2D400B1EB83 /* dsa_pub.pem in Resources */ = {isa = PBXBuildFile; fileRef = C741F4411FC6E2D400B1EB83 /* dsa_pub.pem */; };
 		C74487061F194FAB0072B472 /* Sodium.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C74487051F194FAB0072B472 /* Sodium.framework */; };
 		C74487071F194FAB0072B472 /* Sodium.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = C74487051F194FAB0072B472 /* Sodium.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		C74487091F194FBA0072B472 /* Sodium.framework.dSYM in CopyFiles */ = {isa = PBXBuildFile; fileRef = C74487081F194FBA0072B472 /* Sodium.framework.dSYM */; };
@@ -154,6 +155,7 @@
 		C732CEA71F0F7B7600698F28 /* String+URL.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "String+URL.swift"; sourceTree = "<group>"; };
 		C741F43B1FC6DE9000B1EB83 /* Sparkle.framework.dSYM */ = {isa = PBXFileReference; lastKnownFileType = wrapper.dsym; name = Sparkle.framework.dSYM; path = Carthage/Build/Mac/Sparkle.framework.dSYM; sourceTree = "<group>"; };
 		C741F43C1FC6DE9000B1EB83 /* Sparkle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Sparkle.framework; path = Carthage/Build/Mac/Sparkle.framework; sourceTree = "<group>"; };
+		C741F4411FC6E2D400B1EB83 /* dsa_pub.pem */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = dsa_pub.pem; sourceTree = "<group>"; };
 		C74487051F194FAB0072B472 /* Sodium.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Sodium.framework; path = Carthage/Build/Mac/Sodium.framework; sourceTree = "<group>"; };
 		C74487081F194FBA0072B472 /* Sodium.framework.dSYM */ = {isa = PBXFileReference; lastKnownFileType = wrapper.dsym; name = Sodium.framework.dSYM; path = Carthage/Build/Mac/Sodium.framework.dSYM; sourceTree = "<group>"; };
 		C75527DB1F3B55B700076078 /* MainViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MainViewController.swift; path = eduVPN/MainViewController.swift; sourceTree = SOURCE_ROOT; };
@@ -362,6 +364,7 @@
 				C72AD7051F0A6BFF006DBDA5 /* EduVPN-Bridging-Header.h */,
 				C7FA902B1F0BC83E0037FF88 /* openvpn-2.4.4-openssl-1.0.2k */,
 				C71912571F3C8486005409E0 /* Defaults.plist */,
+				C741F4411FC6E2D400B1EB83 /* dsa_pub.pem */,
 			);
 			name = Resources;
 			path = ../eduVPN;
@@ -494,6 +497,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C71912581F3C8486005409E0 /* Defaults.plist in Resources */,
+				C741F4421FC6E2D400B1EB83 /* dsa_pub.pem in Resources */,
 				C7BEF5CD1F03E0D80038605E /* Assets.xcassets in Resources */,
 				C7BEF5D01F03E0D80038605E /* Main.storyboard in Resources */,
 				C741F43D1FC6DE9000B1EB83 /* Sparkle.framework.dSYM in Resources */,
