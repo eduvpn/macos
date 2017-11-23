@@ -1,3 +1,4 @@
-github "jedisct1/swift-sodium" "9b1f104ad8313618e5f9c33474faf159af0897c0"
-github "onevcat/Kingfisher" "c69e103635caa82238fcb1dbc75bcf94c21cf3cd"
-github "openid/AppAuth-iOS" "83e58f0fcc78ef3820cd276d7ca70ea9f7f2df28"
+github "jedisct1/swift-sodium" "be38e595e4b4b0494936f06935ec9d1f42b4c4cc"
+github "onevcat/Kingfisher" "0f8f17e3c6f8e962b9696f35d58bfd4934827e0a"
+github "openid/AppAuth-iOS" "09c87f8248b2d010e6bce58a7f79303a65885fd1"
+github "sparkle-project/Sparkle" "7f0bc6a2449605c8f1f3ed24db357f37e943ca93"

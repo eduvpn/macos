@@ -1,3 +1,4 @@
 github "openid/AppAuth-iOS" "master"
 github "onevcat/Kingfisher" "master"
 github "jedisct1/swift-sodium" "master"
+github "sparkle-project/Sparkle" "master"
