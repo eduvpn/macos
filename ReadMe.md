@@ -14,6 +14,15 @@ Another tool that can be used to verify settings is [RB App Checker Lite](https:
 
 The bundle identifier (`CFBundleIdentifier`) in the helper's Info.plist should be spelled out. Correct: `org.eduvpn.app.openvpnhelper`, wrong: `$(PRODUCT_BUNDLE_IDENTIFIER)`.
 
+### Building
+
+You need [Carthage](https://github.com/Carthage/Carthage) to build dependencies.
+
+    $ carthage bootstrap
+    
+There are a few places where you'll find the full name of the developer certificate (`Mac Developer: Johan Kool (2W662WXNRW)`) which you need to replace with the name of your developer certificate. Remember that if you adjust this for the check in OpenVPNHelper you need to sing the openvpn binary too, as described above.
+
+
 ### Uninstalling
 
 Besides deleting the app, files are installed at these locations:
@@ -25,3 +34,5 @@ Besides deleting the app, files are installed at these locations:
     ~/Library/Preferences/org.eduvpn.app.plist
     
 and in a temporary folder as provided by macOS, usually somewhere under `/private/var/folders`.
+
+You need to logout or even restart your computer to complete the uninstall.
