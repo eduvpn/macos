@@ -206,7 +206,9 @@ class ProviderService {
                         return
                     }
                     
-                    guard let publicKey = NSData(base64Encoded: "E5On0JTtyUVZmcWd+I/FXRm32nSq8R2ioyW7dcu/U88=", options: []) as Data? else {
+                    let debug = UserDefaults.standard.bool(forKey: "developerMode")
+                    let publicKeyString = debug ? "zzls4TZTXHEyV3yxaxag1DZw3tSpIdBoaaOjUGH/Rwg=" : "E5On0JTtyUVZmcWd+I/FXRm32nSq8R2ioyW7dcu/U88="
+                    guard let publicKey = NSData(base64Encoded: publicKeyString, options: []) as Data? else {
                         handler(.failure(Error.providerVerificationFailed))
                         return
                     }
