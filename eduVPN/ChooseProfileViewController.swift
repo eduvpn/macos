@@ -58,8 +58,7 @@ extension ChooseProfileViewController: NSTableViewDelegate {
         tableView.isEnabled = false
         
         let profile = profiles[tableView.selectedRow]
-        ServiceContainer.providerService.storeProfile(profile: profile)
-        mainWindowController?.dismiss()
+        mainWindowController?.showConnection(for: profile, authState: authState)
     }
     
 }

@@ -15,7 +15,7 @@ class AuthenticatingViewController: NSViewController {
     @IBOutlet var backButton: NSButton!
 
     var info: ProviderInfo!
-    var profile: Profile? = nil
+    var connect: Bool
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -24,10 +24,11 @@ class AuthenticatingViewController: NSViewController {
             DispatchQueue.main.async {
                 switch result {
                 case .success(let authState):
-                    if let profile = self.profile {
-                        self.mainWindowController?.showConnection(for: profile, authState: authState)
+                    ServiceContainer.providerService.storeProvider(provider: self.info.provider)
+                    if connect {
+                        self.fetchProfiles(for: self.info, authState: authState)
                     } else {
-                        self.fetchProfiles(authState: authState)
+                        self.mainWindowController?.dismiss()
                     }
                 case .failure(let error):
                     // User knows he cancelled, no alert needed
@@ -48,31 +49,7 @@ class AuthenticatingViewController: NSViewController {
             }
         }
     }
-    
-    private func fetchProfiles(authState: OIDAuthState) {
-        backButton.isEnabled = false
-        ServiceContainer.providerService.fetchProfiles(for: self.info, authState: authState) { (result) in
-            DispatchQueue.main.async {
-                switch result {
-                case .success(let profiles):
-                    if profiles.count == 1 {
-                        let profile = profiles[0]
-                        ServiceContainer.providerService.storeProfile(profile: profile)
-                        self.mainWindowController?.dismiss()
-                    } else {
-                        // Choose profile
-                        self.mainWindowController?.showChooseProfile(from: profiles, authState: authState)
-                    }
-                case .failure(let error):
-                    let alert = NSAlert(error: error)
-                    alert.beginSheetModal(for: self.view.window!) { (_) in
-                        self.mainWindowController?.pop()
-                    }
-                }
-                self.backButton.isEnabled = true
-            }
-        }
-    }
+ 
     
     override func viewWillAppear() {
         super.viewWillAppear()
@@ -89,4 +66,25 @@ class AuthenticatingViewController: NSViewController {
         // Already triggerd? mainWindowController?.pop()
     }
     
+    private func fetchProfiles(for info: ProviderInfo, authState: OIDAuthState) {
+        ServiceContainer.providerService.fetchProfiles(for: info, authState: authState) { (result) in
+            DispatchQueue.main.async {
+                switch result {
+                case .success(let profiles):
+                    if profiles.count == 1 {
+                        let profile = profiles[0]
+                        self.mainWindowController?.showConnection(for: profile, authState: authState)
+                    } else {
+                        // Choose profile
+                        self.mainWindowController?.showChooseProfile(from: profiles, authState: authState)
+                    }
+                case .failure(let error):
+                    let alert = NSAlert(error: error)
+                    alert.beginSheetModal(for: self.view.window!) { (_) in
+                        self.mainWindowController?.pop()
+                    }
+                }
+            }
+        }
+    }
 }

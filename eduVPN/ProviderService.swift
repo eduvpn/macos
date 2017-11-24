@@ -64,70 +64,145 @@ class ProviderService {
         readFromDisk()
     }
     
-    /// Profiles
-    private(set) var storedProfiles: [ConnectionType: [Profile]] = [:]
-    
-    /// Stores profile and saves it to disk
+    /// Discovers all providers that the user can access with the stored providers
     ///
-    /// - Parameter profile: profile
-    func storeProfile(profile: Profile) {
-        let connectionType = profile.info.provider.connectionType
-        var profiles = storedProfiles[connectionType] ?? []
-        profiles.append(profile)
-        storedProfiles[connectionType] = profiles
+    /// - Parameter handler: List of providers or error
+    func discoverAccessibleProviders(handler: @escaping (Result<[ConnectionType: [Provider]]>) -> ()) {
+        let group = DispatchGroup()
+        var error: Error? = nil
+        
+        func discoverAvailableProviders(type: ConnectionType) {
+            group.enter()
+            discoverProviders(connectionType: type) { (result) in
+                switch result {
+                case .success(let providers):
+                    self.availableProviders[type] = providers
+                case .failure(let discoverError):
+                    error = discoverError as? Error
+                }
+                group.leave()
+            }
+        }
+        
+        discoverAvailableProviders(type: .secureInternet)
+        discoverAvailableProviders(type: .instituteAccess)
+        
+        group.notify(queue: .main) {
+            if let error = error {
+                handler(.failure(error))
+                return
+            }
+            
+            var accessibleProviders: [ConnectionType: [Provider]] = [:]
+            
+            func hasStoredDistributedProvider(type: ConnectionType) -> Bool {
+                guard let providers = self.storedProviders[type] else {
+                    return false
+                }
+                return providers.contains { (provider) -> Bool in
+                    switch provider.authorizationType {
+                    case .local:
+                        return false
+                    case .distributed, .federated:
+                        return true
+                    }
+                }
+            }
+            
+            func addProviders(type: ConnectionType) {
+                if hasStoredDistributedProvider(type: type) {
+                    // Add all providers
+                    if let providers = self.availableProviders[type] {
+                        accessibleProviders[type] = providers
+                    }
+                } else {
+                    // Add stored providers
+                    if let providers = self.storedProviders[type] {
+                        accessibleProviders[type] = providers
+                    }
+                }
+            }
+            
+            addProviders(type: .secureInternet)
+            addProviders(type: .instituteAccess)
+            addProviders(type: .custom)
+
+            handler(.success(accessibleProviders))
+        }
+    }
+    
+    /// Indicates wether at least one provider is setup
+    var hasAtLeastOneStoredProvider: Bool {
+        return !storedProviders.isEmpty
+    }
+    
+    /// All providers
+    private var availableProviders: [ConnectionType: [Provider]] = [:]
+    
+    /// Providers with which the user has authenticated
+    private(set) var storedProviders: [ConnectionType: [Provider]] = [:]
+    
+    /// Stores provider and saves it to disk
+    ///
+    /// - Parameter provider: provider
+    func storeProvider(provider: Provider) {
+        let connectionType = provider.connectionType
+        var providers = storedProviders[connectionType] ?? []
+        providers.append(provider)
+        storedProviders[connectionType] = providers
         saveToDisk()
     }
     
-    /// Removes profile and saves to disk
+    /// Removes provider and saves to disk
     ///
-    /// - Parameter profile: profile
-    func deleteProfile(profile: Profile) {
-        let connectionType = profile.info.provider.connectionType
-        var profiles = storedProfiles[connectionType] ?? []
-        let index = profiles.index(where: { (otherProfile) -> Bool in
-            return otherProfile.profileId == profile.profileId
+    /// - Parameter provider: provider
+    func deleteProvider(provider: Provider) {
+        let connectionType = provider.connectionType
+        var providers = storedProviders[connectionType] ?? []
+        let index = providers.index(where: { (otherProvider) -> Bool in
+            return otherProvider.id == provider.id
         })
         if let index = index {
-            profiles.remove(at: index)
-            storedProfiles[connectionType] = profiles
+            providers.remove(at: index)
+            storedProviders[connectionType] = providers
             saveToDisk()
         }
     }
     
-    /// URL for saving profiles to disk
+    /// URL for saving providers to disk
     ///
     /// - Returns: URL
     /// - Throws: Error finding or creating directory
-    private func storedProfilesFileURL() throws -> URL  {
+    private func storedProvidersFileURL() throws -> URL  {
         var applicationSupportDirectory = try FileManager.default.url(for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
         applicationSupportDirectory.appendPathComponent("eduVPN")
         try FileManager.default.createDirectory(at: applicationSupportDirectory, withIntermediateDirectories: true, attributes: nil)
-        applicationSupportDirectory.appendPathComponent("Profiles.plist")
+        applicationSupportDirectory.appendPathComponent("Providers.plist")
         return applicationSupportDirectory
     }
     
-    /// Reads profiles from disk
+    /// Reads providers from disk
     private func readFromDisk() {
         let decoder = PropertyListDecoder()
         do {
-            let url = try storedProfilesFileURL()
+            let url = try storedProvidersFileURL()
             let data = try Data(contentsOf: url)
-            let restoredProfiles = try decoder.decode([ConnectionType: [Profile]].self, from: data)
-            storedProfiles = restoredProfiles
+            let restoredProviders = try decoder.decode([ConnectionType: [Provider]].self, from: data)
+            storedProviders = restoredProviders
         } catch (let error) {
-            NSLog("Failed to read stored profiles from disk at \(url): \(error)")
+            NSLog("Failed to read stored providers from disk at \(url): \(error)")
         }
     }
     
-    /// Saves profiles to disk
+    /// Saves providers to disk
     private func saveToDisk() {
         let encoder = PropertyListEncoder()
         do {
-            let data = try encoder.encode(storedProfiles)
-            let url = try storedProfilesFileURL()
+            let data = try encoder.encode(storedProviders)
+            let url = try storedProvidersFileURL()
             try data.write(to: url, options: .atomic)
         } catch (let error) {
-            NSLog("Failed to write stored profiles to disk at \(url): \(error)")
+            NSLog("Failed to write stored providers to disk at \(url): \(error)")
         }
     }
     
@@ -223,6 +298,24 @@ class ProviderService {
                         return
                     }
                     
+                    let authorizationType: AuthorizationType
+                    switch json["authorization_type"] as? String ?? "" {
+                    case "local":
+                        authorizationType = .local
+                    case "distributed":
+                        authorizationType = .distributed
+                    case "federated":
+                        guard let authorizationURL = (json["authorization_endpoint"] as? String)?.asURL(),
+                            let tokenURL = (json["token_endpoint"] as? String)?.asURL() else {
+                            handler(.failure(Error.invalidProviders))
+                            return
+                        }
+                        authorizationType = .federated(authorizationURL: authorizationURL, tokenURL: tokenURL)
+                    default:
+                        handler(.failure(Error.invalidProviders))
+                        return
+                    }
+                    
                     guard let instances = json.value(forKeyPath: "instances") as? [[String: AnyObject]] else {
                         handler(.failure(Error.invalidProviders))
                         return
@@ -267,7 +360,7 @@ class ProviderService {
                         
                         let publicKey = instance["public_key"] as? String
                         
-                        return Provider(displayName: displayName, baseURL: baseURL, logoURL: logoURL, publicKey: publicKey, connectionType: connectionType)
+                        return Provider(displayName: displayName, baseURL: baseURL, logoURL: logoURL, publicKey: publicKey, connectionType: connectionType, authorizationType: authorizationType)
                     }
                     
                     guard !providers.isEmpty else {
@@ -377,7 +470,10 @@ class ProviderService {
                                 return nil
                         }
                         let twoFactor = instance["two_factor"] as? Bool
-                        
+                        if twoFactor! {
+                            NSLog("WARNING: 2FA not yet supported")
+                            return nil
+                        }
                         return Profile(profileId: profileId, displayName: displayName, twoFactor: twoFactor ?? false, info: info)
                     }
                     
