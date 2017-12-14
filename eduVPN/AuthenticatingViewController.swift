@@ -15,7 +15,7 @@ class AuthenticatingViewController: NSViewController {
     @IBOutlet var backButton: NSButton!
 
     var info: ProviderInfo!
-    var connect: Bool
+    var connect: Bool = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -25,7 +25,7 @@ class AuthenticatingViewController: NSViewController {
                 switch result {
                 case .success(let authState):
                     ServiceContainer.providerService.storeProvider(provider: self.info.provider)
-                    if connect {
+                    if self.connect {
                         self.fetchProfiles(for: self.info, authState: authState)
                     } else {
                         self.mainWindowController?.dismiss()
