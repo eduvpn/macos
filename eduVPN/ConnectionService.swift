@@ -161,13 +161,8 @@ class ConnectionService: NSObject {
                 handler(.success(Void()))
             } else {
                 self.state = .disconnected
+                self.configURL = nil
                 handler(.failure(Error.helperRejected))
-            }
-            // Remove config file
-            do {
-                try self.uninstall(configURL: configURL)
-            } catch(let error) {
-                print("Failed to remove config at URL %@ with error: %@", configURL, error)
             }
         }
     }
@@ -176,8 +171,12 @@ class ConnectionService: NSObject {
     ///
     /// - Parameter configURL: URL where config was installed
     /// - Throws: Error removing config from disk
-    private func uninstall(configURL: URL) throws {
-        try FileManager.default.removeItem(at: configURL)
+    private func uninstall(configURL: URL) {
+        do {
+            try FileManager.default.removeItem(at: configURL)
+        } catch(let error) {
+            print("Failed to remove config at URL %@ with error: %@", configURL, error)
+        }
     }
     
     /// Asks helper to disconnect VPN connection
@@ -199,6 +198,7 @@ class ConnectionService: NSObject {
         
         helper.close { 
             self.state = .disconnected
+            self.configURL = nil
             handler(.success(Void()))
         }
     }
@@ -222,7 +222,13 @@ class ConnectionService: NSObject {
     }
     
     /// URL to the last loaded config (which may have been deleted already!)
-    private(set) var configURL: URL?
+    private(set) var configURL: URL? {
+        didSet(oldValue) {
+            if let oldConfigURL = oldValue {
+                uninstall(configURL: oldConfigURL)
+            }
+        }
+    }
     
     
     /// URL to the log file
