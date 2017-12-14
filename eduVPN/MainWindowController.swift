@@ -120,12 +120,12 @@ class MainWindowController: NSWindowController {
     ///
     /// - Parameters:
     ///   - info: Provider to authenticate with
-    ///   - profile: Optional profile, if set initiates connection with this profile when authentication succeeds, otherwise fetches profiles and prompts user
+    ///   - connect: If true initiates connection with this provider when authentication succeeds
     ///   - animated: Wether to show with animation
-    func showAuthenticating(with info: ProviderInfo, profile: Profile? = nil, animated: Bool = true) {
+    func showAuthenticating(with info: ProviderInfo, connect: Bool = false, animated: Bool = true) {
         let authenticatingViewController = storyboard!.instantiateController(withIdentifier: NSStoryboard.SceneIdentifier(rawValue: "Authenticating")) as! AuthenticatingViewController
         authenticatingViewController.info = info
-        authenticatingViewController.profile = profile
+        authenticatingViewController.connect = connect
         push(viewController: authenticatingViewController, animated: animated)
     }
     

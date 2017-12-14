@@ -7,21 +7,22 @@
 //
 
 import Cocoa
+import AppAuth
 
 class ProvidersViewController: NSViewController {
 
     @IBOutlet var tableView: NSTableView!
     @IBOutlet var otherProviderButton: NSButton!
     
-    private var profiles: [ConnectionType: [Profile]]! {
+    private var providers: [ConnectionType: [Provider]]! {
         didSet {
             var rows: [TableRow] = []
             
             func addRows(connectionType: ConnectionType) {
-                if let connectionProfiles = profiles[connectionType], !connectionProfiles.isEmpty {
+                if let connectionProviders = providers[connectionType], !connectionProviders.isEmpty {
                     rows.append(.section(connectionType))
-                    connectionProfiles.forEach { (profile) in
-                        rows.append(.profile(profile))
+                    connectionProviders.forEach { (provider) in
+                        rows.append(.provider(provider))
                     }
                 }
             }
@@ -36,7 +37,7 @@ class ProvidersViewController: NSViewController {
     
     private enum TableRow {
         case section(ConnectionType)
-        case profile(Profile)
+        case provider(Provider)
     }
     
     private var rows: [TableRow] = []
@@ -51,19 +52,27 @@ class ProvidersViewController: NSViewController {
         otherProviderButton.attributedTitle = NSAttributedString(string: otherProviderButton.title, attributes: attributes)
     }
     
-    override func viewWillAppear() {
-        super.viewWillAppear()
-    
-        profiles = ServiceContainer.providerService.storedProfiles
-        tableView.reloadData()
-    }
-    
     override func viewDidAppear() {
         super.viewDidAppear()
         tableView.deselectAll(nil)
         tableView.isEnabled = true
         
-        if profiles.isEmpty {
+        if ServiceContainer.providerService.hasAtLeastOneStoredProvider {
+            ServiceContainer.providerService.discoverAccessibleProviders { (result) in
+                DispatchQueue.main.async {
+                    switch result {
+                    case .success(let providers):
+                        self.providers = providers
+                        self.tableView.reloadData()
+                    case .failure(let error):
+                        let alert = NSAlert(error: error)
+                        alert.beginSheetModal(for: self.view.window!) { (_) in
+                            
+                        }
+                    }
+                }
+            }
+        } else {
             addOtherProvider(animated: false)
         }
     }
@@ -76,6 +85,70 @@ class ProvidersViewController: NSViewController {
         mainWindowController?.showChooseConnectionType(allowClose: !rows.isEmpty, animated: animated)
     }
     
+    
+    fileprivate func authenticateAndConnect(to provider: Provider) {
+        if let authState = ServiceContainer.authenticationService.authState(for: provider), authState.isAuthorized {
+            tableView.isEnabled = false
+            ServiceContainer.providerService.fetchInfo(for: provider) { (result) in
+                DispatchQueue.main.async {
+                    self.tableView.isEnabled = true
+                    
+                    switch result {
+                    case .success(let info):
+                        self.fetchProfiles(for: info, authState: authState)
+                    case .failure(let error):
+                        let alert = NSAlert(error: error)
+                        alert.beginSheetModal(for: self.view.window!) { (_) in
+                            
+                        }
+                    }
+                }
+            }
+        } else {
+            // No (valid) authentication token
+            self.tableView.isEnabled = false
+            ServiceContainer.providerService.fetchInfo(for: provider) { (result) in
+                DispatchQueue.main.async {
+                    self.tableView.isEnabled = true
+                    
+                    switch result {
+                    case .success(let info):
+                        self.mainWindowController?.showAuthenticating(with: info, connect: true)
+                    case .failure(let error):
+                        let alert = NSAlert(error: error)
+                        alert.beginSheetModal(for: self.view.window!) { (_) in
+                            
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    private func fetchProfiles(for info: ProviderInfo, authState: OIDAuthState) {
+        tableView.isEnabled = false
+        ServiceContainer.providerService.fetchProfiles(for: info, authState: authState) { (result) in
+            DispatchQueue.main.async {
+                self.tableView.isEnabled = true
+                
+                switch result {
+                case .success(let profiles):
+                    if profiles.count == 1 {
+                        let profile = profiles[0]
+                        self.mainWindowController?.showConnection(for: profile, authState: authState)
+                    } else {
+                        // Choose profile
+                        self.mainWindowController?.showChooseProfile(from: profiles, authState: authState)
+                    }
+                case .failure(let error):
+                    let alert = NSAlert(error: error)
+                    alert.beginSheetModal(for: self.view.window!) { (_) in
+                        
+                    }
+                }
+            }
+        }
+    }
 }
 
 extension ProvidersViewController: NSTableViewDataSource {
@@ -95,10 +168,10 @@ extension ProvidersViewController: NSTableViewDelegate {
             let result = tableView.makeView(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: "SectionCell"), owner: self) as? NSTableCellView
             result?.textField?.stringValue = connectionType.localizedDescription
             return result
-        case .profile(let profile):
+        case .provider(let provider):
             let result = tableView.makeView(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: "ProfileCell"), owner: self) as? NSTableCellView
-            result?.imageView?.kf.setImage(with: profile.info.provider.logoURL)
-            result?.textField?.stringValue = profile.info.provider.displayName + ": " + profile.displayName
+            result?.imageView?.kf.setImage(with: provider.logoURL)
+            result?.textField?.stringValue = provider.displayName
             return result
         }
     }
@@ -108,7 +181,7 @@ extension ProvidersViewController: NSTableViewDelegate {
         switch tableRow {
         case .section:
             return false
-        case .profile:
+        case .provider:
             return true
         }
     }
@@ -124,13 +197,8 @@ extension ProvidersViewController: NSTableViewDelegate {
         case .section:
             // Ignore
             break
-        case .profile(let profile):
-            tableView.isEnabled = false
-            if let authState = ServiceContainer.authenticationService.authStates[profile.info.provider.id] {
-                mainWindowController?.showConnection(for: profile, authState: authState)
-            } else {
-                mainWindowController?.showAuthenticating(with: profile.info, profile: profile)
-            }
+        case .provider(let provider):
+            authenticateAndConnect(to: provider)
         }
     }
     

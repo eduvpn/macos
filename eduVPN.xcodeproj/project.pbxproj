@@ -28,7 +28,6 @@
 		C732CEA81F0F7B7600698F28 /* String+URL.swift in Sources */ = {isa = PBXBuildFile; fileRef = C732CEA71F0F7B7600698F28 /* String+URL.swift */; };
 		C741F43D1FC6DE9000B1EB83 /* Sparkle.framework.dSYM in Resources */ = {isa = PBXBuildFile; fileRef = C741F43B1FC6DE9000B1EB83 /* Sparkle.framework.dSYM */; };
 		C741F43E1FC6DE9000B1EB83 /* Sparkle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C741F43C1FC6DE9000B1EB83 /* Sparkle.framework */; };
-		C741F43F1FC6DEED00B1EB83 /* Sparkle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C741F43C1FC6DE9000B1EB83 /* Sparkle.framework */; };
 		C741F4401FC6DEED00B1EB83 /* Sparkle.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = C741F43C1FC6DE9000B1EB83 /* Sparkle.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		C741F4421FC6E2D400B1EB83 /* dsa_pub.pem in Resources */ = {isa = PBXBuildFile; fileRef = C741F4411FC6E2D400B1EB83 /* dsa_pub.pem */; };
 		C74487061F194FAB0072B472 /* Sodium.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C74487051F194FAB0072B472 /* Sodium.framework */; };
@@ -214,7 +213,6 @@
 				C72A557A1F0D9FF2001DCA24 /* AppAuth.framework in Frameworks */,
 				C741F43E1FC6DE9000B1EB83 /* Sparkle.framework in Frameworks */,
 				C7D15FD41F0D166800719F38 /* ServiceManagement.framework in Frameworks */,
-				C741F43F1FC6DEED00B1EB83 /* Sparkle.framework in Frameworks */,
 				C7D15FD21F0D166100719F38 /* Security.framework in Frameworks */,
 				C7D15FD11F0D165900719F38 /* Cocoa.framework in Frameworks */,
 				C74487061F194FAB0072B472 /* Sodium.framework in Frameworks */,
@@ -436,7 +434,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0830;
-				LastUpgradeCheck = 0900;
+				LastUpgradeCheck = 0920;
 				ORGANIZATIONNAME = EduVPN;
 				TargetAttributes = {
 					C72AD6F21F0A692F006DBDA5 = {

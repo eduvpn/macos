@@ -53,7 +53,7 @@ class AuthenticationService {
             NSRunningApplication.current.activate(options: [.activateAllWindows, .activateIgnoringOtherApps])
             
             if let authState = authState {
-                self.store(info: info, authState: authState)
+                self.store(for: info.provider, authState: authState)
                 handler(.success(authState))
             } else if let error = error {
                 handler(.failure(error))
@@ -69,33 +69,36 @@ class AuthenticationService {
     }
     
     /// Authentication tokens
-    private(set) var authStates: [String: OIDAuthState] = [:]
+    private var authStatesByProviderId: [String: OIDAuthState] = [:]
+    private var authStatesByConnectionType: [ConnectionType: OIDAuthState] = [:]
+    
+    /// Finds authentication token
+    ///
+    /// - Parameter provider: Provider
+    /// - Returns: Authentication token if available
+    func authState(for provider: Provider) -> OIDAuthState? {
+        switch provider.authorizationType {
+        case .local:
+            return authStatesByProviderId[provider.id]
+        case .distributed, .federated:
+            return authStatesByConnectionType[provider.connectionType]
+        }
+    }
     
     /// Stores an authentication token
     ///
     /// - Parameters:
     ///   - info: Provider info
     ///   - authState: Authentication token
-    private func store(info: ProviderInfo, authState: OIDAuthState) {
-        authStates[info.provider.id] = authState
+    private func store(for provider: Provider, authState: OIDAuthState) {
+        switch provider.authorizationType {
+        case .local:
+            authStatesByProviderId[provider.id] = authState
+        case .distributed, .federated:
+            authStatesByConnectionType[provider.connectionType] = authState
+        }
         saveToDisk()
     }
-    
-//    /// Removes profile and saves to disk
-//    ///
-//    /// - Parameter profile: profile
-//    func deleteProfile(profile: Profile) {
-//        let connectionType = profile.info.provider.connectionType
-//        var profiles = storedProfiles[connectionType] ?? []
-//        let index = profiles.index {
-//            $0 == profile
-//        }
-//        if let index = index {
-//            profiles.remove(at: index)
-//            storedProfiles[connectionType] = profiles
-//            saveToDisk()
-//        }
-//    }
     
     /// URL for saving authentication tokens to disk
     ///
@@ -114,8 +117,19 @@ class AuthenticationService {
         do {
             let url = try storedAuthStatesFileURL()
             let data = try Data(contentsOf: url)
-            if let restoredAuthStates = NSKeyedUnarchiver.unarchiveObject(with: data) as? [String: OIDAuthState] {
-                authStates = restoredAuthStates
+            // OIDAuthState doesn't support Codable, use NSArchiving instead
+            if let restoredAuthStates = NSKeyedUnarchiver.unarchiveObject(with: data) as? [String: AnyObject] {
+                if let authStatesByProviderId = restoredAuthStates["authStatesByProviderId"] as? [String: OIDAuthState] {
+                    self.authStatesByProviderId = authStatesByProviderId
+                }
+                if let authStatesByConnectionType = restoredAuthStates["authStatesByConnectionType"] as? [String: OIDAuthState] {
+                    // Convert String to ConnectionType
+                    self.authStatesByConnectionType = authStatesByConnectionType.reduce(into: [ConnectionType: OIDAuthState]()) { (result, entry) in
+                        if let type = ConnectionType(rawValue: entry.key) {
+                            result[type] = entry.value
+                        }
+                    }
+                }
             } else {
                 NSLog("Failed to unarchive stored authentication tokens from disk")
             }
@@ -126,14 +140,17 @@ class AuthenticationService {
     
     /// Saves authentication tokens to disk
     private func saveToDisk() {
-       do {
-            let data = NSKeyedArchiver.archivedData(withRootObject: authStates)
+        do {
+            // Convert ConnectionType to String
+            let authStatesByConnectionType = self.authStatesByConnectionType.reduce(into: [String: OIDAuthState]()) { (result, entry) in
+                result[entry.key.rawValue] = entry.value
+            }
+            let data = NSKeyedArchiver.archivedData(withRootObject: ["authStatesByProviderId": authStatesByProviderId, "authStatesByConnectionType": authStatesByConnectionType])
             let url = try storedAuthStatesFileURL()
             try data.write(to: url, options: .atomic)
         } catch (let error) {
-            NSLog("Failed to write authentication tokens to disk: \(error)")
+            NSLog("Failed to save stored authentication tokens to disk: \(error)")
         }
     }
     
 }
-

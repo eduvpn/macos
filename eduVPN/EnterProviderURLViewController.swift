@@ -65,7 +65,7 @@ class EnterProviderURLViewController: NSViewController {
             return
         }
         
-        let provider = Provider(displayName: host, baseURL: url, logoURL: nil, publicKey: nil, connectionType: .custom)
+        let provider = Provider(displayName: host, baseURL: url, logoURL: nil, publicKey: nil, connectionType: .custom, authorizationType: .local)
         ServiceContainer.providerService.fetchInfo(for: provider) { result in
             switch result {
             case .success(let info):
