@@ -220,13 +220,10 @@ class ConfigurationService {
                     return
                 }
                 
-                guard var config = String(data: data, encoding: .utf8) else {
+                guard let config = String(data: data, encoding: .utf8) else {
                     handler(.failure(Error.invalidConfiguration))
                     return
                 }
-                
-                // FIXME: Temporary hack
-                config = config.replacingOccurrences(of: "auth-user-pas", with: "# auth-user-pas Disabled unexpected setting")
                 
                 handler(.success(config))
             }

@@ -14,14 +14,16 @@ import ServiceManagement
 /// Installs and connects helper
 class HelperService {
     
-    static let helperVersion = "1.0-0.0.12"
+    static let helperVersion = "1.0-0.0.15"
     static let helperIdentifier = "org.eduvpn.app.openvpnhelper"
 
     enum Error: Swift.Error, LocalizedError {
         case noHelperConnection
         case authenticationFailed
         case installationFailed
-
+        case connectionInvalidated
+        case connectionInterrupted
+        
         var errorDescription: String? {
             switch self {
             case .noHelperConnection:
@@ -30,6 +32,10 @@ class HelperService {
                 return NSLocalizedString("Authentication failed", comment: "")
             case .installationFailed:
                 return NSLocalizedString("Installation failed", comment: "")
+            case .connectionInvalidated:
+                return NSLocalizedString("Connection invalidated", comment: "")
+            case .connectionInterrupted:
+                return NSLocalizedString("Connection interrupted", comment: "")
             }
         }
         
@@ -37,7 +43,7 @@ class HelperService {
             switch self {
             case .noHelperConnection:
                 return NSLocalizedString("Try reinstalling eduVPN.", comment: "")
-            case .authenticationFailed:
+            case .authenticationFailed, .connectionInvalidated, .connectionInterrupted:
                 return NSLocalizedString("Try to connect again.", comment: "")
             case .installationFailed:
                 return NSLocalizedString("Try reinstalling eduVPN.", comment: "")
@@ -151,10 +157,12 @@ class HelperService {
         connection?.exportedInterface = NSXPCInterface(with: ClientProtocol.self)
         connection?.exportedObject = client
         connection?.invalidationHandler = { () in
-            NSLog("connection invalidated!")
+            // Don't do this: handler(.failure(Error.connectionInvalidated))
+            // It causes the helper to fail to install (somehow)
         }
         connection?.interruptionHandler = { () in
-            NSLog("connection interrupted!")
+            // Don't do this: handler(.failure(Error.connectionInterrupted))
+            // It causes the helper to fail to install (somehow)
         }
         connection?.resume()
         

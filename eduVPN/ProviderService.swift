@@ -473,10 +473,6 @@ class ProviderService {
                                 return nil
                         }
                         let twoFactor = instance["two_factor"] as? Bool
-                        if twoFactor! {
-                            NSLog("WARNING: 2FA not yet supported")
-                            return nil
-                        }
                         return Profile(profileId: profileId, displayName: displayName, twoFactor: twoFactor ?? false, info: info)
                     }
                     
