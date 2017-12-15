@@ -88,9 +88,10 @@ class ConnectionService: NSObject {
     ///
     /// - Parameters:
     ///   - profile: Profile
+    ///   - twoFactor: Optional two factor authentication token
     ///   - authState: Authentication token
     ///   - handler: Success or error
-    func connect(to profile: Profile, authState: OIDAuthState, handler: @escaping (Result<Void>) -> ()) {
+    func connect(to profile: Profile, twoFactor: TwoFactor?, authState: OIDAuthState, handler: @escaping (Result<Void>) -> ()) {
         guard state == .disconnected else {
             handler(.failure(Error.unexpectedState))
             return
@@ -105,7 +106,13 @@ class ConnectionService: NSObject {
                     case .success(let config):
                         do {
                             let configURL = try self.install(config: config)
-                            self.activateConfig(at: configURL, handler: handler)
+                            let authUserPassURL: URL?
+                            if let twoFactor = twoFactor {
+                                authUserPassURL = try self.install(twoFactor: twoFactor)
+                            } else {
+                                authUserPassURL = nil
+                            }
+                            self.activateConfig(at: configURL, authUserPassURL: authUserPassURL, handler: handler)
                         } catch(let error) {
                             self.state = .disconnected
                             handler(.failure(error))
@@ -135,12 +142,36 @@ class ConnectionService: NSObject {
         return fileURL
     }
     
+    /// Installs authUserPass
+    ///
+    /// - Parameter twoFactor: Two Factor Authenticationtoken
+    /// - Returns: URL where authUserPass was installed
+    /// - Throws: Error writing config to disk
+    private func install(twoFactor: TwoFactor) throws -> URL {
+        let username: String
+        let password: String
+        switch twoFactor {
+        case .totp(let token):
+            username = "totp"
+            password = token
+        case .yubico(let token):
+            username = "yubi"
+            password = token
+        }
+        
+        let tempDir = (NSTemporaryDirectory() as NSString).appendingPathComponent("org.eduvpn.app.temp") // Added .temp because .app lets the Finder show the folder as an app
+        try FileManager.default.createDirectory(atPath: tempDir, withIntermediateDirectories: true, attributes: nil)
+        let fileURL = URL(fileURLWithPath: (tempDir as NSString).appendingPathComponent("eduvpn.aup"))
+        try "\(username)\n\(password)".write(to: fileURL, atomically: true, encoding: .utf8)
+        return fileURL
+    }
+    
     /// Asks helper service to start VPN connection
     ///
     /// - Parameters:
     ///   - configURL: URL of config file
     ///   - handler: Succes or error
-    private func activateConfig(at configURL: URL, handler: @escaping (Result<Void>) -> ()) {
+    private func activateConfig(at configURL: URL, authUserPassURL: URL?, handler: @escaping (Result<Void>) -> ()) {
         guard state == .connecting else {
             handler(.failure(Error.unexpectedState))
             return
@@ -154,28 +185,29 @@ class ConnectionService: NSObject {
         let bundle = Bundle.init(for: ConnectionService.self)
         let openvpnURL = bundle.url(forResource: "openvpn", withExtension: nil, subdirectory: ConnectionService.openVPNSubdirectory)!
         self.configURL = configURL
-        
-        helper.startOpenVPN(at: openvpnURL, withConfig: configURL) { (success) in
+        self.authUserPassURL = authUserPassURL
+        helper.startOpenVPN(at: openvpnURL, withConfig: configURL, authUserPass: authUserPassURL) { (success) in
             if success {
                 self.state = .connected
                 handler(.success(Void()))
             } else {
                 self.state = .disconnected
                 self.configURL = nil
+                self.authUserPassURL = nil
                 handler(.failure(Error.helperRejected))
             }
         }
     }
     
-    /// Uninstalls configuration
+    /// Uninstalls file
     ///
-    /// - Parameter configURL: URL where config was installed
-    /// - Throws: Error removing config from disk
-    private func uninstall(configURL: URL) {
+    /// - Parameter fileURL: URL where file was installed
+    /// - Throws: Error removing file from disk
+    private func uninstall(fileURL: URL) {
         do {
-            try FileManager.default.removeItem(at: configURL)
+            try FileManager.default.removeItem(at: fileURL)
         } catch(let error) {
-            print("Failed to remove config at URL %@ with error: %@", configURL, error)
+            print("Failed to remove file at URL %@ with error: %@", fileURL, error)
         }
     }
     
@@ -199,6 +231,7 @@ class ConnectionService: NSObject {
         helper.close { 
             self.state = .disconnected
             self.configURL = nil
+            self.authUserPassURL = nil
             handler(.success(Void()))
         }
     }
@@ -224,12 +257,20 @@ class ConnectionService: NSObject {
     /// URL to the last loaded config (which may have been deleted already!)
     private(set) var configURL: URL? {
         didSet(oldValue) {
-            if let oldConfigURL = oldValue {
-                uninstall(configURL: oldConfigURL)
+            if let oldURL = oldValue {
+                uninstall(fileURL: oldURL)
             }
         }
     }
     
+    /// URL to the last loaded auth-user-pass (which may have been deleted already!)
+    private(set) var authUserPassURL: URL? {
+        didSet(oldValue) {
+            if let oldURL = oldValue {
+                uninstall(fileURL: oldURL)
+            }
+        }
+    }
     
     /// URL to the log file
     var logURL: URL? {

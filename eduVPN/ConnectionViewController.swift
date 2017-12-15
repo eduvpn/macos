@@ -39,8 +39,6 @@ class ConnectionViewController: NSViewController {
         
         locationImageView?.kf.setImage(with: profile.info.provider.logoURL)
         profileLabel.stringValue = profile.displayName
-        
-        connect()
     }
     
     override func viewWillAppear() {
@@ -48,7 +46,7 @@ class ConnectionViewController: NSViewController {
         updateForStateChange()
         NotificationCenter.default.addObserver(self, selector: #selector(stateChanged(notification:)), name: ConnectionService.stateChanged, object: ServiceContainer.connectionService)
     }
-    
+
     override func viewDidDisappear() {
         super.viewDidDisappear()
         NotificationCenter.default.removeObserver(self, name: ConnectionService.stateChanged, object: ServiceContainer.connectionService)
@@ -100,9 +98,18 @@ class ConnectionViewController: NSViewController {
         }
     }
     
-    private func connect() {
+    func connect(twoFactor: TwoFactor? = nil) {
         statisticsController.content = nil
-        ServiceContainer.connectionService.connect(to: profile, authState: authState) { (result) in
+        
+        // Prompt user if we need two factor authentication token
+        if profile.twoFactor, twoFactor == nil {
+            let enter2FAViewController = storyboard!.instantiateController(withIdentifier: NSStoryboard.SceneIdentifier(rawValue: "Enter2FA")) as! Enter2FAViewController
+            enter2FAViewController.delegate = self
+            mainWindowController?.present(viewController: enter2FAViewController)
+            return
+        }
+        
+        ServiceContainer.connectionService.connect(to: profile, twoFactor: twoFactor, authState: authState) { (result) in
             DispatchQueue.main.async {
                 switch result {
                 case .success:
@@ -193,6 +200,20 @@ class ConnectionViewController: NSViewController {
     @IBAction func goBack(_ sender: Any) {
         assert(ServiceContainer.connectionService.state == .disconnected)
         mainWindowController?.popToRoot()
+    }
+    
+}
+
+extension ConnectionViewController: Enter2FAViewControllerDelegate {
+    
+    func enter2FA(controller: Enter2FAViewController, enteredTwoFactor twoFactor: TwoFactor) {
+        mainWindowController?.dismiss {
+            self.connect(twoFactor: twoFactor)
+        }
+    }
+    
+    func enter2FACancelled(controller: Enter2FAViewController) {
+        mainWindowController?.dismiss()
     }
     
 }
