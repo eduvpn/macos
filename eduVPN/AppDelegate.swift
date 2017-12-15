@@ -38,7 +38,36 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         mainWindowController = NSStoryboard(name: NSStoryboard.Name(rawValue: "Main"), bundle: nil).instantiateController(withIdentifier: NSStoryboard.SceneIdentifier(rawValue: "MainWindowController")) as! MainWindowController
         mainWindowController.window?.makeKeyAndOrderFront(nil)
     }
-
+    
+    func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {
+        switch ServiceContainer.connectionService.state {
+        case .disconnected:
+            return .terminateNow
+        case .connecting, .disconnecting:
+            return .terminateCancel
+        case .connected:
+            ServiceContainer.connectionService.disconnect { result in
+                DispatchQueue.main.async {
+                    switch result {
+                    case .success:
+                        NSApp.reply(toApplicationShouldTerminate: true)
+                    case .failure(let error):
+                        NSApp.reply(toApplicationShouldTerminate: false)
+                        let alert = NSAlert(error: error)
+                        if let window = self.mainWindowController.window {
+                            alert.beginSheetModal(for: window) { (_) in
+                                
+                            }
+                        } else {
+                            alert.runModal()
+                        }
+                    }
+                }
+            }
+            return .terminateLater
+        }
+    }
+    
     func applicationWillTerminate(_ aNotification: Notification) {
         // Insert code here to tear down your application
     }
