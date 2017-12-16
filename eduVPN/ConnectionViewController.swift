@@ -57,7 +57,7 @@ class ConnectionViewController: NSViewController {
                 case .success(let messages):
                     self.systemMessages = messages
                     self.updateMessages()
-                case .failure(let error):
+                case .failure:
                     // Ignore
                     break
                 }
@@ -70,7 +70,7 @@ class ConnectionViewController: NSViewController {
                 case .success(let messages):
                     self.userMessages = messages
                     self.updateMessages()
-                case .failure(let error):
+                case .failure:
                     // Ignore
                     break
                 }
