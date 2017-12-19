@@ -111,3 +111,8 @@ struct Profile: Codable {
     let info: ProviderInfo
 }
 
+enum TwoFactor {
+    case totp(String)
+    case yubico(String)
+}
+

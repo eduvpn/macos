@@ -47,38 +47,38 @@ class MainWindowController: NSWindowController {
     
     // MARK: - Navigation
     
-    func push(viewController: NSViewController, animated: Bool = true) {
+    func push(viewController: NSViewController, animated: Bool = true, completionHandler: (() -> ())? = nil) {
         navigationStack.append(viewController)
-        mainViewController.show(viewController: viewController, options: .slideForward, animated: animated)
+        mainViewController.show(viewController: viewController, options: .slideForward, animated: animated, completionHandler: completionHandler)
     }
     
-    func pop(animated: Bool = true) {
+    func pop(animated: Bool = true, completionHandler: (() -> ())? = nil) {
         guard navigationStack.count > 1 else {
             return
         }
         navigationStack.removeLast()
-        mainViewController.show(viewController: navigationStack.last!, options: .slideBackward, animated: animated)
+        mainViewController.show(viewController: navigationStack.last!, options: .slideBackward, animated: animated, completionHandler: completionHandler)
     }
     
-    func popToRoot(animated: Bool = true) {
+    func popToRoot(animated: Bool = true, completionHandler: (() -> ())? = nil) {
         guard navigationStack.count > 1 else {
             return
         }
         navigationStack = [navigationStack.first!]
-        mainViewController.show(viewController: navigationStack.last!, options: .slideBackward, animated: animated)
+        mainViewController.show(viewController: navigationStack.last!, options: .slideBackward, animated: animated, completionHandler: completionHandler)
     }
     
-    func present(viewController: NSViewController, animated: Bool = true) {
+    func present(viewController: NSViewController, animated: Bool = true, completionHandler: (() -> ())? = nil) {
         navigationStackStack.append([viewController])
-        mainViewController.show(viewController: viewController, options: .slideUp, animated: animated)
+        mainViewController.show(viewController: viewController, options: .slideUp, animated: animated, completionHandler: completionHandler)
     }
     
-    func dismiss(animated: Bool = true) {
+    func dismiss(animated: Bool = true, completionHandler: (() -> ())? = nil) {
         guard navigationStackStack.count > 1 else {
             return
         }
         navigationStackStack.removeLast()
-        mainViewController.show(viewController: navigationStack.last!, options: .slideDown, animated: animated)
+        mainViewController.show(viewController: navigationStack.last!, options: .slideDown, animated: animated, completionHandler: completionHandler)
     }
     
     // MARK: - Switching to screens
@@ -152,7 +152,9 @@ class MainWindowController: NSWindowController {
         let connectionViewController = storyboard!.instantiateController(withIdentifier: NSStoryboard.SceneIdentifier(rawValue: "Connection")) as! ConnectionViewController
         connectionViewController.profile = profile
         connectionViewController.authState = authState
-        push(viewController: connectionViewController, animated: animated)
+        push(viewController: connectionViewController, animated: animated) {
+            connectionViewController.connect()
+        }
     }
     
 }
@@ -160,7 +162,7 @@ class MainWindowController: NSWindowController {
 extension NSViewController {
     
     var mainWindowController: MainWindowController? {
-        return view.window?.windowController as? MainWindowController
+        return (NSApp.delegate as! AppDelegate).mainWindowController
     }
     
 }
