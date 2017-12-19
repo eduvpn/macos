@@ -20,10 +20,14 @@ class ConnectionViewController: NSViewController {
     @IBOutlet var disconnectButton: NSButton!
     @IBOutlet var connectButton: NSButton!
     @IBOutlet var statisticsBox: NSBox!
+    @IBOutlet var notificationsBox: NSBox!
+    @IBOutlet var notificationsField: NSTextField!
     
     var profile: Profile!
     var authState: OIDAuthState!
     @objc var statistics: Statistics?
+    private var systemMessages: [Message] = []
+    private var userMessages: [Message] = []
     
     @IBOutlet var statisticsController: NSObjectController!
     
@@ -45,8 +49,35 @@ class ConnectionViewController: NSViewController {
         super.viewWillAppear()
         updateForStateChange()
         NotificationCenter.default.addObserver(self, selector: #selector(stateChanged(notification:)), name: ConnectionService.stateChanged, object: ServiceContainer.connectionService)
+        
+        // Fetch messages
+        ServiceContainer.providerService.fetchMessages(for: profile.info, audience: .system, authState: authState) { (result) in
+            DispatchQueue.main.async {
+                switch result {
+                case .success(let messages):
+                    self.systemMessages = messages
+                    self.updateMessages()
+                case .failure(let error):
+                    // Ignore
+                    break
+                }
+            }
+        }
+        
+        ServiceContainer.providerService.fetchMessages(for: profile.info, audience: .user, authState: authState) { (result) in
+            DispatchQueue.main.async {
+                switch result {
+                case .success(let messages):
+                    self.userMessages = messages
+                    self.updateMessages()
+                case .failure(let error):
+                    // Ignore
+                    break
+                }
+            }
+        }
     }
-
+    
     override func viewDidDisappear() {
         super.viewDidDisappear()
         NotificationCenter.default.removeObserver(self, name: ConnectionService.stateChanged, object: ServiceContainer.connectionService)
@@ -137,6 +168,18 @@ class ConnectionViewController: NSViewController {
                     }
                 }
             }
+        }
+    }
+    
+    private func updateMessages() {
+        let messages = userMessages + systemMessages
+        notificationsBox.title = messages.count == 1 ? NSLocalizedString("Notification", comment: "Notification box title (1 message)") : NSLocalizedString("Notifications", comment: "Notifications box title")
+        notificationsBox.isHidden = messages.isEmpty
+        
+        notificationsField.attributedStringValue = messages.reduce(into: NSMutableAttributedString()) { (notifications, message) in
+            let date =  DateFormatter.localizedString(from: message.date, dateStyle: .short, timeStyle: .short)
+            notifications.append(NSAttributedString(string: date + ": ", attributes: [.font: NSFont.boldSystemFont(ofSize: NSFont.systemFontSize(for: .small))]))
+            notifications.append(NSAttributedString(string: message.message + "\n\n", attributes: [.font: NSFont.systemFont(ofSize: NSFont.systemFontSize(for: .small))]))
         }
     }
     

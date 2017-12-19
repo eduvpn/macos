@@ -1187,9 +1187,8 @@ CA
                                         <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" setsMaxLayoutWidthAtFirstLayout="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Bkm-Qe-VuB">
                                             <rect key="frame" x="10" y="0.0" width="340" height="74"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                            <textFieldCell key="cell" sendsActionOnEndEditing="YES" id="E7D-Hd-XLz">
+                                            <textFieldCell key="cell" selectable="YES" sendsActionOnEndEditing="YES" title="Today, 14:23: The lorem is ipsum when it rains" allowsEditingTextAttributes="YES" id="E7D-Hd-XLz">
                                                 <font key="font" metaFont="smallSystem"/>
-                                                <string key="title">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</string>
                                                 <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                 <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                             </textFieldCell>
@@ -1341,6 +1340,8 @@ DQ
                         <outlet property="connectButton" destination="Lha-yM-Uco" id="o5W-mH-GgU"/>
                         <outlet property="disconnectButton" destination="smu-HX-KlD" id="IKt-W2-IuE"/>
                         <outlet property="locationImageView" destination="lQa-Os-EgV" id="Hvw-1H-X5b"/>
+                        <outlet property="notificationsBox" destination="foZ-Fb-y44" id="YfW-ne-p5H"/>
+                        <outlet property="notificationsField" destination="Bkm-Qe-VuB" id="YfW-ne-p5S"/>
                         <outlet property="profileLabel" destination="t6t-Oi-cJ5" id="lBD-D7-3sG"/>
                         <outlet property="spinner" destination="HSo-Og-0y9" id="Zgf-Sd-zdc"/>
                         <outlet property="stateImageView" destination="ico-ME-n8x" id="cif-EW-M48"/>
