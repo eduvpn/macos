@@ -284,6 +284,8 @@ extension ConnectionService: ClientProtocol {
         self.state = .disconnecting
         reply()
         self.state = .disconnected
+        self.configURL = nil
+        self.authUserPassURL = nil
     }
 
 }
