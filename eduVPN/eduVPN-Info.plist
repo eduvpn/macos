@@ -17,9 +17,9 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>0.1</string>
+	<string>0.1.1</string>
 	<key>CFBundleVersion</key>
-	<string>5</string>
+	<string>1</string>
 	<key>LSApplicationCategoryType</key>
 	<string>public.app-category.utilities</string>
 	<key>LSMinimumSystemVersion</key>
@@ -38,7 +38,7 @@
 	<key>SMPrivilegedExecutables</key>
 	<dict>
 		<key>org.eduvpn.app.openvpnhelper</key>
-		<string>identifier "org.eduvpn.app.openvpnhelper" and anchor apple generic and certificate leaf[subject.CN] = "Mac Developer: Johan Kool (2W662WXNRW)" and certificate 1[field.1.2.840.113635.100.6.2.1] /* exists */</string>
+		<string>identifier "org.eduvpn.app.openvpnhelper" and anchor apple generic and certificate leaf[subject.CN] = "Mac Developer: M Koelewijn (SMMAA693P5)" and certificate 1[field.1.2.840.113635.100.6.2.1] /* exists */</string>
 	</dict>
 	<key>SUFeedURL</key>
 	<string>https://app.eduvpn.nl/mac/appcast.xml</string>
