@@ -23,6 +23,13 @@ You need [Carthage](https://github.com/Carthage/Carthage) to build dependencies.
 There are a few places where you'll find the full name of the developer certificate (`Mac Developer: Johan Kool (2W662WXNRW)`) which you need to replace with the name of your developer certificate. Remember that if you adjust this for the check in OpenVPNHelper you need to sing the openvpn binary too, as described above.
 
 
+1. Select eduVPN target
+2. Product > Archive
+3. Export
+4. Developer Id
+5. Select profiles
+
+
 ### Uninstalling
 
 Besides deleting the app, files are installed at these locations:
