@@ -18,6 +18,13 @@ You need [Carthage](https://github.com/Carthage/Carthage) to build dependencies.
 
     $ carthage bootstrap
 
+1. Select eduVPN target
+2. Product > Archive
+3. Export
+4. Developer Id
+5. Select profiles
+
+
 ### Uninstalling
 
 Besides deleting the app, files are installed at these locations:
