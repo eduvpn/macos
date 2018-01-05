@@ -38,7 +38,7 @@
 	<key>SMPrivilegedExecutables</key>
 	<dict>
 		<key>org.eduvpn.app.openvpnhelper</key>
-		<string>identifier "org.eduvpn.app.openvpnhelper" and anchor apple generic and certificate leaf[subject.CN] = "Mac Developer: Johan Kool (2W662WXNRW)" and certificate 1[field.1.2.840.113635.100.6.2.1] /* exists */</string>
+		<string>identifier &quot;org.eduvpn.app.openvpnhelper&quot; and anchor apple generic and certificate leaf[subject.CN] = &quot;${EXPANDED_CODE_SIGN_IDENTITY_NAME}&quot; and certificate 1[field.1.2.840.113635.100.6.2.1] /* exists */</string>
 	</dict>
 	<key>SUFeedURL</key>
 	<string>https://app.eduvpn.nl/mac/appcast.xml</string>
