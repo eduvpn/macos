@@ -2,7 +2,7 @@
 # Note: must be bash; uses bash-specific tricks
 #
 # ******************************************************************************************************************
-# This Tunnelblick script does everything! It handles TUN and TAP interfaces,
+# This eduVPN script does everything! It handles TUN and TAP interfaces,
 # pushed configurations, DHCP with DNS and SMB, and renewed DHCP leases. :)
 #
 # This is the "Up" version of the script, executed after the interface is
@@ -11,6 +11,7 @@
 # Created by: Nick Williams (using original code and parts of old Tblk scripts)
 # Modifed by: Jonathan K. Bullard for Mountain Lion
 #
+# Modified by eduVPN to avoid filename collisions: tunnelblick -> eduvpn, Tunnelblick -> eduVPN
 # ******************************************************************************************************************
 
 
@@ -64,7 +65,7 @@ disable_ipv6() {
 # For each such service, outputs a line with the name of the service.
 # (A separate line is output for each name because a name may include spaces.)
 #
-# The 'restore_ipv6' routine in client.down.tunnelblick.sh undoes the actions performed by this routine.
+# The 'restore_ipv6' routine in client.down.eduvpn.sh undoes the actions performed by this routine.
 #
 # NOTE: Done only for enabled services because some versions of OS X enable the service if this IPv6 setting is changed.
 #
@@ -655,7 +656,7 @@ sed -e 's/^[[:space:]]*[[:digit:]]* : //g' | tr '\n' ' '
 	logDebugMessage "DEBUG: ${SKP_SMB}${SKP_SMB_WG}ADD State: Workgroup      ${FIN_SMB_WG}"
 	logDebugMessage "DEBUG: ${SKP_SMB}${SKP_SMB_WA}ADD State: WINSAddresses  ${FIN_SMB_WA}"
 
-	# Save the openvpn process ID and the Network Primary Service ID, leasewather.plist path, logfile path, and optional arguments from Tunnelblick,
+	# Save the openvpn process ID and the Network Primary Service ID, leasewather.plist path, logfile path, and optional arguments from eduVPN,
 	# then save old and new DNS and SMB settings
 	# PPID is a script variable (defined by bash itself) that contains the process ID of the parent of the process running the script (i.e., OpenVPN's process ID)
 	# config is an environmental variable set to the configuration path by OpenVPN prior to running this up script
@@ -686,22 +687,22 @@ sed -e 's/^[[:space:]]*[[:digit:]]* : //g' | tr '\n' ' '
 		set State:/Network/OpenVPN
 
 		# Back up the device's current DNS and SMB configurations,
-		# Indicate 'no such key' by a dictionary with a single entry: "TunnelblickNoSuchKey : true"
-		# If there isn't a key, "TunnelblickNoSuchKey : true" won't be removed.
-		# If there is a key, "TunnelblickNoSuchKey : true" will be removed and the key's contents will be used
+		# Indicate 'no such key' by a dictionary with a single entry: "eduVPNNoSuchKey : true"
+		# If there isn't a key, "eduVPNNoSuchKey : true" won't be removed.
+		# If there is a key, "eduVPNNoSuchKey : true" will be removed and the key's contents will be used
 
 		d.init
-		d.add TunnelblickNoSuchKey true
+		d.add eduVPNNoSuchKey true
 		get State:/Network/Service/${PSID}/DNS
 		set State:/Network/OpenVPN/OldDNS
 
 		d.init
-		d.add TunnelblickNoSuchKey true
+		d.add eduVPNNoSuchKey true
 		get Setup:/Network/Service/${PSID}/DNS
 		set State:/Network/OpenVPN/OldDNSSetup
 
 		d.init
-		d.add TunnelblickNoSuchKey true
+		d.add eduVPNNoSuchKey true
 		get State:/Network/Service/${PSID}/SMB
 		set State:/Network/OpenVPN/OldSMB
 
@@ -738,12 +739,12 @@ EOF
 
 		# Initialize the maps that will be compared when a configuration change occurs
 		d.init
-		d.add TunnelblickNoSuchKey true
+		d.add eduVPNNoSuchKey true
 		get State:/Network/Global/DNS
 		set State:/Network/OpenVPN/DNS
 
 		d.init
-		d.add TunnelblickNoSuchKey true
+		d.add eduVPNNoSuchKey true
 		get State:/Network/Global/SMB
 		set State:/Network/OpenVPN/SMB
 
@@ -857,7 +858,7 @@ sed -e 's/^[[:space:]]*[[:digit:]]* : //g' | tr '\n' ' '
             logMessage "Setting up to monitor system configuration with leasewatch"
         fi
         if [ "${LEASEWATCHER_TEMPLATE_PATH}" != "" ] ; then
-            sed -e "s|/Applications/Tunnelblick/.app/Contents/Resources|${TB_RESOURCES_PATH}|g" "${LEASEWATCHER_TEMPLATE_PATH}" > "${LEASEWATCHER_PLIST_PATH}"
+            sed -e "s|/Applications/eduVPN/.app/Contents/Resources|${TB_RESOURCES_PATH}|g" "${LEASEWATCHER_TEMPLATE_PATH}" > "${LEASEWATCHER_PLIST_PATH}"
 		fi
         launchctl load "${LEASEWATCHER_PLIST_PATH}"
 	fi
@@ -1022,7 +1023,7 @@ configureOpenVpnDns()
 # DOMAIN name -- Set Connection-specific DNS Suffix.
 #
 # DOMAIN-SEARCH name -- Set Connection-specific DNS Search Address. Repeat this option to
-#               set additional search domains. (Tunnelblick-specific addition.)
+#               set additional search domains. (eduVPN-specific addition.)
 #
 # DNS addr -- Set primary domain name server address.  Repeat  this  option  to  set
 #              secondary DNS server addresses.
@@ -1230,12 +1231,12 @@ logDnsInfo() {
 					fi
 				done
 				if ${knownDnsServerNotFound} ; then
-					logMessage "NOTE: The DNS servers do not include any free public DNS servers known to Tunnelblick. This may cause DNS queries to fail or be intercepted or falsified even if they are directed through the VPN. Specify only known public DNS servers or DNS servers located on the VPN network to avoid such problems."
+					logMessage "NOTE: The DNS servers do not include any free public DNS servers known to eduVPN. This may cause DNS queries to fail or be intercepted or falsified even if they are directed through the VPN. Specify only known public DNS servers or DNS servers located on the VPN network to avoid such problems."
 				else
 					if ${unknownDnsServerFound} ; then
-						logMessage "NOTE: The DNS servers include one or more free public DNS servers known to Tunnelblick and one or more DNS servers not known to Tunnelblick. If used, the DNS servers not known to Tunnelblick may cause DNS queries to fail or be intercepted or falsified even if they are directed through the VPN. Specify only known public DNS servers or DNS servers located on the VPN network to avoid such problems."
+						logMessage "NOTE: The DNS servers include one or more free public DNS servers known to eduVPN and one or more DNS servers not known to eduVPN. If used, the DNS servers not known to eduVPN may cause DNS queries to fail or be intercepted or falsified even if they are directed through the VPN. Specify only known public DNS servers or DNS servers located on the VPN network to avoid such problems."
 					else
-						logMessage "The DNS servers include only free public DNS servers known to Tunnelblick."
+						logMessage "The DNS servers include only free public DNS servers known to eduVPN."
 					fi
 				fi
 			fi
@@ -1309,7 +1310,7 @@ logMessage "Start of output from ${OUR_NAME}"
 
 # Process optional arguments (if any) for the script
 # Each one begins with a "-"
-# They come from Tunnelblick, and come first, before the OpenVPN arguments
+# They come from eduVPN, and come first, before the OpenVPN arguments
 # So we set ARG_ script variables to their values and shift them out of the argument list
 # When we're done, only the OpenVPN arguments remain for the rest of the script to use
 ARG_ENABLE_IPV6_ON_TAP="false"
@@ -1325,7 +1326,7 @@ ARG_DO_NO_USE_DEFAULT_DOMAIN="false"
 ARG_OVERRIDE_MANUAL_NETWORK_SETTINGS="false"
 ARG_PREPEND_DOMAIN_NAME="false"
 ARG_RESET_PRIMARY_INTERFACE_ON_DISCONNECT="false"
-ARG_TB_PATH="/Applications/Tunnelblick.app"
+ARG_TB_PATH="/Applications/eduVPN.app"
 ARG_RESTORE_ON_WINS_RESET="false"
 
 # Handle the arguments we know about by setting ARG_ script variables to their values, then shift them out
@@ -1373,13 +1374,13 @@ while [ {$#} ] ; do
         ARG_RESET_PRIMARY_INTERFACE_ON_DISCONNECT="true"
         shift
     elif [ "${1:0:2}" = "-t" ] ; then
-        ARG_TB_PATH="${1:2}"				        # -t path of Tunnelblick.app
+        ARG_TB_PATH="${1:2}"				        # -t path of eduVPN.app
         shift
     elif [ "$1" = "-w" ] ; then                     # -w = ARG_RESTORE_ON_WINS_RESET
 		ARG_RESTORE_ON_WINS_RESET="true"
 		shift
 	else
-		if [ "${1:0:1}" = "-" ] ; then				# Shift out Tunnelblick arguments (they start with "-") that we don't understand
+		if [ "${1:0:1}" = "-" ] ; then				# Shift out eduVPN arguments (they start with "-") that we don't understand
 			shift									# so the rest of the script sees only the OpenVPN arguments
 		else
 			break
@@ -1390,35 +1391,35 @@ done
 readonly ARG_MONITOR_NETWORK_CONFIGURATION ARG_RESTORE_ON_DNS_RESET ARG_RESTORE_ON_WINS_RESET ARG_TAP ARG_PREPEND_DOMAIN_NAME ARG_FLUSH_DNS_CACHE ARG_RESET_PRIMARY_INTERFACE_ON_DISCONNECT ARG_IGNORE_OPTION_FLAGS
 
 # Note: The script log path name is constructed from the path of the regular config file, not the shadow copy
-# if the config is shadow copy, e.g. /Library/Application Support/Tunnelblick/Users/Jonathan/Folder/Subfolder/config.ovpn
-# then convert to regular config     /Users/Jonathan/Library/Application Support/Tunnelblick/Configurations/Folder/Subfolder/config.ovpn
+# if the config is shadow copy, e.g. /Library/Application Support/eduVPN/Users/Jonathan/Folder/Subfolder/config.ovpn
+# then convert to regular config     /Users/Jonathan/Library/Application Support/eduVPN/Configurations/Folder/Subfolder/config.ovpn
 #      to get the script log path
 # Note: "/Users/..." works even if the home directory has a different path; it is used in the name of the log file, and is not used as a path to get to anything.
-readonly TBALTPREFIX="/Library/Application Support/Tunnelblick/Users/"
+readonly TBALTPREFIX="/Library/Application Support/eduVPN/Users/"
 readonly TBALTPREFIXLEN="${#TBALTPREFIX}"
 readonly TBCONFIGSTART="${config:0:$TBALTPREFIXLEN}"
 if [ "$TBCONFIGSTART" = "$TBALTPREFIX" ] ; then
 	readonly TBBASE="${config:$TBALTPREFIXLEN}"
 	readonly TBSUFFIX="${TBBASE#*/}"
 	readonly TBUSERNAME="${TBBASE%%/*}"
-	readonly TBCONFIG="/Users/$TBUSERNAME/Library/Application Support/Tunnelblick/Configurations/$TBSUFFIX"
+	readonly TBCONFIG="/Users/$TBUSERNAME/Library/Application Support/eduVPN/Configurations/$TBSUFFIX"
 else
     readonly TBCONFIG="${config}"
 fi
 
 readonly CONFIG_PATH_DASHES_SLASHES="$( echo "${TBCONFIG}" | sed -e 's/-/--/g' | sed -e 's/\//-S/g' )"
-readonly SCRIPT_LOG_FILE="/Library/Application Support/Tunnelblick/Logs/${CONFIG_PATH_DASHES_SLASHES}.script.log"
+readonly SCRIPT_LOG_FILE="/Library/Application Support/eduVPN/Logs/${CONFIG_PATH_DASHES_SLASHES}.script.log"
 
 readonly TB_RESOURCES_PATH="${ARG_TB_PATH}/Contents/Resources"
 readonly FREE_PUBLIC_DNS_SERVERS_LIST_PATH="${TB_RESOURCES_PATH}/FreePublicDnsServersList.txt"
 
 # These scripts use a launchd .plist to set up to monitor the network configuration.
 #
-# If Tunnelblick.app is located in /Applications, we load the launchd .plist directly from within the .app.
+# If eduVPN.app is located in /Applications, we load the launchd .plist directly from within the .app.
 #
-# If Tunnelblick.app is not located in /Applications (i.e., we are debugging), we create a modified version of the launchd .plist and use
+# If eduVPN.app is not located in /Applications (i.e., we are debugging), we create a modified version of the launchd .plist and use
 # that modified copy in the 'launchctl load' command. (The modification is that the path to process-network-changes or leasewatch program
-# in the .plist is changed to point to the copy of the program that is inside the running Tunnelblick.)
+# in the .plist is changed to point to the copy of the program that is inside the running eduVPN.)
 #
 # The variables involved in this are set up here:
 #
@@ -1435,12 +1436,12 @@ if [ "${ARG_IGNORE_OPTION_FLAGS:0:2}" = "-p" ] ; then
 else
     readonly LEASEWATCHER_PLIST="LeaseWatch.plist"
 fi
-if [ "${ARG_TB_PATH}" = "/Applications/Tunnelblick.app" ] ; then
+if [ "${ARG_TB_PATH}" = "/Applications/eduVPN.app" ] ; then
     readonly LEASEWATCHER_PLIST_PATH="${TB_RESOURCES_PATH}/${LEASEWATCHER_PLIST}"
     readonly LEASEWATCHER_TEMPLATE_PATH=""
     readonly REMOVE_LEASEWATCHER_PLIST="false"
 else
-    readonly LEASEWATCHER_PLIST_PATH="/Library/Application Support/Tunnelblick/${LEASEWATCHER_PLIST}"
+    readonly LEASEWATCHER_PLIST_PATH="/Library/Application Support/eduVPN/${LEASEWATCHER_PLIST}"
     readonly LEASEWATCHER_TEMPLATE_PATH="${TB_RESOURCES_PATH}/${LEASEWATCHER_PLIST}"
     readonly REMOVE_LEASEWATCHER_PLIST="true"
 fi
@@ -1478,7 +1479,7 @@ if ${ARG_TAP} ; then
 		logDebugMessage "DEBUG: bRouteGatewayIsDhcp is TRUE"
 		if [ -z "$dev" ]; then
 			logMessage "ERROR: Cannot configure TAP interface for DHCP without \$dev being defined. Exiting."
-            # We don't create the "/tmp/tunnelblick-downscript-needs-to-be-run.txt" file, because the down script does NOT need to be run since we didn't do anything
+            # We don't create the "/tmp/eduvpn-downscript-needs-to-be-run.txt" file, because the down script does NOT need to be run since we didn't do anything
             logMessage "End of output from ${OUR_NAME}"
             logMessage "**********************************************"
 			exit 1
@@ -1552,7 +1553,7 @@ else
 	fi
 fi
 
-touch "/tmp/tunnelblick-downscript-needs-to-be-run.txt"
+touch "/tmp/eduvpn-downscript-needs-to-be-run.txt"
 
 logMessage "End of output from ${OUR_NAME}"
 logMessage "**********************************************"

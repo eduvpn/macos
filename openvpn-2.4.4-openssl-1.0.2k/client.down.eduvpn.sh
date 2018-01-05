@@ -2,7 +2,7 @@
 # Note: must be bash; uses bash-specific tricks
 #
 # ******************************************************************************************************************
-# This Tunnelblick script does everything! It handles TUN and TAP interfaces, 
+# This eduVPN script does everything! It handles TUN and TAP interfaces, 
 # pushed configurations and DHCP leases. :)
 # 
 # This is the "Down" version of the script, executed after the connection is 
@@ -10,6 +10,7 @@
 #
 # Created by: Nick Williams (using original code and parts of old Tblk scripts)
 # 
+# Modified by eduVPN to avoid filename collisions: tunnelblick -> eduvpn, Tunnelblick -> eduVPN
 # ******************************************************************************************************************
 
 # @param String message - The message to log
@@ -32,7 +33,7 @@ echo ${@}
 # @param String list - list of network service names, output from disable_ipv6()
 restore_ipv6() {
 
-    # Undoes the actions performed by the disable_ipv6() routine in client.up.tunnelblick.sh by restoring the IPv6
+    # Undoes the actions performed by the disable_ipv6() routine in client.up.eduvpn.sh by restoring the IPv6
     # 'automatic' setting for each network service for which that routine disabled IPv6.
     #
     # $1 must contain the output from disable_ipv6() -- the list of network services.
@@ -189,21 +190,21 @@ logMessage "Start of output from ${OUR_NAME}"
 
 # Remove the flag file that indicates we need to run the down script
 
-if [ -e   "/tmp/tunnelblick-downscript-needs-to-be-run.txt" ] ; then
-    rm -f "/tmp/tunnelblick-downscript-needs-to-be-run.txt"
+if [ -e   "/tmp/eduvpn-downscript-needs-to-be-run.txt" ] ; then
+    rm -f "/tmp/eduvpn-downscript-needs-to-be-run.txt"
 fi
 
 # Test for the "-r" Tunnelbick option (Reset primary interface after disconnecting) because we _always_ need its value.
 # Usually we get the value for that option (and the other options) from State:/Network/OpenVPN,
 # but that key may not exist (because, for example, there were no DNS changes).
-# So we get the value from the Tunnelblick options passed to this script by OpenVPN.
+# So we get the value from the eduVPN options passed to this script by OpenVPN.
 #
-# We do the same thing for the -f Tunnelblick option (Flush DNS cache after connecting or disconnecting)
+# We do the same thing for the -f eduVPN option (Flush DNS cache after connecting or disconnecting)
 ARG_RESET_PRIMARY_INTERFACE_ON_DISCONNECT="false"
 ARG_FLUSH_DNS_CACHE="false"
 while [ {$#} ] ; do
-    if [ "${1:0:1}" != "-" ] ; then				# Tunnelblick arguments start with "-" and come first
-        break                                   # so if this one doesn't start with "-" we are done processing Tunnelblick arguments
+    if [ "${1:0:1}" != "-" ] ; then				# eduVPN arguments start with "-" and come first
+        break                                   # so if this one doesn't start with "-" we are done processing eduVPN arguments
     fi
     if [ "$1" = "-r" ] ; then
         ARG_RESET_PRIMARY_INTERFACE_ON_DISCONNECT="true"
@@ -218,7 +219,7 @@ done
 # Quick check - is the configuration there?
 if ! scutil -w State:/Network/OpenVPN &>/dev/null -t 1 ; then
 	# Configuration isn't there
-    logMessage "WARNING: Not restoring DNS settings because no saved Tunnelblick DNS information was found."
+    logMessage "WARNING: Not restoring DNS settings because no saved eduVPN DNS information was found."
 	
 	flushDNSCache
     
@@ -271,8 +272,8 @@ if ${ARG_TAP} ; then
 	if [ "$bRouteGatewayIsDhcp" == "true" ]; then
         if [ "$bTapDeviceHasBeenSetNone" == "false" ]; then
             if [ -z "$dev" ]; then
-                # If $dev is not defined, then use TunnelDevice, which was set from $dev by client.up.tunnelblick.sh
-                # ($def is not defined when this script is called from MenuController to clean up when exiting Tunnelblick)
+                # If $dev is not defined, then use TunnelDevice, which was set from $dev by client.up.eduvpn.sh
+                # ($def is not defined when this script is called from MenuController to clean up when exiting eduVPN)
                 if [ -n "${sTunnelDevice}" ]; then
                     logMessage "WARNING: \$dev not defined; using TunnelDevice: ${sTunnelDevice}"
                     set +e
@@ -326,7 +327,7 @@ DNS_OLD_SETUP="$( scutil <<-EOF
 EOF
 )"
 TB_NO_SUCH_KEY="<dictionary> {
-  TunnelblickNoSuchKey : true
+  eduVPNNoSuchKey : true
 }"
 
 if [ "${DNS_OLD}" = "${TB_NO_SUCH_KEY}" ] ; then
