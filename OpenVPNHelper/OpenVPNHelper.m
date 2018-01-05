@@ -59,7 +59,7 @@
     reply([NSString stringWithFormat:@"%@-%@", version, buildVersion]);
 }
 
-- (void)startOpenVPNAtURL:(NSURL *_Nonnull)launchURL withConfig:(NSURL *_Nonnull)config authUserPass:(NSURL *_Nullable)authUserPassURL reply:(void(^_Nonnull)(BOOL))reply {
+- (void)startOpenVPNAtURL:(NSURL *_Nonnull)launchURL withConfig:(NSURL *_Nonnull)config authUserPass:(NSURL *_Nullable)authUserPass upScript:(NSURL *_Nullable)upScript downScript:(NSURL *_Nullable)downScript reply:(void(^_Nonnull)(BOOL))reply {
     // Verify that binary at URL is signed by me
     SecStaticCodeRef staticCodeRef = 0;
     OSStatus status = SecStaticCodeCreateWithPath((__bridge CFURLRef _Nonnull)(launchURL), kSecCSDefaultFlags, &staticCodeRef);
@@ -94,8 +94,18 @@
     NSMutableArray *arguments = [NSMutableArray arrayWithArray:@[@"--config", config.path,
                        @"--log", logFilePath,
                        @"--status", statisticsPath, @"1"]];
-    if (authUserPassURL.path) {
-        [arguments addObjectsFromArray:@[@"--auth-user-pass", authUserPassURL.path]];
+    if (authUserPass.path) {
+        [arguments addObjectsFromArray:@[@"--auth-user-pass", authUserPass.path]];
+    }
+    if (upScript.path) {
+        [arguments addObjectsFromArray:@[@"--up", upScript.path]];
+    }
+    if (downScript.path) {
+        [arguments addObjectsFromArray:@[@"--down", downScript.path]];
+    }
+    if (upScript.path || downScript.path) {
+        // 2 -- allow calling of built-ins and scripts
+        [arguments addObjectsFromArray:@[@"--script-security", @"2"]];
     }
     task.arguments = arguments;
     [task setTerminationHandler:^(NSTask *task){

@@ -35,9 +35,11 @@
  @param launchURL URL to openvpn binary
  @param config URL to config file
  @param authUserPass URL to auth-user-pass file
+ @param upScript URL to up script
+ @param downScript URL to down script
  @param reply Success or not
  */
-- (void)startOpenVPNAtURL:(NSURL *_Nonnull)launchURL withConfig:(NSURL *_Nonnull)config authUserPass:(NSURL *_Nullable)authUserPass reply:(void(^_Nonnull)(BOOL))reply;
+- (void)startOpenVPNAtURL:(NSURL *_Nonnull)launchURL withConfig:(NSURL *_Nonnull)config authUserPass:(NSURL *_Nullable)authUserPass upScript:(NSURL *_Nullable)upScript downScript:(NSURL *_Nullable)downScript reply:(void(^_Nonnull)(BOOL))reply;
 
 /**
  Closes OpenVPN connection
