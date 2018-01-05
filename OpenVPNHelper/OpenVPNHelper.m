@@ -68,9 +68,10 @@
         reply(NO);
         return;
     }
-    
+
+    NSString *requirement = [[[NSBundle mainBundle].infoDictionary[@"SMAuthorizedClients"] firstObject] substringFromIndex:[@"identifier \"org.eduvpn.app\" and " length] - 1];
     SecRequirementRef requirementRef = 0;
-    status = SecRequirementCreateWithString((__bridge CFStringRef _Nonnull)@"anchor apple generic and certificate leaf[subject.CN] = \"Mac Developer: Johan Kool (2W662WXNRW)\" and certificate 1[field.1.2.840.113635.100.6.2.1]", kSecCSDefaultFlags, &requirementRef);
+    status = SecRequirementCreateWithString((__bridge CFStringRef _Nonnull)requirement, kSecCSDefaultFlags, &requirementRef);
     if (status != errSecSuccess) {
         NSLog(@"Requirement error %d", status);
         reply(NO);

@@ -416,6 +416,7 @@
 			buildPhases = (
 				C7BEF5C11F03E0D80038605E /* Sources */,
 				C7BEF5C21F03E0D80038605E /* Frameworks */,
+				C76E5F7A1FFF945000E6F905 /* Sign OpenVPN */,
 				C7BEF5C31F03E0D80038605E /* Resources */,
 				C72AD6ED1F0A6641006DBDA5 /* CopyFiles */,
 				C75527F51F3C543600076078 /* CopyFiles */,
@@ -510,6 +511,23 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		C76E5F7A1FFF945000E6F905 /* Sign OpenVPN */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Sign OpenVPN";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "codesign -f -s \"${EXPANDED_CODE_SIGN_IDENTITY_NAME}\" \"${SOURCE_ROOT}/openvpn-2.4.4-openssl-1.0.2k/openvpn\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		C72AD6EF1F0A692F006DBDA5 /* Sources */ = {

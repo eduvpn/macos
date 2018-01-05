@@ -2,9 +2,7 @@
 
 ### Notes
 
-The helper will only run binaries that are signed by me.
-
-    $ codesign -f -s "Mac Developer: Johan Kool (2W662WXNRW)" /Users/jkool/Developer/Egeniq/eduvpn-macos/openvpn-2.4.4-openssl-1.0.2k/openvpn
+The helper will only run binaries that are signed. This is automatically done with a run script during the build process.
 
 To verify code signing and priviliged helper settings use the SMJobBlessUtil.py tool.
 
@@ -19,9 +17,6 @@ The bundle identifier (`CFBundleIdentifier`) in the helper's Info.plist should b
 You need [Carthage](https://github.com/Carthage/Carthage) to build dependencies.
 
     $ carthage bootstrap
-    
-There are a few places where you'll find the full name of the developer certificate (`Mac Developer: Johan Kool (2W662WXNRW)`) which you need to replace with the name of your developer certificate. Remember that if you adjust this for the check in OpenVPNHelper you need to sing the openvpn binary too, as described above.
-
 
 ### Uninstalling
 

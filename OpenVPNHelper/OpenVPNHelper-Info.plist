@@ -21,7 +21,7 @@
 	<key>CFBundleVersion</key>
 	<string>3</string>
 	<key>NSHumanReadableCopyright</key>
-	<string>Copyright © 2017 eduVPN. All rights reserved.</string>
+	<string>Copyright © 2017-2018 eduVPN. All rights reserved.</string>
 	<key>SMAuthorizedClients</key>
 	<array>
 		<string>identifier &quot;org.eduvpn.app&quot; and anchor apple generic and certificate leaf[subject.CN] = &quot;Mac Developer: Johan Kool (2W662WXNRW)&quot; and certificate 1[field.1.2.840.113635.100.6.2.1] /* exists */</string>
