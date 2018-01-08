@@ -381,6 +381,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = C72AD6F71F0A692F006DBDA5 /* Build configuration list for PBXNativeTarget "org.eduvpn.app.openvpnhelper" */;
 			buildPhases = (
+				C71F0FDA20003574008A4760 /* SMAuthorizedClients */,
 				C72AD6EF1F0A692F006DBDA5 /* Sources */,
 				C72AD6F01F0A692F006DBDA5 /* Frameworks */,
 			);
@@ -414,6 +415,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = C7BEF5D41F03E0D80038605E /* Build configuration list for PBXNativeTarget "eduVPN" */;
 			buildPhases = (
+				C76E5F7A1FFF945000E6F905 /* Sign OpenVPN */,
 				C7BEF5C11F03E0D80038605E /* Sources */,
 				C7BEF5C21F03E0D80038605E /* Frameworks */,
 				C7BEF5C31F03E0D80038605E /* Resources */,
@@ -466,7 +468,7 @@
 					};
 				};
 			};
-			buildConfigurationList = C7BEF5C01F03E0D70038605E /* Build configuration list for PBXProject "EduVPN" */;
+			buildConfigurationList = C7BEF5C01F03E0D70038605E /* Build configuration list for PBXProject "eduVPN" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -510,6 +512,39 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		C71F0FDA20003574008A4760 /* SMAuthorizedClients */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = SMAuthorizedClients;
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "/usr/libexec/PlistBuddy -c \"Set :SMAuthorizedClients:0 \\\"identifier \\\\\\\"org.eduvpn.app\\\\\\\" and anchor apple generic and certificate leaf[subject.CN] = \\\\\\\"${EXPANDED_CODE_SIGN_IDENTITY_NAME}\\\\\\\" and certificate 1[field.1.2.840.113635.100.6.2.1] /* exists */\\\"\" ${SOURCE_ROOT}/OpenVPNHelper/OpenVPNHelper-Info.plist";
+			showEnvVarsInLog = 0;
+		};
+		C76E5F7A1FFF945000E6F905 /* Sign OpenVPN */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Sign OpenVPN";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/bash;
+			shellScript = "signed=$( codesign -d -vv ${SOURCE_ROOT}/openvpn-2.4.4-openssl-1.0.2k/openvpn 2>&1 >/dev/null | grep \"${EXPANDED_CODE_SIGN_IDENTITY_NAME}\" )\necho $signed\nif [ -n \"$signed\" ]\nthen\n    echo \"Already signed for ${EXPANDED_CODE_SIGN_IDENTITY_NAME}, skipping\"\nelse\n    echo \"Signing for ${EXPANDED_CODE_SIGN_IDENTITY_NAME}\"\n    codesign -f -s \"${EXPANDED_CODE_SIGN_IDENTITY_NAME}\" \"${SOURCE_ROOT}/openvpn-2.4.4-openssl-1.0.2k/openvpn\"\nfi\n\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		C72AD6EF1F0A692F006DBDA5 /* Sources */ = {
@@ -844,7 +879,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		C7BEF5C01F03E0D70038605E /* Build configuration list for PBXProject "EduVPN" */ = {
+		C7BEF5C01F03E0D70038605E /* Build configuration list for PBXProject "eduVPN" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C7BEF5D21F03E0D80038605E /* Debug */,

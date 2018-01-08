@@ -184,9 +184,11 @@ class ConnectionService: NSObject {
         
         let bundle = Bundle.init(for: ConnectionService.self)
         let openvpnURL = bundle.url(forResource: "openvpn", withExtension: nil, subdirectory: ConnectionService.openVPNSubdirectory)!
+        let upScript = bundle.url(forResource: "client.up.eduvpn", withExtension: "sh", subdirectory: ConnectionService.openVPNSubdirectory)!
+        let downScript = bundle.url(forResource: "client.down.eduvpn", withExtension: "sh", subdirectory: ConnectionService.openVPNSubdirectory)!
         self.configURL = configURL
         self.authUserPassURL = authUserPassURL
-        helper.startOpenVPN(at: openvpnURL, withConfig: configURL, authUserPass: authUserPassURL) { (success) in
+        helper.startOpenVPN(at: openvpnURL, withConfig: configURL, authUserPass: authUserPassURL, upScript: upScript, downScript: downScript) { (success) in
             if success {
                 self.state = .connected
                 handler(.success(Void()))
