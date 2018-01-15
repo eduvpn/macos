@@ -468,7 +468,7 @@
 					};
 				};
 			};
-			buildConfigurationList = C7BEF5C01F03E0D70038605E /* Build configuration list for PBXProject "eduVPN" */;
+			buildConfigurationList = C7BEF5C01F03E0D70038605E /* Build configuration list for PBXProject "EduVPN" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -526,7 +526,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "/usr/libexec/PlistBuddy -c \"Set :SMAuthorizedClients:0 \\\"identifier \\\\\\\"org.eduvpn.app\\\\\\\" and anchor apple generic and certificate leaf[subject.CN] = \\\\\\\"${EXPANDED_CODE_SIGN_IDENTITY_NAME}\\\\\\\" and certificate 1[field.1.2.840.113635.100.6.2.1] /* exists */\\\"\" ${SOURCE_ROOT}/OpenVPNHelper/OpenVPNHelper-Info.plist";
+			shellScript = "/usr/libexec/PlistBuddy -c \"Set :SMAuthorizedClients:0 \\\"anchor apple generic and identifier \\\\\\\"org.eduvpn.app\\\\\\\" and (certificate leaf[field.1.2.840.113635.100.6.1.9] /* exists */ or certificate 1[field.1.2.840.113635.100.6.2.6] /* exists */ and certificate leaf[field.1.2.840.113635.100.6.1.13] /* exists */ and certificate leaf[subject.OU] = ${DEVELOPMENT_TEAM})\\\"\" ${SOURCE_ROOT}/OpenVPNHelper/OpenVPNHelper-Info.plist";
 			showEnvVarsInLog = 0;
 		};
 		C76E5F7A1FFF945000E6F905 /* Sign OpenVPN */ = {
@@ -542,7 +542,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
 			shellScript = "signed=$( codesign -d -vv ${SOURCE_ROOT}/openvpn-2.4.4-openssl-1.0.2k/openvpn 2>&1 >/dev/null | grep \"${EXPANDED_CODE_SIGN_IDENTITY_NAME}\" )\necho $signed\nif [ -n \"$signed\" ]\nthen\n    echo \"Already signed for ${EXPANDED_CODE_SIGN_IDENTITY_NAME}, skipping\"\nelse\n    echo \"Signing for ${EXPANDED_CODE_SIGN_IDENTITY_NAME}\"\n    codesign -f -s \"${EXPANDED_CODE_SIGN_IDENTITY_NAME}\" \"${SOURCE_ROOT}/openvpn-2.4.4-openssl-1.0.2k/openvpn\"\nfi\n\n";
-			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -879,7 +878,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		C7BEF5C01F03E0D70038605E /* Build configuration list for PBXProject "eduVPN" */ = {
+		C7BEF5C01F03E0D70038605E /* Build configuration list for PBXProject "EduVPN" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C7BEF5D21F03E0D80038605E /* Debug */,
