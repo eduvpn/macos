@@ -69,7 +69,7 @@
         return;
     }
 
-    NSString *requirement = [[[NSBundle mainBundle].infoDictionary[@"SMAuthorizedClients"] firstObject] substringFromIndex:[@"identifier \"org.eduvpn.app\" and " length] - 1];
+    NSString *requirement = @"anchor apple generic and identifier openvpn and (certificate leaf[field.1.2.840.113635.100.6.1.9] /* exists */ or certificate 1[field.1.2.840.113635.100.6.2.6] /* exists */ and certificate leaf[field.1.2.840.113635.100.6.1.13] /* exists */ and certificate leaf[subject.OU] = ZYJ4TZX4UU)";
     SecRequirementRef requirementRef = 0;
     status = SecRequirementCreateWithString((__bridge CFStringRef _Nonnull)requirement, kSecCSDefaultFlags, &requirementRef);
     if (status != errSecSuccess) {
