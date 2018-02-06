@@ -7,6 +7,7 @@
 //
 
 #import "OpenVPNHelper.h"
+#include <syslog.h>
 
 @interface OpenVPNHelper () <NSXPCListenerDelegate, OpenVPNHelperProtocol>
 
@@ -64,28 +65,28 @@
     SecStaticCodeRef staticCodeRef = 0;
     OSStatus status = SecStaticCodeCreateWithPath((__bridge CFURLRef _Nonnull)(launchURL), kSecCSDefaultFlags, &staticCodeRef);
     if (status != errSecSuccess) {
-        NSLog(@"Static code error %d", status);
+        syslog(LOG_ERR, "Static code error %d", status);
         reply(NO);
         return;
     }
 
-    NSString *requirement = @"anchor apple generic and identifier openvpn and (certificate leaf[field.1.2.840.113635.100.6.1.9] /* exists */ or certificate 1[field.1.2.840.113635.100.6.2.6] /* exists */ and certificate leaf[field.1.2.840.113635.100.6.1.13] /* exists */ and certificate leaf[subject.OU] = ZYJ4TZX4UU)";
+    NSString *requirement = @"anchor apple generic and identifier openvpn and certificate leaf[subject.OU] = ZYJ4TZX4UU";
     SecRequirementRef requirementRef = 0;
     status = SecRequirementCreateWithString((__bridge CFStringRef _Nonnull)requirement, kSecCSDefaultFlags, &requirementRef);
     if (status != errSecSuccess) {
-        NSLog(@"Requirement error %d", status);
+        syslog(LOG_ERR, "Requirement error %d", status);
         reply(NO);
         return;
     }
     
     status = SecStaticCodeCheckValidity(staticCodeRef, kSecCSDefaultFlags, requirementRef);
     if (status != errSecSuccess) {
-        NSLog(@"Validity error %d", status);
+        syslog(LOG_ERR, "Validity error %d", status);
         reply(NO);
         return;
     }
     
-    NSLog(@"Launching task");
+    syslog(LOG_NOTICE, "Launching task");
     
     NSTask *task = [[NSTask alloc] init];
     task.launchPath = launchURL.path;
@@ -111,7 +112,7 @@
     task.arguments = arguments;
     [task setTerminationHandler:^(NSTask *task){
         [self.remoteObject taskTerminatedWithReply:^{
-           NSLog(@"task terminated");
+            syslog(LOG_NOTICE, "Terminated task");
         }];
     }];
     [task launch];
@@ -119,7 +120,7 @@
     // Make log file readable
     NSError *error;
     if (![[NSFileManager defaultManager] setAttributes:@{NSFilePosixPermissions: [NSNumber numberWithShort:0644]} ofItemAtPath:logFilePath error:&error]) {
-        NSLog(@"Error making log file %@ readable (chmod 644): %@", logFilePath, error);
+        syslog(LOG_WARNING, "Error making log file %s readable (chmod 644): %s", logFilePath.UTF8String, error.description.UTF8String);
     }
     
     self.openVPNTask = task;
@@ -140,7 +141,7 @@
         NSError *error = nil;
         NSString *string = [NSString stringWithContentsOfFile:self.statisticsPath encoding:NSUTF8StringEncoding error:&error];
         if (string == nil) {
-            NSLog(@"Read statistics file error: %@", error);
+            syslog(LOG_WARNING, "Read statistics file error: %s", error.description.UTF8String);
             reply(nil);
             return;
         }

@@ -416,6 +416,7 @@
 			buildConfigurationList = C7BEF5D41F03E0D80038605E /* Build configuration list for PBXNativeTarget "eduVPN" */;
 			buildPhases = (
 				C76E5F7A1FFF945000E6F905 /* Sign OpenVPN */,
+				C77C7DB02029C7C70029F90E /* Set SMPrivilegedExecutables */,
 				C7BEF5C11F03E0D80038605E /* Sources */,
 				C7BEF5C21F03E0D80038605E /* Frameworks */,
 				C7BEF5C31F03E0D80038605E /* Resources */,
@@ -542,6 +543,20 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
 			shellScript = "signed=$( codesign -d -vv ${SOURCE_ROOT}/openvpn-2.4.4-openssl-1.0.2k/openvpn 2>&1 >/dev/null | grep \"${EXPANDED_CODE_SIGN_IDENTITY_NAME}\" )\necho $signed\nif [ -n \"$signed\" ]\nthen\n    echo \"Already signed for ${EXPANDED_CODE_SIGN_IDENTITY_NAME}, skipping\"\nelse\n    echo \"Signing for ${EXPANDED_CODE_SIGN_IDENTITY_NAME}\"\n    codesign -f -s \"${EXPANDED_CODE_SIGN_IDENTITY_NAME}\" \"${SOURCE_ROOT}/openvpn-2.4.4-openssl-1.0.2k/openvpn\"\nfi\n\n";
+		};
+		C77C7DB02029C7C70029F90E /* Set SMPrivilegedExecutables */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Set SMPrivilegedExecutables";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if test \"$ACTION\" == \"install\"\nthen\n/usr/libexec/PlistBuddy -c \"Set :SMPrivilegedExecutables:org.eduvpn.app.openvpnhelper \\\"anchor apple generic and identifier \\\\\\\"org.eduvpn.app.openvpnhelper\\\\\\\" and (certificate leaf[field.1.2.840.113635.100.6.1.9] /* exists */ or certificate 1[field.1.2.840.113635.100.6.2.6] /* exists */ and certificate leaf[field.1.2.840.113635.100.6.1.13] /* exists */ and certificate leaf[subject.OU] = ${DEVELOPMENT_TEAM})\\\"\" ${SOURCE_ROOT}/eduVPN/eduVPN-Info.plist\nelse\n/usr/libexec/PlistBuddy -c \"Set :SMPrivilegedExecutables:org.eduvpn.app.openvpnhelper \\\"identifier \\\\\\\"org.eduvpn.app.openvpnhelper\\\\\\\" and anchor apple generic and certificate leaf[subject.CN] = \\\\\\\"${EXPANDED_CODE_SIGN_IDENTITY_NAME}\\\\\\\" and certificate 1[field.1.2.840.113635.100.6.2.1] /* exists */\\\"\" ${SOURCE_ROOT}/eduVPN/eduVPN-Info.plist\nfi";
 		};
 /* End PBXShellScriptBuildPhase section */
 

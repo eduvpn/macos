@@ -20,7 +20,7 @@ class HelperService {
     enum Error: Swift.Error, LocalizedError {
         case noHelperConnection
         case authenticationFailed
-        case installationFailed
+        case installationFailed(ServiceManagementError)
         case connectionInvalidated
         case connectionInterrupted
         
@@ -45,11 +45,54 @@ class HelperService {
                 return NSLocalizedString("Try reinstalling eduVPN.", comment: "")
             case .authenticationFailed, .connectionInvalidated, .connectionInterrupted:
                 return NSLocalizedString("Try to connect again.", comment: "")
-            case .installationFailed:
-                return NSLocalizedString("Try reinstalling eduVPN.", comment: "")
+            case .installationFailed(let serviceManagementError):
+                return (serviceManagementError.errorDescription ?? "") + " (SM-\(serviceManagementError.rawValue)) " + NSLocalizedString("Try reinstalling eduVPN.", comment: "")
             }
         }
     }
+
+    enum ServiceManagementError: Int, Swift.Error, LocalizedError {
+        case unknown = 0
+        case helperVersionMismatch = 1
+        case kSMErrorInternalFailure = 2
+        case kSMErrorInvalidSignature = 3
+        case kSMErrorAuthorizationFailure = 4
+        case kSMErrorToolNotValid = 5
+        case kSMErrorJobNotFound = 6
+        case kSMErrorServiceUnavailable = 7
+        case kSMErrorJobPlistNotFound = 8
+        case kSMErrorJobMustBeEnabled = 9
+        case kSMErrorInvalidPlist = 10
+        
+        var errorDescription: String? {
+            switch self {
+            case .unknown:
+                return NSLocalizedString("An unknown error has occurred.", comment: "")
+            case .helperVersionMismatch:
+                return NSLocalizedString("The helper has an unexpected version.", comment: "")
+            case .kSMErrorInternalFailure:
+                return NSLocalizedString("An internal failure has occurred.", comment: "")
+            case .kSMErrorInvalidSignature:
+                return NSLocalizedString("The Application's code signature does not meet the requirements to perform the operation.", comment: "")
+            case .kSMErrorAuthorizationFailure:
+                return NSLocalizedString("The request required authorization (i.e. adding a job to the kSMDomainSystemLaunchd} domain) but the AuthorizationRef did not contain the required right.", comment: "")
+            case .kSMErrorToolNotValid:
+                return NSLocalizedString("The specified path does not exist or the tool at the specified path is not valid.", comment: "")
+            case .kSMErrorJobNotFound:
+                return NSLocalizedString("A job with the given label could not be found.", comment: "")
+            case .kSMErrorServiceUnavailable:
+                return NSLocalizedString("The service required to perform this operation is unavailable or is no longer accepting requests.", comment: "")
+            case .kSMErrorJobPlistNotFound:
+                return NSLocalizedString("A plist for the job could not be found.", comment: "")
+            case .kSMErrorJobMustBeEnabled:
+                return NSLocalizedString("The job must be enabled.", comment: "")
+            case .kSMErrorInvalidPlist:
+                return NSLocalizedString("The plist was invalid.", comment: "")
+            }
+        }
+        
+    }
+
     
     private(set) var connection: NSXPCConnection?
     private var authRef: AuthorizationRef?
@@ -97,14 +140,14 @@ class HelperService {
                             if upToDate {
                                 handler(.success(Void()))
                             } else {
-                                handler(.failure(Error.installationFailed))
+                                handler(.failure(Error.installationFailed(.helperVersionMismatch)))
                             }
-                        case .failure:
-                            handler(.failure(Error.installationFailed))
+                        case .failure(let error):
+                            handler(.failure(error))
                         }
                     }
-                case .failure:
-                    handler(.failure(Error.installationFailed))
+                case .failure(let error):
+                    handler(.failure(error))
                 }
             }
         }
@@ -142,7 +185,9 @@ class HelperService {
             handler(.success(Void()))
         } else {
             NSLog("SMJobBless failed: \(String(describing: error))")
-            handler(.failure(Error.installationFailed))
+            let error = Error.installationFailed(ServiceManagementError(rawValue: (error as? NSError)?.code ?? 0) ?? .unknown)
+            NSLog("Installation failed: \(String(describing: error))")
+            handler(.failure(error))
         }
     }
     
