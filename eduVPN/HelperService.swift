@@ -75,7 +75,7 @@ class HelperService {
             case .kSMErrorInvalidSignature:
                 return NSLocalizedString("The Application's code signature does not meet the requirements to perform the operation.", comment: "")
             case .kSMErrorAuthorizationFailure:
-                return NSLocalizedString("The request required authorization (i.e. adding a job to the kSMDomainSystemLaunchd} domain) but the AuthorizationRef did not contain the required right.", comment: "")
+                return NSLocalizedString("The request required authorization (i.e. adding a job to the kSMDomainSystemLaunchd domain) but the AuthorizationRef did not contain the required right.", comment: "")
             case .kSMErrorToolNotValid:
                 return NSLocalizedString("The specified path does not exist or the tool at the specified path is not valid.", comment: "")
             case .kSMErrorJobNotFound:
@@ -90,10 +90,8 @@ class HelperService {
                 return NSLocalizedString("The plist was invalid.", comment: "")
             }
         }
-        
     }
 
-    
     private(set) var connection: NSXPCConnection?
     private var authRef: AuthorizationRef?
     
@@ -185,7 +183,13 @@ class HelperService {
             handler(.success(Void()))
         } else {
             NSLog("SMJobBless failed: \(String(describing: error))")
-            let error = Error.installationFailed(ServiceManagementError(rawValue: (error as? NSError)?.code ?? 0) ?? .unknown)
+            let code: Int
+            if let error = error?.takeUnretainedValue() {
+                code = CFErrorGetCode(error)
+            } else {
+                code = 0
+            }
+            let error = Error.installationFailed(ServiceManagementError(rawValue: code) ?? .unknown)
             NSLog("Installation failed: \(String(describing: error))")
             handler(.failure(error))
         }
