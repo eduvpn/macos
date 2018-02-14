@@ -29,7 +29,7 @@ class ProviderService {
         var errorDescription: String? {
             switch self {
             case .unknown:
-                return NSLocalizedString("Discovering providers failed for unknown reason", comment: "")
+                return NSLocalizedString("An unknown error occurred", comment: "")
             case .invalidProvider:
                 return NSLocalizedString("Invalid provider", comment: "")
             case .invalidProviderURL:
@@ -63,7 +63,10 @@ class ProviderService {
         }
     }
     
-    init() {
+    private let urlSession: URLSession
+    
+    init(urlSession: URLSession) {
+        self.urlSession = urlSession
         readFromDisk()
     }
     
@@ -260,7 +263,7 @@ class ProviderService {
     ///   - handler: List of providers or error
     func discoverProviders(connectionType: ConnectionType, handler: @escaping (Result<[Provider]>) -> ()) {
         let request = URLRequest(url: signatureUrl(for: connectionType))
-        let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
+        let task = urlSession.dataTask(with: request) { (data, response, error) in
             guard let signature = data, let response = response as? HTTPURLResponse, 200..<300 ~= response.statusCode else {
                 handler(.failure(error ?? Error.unknown))
                 return
@@ -271,7 +274,7 @@ class ProviderService {
         
         func discoverProviders(signature: Data) {
             let request = URLRequest(url: url(for: connectionType))
-            let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
+            let task = urlSession.dataTask(with: request) { (data, response, error) in
                 guard let data = data, let response = response as? HTTPURLResponse, 200..<300 ~= response.statusCode else {
                     handler(.failure(error ?? Error.unknown))
                     return
@@ -393,7 +396,7 @@ class ProviderService {
         }
         
         let request = URLRequest(url:url)
-        let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
+        let task = urlSession.dataTask(with: request) { (data, response, error) in
             guard let data = data, let response = response as? HTTPURLResponse, 200..<300 ~= response.statusCode else {
                 switch provider.connectionType {
                 case .secureInternet, .instituteAccess:
@@ -451,7 +454,7 @@ class ProviderService {
             var request = URLRequest(url: url)
             request.setValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
             
-            let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
+            let task = self.urlSession.dataTask(with: request) { (data, response, error) in
                 guard let data = data, let response = response as? HTTPURLResponse, 200..<300 ~= response.statusCode else {
                     handler(.failure(error ?? Error.unknown))
                     return
@@ -523,7 +526,7 @@ class ProviderService {
             var request = URLRequest(url: url)
             request.setValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
             
-            let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
+            let task = self.urlSession.dataTask(with: request) { (data, response, error) in
                 guard let data = data, let response = response as? HTTPURLResponse, 200..<300 ~= response.statusCode else {
                     handler(.failure(error ?? Error.unknown))
                     return

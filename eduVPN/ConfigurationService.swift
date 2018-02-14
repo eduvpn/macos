@@ -50,6 +50,12 @@ class ConfigurationService {
         }
     }
     
+    private let urlSession: URLSession
+    
+    init(urlSession: URLSession) {
+        self.urlSession = urlSession
+    }
+    
     /// Fetches configuration for a profile including certificate and private key
     ///
     /// - Parameters:
@@ -149,7 +155,7 @@ class ConfigurationService {
             request.httpBody = data
             request.setValue("\(data.count)", forHTTPHeaderField: "Content-Length")
             
-            let task = URLSession.shared.dataTask(with: request) { (data, _, error) in
+            let task = self.urlSession.dataTask(with: request) { (data, _, error) in
                 guard let data = data else {
                     handler(.failure(error ?? Error.unknown))
                     return
@@ -214,7 +220,7 @@ class ConfigurationService {
             var request = URLRequest(url: requestUrl)
             request.setValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
             
-            let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
+            let task = self.urlSession.dataTask(with: request) { (data, response, error) in
                 guard let data = data, let response = response as? HTTPURLResponse, 200..<300 ~= response.statusCode else {
                     handler(.failure(error ?? Error.unknown))
                     return
