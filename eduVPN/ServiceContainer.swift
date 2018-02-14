@@ -11,17 +11,23 @@ import Foundation
 /// Entrypoint to services
 struct ServiceContainer {
     
+    /// URL session to perform network requests
+    static let urlSession: URLSession = {
+        let urlSession =  URLSession(configuration: .ephemeral)
+        return urlSession
+    }()
+    
     /// Installs and connects helper
     static let helperService = HelperService()
     
     /// Discovers providers
-    static let providerService = ProviderService()
+    static let providerService = ProviderService(urlSession: urlSession)
     
     /// Authenticates user with provider
     static let authenticationService = AuthenticationService()
    
     /// Fetches configuration
-    static let configurationService = ConfigurationService()
+    static let configurationService = ConfigurationService(urlSession: urlSession)
     
     /// Connects to VPN
     static let connectionService = ConnectionService(configurationService: configurationService, helperService: helperService)
