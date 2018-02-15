@@ -93,17 +93,17 @@
     NSString *logFilePath = [config.path stringByAppendingString:@".log"];
     NSString *statisticsPath = [config.path stringByAppendingString:@".status"];
     
-    NSMutableArray *arguments = [NSMutableArray arrayWithArray:@[@"--config", config.path,
-                       @"--log", logFilePath,
-                       @"--status", statisticsPath, @"1"]];
+    NSMutableArray *arguments = [NSMutableArray arrayWithArray:@[@"--config", [self pathWithSpacesEscaped:config.path],
+                       @"--log", [self pathWithSpacesEscaped:logFilePath],
+                       @"--status", [self pathWithSpacesEscaped:statisticsPath], @"1"]];
     if (authUserPass.path) {
-        [arguments addObjectsFromArray:@[@"--auth-user-pass", authUserPass.path]];
+        [arguments addObjectsFromArray:@[@"--auth-user-pass", [self pathWithSpacesEscaped:authUserPass.path]]];
     }
     if (upScript.path) {
-        [arguments addObjectsFromArray:@[@"--up", upScript.path]];
+        [arguments addObjectsFromArray:@[@"--up", [self pathWithSpacesEscaped:upScript.path]]];
     }
     if (downScript.path) {
-        [arguments addObjectsFromArray:@[@"--down", downScript.path]];
+        [arguments addObjectsFromArray:@[@"--down", [self pathWithSpacesEscaped:downScript.path]]];
     }
     if (upScript.path || downScript.path) {
         // 2 -- allow calling of built-ins and scripts
@@ -195,6 +195,10 @@
     } else {
         return bytes;
     }
+}
+
+- (NSString *)pathWithSpacesEscaped:(NSString *)path {
+    return [path stringByReplacingOccurrencesOfString:@" " withString:@"\\ "];
 }
 
 @end
