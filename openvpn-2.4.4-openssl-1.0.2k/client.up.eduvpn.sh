@@ -932,6 +932,12 @@ configureDhcpDns()
 				let nNameServerIndex++
 			done
 
+            # Now look for IPv6 addresses
+            for tNameServer in $( echo "$sGetPacketOutput" | grep "domain_name_server" | grep -Eo "(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))" ); do
+                aNameServers[nNameServerIndex-1]="$( trim "$tNameServer" )"
+                let nNameServerIndex++
+            done
+
 			for tWINSServer in $( echo "$sGetPacketOutput" | grep "nb_over_tcpip_name_server" | grep -Eo "\{([0-9\.]+)(, [0-9\.]+)*\}" | grep -Eo "([0-9\.]+)" ); do
 				aWinsServers[nWinsServerIndex-1]="$( trim "$tWINSServer" )"
 				let nWinsServerIndex++
@@ -1081,6 +1087,10 @@ configureOpenVpnDns()
 				;;
 			"dhcp-option DNS "*    )
 				aNameServers[nNameServerIndex-1]="$( trim "${vOptions[nOptionIndex-1]//dhcp-option DNS /}" )"
+				let nNameServerIndex++
+				;;
+	        "dhcp-option DNS6 "*    )
+				aNameServers[nNameServerIndex-1]="$( trim "${vOptions[nOptionIndex-1]//dhcp-option DNS6 /}" )"
 				let nNameServerIndex++
 				;;
 			"dhcp-option WINS "*   )
