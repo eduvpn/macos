@@ -95,7 +95,6 @@ class ConnectionViewController: NSViewController {
             
         case .connected:
             self.backButton.isHidden = true
-            self.stateImageView.image = #imageLiteral(resourceName: "connected")
             self.spinner.stopAnimation(self)
             self.disconnectButton.isHidden = false
             self.connectButton.isHidden = true
@@ -217,11 +216,20 @@ class ConnectionViewController: NSViewController {
                 switch result {
                 case .success(let statistics):
                     self.statisticsController.content = statistics
+                    self.updateStatusImage()
                 case .failure:
                     break
                 }
             }
         }
+    }
+    
+    /// Wait with showing state as connected until first byte has been read or written
+    private func updateStatusImage() {
+        guard let statistics = statisticsController.content as? Statistics else {
+            return
+        }
+        stateImageView.image = (statistics.tcpUdpReadBytes > 0  || statistics.tcpUdpWriteBytes > 0) ? #imageLiteral(resourceName: "connected") : #imageLiteral(resourceName: "connecting")
     }
     
     @objc @IBAction func connect(_ sender: Any) {
