@@ -16,6 +16,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     @IBOutlet var statusMenu: NSMenu!
     
     func applicationWillFinishLaunching(_ notification: Notification) {
+        ServiceContainer.preferencesService.updateForUIPreferences()
+        
         // Disabled until best approach to get token is determined
 //        // Setup incoming URL handling
 //        NSAppleEventManager.shared().setEventHandler(self, andSelector: #selector(AppDelegate.handleAppleEvent(event:with:)), forEventClass: AEEventClass(kInternetEventClass), andEventID: AEEventID(kAEGetURL))
@@ -31,7 +33,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         
         NotificationCenter.default.addObserver(self, selector: #selector(connectionStateChanged(notification:)), name: ConnectionService.stateChanged, object: ServiceContainer.connectionService)
       
-        ServiceContainer.preferencesService.updateForUIPreferences()
         
         ValueTransformer.setValueTransformer(DurationTransformer(), forName: NSValueTransformerName(rawValue: "DurationTransformer"))
         
@@ -85,7 +86,29 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         guard let window = mainWindowController.window else {
             return
         }
-        window.setIsVisible(true)
+        NSApp.activate(ignoringOtherApps: true)
+        window.makeKeyAndOrderFront(nil)
+    }
+    
+    private lazy var preferencesWindowController = NSStoryboard(name: NSStoryboard.Name(rawValue: "Main"), bundle: nil).instantiateController(withIdentifier: NSStoryboard.SceneIdentifier(rawValue: "PreferencesController")) as! NSWindowController
+    
+    @objc @IBAction func showPreferences(_ sender: Any) {
+        guard let window = mainWindowController.window, let preferencesWindow = preferencesWindowController.window else {
+            return
+        }
+        
+        window.beginSheet(preferencesWindow, completionHandler: nil)
+        
+        NSApp.activate(ignoringOtherApps: true)
+        window.makeKeyAndOrderFront(nil)
+    }
+    
+    @objc @IBAction func closePreferences(_ sender: Any) {
+        guard let window = mainWindowController.window, let preferencesWindow = preferencesWindowController.window else {
+            return
+        }
+        
+        window.endSheet(preferencesWindow)
     }
     
     private func createStatusItem() {
