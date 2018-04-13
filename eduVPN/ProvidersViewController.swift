@@ -81,7 +81,7 @@ class ProvidersViewController: NSViewController {
         try? reachability?.startNotifier()
     }
     
-    override func viewWillAppear() {
+    override func viewWillDisappear() {
         super.viewWillDisappear()
         reachability?.stopNotifier()
     }
