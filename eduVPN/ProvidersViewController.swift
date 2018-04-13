@@ -8,10 +8,12 @@
 
 import Cocoa
 import AppAuth
+import Reachability
 
 class ProvidersViewController: NSViewController {
 
     @IBOutlet var tableView: NSTableView!
+    @IBOutlet var unreachableLabel: NSTextField!
     @IBOutlet var otherProviderButton: NSButton!
     
     private var providers: [ConnectionType: [Provider]]! {
@@ -41,6 +43,7 @@ class ProvidersViewController: NSViewController {
     }
     
     private var rows: [TableRow] = []
+    private let reachability = Reachability()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -50,6 +53,20 @@ class ProvidersViewController: NSViewController {
         paragraphStyle.alignment = .center
         let attributes = [NSAttributedStringKey.font: NSFont.systemFont(ofSize: 17), NSAttributedStringKey.foregroundColor : NSColor.white, NSAttributedStringKey.paragraphStyle : paragraphStyle]
         otherProviderButton.attributedTitle = NSAttributedString(string: otherProviderButton.title, attributes: attributes)
+        
+        // Handle internet connection state
+        reachability?.whenReachable = { [weak self] reachability in
+            self?.discoverAccessibleProviders()
+            self?.unreachableLabel.isHidden = true
+            self?.tableView.isHidden = false
+            self?.otherProviderButton.isHidden = false
+        }
+        
+        reachability?.whenUnreachable = { [weak self] _ in
+            self?.unreachableLabel.isHidden = false
+            self?.tableView.isHidden = true
+            self?.otherProviderButton.isHidden = true
+        }
     }
     
     override func viewDidAppear() {
@@ -57,23 +74,32 @@ class ProvidersViewController: NSViewController {
         tableView.deselectAll(nil)
         tableView.isEnabled = true
         
-        if ServiceContainer.providerService.hasAtLeastOneStoredProvider {
-            ServiceContainer.providerService.discoverAccessibleProviders { (result) in
-                DispatchQueue.main.async {
-                    switch result {
-                    case .success(let providers):
-                        self.providers = providers
-                        self.tableView.reloadData()
-                    case .failure(let error):
-                        let alert = NSAlert(error: error)
-                        alert.beginSheetModal(for: self.view.window!) { (_) in
-                            
-                        }
+        if !ServiceContainer.providerService.hasAtLeastOneStoredProvider {
+            addOtherProvider(animated: false)
+        }
+        
+        try? reachability?.startNotifier()
+    }
+    
+    override func viewWillAppear() {
+        super.viewWillDisappear()
+        reachability?.stopNotifier()
+    }
+    
+    private func discoverAccessibleProviders() {
+        ServiceContainer.providerService.discoverAccessibleProviders { (result) in
+            DispatchQueue.main.async {
+                switch result {
+                case .success(let providers):
+                    self.providers = providers
+                    self.tableView.reloadData()
+                case .failure(let error):
+                    let alert = NSAlert(error: error)
+                    alert.beginSheetModal(for: self.view.window!) { (_) in
+                        
                     }
                 }
             }
-        } else {
-            addOtherProvider(animated: false)
         }
     }
     
