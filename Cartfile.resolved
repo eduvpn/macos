@@ -1,3 +1,4 @@
+github "ashleymills/Reachability.swift" "43b206183f2bf9523561263cb6d19aa0e2576ed0"
 github "jedisct1/swift-sodium" "4eb2b5e884a55ca96bf8a0cdbaaaf1ffd0fd954c"
 github "onevcat/Kingfisher" "e3ecfea740a709a5f4f66f45817bbee11b3adc35"
 github "openid/AppAuth-iOS" "b420522dae9f74d536ab81dfe9c5aaee7ecb0099"
