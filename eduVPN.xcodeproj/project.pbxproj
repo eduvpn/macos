@@ -542,7 +542,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
-			shellScript = "signed=$( codesign -d -vv ${SOURCE_ROOT}/openvpn-2.4.4-openssl-1.0.2k/openvpn 2>&1 >/dev/null | grep \"${EXPANDED_CODE_SIGN_IDENTITY_NAME}\" )\necho $signed\nif [ -n \"$signed\" ]\nthen\n    echo \"Already signed for ${EXPANDED_CODE_SIGN_IDENTITY_NAME}, skipping\"\nelse\n    echo \"Signing for ${EXPANDED_CODE_SIGN_IDENTITY_NAME}\"\n    codesign -f -s \"${EXPANDED_CODE_SIGN_IDENTITY_NAME}\" \"${SOURCE_ROOT}/openvpn-2.4.4-openssl-1.0.2k/openvpn\"\nfi\n\n";
+			shellScript = "signed=$( codesign -d -vv ${SOURCE_ROOT}/openvpn-2.4.4-openssl-1.0.2o/openvpn 2>&1 >/dev/null | grep \"${EXPANDED_CODE_SIGN_IDENTITY_NAME}\" )\necho $signed\nif [ -n \"$signed\" ]\nthen\n    echo \"Already signed for ${EXPANDED_CODE_SIGN_IDENTITY_NAME}, skipping\"\nelse\n    echo \"Signing for ${EXPANDED_CODE_SIGN_IDENTITY_NAME}\"\n    codesign -f -s \"${EXPANDED_CODE_SIGN_IDENTITY_NAME}\" \"${SOURCE_ROOT}/openvpn-2.4.4-openssl-1.0.2o/openvpn\"\nfi\n\n";
 		};
 		C77C7DB02029C7C70029F90E /* Set SMPrivilegedExecutables */ = {
 			isa = PBXShellScriptBuildPhase;
