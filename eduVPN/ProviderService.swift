@@ -357,7 +357,7 @@ class ProviderService {
                         return nil
                     }
                     
-                    let providers: [Provider] = instances.flatMap { (instance) -> Provider? in                        
+                    let providers: [Provider] = instances.compactMap { (instance) -> Provider? in                        
                         guard let displayName = displayName(for: instance),
                             let baseURL = (instance["base_uri"] as? String)?.asURL(appendSlash: true),
                             let logoURL = (instance["logo"] as? String)?.asURL() else {
@@ -470,7 +470,7 @@ class ProviderService {
                         return
                     }
                     
-                    let profiles: [Profile] = instances.flatMap { (instance) -> Profile? in
+                    let profiles: [Profile] = instances.compactMap { (instance) -> Profile? in
                         guard let displayName = instance["display_name"] as? String,
                             let profileId = instance["profile_id"] as? String else {
                                 return nil
@@ -542,7 +542,7 @@ class ProviderService {
                         return
                     }
                     
-                    let messages: [Message] = instances.flatMap { (instance) -> Message? in
+                    let messages: [Message] = instances.compactMap { (instance) -> Message? in
                         guard let typeString = instance["type"] as? String, let type = MessageType(rawValue: typeString) else {
                             return nil
                         }
