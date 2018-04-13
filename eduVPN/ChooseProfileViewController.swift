@@ -15,7 +15,6 @@ class ChooseProfileViewController: NSViewController {
     @IBOutlet var backButton: NSButton!
     
     var profiles: [Profile]!
-    var authState: OIDAuthState!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -58,7 +57,7 @@ extension ChooseProfileViewController: NSTableViewDelegate {
         tableView.isEnabled = false
         
         let profile = profiles[tableView.selectedRow]
-        mainWindowController?.showConnection(for: profile, authState: authState)
+        mainWindowController?.showConnection(for: profile)
     }
     
 }

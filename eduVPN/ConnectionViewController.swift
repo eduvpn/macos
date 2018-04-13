@@ -24,7 +24,6 @@ class ConnectionViewController: NSViewController {
     @IBOutlet var notificationsField: NSTextField!
     
     var profile: Profile!
-    var authState: OIDAuthState!
     @objc var statistics: Statistics?
     private var systemMessages: [Message] = []
     private var userMessages: [Message] = []
@@ -51,7 +50,7 @@ class ConnectionViewController: NSViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(stateChanged(notification:)), name: ConnectionService.stateChanged, object: ServiceContainer.connectionService)
         
         // Fetch messages
-        ServiceContainer.providerService.fetchMessages(for: profile.info, audience: .system, authState: authState) { (result) in
+        ServiceContainer.providerService.fetchMessages(for: profile.info, audience: .system) { (result) in
             DispatchQueue.main.async {
                 switch result {
                 case .success(let messages):
@@ -64,7 +63,7 @@ class ConnectionViewController: NSViewController {
             }
         }
         
-        ServiceContainer.providerService.fetchMessages(for: profile.info, audience: .user, authState: authState) { (result) in
+        ServiceContainer.providerService.fetchMessages(for: profile.info, audience: .user) { (result) in
             DispatchQueue.main.async {
                 switch result {
                 case .success(let messages):
@@ -136,6 +135,11 @@ class ConnectionViewController: NSViewController {
             let enter2FAViewController = storyboard!.instantiateController(withIdentifier: NSStoryboard.SceneIdentifier(rawValue: "Enter2FA")) as! Enter2FAViewController
             enter2FAViewController.delegate = self
             mainWindowController?.present(viewController: enter2FAViewController)
+            return
+        }
+        
+        guard let authState = ServiceContainer.authenticationService.authState(for: profile.info.provider) else {
+            // This should in theory never happen
             return
         }
         

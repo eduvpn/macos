@@ -21,13 +21,13 @@ struct ServiceContainer {
     static let helperService = HelperService()
     
     /// Discovers providers
-    static let providerService = ProviderService(urlSession: urlSession)
+    static let providerService = ProviderService(urlSession: urlSession, authenticationService: authenticationService)
     
     /// Authenticates user with provider
     static let authenticationService = AuthenticationService()
    
     /// Fetches configuration
-    static let configurationService = ConfigurationService(urlSession: urlSession)
+    static let configurationService = ConfigurationService(urlSession: urlSession, authenticationService: authenticationService)
     
     /// Connects to VPN
     static let connectionService = ConnectionService(configurationService: configurationService, helperService: helperService)

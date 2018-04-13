@@ -64,9 +64,11 @@ class ProviderService {
     }
     
     private let urlSession: URLSession
+    private let authenticationService: AuthenticationService
     
-    init(urlSession: URLSession) {
+    init(urlSession: URLSession, authenticationService: AuthenticationService) {
         self.urlSession = urlSession
+        self.authenticationService = authenticationService
         readFromDisk()
     }
     
@@ -438,16 +440,16 @@ class ProviderService {
     ///
     /// - Parameters:
     ///   - info: Provider info
-    ///   - authState: Authentication token
     ///   - handler: Profiles or error
-    func fetchProfiles(for info: ProviderInfo, authState: OIDAuthState, handler: @escaping (Result<[Profile]>) -> ()) {
+    func fetchProfiles(for info: ProviderInfo, handler: @escaping (Result<[Profile]>) -> ()) {
         guard let url = URL(string: "profile_list", relativeTo: info.apiBaseURL) else {
             handler(.failure(Error.invalidProviderInfo))
             return
         }
         
-        authState.performAction { (accessToken, idToken, error) in
+        authenticationService.performAction(for: info) { (accessToken, idToken, error) in
             guard let accessToken = accessToken else {
+                
                 handler(.failure(error ?? Error.missingToken))
                 return
             }
@@ -501,9 +503,8 @@ class ProviderService {
     /// - Parameters:
     ///   - info: Provider info
     ///   - audience: System or user
-    ///   - authState: Authentication token
     ///   - handler: Messages or error
-    func fetchMessages(for info: ProviderInfo, audience: MessageAudience, authState: OIDAuthState, handler: @escaping (Result<[Message]>) -> ()) {
+    func fetchMessages(for info: ProviderInfo, audience: MessageAudience, handler: @escaping (Result<[Message]>) -> ()) {
         let path: String
         switch audience {
         case .system:
@@ -517,8 +518,7 @@ class ProviderService {
             return
         }
         
-        
-        authState.performAction { (accessToken, idToken, error) in
+        authenticationService.performAction(for: info) { (accessToken, idToken, error) in
             guard let accessToken = accessToken else {
                 handler(.failure(error ?? Error.missingToken))
                 return

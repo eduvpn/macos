@@ -133,12 +133,10 @@ class MainWindowController: NSWindowController {
     ///
     /// - Parameters:
     ///   - profiles: Profiles to chose from
-    ///   - authState: Authentication token
     ///   - animated: Wether to show with animation
-    func showChooseProfile(from profiles: [Profile], authState: OIDAuthState, animated: Bool = true) {
+    func showChooseProfile(from profiles: [Profile], animated: Bool = true) {
         let chooseProfileViewController = storyboard!.instantiateController(withIdentifier: NSStoryboard.SceneIdentifier(rawValue: "ChooseProfile")) as! ChooseProfileViewController
         chooseProfileViewController.profiles = profiles
-        chooseProfileViewController.authState = authState
         push(viewController: chooseProfileViewController, animated: animated)
     }
     
@@ -146,12 +144,10 @@ class MainWindowController: NSWindowController {
     ///
     /// - Parameters:
     ///   - profile: Profile
-    ///   - authState: Authentication token
     ///   - animated: Wether to show with animation
-    func showConnection(for profile: Profile, authState: OIDAuthState, animated: Bool = true) {
+    func showConnection(for profile: Profile, animated: Bool = true) {
         let connectionViewController = storyboard!.instantiateController(withIdentifier: NSStoryboard.SceneIdentifier(rawValue: "Connection")) as! ConnectionViewController
         connectionViewController.profile = profile
-        connectionViewController.authState = authState
         push(viewController: connectionViewController, animated: animated) {
             connectionViewController.connect()
         }
