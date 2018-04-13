@@ -32,7 +32,7 @@
                                         <menuItem isSeparatorItem="YES" id="VOq-y0-SEH"/>
                                         <menuItem title="Preferences…" keyEquivalent="," id="BOF-NM-1cW">
                                             <connections>
-                                                <segue destination="QBP-pf-Gdt" kind="modal" id="AQc-sr-ok7"/>
+                                                <action selector="showPreferences:" target="Ady-hI-5gd" id="ARw-AV-ScF"/>
                                             </connections>
                                         </menuItem>
                                         <menuItem isSeparatorItem="YES" id="wFC-TO-SCJ"/>
@@ -685,7 +685,7 @@
                         <menuItem title="Preferences…" id="Wxh-z5-5Rm">
                             <modifierMask key="keyEquivalentModifierMask"/>
                             <connections>
-                                <segue destination="QBP-pf-Gdt" kind="modal" id="7by-Rq-dgY"/>
+                                <action selector="showPreferences:" target="Ady-hI-5gd" id="Rk8-8W-LQv"/>
                             </connections>
                         </menuItem>
                         <menuItem title="Help" id="Prj-2b-kt4">
@@ -716,7 +716,7 @@
         <scene sceneID="R2V-B0-nI4">
             <objects>
                 <windowController storyboardIdentifier="MainWindowController" showSeguePresentationStyle="single" id="B8D-0N-5wS" customClass="MainWindowController" customModule="eduVPN" customModuleProvider="target" sceneMemberID="viewController">
-                    <window key="window" title="eduVPN" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" frameAutosaveName="Main" animationBehavior="default" tabbingMode="disallowed" titlebarAppearsTransparent="YES" id="IQv-IB-iLA" customClass="MainWindow" customModule="eduVPN">
+                    <window key="window" title="eduVPN" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" frameAutosaveName="Main" animationBehavior="default" tabbingMode="disallowed" id="IQv-IB-iLA" customClass="MainWindow" customModule="eduVPN">
                         <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES"/>
                         <rect key="contentRect" x="684" y="489" width="378" height="575"/>
                         <rect key="screenRect" x="0.0" y="0.0" width="1680" height="1027"/>
@@ -770,7 +770,7 @@
         <!--Window Controller-->
         <scene sceneID="jUN-uA-o3q">
             <objects>
-                <windowController showSeguePresentationStyle="single" id="QBP-pf-Gdt" sceneMemberID="viewController">
+                <windowController storyboardIdentifier="PreferencesController" showSeguePresentationStyle="single" id="QBP-pf-Gdt" sceneMemberID="viewController">
                     <window key="window" title="Preferences" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" frameAutosaveName="" animationBehavior="default" tabbingMode="disallowed" id="g8w-C1-RJw" customClass="MainWindow" customModule="eduVPN" customModuleProvider="target">
                         <windowStyleMask key="styleMask" titled="YES" closable="YES"/>
                         <windowCollectionBehavior key="collectionBehavior" fullScreenNone="YES"/>
@@ -797,11 +797,11 @@
             <objects>
                 <viewController title="Preferences" showSeguePresentationStyle="single" id="TRM-HQ-ggb" sceneMemberID="viewController">
                     <view key="view" id="TOs-5F-9Ou">
-                        <rect key="frame" x="0.0" y="0.0" width="480" height="332"/>
+                        <rect key="frame" x="0.0" y="0.0" width="480" height="374"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="GEf-t5-7wD">
-                                <rect key="frame" x="18" y="192" width="149" height="18"/>
+                                <rect key="frame" x="18" y="234" width="149" height="18"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <buttonCell key="cell" type="check" title="Use Developer Mode" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="zSO-mA-g3Q">
                                     <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -812,7 +812,7 @@
                                 </connections>
                             </button>
                             <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ikE-fS-AfB">
-                                <rect key="frame" x="18" y="244" width="136" height="18"/>
+                                <rect key="frame" x="18" y="286" width="136" height="18"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <buttonCell key="cell" type="check" title="Show in Status Bar" bezelStyle="regularSquare" imagePosition="left" inset="2" id="cBe-YZ-5lV">
                                     <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -824,7 +824,7 @@
                                 </connections>
                             </button>
                             <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Adq-lA-U3V">
-                                <rect key="frame" x="18" y="296" width="119" height="18"/>
+                                <rect key="frame" x="18" y="338" width="119" height="18"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <buttonCell key="cell" type="check" title="Launch at Login" bezelStyle="regularSquare" imagePosition="left" inset="2" id="d17-8e-A58">
                                     <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -835,7 +835,7 @@
                                 </connections>
                             </button>
                             <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="RPB-k0-psB">
-                                <rect key="frame" x="18" y="270" width="105" height="18"/>
+                                <rect key="frame" x="18" y="312" width="105" height="18"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <buttonCell key="cell" type="check" title="Show in Dock" bezelStyle="regularSquare" imagePosition="left" inset="2" id="ok3-5H-Dt0">
                                     <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -847,7 +847,7 @@
                                 </connections>
                             </button>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="yvD-in-gmY">
-                                <rect key="frame" x="18" y="165" width="60" height="17"/>
+                                <rect key="frame" x="18" y="207" width="60" height="17"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Key Pairs" id="J4w-7w-2NM">
                                     <font key="font" metaFont="system"/>
@@ -856,7 +856,7 @@
                                 </textFieldCell>
                             </textField>
                             <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="3e1-No-Xza">
-                                <rect key="frame" x="18" y="218" width="136" height="18"/>
+                                <rect key="frame" x="18" y="260" width="136" height="18"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <buttonCell key="cell" type="check" title="Check for Updates" bezelStyle="regularSquare" imagePosition="left" enabled="NO" inset="2" id="i9O-fc-ZtB">
                                     <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -864,14 +864,14 @@
                                 </buttonCell>
                             </button>
                             <scrollView fixedFrame="YES" autohidesScrollers="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Djn-30-jlr">
-                                <rect key="frame" x="20" y="48" width="440" height="109"/>
+                                <rect key="frame" x="20" y="89" width="440" height="110"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <clipView key="contentView" ambiguous="YES" id="C8f-mg-sD8">
-                                    <rect key="frame" x="1" y="0.0" width="438" height="108"/>
+                                    <rect key="frame" x="1" y="0.0" width="438" height="109"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" alternatingRowBackgroundColors="YES" columnReordering="NO" columnResizing="NO" autosaveColumns="NO" headerView="Pif-N7-flZ" id="277-ff-rBp">
-                                            <rect key="frame" x="0.0" y="0.0" width="438" height="85"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="438" height="86"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <size key="intercellSpacing" width="3" height="2"/>
                                             <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -909,7 +909,7 @@
                                     </subviews>
                                 </clipView>
                                 <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="YES" id="ptW-MC-ycG">
-                                    <rect key="frame" x="1" y="7" width="0.0" height="16"/>
+                                    <rect key="frame" x="1" y="93" width="438" height="16"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                 </scroller>
                                 <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" doubleValue="1" horizontal="NO" id="dqu-X3-R8Q">
@@ -921,8 +921,22 @@
                                     <autoresizingMask key="autoresizingMask"/>
                                 </tableHeaderView>
                             </scrollView>
+                            <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="5kb-lR-sJo">
+                                <rect key="frame" x="394" y="13" width="72" height="32"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <buttonCell key="cell" type="push" title="Done" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="L4N-yD-1aA">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                    <string key="keyEquivalent" base64-UTF8="YES">
+DQ
+</string>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="closePreferences:" target="URQ-m7-vBM" id="Ex6-Ob-jhS"/>
+                                </connections>
+                            </button>
                             <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="k8T-Bi-mme">
-                                <rect key="frame" x="14" y="13" width="89" height="32"/>
+                                <rect key="frame" x="14" y="54" width="89" height="32"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <buttonCell key="cell" type="push" title="Remove" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="RWq-kx-jlo">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -944,7 +958,7 @@
                 </arrayController>
                 <userDefaultsController representsSharedInstance="YES" id="cF9-Lp-W07"/>
             </objects>
-            <point key="canvasLocation" x="1431" y="-282"/>
+            <point key="canvasLocation" x="1431" y="-257"/>
         </scene>
         <!--Choose Provider View Controller-->
         <scene sceneID="hIz-AP-VOD">
@@ -1854,7 +1868,4 @@ DQ
         <image name="secure_access" width="212" height="130"/>
         <image name="secure_internet" width="212" height="130"/>
     </resources>
-    <inferredMetricsTieBreakers>
-        <segue reference="7by-Rq-dgY"/>
-    </inferredMetricsTieBreakers>
 </document>
