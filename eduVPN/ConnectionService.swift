@@ -16,7 +16,7 @@ typealias Config = String
 /// Connects to VPN
 class ConnectionService: NSObject {
     
-    static let openVPNSubdirectory = "openvpn-2.4.4-openssl-1.0.2k"
+    static let openVPNSubdirectory = "openvpn-2.4.4-openssl-1.0.2o"
     
     /// Notification posted when connection state changes
     static let stateChanged = NSNotification.Name("ConnectionService.stateChanged")
