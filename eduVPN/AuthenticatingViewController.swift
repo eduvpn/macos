@@ -23,10 +23,10 @@ class AuthenticatingViewController: NSViewController {
         ServiceContainer.authenticationService.authenticate(using: info) { (result) in
             DispatchQueue.main.async {
                 switch result {
-                case .success(let authState):
+                case .success:
                     ServiceContainer.providerService.storeProvider(provider: self.info.provider)
                     if self.connect {
-                        self.fetchProfiles(for: self.info, authState: authState)
+                        self.fetchProfiles(for: self.info)
                     } else {
                         self.mainWindowController?.dismiss()
                     }
@@ -66,17 +66,17 @@ class AuthenticatingViewController: NSViewController {
         // Already triggerd? mainWindowController?.pop()
     }
     
-    private func fetchProfiles(for info: ProviderInfo, authState: OIDAuthState) {
-        ServiceContainer.providerService.fetchProfiles(for: info, authState: authState) { (result) in
+    private func fetchProfiles(for info: ProviderInfo) {
+        ServiceContainer.providerService.fetchProfiles(for: info) { (result) in
             DispatchQueue.main.async {
                 switch result {
                 case .success(let profiles):
                     if profiles.count == 1 {
                         let profile = profiles[0]
-                        self.mainWindowController?.showConnection(for: profile, authState: authState)
+                        self.mainWindowController?.showConnection(for: profile)
                     } else {
                         // Choose profile
-                        self.mainWindowController?.showChooseProfile(from: profiles, authState: authState)
+                        self.mainWindowController?.showChooseProfile(from: profiles)
                     }
                 case .failure(let error):
                     let alert = NSAlert(error: error)

@@ -51,9 +51,11 @@ class ConfigurationService {
     }
     
     private let urlSession: URLSession
+    private let authenticationService: AuthenticationService
     
-    init(urlSession: URLSession) {
+    init(urlSession: URLSession, authenticationService: AuthenticationService) {
         self.urlSession = urlSession
+        self.authenticationService = authenticationService
     }
     
     /// Fetches configuration for a profile including certificate and private key
@@ -142,7 +144,7 @@ class ConfigurationService {
             return
         }
         
-        authState.performAction { (accessToken, idToken, error) in
+        authenticationService.performAction(for: info) { (accessToken, idToken, error) in
             guard let accessToken = accessToken else {
                 handler(.failure(error ?? Error.missingToken))
                 return
@@ -212,7 +214,7 @@ class ConfigurationService {
             return
         }
 
-        authState.performAction { (accessToken, idToken, error) in
+        authenticationService.performAction(for: profile.info) { (accessToken, idToken, error) in
             guard let accessToken = accessToken else {
                 handler(.failure(error ?? Error.missingToken))
                 return

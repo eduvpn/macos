@@ -15,11 +15,14 @@ class AuthenticationService {
     
     enum Error: Swift.Error, LocalizedError {
         case unknown
+        case noToken
         
         var errorDescription: String? {
             switch self {
             case .unknown:
                 return NSLocalizedString("Authorization failed for unknown reason", comment: "")
+            case .noToken:
+                return NSLocalizedString("Authorization failed", comment: "")
             }
         }
         
@@ -27,6 +30,8 @@ class AuthenticationService {
             switch self {
             case .unknown:
                 return NSLocalizedString("Try to authorize again with your provider.", comment: "")
+            case .noToken:
+                return NSLocalizedString("Try to add your provider again.", comment: "")
             }
         }
     }
@@ -82,6 +87,46 @@ class AuthenticationService {
             return authStatesByProviderId[provider.id]
         case .distributed, .federated:
             return authStatesByConnectionType[provider.connectionType]
+        }
+    }
+    
+    /// Performs an authenticated action
+    ///
+    /// - Parameters:
+    ///   - info: Provider info
+    ///   - reauthenticateIfNeeded: Whether authentication should retried when token is revoked or expired
+    ///   - action: The action to perform
+    func performAction(for info: ProviderInfo, reauthenticateIfNeeded: Bool = true, action: @escaping OIDAuthStateAction) {
+        func reauthenticate() {
+            authenticate(using: info, handler: { (result) in
+                switch result {
+                case .success:
+                    self.performAction(for: info, reauthenticateIfNeeded: false, action: action)
+                case .failure(let error):
+                    action(nil, nil, error)
+                }
+            })
+        }
+        
+        guard let authState = authState(for: info.provider) else {
+            if reauthenticateIfNeeded {
+                reauthenticate()
+            } else {
+                action(nil, nil, Error.noToken)
+            }
+            return
+        }
+        
+        authState.performAction { (accessToken, idToken, error) in
+            guard let accessToken = accessToken else {
+                if reauthenticateIfNeeded {
+                    reauthenticate()
+                } else {
+                    action(nil, idToken, error)
+                }
+                return
+            }
+            action(accessToken, idToken, error)
         }
     }
     

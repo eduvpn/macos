@@ -153,7 +153,7 @@ class ProvidersViewController: NSViewController {
     
     private func fetchProfiles(for info: ProviderInfo, authState: OIDAuthState) {
         tableView.isEnabled = false
-        ServiceContainer.providerService.fetchProfiles(for: info, authState: authState) { (result) in
+        ServiceContainer.providerService.fetchProfiles(for: info) { (result) in
             DispatchQueue.main.async {
                 self.tableView.isEnabled = true
                 
@@ -161,10 +161,10 @@ class ProvidersViewController: NSViewController {
                 case .success(let profiles):
                     if profiles.count == 1 {
                         let profile = profiles[0]
-                        self.mainWindowController?.showConnection(for: profile, authState: authState)
+                        self.mainWindowController?.showConnection(for: profile)
                     } else {
                         // Choose profile
-                        self.mainWindowController?.showChooseProfile(from: profiles, authState: authState)
+                        self.mainWindowController?.showChooseProfile(from: profiles)
                     }
                 case .failure(let error):
                     let alert = NSAlert(error: error)
