@@ -28,9 +28,13 @@ class EnterProviderURLViewController: NSViewController {
     @IBOutlet var textField: NSTextField!
     @IBOutlet var backButton: NSButton!
     @IBOutlet var doneButton: NSButton!
-
+   
+    var allowClose: Bool = true
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        backButton.isHidden = !allowClose
         
         // Change title color
         let paragraphStyle = NSMutableParagraphStyle()
@@ -40,7 +44,7 @@ class EnterProviderURLViewController: NSViewController {
     }
     
     @IBAction func goBack(_ sender: Any) {
-        mainWindowController?.pop()
+        mainWindowController?.close(viewController: self)
     }
     
     private func validURL() -> URL? {

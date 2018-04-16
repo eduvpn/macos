@@ -76,6 +76,43 @@ class ProviderService {
     ///
     /// - Parameter handler: List of providers or error
     func discoverAccessibleProviders(handler: @escaping (Result<[ConnectionType: [Provider]]>) -> ()) {
+        #if API_DISCOVERY_DISABLED
+        var accessibleProviders: [ConnectionType: [Provider]] = [:]
+        
+        func hasStoredDistributedProvider(type: ConnectionType) -> Bool {
+            guard let providers = self.storedProviders[type] else {
+                return false
+            }
+            return providers.contains { (provider) -> Bool in
+                switch provider.authorizationType {
+                case .local:
+                    return false
+                case .distributed, .federated:
+                    return true
+                }
+            }
+        }
+        
+        func addProviders(type: ConnectionType) {
+            if hasStoredDistributedProvider(type: type) {
+                // Add all providers
+                if let providers = self.availableProviders[type] {
+                    accessibleProviders[type] = providers
+                }
+            } else {
+                // Add stored providers
+                if let providers = self.storedProviders[type] {
+                    accessibleProviders[type] = providers
+                }
+            }
+        }
+        
+        addProviders(type: .custom)
+        
+        handler(.success(accessibleProviders))
+        
+        #else
+        
         let group = DispatchGroup()
         var error: Error? = nil
         
@@ -137,6 +174,8 @@ class ProviderService {
 
             handler(.success(accessibleProviders))
         }
+        
+        #endif
     }
     
     /// Indicates wether at least one provider is setup
@@ -183,7 +222,14 @@ class ProviderService {
     /// - Throws: Error finding or creating directory
     private func storedProvidersFileURL() throws -> URL  {
         var applicationSupportDirectory = try FileManager.default.url(for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
-        applicationSupportDirectory.appendPathComponent("eduVPN")
+        switch Bundle.main.bundleIdentifier! {
+        case "org.eduvpn.app":
+            applicationSupportDirectory.appendPathComponent("eduVPN")
+        case "org.eduvpn.app.home":
+            applicationSupportDirectory.appendPathComponent("Let's connect!")
+        default:
+            fatalError()
+        }
         try FileManager.default.createDirectory(at: applicationSupportDirectory, withIntermediateDirectories: true, attributes: nil)
         applicationSupportDirectory.appendPathComponent("Providers.plist")
         return applicationSupportDirectory

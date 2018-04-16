@@ -47,6 +47,28 @@ class MainWindowController: NSWindowController {
     
     // MARK: - Navigation
     
+    enum Presentation {
+        case push
+        case present
+    }
+    
+    func show(viewController: NSViewController, presentation: Presentation, animated: Bool = true, completionHandler: (() -> ())? = nil) {
+        switch presentation {
+        case .push:
+            push(viewController: viewController, animated: animated, completionHandler: completionHandler)
+        case .present:
+            present(viewController: viewController, animated: animated, completionHandler: completionHandler)
+        }
+    }
+    
+    func close(viewController: NSViewController, animated: Bool = true, completionHandler: (() -> ())? = nil) {
+        if  navigationStack.count > 1, navigationStack.last == viewController {
+            pop(animated: animated, completionHandler: completionHandler)
+        } else if navigationStackStack.count > 1, navigationStackStack.last!.last == viewController {
+            dismiss(animated: animated, completionHandler: completionHandler)
+        }
+    }
+        
     func push(viewController: NSViewController, animated: Bool = true, completionHandler: (() -> ())? = nil) {
         navigationStack.append(viewController)
         mainViewController.show(viewController: viewController, options: .slideForward, animated: animated, completionHandler: completionHandler)
@@ -111,9 +133,10 @@ class MainWindowController: NSWindowController {
     ///
     /// - Parameters:
     ///   - animated: Wether to show with animation
-    func showEnterProviderURL(animated: Bool = true) {
+    func showEnterProviderURL(allowClose: Bool = true, animated: Bool = true, presentation: Presentation = .push) {
         let enterProviderURLViewController = storyboard!.instantiateController(withIdentifier: NSStoryboard.SceneIdentifier(rawValue: "EnterProviderURL")) as! EnterProviderURLViewController
-        push(viewController: enterProviderURLViewController, animated: animated)
+        enterProviderURLViewController.allowClose = allowClose
+        show(viewController: enterProviderURLViewController, presentation: presentation, animated: animated)
     }
     
     /// Prompts user to authenticate with provider

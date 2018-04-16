@@ -151,7 +151,14 @@ class AuthenticationService {
     /// - Throws: Error finding or creating directory
     private func storedAuthStatesFileURL() throws -> URL  {
         var applicationSupportDirectory = try FileManager.default.url(for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
-        applicationSupportDirectory.appendPathComponent("eduVPN")
+        switch Bundle.main.bundleIdentifier! {
+        case "org.eduvpn.app":
+            applicationSupportDirectory.appendPathComponent("eduVPN")
+        case "org.eduvpn.app.home":
+            applicationSupportDirectory.appendPathComponent("Let's connect!")
+        default:
+            fatalError()
+        }
         try FileManager.default.createDirectory(at: applicationSupportDirectory, withIntermediateDirectories: true, attributes: nil)
         applicationSupportDirectory.appendPathComponent("AuthenticationTokens.plist")
         return applicationSupportDirectory

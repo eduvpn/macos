@@ -4,12 +4,17 @@
 <dict>
 	<key>SchemeUserState</key>
 	<dict>
-		<key>LoginItemHelper.xcscheme</key>
+		<key>Let's connect!.xcscheme_^#shared#^_</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>1</integer>
+		</dict>
+		<key>LoginItemHelper.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>isShown</key>
 			<false/>
 			<key>orderHint</key>
-			<integer>2</integer>
+			<integer>3</integer>
 		</dict>
 		<key>eduVPN.xcscheme_^#shared#^_</key>
 		<dict>
@@ -21,7 +26,7 @@
 			<key>isShown</key>
 			<false/>
 			<key>orderHint</key>
-			<integer>1</integer>
+			<integer>2</integer>
 		</dict>
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
@@ -37,6 +42,11 @@
 			<true/>
 		</dict>
 		<key>C7BEF5C41F03E0D80038605E</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>C7C494D2208484120056D5E4</key>
 		<dict>
 			<key>primary</key>
 			<true/>

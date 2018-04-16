@@ -44,7 +44,7 @@ class ProvidersViewController: NSViewController {
     
     private var rows: [TableRow] = []
     private let reachability = Reachability()
-    
+  
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -108,9 +108,12 @@ class ProvidersViewController: NSViewController {
     }
     
     private func addOtherProvider(animated: Bool) {
+        #if API_DISCOVERY_DISABLED
+        mainWindowController?.showEnterProviderURL(allowClose: !rows.isEmpty, animated: animated, presentation: .present)
+        #else
         mainWindowController?.showChooseConnectionType(allowClose: !rows.isEmpty, animated: animated)
+        #endif
     }
-    
     
     fileprivate func authenticateAndConnect(to provider: Provider) {
         if let authState = ServiceContainer.authenticationService.authState(for: provider), authState.isAuthorized {
