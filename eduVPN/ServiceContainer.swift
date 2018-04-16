@@ -23,6 +23,9 @@ struct ServiceContainer {
     /// Discovers providers
     static let providerService = ProviderService(urlSession: urlSession, authenticationService: authenticationService)
     
+    /// Registers 2FA
+    static let twoFactorService = TwoFactorService(urlSession: urlSession, authenticationService: authenticationService)
+    
     /// Authenticates user with provider
     static let authenticationService = AuthenticationService()
    

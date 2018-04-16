@@ -909,7 +909,7 @@
                                     </subviews>
                                 </clipView>
                                 <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="YES" id="ptW-MC-ycG">
-                                    <rect key="frame" x="1" y="93" width="438" height="16"/>
+                                    <rect key="frame" x="1" y="7" width="0.0" height="16"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                 </scroller>
                                 <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" doubleValue="1" horizontal="NO" id="dqu-X3-R8Q">
@@ -1858,6 +1858,170 @@ DQ
                 <customObject id="Dhn-go-JKo" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1174" y="1046.5"/>
+        </scene>
+        <!--Enroll2FA View Controller-->
+        <scene sceneID="8aH-wQ-FRP">
+            <objects>
+                <viewController storyboardIdentifier="Enroll2FA" id="b5G-d1-wPp" customClass="Enroll2FAViewController" customModule="eduVPN" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" wantsLayer="YES" id="I1t-t4-8ax">
+                        <rect key="frame" x="0.0" y="0.0" width="378" height="575"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="FCq-9C-cnC">
+                                <rect key="frame" x="40" y="505" width="30" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <buttonCell key="cell" type="smallSquare" bezelStyle="smallSquare" image="Back" imagePosition="only" alignment="center" imageScaling="proportionallyDown" inset="2" id="PSO-Wd-8Jf">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                    <string key="keyEquivalent" base64-UTF8="YES">
+CA
+</string>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="goBack:" target="b5G-d1-wPp" id="xhk-5z-i6R"/>
+                                </connections>
+                            </button>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="DnE-Xc-p5E">
+                                <rect key="frame" x="86" y="509" width="208" height="21"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="Two Factor Authentication" id="kqB-9m-JFq">
+                                    <font key="font" metaFont="system" size="17"/>
+                                    <color key="textColor" red="0.3162727058" green="0.69435155390000003" blue="0.80810165410000001" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="eUZ-KX-Fns">
+                                <rect key="frame" x="84" y="20" width="210" height="44"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <buttonCell key="cell" type="smallSquare" title="Enroll" bezelStyle="smallSquare" image="Button" imagePosition="overlaps" alignment="center" enabled="NO" imageScaling="proportionallyDown" inset="2" id="4Wg-Ug-qL9">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system" size="17"/>
+                                    <string key="keyEquivalent" base64-UTF8="YES">
+DQ
+</string>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="done:" target="b5G-d1-wPp" id="1uV-n0-i8t"/>
+                                </connections>
+                            </button>
+                            <segmentedControl verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="xmo-Wr-IQw">
+                                <rect key="frame" x="18" y="441" width="342" height="24"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <segmentedCell key="cell" borderStyle="border" alignment="left" segmentDistribution="fillEqually" style="rounded" trackingMode="selectOne" id="VSY-N0-7Tx">
+                                    <font key="font" metaFont="system"/>
+                                    <segments>
+                                        <segment label="TOTP" width="168" selected="YES"/>
+                                        <segment label="YubiKey" width="168" tag="1"/>
+                                    </segments>
+                                </segmentedCell>
+                                <connections>
+                                    <action selector="typeChanged:" target="b5G-d1-wPp" id="M2Z-xl-FsW"/>
+                                </connections>
+                            </segmentedControl>
+                            <tabView fixedFrame="YES" drawsBackground="NO" type="noTabsNoBorder" translatesAutoresizingMaskIntoConstraints="NO" id="2QT-GX-Lbu">
+                                <rect key="frame" x="20" y="72" width="338" height="363"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <font key="font" metaFont="system"/>
+                                <tabViewItems>
+                                    <tabViewItem label="TOTP" identifier="totp" id="Tm9-O7-UlM">
+                                        <view key="view" id="CzY-x5-Y9R">
+                                            <rect key="frame" x="0.0" y="0.0" width="338" height="363"/>
+                                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                            <subviews>
+                                                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="XoX-vt-Rlk">
+                                                    <rect key="frame" x="-2" y="74" width="342" height="26"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" sendsActionOnEndEditing="YES" alignment="center" title="&lt;&lt;&lt; SECRET HERE &gt;&gt;&gt;" id="obf-Vz-ND1">
+                                                        <font key="font" metaFont="system"/>
+                                                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                                    </textFieldCell>
+                                                </textField>
+                                                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="pSj-3B-JEt">
+                                                    <rect key="frame" x="-2" y="312" width="342" height="51"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                    <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="You need to setup two factor authentication. To enroll scan the QR-code below or enter the code into your authenticator app." id="hhm-6Y-8g0">
+                                                        <font key="font" metaFont="system"/>
+                                                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                                    </textFieldCell>
+                                                </textField>
+                                                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1h7-re-8yN">
+                                                    <rect key="frame" x="-2" y="52" width="308" height="17"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Then enter the generated code below to continue:" id="NXb-u3-azC">
+                                                        <font key="font" metaFont="system"/>
+                                                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                                    </textFieldCell>
+                                                </textField>
+                                                <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="g8p-ub-P5d">
+                                                    <rect key="frame" x="69" y="104" width="200" height="200"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                    <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" id="dul-ot-9Xs"/>
+                                                </imageView>
+                                                <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="XTq-qI-Fis">
+                                                    <rect key="frame" x="0.0" y="12" width="338" height="36"/>
+                                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                    <textFieldCell key="cell" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" placeholderString="Enter code here" drawsBackground="YES" id="vO2-iI-5wx">
+                                                        <font key="font" metaFont="system" size="26"/>
+                                                        <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                                                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                    </textFieldCell>
+                                                    <connections>
+                                                        <outlet property="delegate" destination="b5G-d1-wPp" id="TrG-vF-3aP"/>
+                                                    </connections>
+                                                </textField>
+                                            </subviews>
+                                        </view>
+                                    </tabViewItem>
+                                    <tabViewItem label="YubiKey" identifier="yubikey" id="hi0-H5-NBZ">
+                                        <view key="view" ambiguous="YES" id="Gtg-G3-w4K">
+                                            <rect key="frame" x="0.0" y="0.0" width="338" height="363"/>
+                                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                            <subviews>
+                                                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="YcE-EA-c9b">
+                                                    <rect key="frame" x="-2" y="329" width="342" height="34"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                    <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="You need to setup two factor authentication. To enroll enter the code from your YubiKey here." id="Kct-Zf-OIY">
+                                                        <font key="font" metaFont="system"/>
+                                                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                                    </textFieldCell>
+                                                </textField>
+                                                <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="HnN-FT-wlw">
+                                                    <rect key="frame" x="0.0" y="242" width="338" height="79"/>
+                                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                    <textFieldCell key="cell" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" placeholderString="Enter code here" drawsBackground="YES" id="g2X-CW-zRq">
+                                                        <font key="font" metaFont="system" size="26"/>
+                                                        <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                                                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                    </textFieldCell>
+                                                    <connections>
+                                                        <outlet property="delegate" destination="b5G-d1-wPp" id="aEe-TU-tRC"/>
+                                                    </connections>
+                                                </textField>
+                                            </subviews>
+                                        </view>
+                                    </tabViewItem>
+                                </tabViewItems>
+                            </tabView>
+                        </subviews>
+                    </view>
+                    <connections>
+                        <outlet property="backButton" destination="FCq-9C-cnC" id="CPd-dT-dTQ"/>
+                        <outlet property="doneButton" destination="eUZ-KX-Fns" id="0wt-7H-HSp"/>
+                        <outlet property="qrImageView" destination="g8p-ub-P5d" id="ENA-wA-sBp"/>
+                        <outlet property="segmentedControl" destination="xmo-Wr-IQw" id="uIv-Nb-Orh"/>
+                        <outlet property="tabView" destination="2QT-GX-Lbu" id="ENA-wA-sBt"/>
+                        <outlet property="totpResponseField" destination="XTq-qI-Fis" id="ENA-wA-sBr"/>
+                        <outlet property="totpSecretField" destination="XoX-vt-Rlk" id="ENA-wA-sBq"/>
+                        <outlet property="yubiTextField" destination="HnN-FT-wlw" id="ENA-wA-sBs"/>
+                    </connections>
+                </viewController>
+                <customObject id="QRr-6a-D51" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1787" y="1046.5"/>
         </scene>
     </scenes>
     <resources>

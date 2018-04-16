@@ -49,6 +49,7 @@
 		C761E2E22080B08C00A98B90 /* Reachability.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = C761E2DD2080B07B00A98B90 /* Reachability.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		C765819B1F063BC9003DEC92 /* ServiceContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = C765819A1F063BC9003DEC92 /* ServiceContainer.swift */; };
 		C765819D1F063C47003DEC92 /* ConnectionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C765819C1F063C47003DEC92 /* ConnectionService.swift */; };
+		C77EF61320876B5A0097DEB2 /* String+Random.swift in Sources */ = {isa = PBXBuildFile; fileRef = C77EF61220876B5A0097DEB2 /* String+Random.swift */; };
 		C78250A61FC7291000B33892 /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = C78250A51FC7291000B33892 /* Message.swift */; };
 		C79265C32080F340005E86E7 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C7BEF5CE1F03E0D80038605E /* Main.storyboard */; };
 		C795BAA220616C9300304431 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7BEF5C81F03E0D80038605E /* AppDelegate.swift */; };
@@ -59,6 +60,9 @@
 		C7BEF5DA1F03E4FD0038605E /* Provider.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7BEF5D91F03E4FD0038605E /* Provider.swift */; };
 		C7BEF5DC1F03F2CA0038605E /* MainWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7BEF5DB1F03F2CA0038605E /* MainWindowController.swift */; };
 		C7BEF5DE1F03F4020038605E /* AuthenticatingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7BEF5DD1F03F4020038605E /* AuthenticatingViewController.swift */; };
+		C7C4951820849DF20056D5E4 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7C4951720849DF20056D5E4 /* User.swift */; };
+		C7C4951F2084BE600056D5E4 /* Enroll2FAViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7C4951E2084BE600056D5E4 /* Enroll2FAViewController.swift */; };
+		C7C495212084DE230056D5E4 /* TwoFactorService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7C495202084DE230056D5E4 /* TwoFactorService.swift */; };
 		C7D15FD11F0D165900719F38 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C7D15FD01F0D165900719F38 /* Cocoa.framework */; };
 		C7D15FD21F0D166100719F38 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C72AD7031F0A6AEE006DBDA5 /* Security.framework */; };
 		C7D15FD41F0D166800719F38 /* ServiceManagement.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C7D15FD31F0D166800719F38 /* ServiceManagement.framework */; };
@@ -180,6 +184,7 @@
 		C761E2DF2080B08200A98B90 /* Reachability.framework.dSYM */ = {isa = PBXFileReference; lastKnownFileType = wrapper.dsym; name = Reachability.framework.dSYM; path = Carthage/Build/Mac/Reachability.framework.dSYM; sourceTree = "<group>"; };
 		C765819A1F063BC9003DEC92 /* ServiceContainer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceContainer.swift; sourceTree = "<group>"; };
 		C765819C1F063C47003DEC92 /* ConnectionService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = ConnectionService.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
+		C77EF61220876B5A0097DEB2 /* String+Random.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Random.swift"; sourceTree = "<group>"; };
 		C78250A51FC7291000B33892 /* Message.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Message.swift; path = eduVPN/Message.swift; sourceTree = SOURCE_ROOT; };
 		C7A4E1211FACD09C00B21262 /* EnterProviderURLViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = EnterProviderURLViewController.swift; path = eduVPN/EnterProviderURLViewController.swift; sourceTree = SOURCE_ROOT; };
 		C7A9F1D01FB3C81B007A752F /* ReadMe.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = ReadMe.md; sourceTree = "<group>"; };
@@ -193,6 +198,9 @@
 		C7BEF5DB1F03F2CA0038605E /* MainWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainWindowController.swift; sourceTree = "<group>"; };
 		C7BEF5DD1F03F4020038605E /* AuthenticatingViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AuthenticatingViewController.swift; sourceTree = "<group>"; };
 		C7BEF5DF1F03F4220038605E /* ConnectionViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConnectionViewController.swift; sourceTree = "<group>"; };
+		C7C4951720849DF20056D5E4 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = User.swift; path = eduVPN/User.swift; sourceTree = SOURCE_ROOT; };
+		C7C4951E2084BE600056D5E4 /* Enroll2FAViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Enroll2FAViewController.swift; sourceTree = "<group>"; };
+		C7C495202084DE230056D5E4 /* TwoFactorService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TwoFactorService.swift; sourceTree = "<group>"; };
 		C7D15FD01F0D165900719F38 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		C7D15FD31F0D166800719F38 /* ServiceManagement.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ServiceManagement.framework; path = System/Library/Frameworks/ServiceManagement.framework; sourceTree = SDKROOT; };
 		C7F345161F955473002120B9 /* ProvidersViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ProvidersViewController.swift; path = eduVPN/ProvidersViewController.swift; sourceTree = SOURCE_ROOT; };
@@ -340,6 +348,7 @@
 				C7BEF5DF1F03F4220038605E /* ConnectionViewController.swift */,
 				C71912551F3C6942005409E0 /* PreferencesViewController.swift */,
 				C761DF061FE4002A009F0154 /* Enter2FAViewController.swift */,
+				C7C4951E2084BE600056D5E4 /* Enroll2FAViewController.swift */,
 				C711B16E1F4D864600E1C076 /* DurationTransformer.swift */,
 			);
 			name = Controllers;
@@ -355,6 +364,8 @@
 				C71847C51F0E5AC600296C61 /* ConfigurationService.swift */,
 				C765819C1F063C47003DEC92 /* ConnectionService.swift */,
 				C75527F91F3C55F100076078 /* PreferencesService.swift */,
+				C7C495202084DE230056D5E4 /* TwoFactorService.swift */,
+				C77EF61220876B5A0097DEB2 /* String+Random.swift */,
 			);
 			name = Services;
 			sourceTree = "<group>";
@@ -364,6 +375,7 @@
 			children = (
 				C7BEF5D91F03E4FD0038605E /* Provider.swift */,
 				C78250A51FC7291000B33892 /* Message.swift */,
+				C7C4951720849DF20056D5E4 /* User.swift */,
 				C7FA902D1F0BD1A60037FF88 /* Either.swift */,
 				C732CEA71F0F7B7600698F28 /* String+URL.swift */,
 			);
@@ -596,6 +608,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C7C4951820849DF20056D5E4 /* User.swift in Sources */,
 				C7A4E1221FACD09C00B21262 /* EnterProviderURLViewController.swift in Sources */,
 				C732CEA81F0F7B7600698F28 /* String+URL.swift in Sources */,
 				C7BEF5DA1F03E4FD0038605E /* Provider.swift in Sources */,
@@ -612,11 +625,14 @@
 				C795BAA220616C9300304431 /* AppDelegate.swift in Sources */,
 				C765819D1F063C47003DEC92 /* ConnectionService.swift in Sources */,
 				C71847C61F0E5AC600296C61 /* ConfigurationService.swift in Sources */,
+				C77EF61320876B5A0097DEB2 /* String+Random.swift in Sources */,
 				C71912561F3C6942005409E0 /* PreferencesViewController.swift in Sources */,
 				C7AA7FBF1FE4989000845D62 /* ConnectionViewController.swift in Sources */,
 				C765819B1F063BC9003DEC92 /* ServiceContainer.swift in Sources */,
 				C75527DC1F3B55B700076078 /* MainViewController.swift in Sources */,
 				C7F345171F955473002120B9 /* ProvidersViewController.swift in Sources */,
+				C7C4951F2084BE600056D5E4 /* Enroll2FAViewController.swift in Sources */,
+				C7C495212084DE230056D5E4 /* TwoFactorService.swift in Sources */,
 				C78250A61FC7291000B33892 /* Message.swift in Sources */,
 				C761DF071FE4002A009F0154 /* Enter2FAViewController.swift in Sources */,
 				C7BEF5DE1F03F4020038605E /* AuthenticatingViewController.swift in Sources */,
