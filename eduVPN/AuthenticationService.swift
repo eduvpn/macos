@@ -37,8 +37,10 @@ class AuthenticationService {
     }
     
     private var redirectHTTPHandler: OIDRedirectHTTPHandler?
+    private let appName: String
     
-    init() {
+    init(appName: String) {
+        self.appName = appName
         readFromDisk()
     }
     

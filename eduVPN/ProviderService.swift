@@ -73,10 +73,12 @@ class ProviderService {
     
     private let urlSession: URLSession
     private let authenticationService: AuthenticationService
+    private let appName: String
     
-    init(urlSession: URLSession, authenticationService: AuthenticationService) {
+    init(urlSession: URLSession, authenticationService: AuthenticationService, appName: String) {
         self.urlSession = urlSession
         self.authenticationService = authenticationService
+        self.appName = appName
         readFromDisk()
     }
     
@@ -230,14 +232,7 @@ class ProviderService {
     /// - Throws: Error finding or creating directory
     private func storedProvidersFileURL() throws -> URL  {
         var applicationSupportDirectory = try FileManager.default.url(for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
-        switch Bundle.main.bundleIdentifier! {
-        case "org.eduvpn.app":
-            applicationSupportDirectory.appendPathComponent("eduVPN")
-        case "org.eduvpn.app.home":
-            applicationSupportDirectory.appendPathComponent("Let's connect!")
-        default:
-            fatalError()
-        }
+        applicationSupportDirectory.appendPathComponent(appName)
         try FileManager.default.createDirectory(at: applicationSupportDirectory, withIntermediateDirectories: true, attributes: nil)
         applicationSupportDirectory.appendPathComponent("Providers.plist")
         return applicationSupportDirectory

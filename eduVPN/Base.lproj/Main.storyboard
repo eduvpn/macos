@@ -666,7 +666,7 @@
                         <outlet property="delegate" destination="Voe-Tx-rLC" id="PrD-fu-P6m"/>
                     </connections>
                 </application>
-                <customObject id="Voe-Tx-rLC" customClass="AppDelegate" customModule="eduVPN" customModuleProvider="target">
+                <customObject id="Voe-Tx-rLC" customClass="AppDelegate" customModule="Let_s_connect_" customModuleProvider="target">
                     <connections>
                         <outlet property="statusMenu" destination="QdB-u5-YNJ" id="13s-wb-31K"/>
                     </connections>
@@ -715,8 +715,8 @@
         <!--Window Controller-->
         <scene sceneID="R2V-B0-nI4">
             <objects>
-                <windowController storyboardIdentifier="MainWindowController" showSeguePresentationStyle="single" id="B8D-0N-5wS" customClass="MainWindowController" customModule="eduVPN" customModuleProvider="target" sceneMemberID="viewController">
-                    <window key="window" title="eduVPN" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" frameAutosaveName="Main" animationBehavior="default" tabbingMode="disallowed" id="IQv-IB-iLA" customClass="MainWindow" customModule="eduVPN">
+                <windowController storyboardIdentifier="MainWindowController" showSeguePresentationStyle="single" id="B8D-0N-5wS" customClass="MainWindowController" customModule="Let_s_connect_" customModuleProvider="target" sceneMemberID="viewController">
+                    <window key="window" title="eduVPN" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" frameAutosaveName="Main" animationBehavior="default" tabbingMode="disallowed" id="IQv-IB-iLA">
                         <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES"/>
                         <rect key="contentRect" x="684" y="489" width="378" height="575"/>
                         <rect key="screenRect" x="0.0" y="0.0" width="1680" height="1027"/>
@@ -745,7 +745,7 @@
         <!--Main View Controller-->
         <scene sceneID="pls-UA-ly7">
             <objects>
-                <viewController storyboardIdentifier="MainViewController" id="khn-a8-CTC" customClass="MainViewController" customModule="eduVPN" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="MainViewController" id="khn-a8-CTC" customClass="MainViewController" customModule="Let_s_connect_" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="8OX-OJ-cMR">
                         <rect key="frame" x="0.0" y="0.0" width="378" height="575"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -771,7 +771,7 @@
         <scene sceneID="jUN-uA-o3q">
             <objects>
                 <windowController storyboardIdentifier="PreferencesController" showSeguePresentationStyle="single" id="QBP-pf-Gdt" sceneMemberID="viewController">
-                    <window key="window" title="Preferences" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" frameAutosaveName="" animationBehavior="default" tabbingMode="disallowed" id="g8w-C1-RJw" customClass="MainWindow" customModule="eduVPN" customModuleProvider="target">
+                    <window key="window" title="Preferences" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" frameAutosaveName="" animationBehavior="default" tabbingMode="disallowed" id="g8w-C1-RJw" customClass="MainWindow" customModule="Let_s_connect_" customModuleProvider="target">
                         <windowStyleMask key="styleMask" titled="YES" closable="YES"/>
                         <windowCollectionBehavior key="collectionBehavior" fullScreenNone="YES"/>
                         <rect key="contentRect" x="-159" y="1614" width="480" height="332"/>
@@ -963,7 +963,7 @@ DQ
         <!--Choose Provider View Controller-->
         <scene sceneID="hIz-AP-VOD">
             <objects>
-                <viewController storyboardIdentifier="ChooseProvider" id="XfG-lQ-9wD" customClass="ChooseProviderViewController" customModule="eduVPN" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="ChooseProvider" id="XfG-lQ-9wD" customClass="ChooseProviderViewController" customModule="Let_s_connect_" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" wantsLayer="YES" id="m2S-Jp-Qdl">
                         <rect key="frame" x="0.0" y="0.0" width="378" height="575"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -1077,7 +1077,7 @@ CA
         <!--Authenticating View Controller-->
         <scene sceneID="paG-B8-GbA">
             <objects>
-                <viewController storyboardIdentifier="Authenticating" id="UOS-Lh-Hiq" customClass="AuthenticatingViewController" customModule="eduVPN" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="Authenticating" id="UOS-Lh-Hiq" customClass="AuthenticatingViewController" customModule="Let_s_connect_" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="gv0-k4-ChA">
                         <rect key="frame" x="0.0" y="0.0" width="378" height="575"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -1123,7 +1123,7 @@ CA
         <!--Connection View Controller-->
         <scene sceneID="rmV-Wn-uOa">
             <objects>
-                <viewController storyboardIdentifier="Connection" id="f5D-Eq-JOa" customClass="ConnectionViewController" customModule="eduVPN" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="Connection" id="f5D-Eq-JOa" customClass="ConnectionViewController" customModule="Let_s_connect_" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="2mZ-VK-Lri">
                         <rect key="frame" x="0.0" y="0.0" width="378" height="575"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -1376,7 +1376,7 @@ DQ
         <!--Choose Connection Type View Controller-->
         <scene sceneID="R5C-VG-0tb">
             <objects>
-                <viewController storyboardIdentifier="ChooseConnectionType" id="Lns-jv-Aqp" customClass="ChooseConnectionTypeViewController" customModule="eduVPN" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="ChooseConnectionType" id="Lns-jv-Aqp" customClass="ChooseConnectionTypeViewController" customModule="Let_s_connect_" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" wantsLayer="YES" id="NKN-qH-oxC">
                         <rect key="frame" x="0.0" y="0.0" width="378" height="575"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -1454,7 +1454,7 @@ CA
         <!--Choose Profile View Controller-->
         <scene sceneID="q3V-V1-a5D">
             <objects>
-                <viewController storyboardIdentifier="ChooseProfile" id="xQP-Pr-Baz" customClass="ChooseProfileViewController" customModule="eduVPN" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="ChooseProfile" id="xQP-Pr-Baz" customClass="ChooseProfileViewController" customModule="Let_s_connect_" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" wantsLayer="YES" id="4nJ-ev-Mfz">
                         <rect key="frame" x="0.0" y="0.0" width="378" height="575"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -1561,7 +1561,7 @@ CA
         <!--Providers View Controller-->
         <scene sceneID="4WM-oH-o6s">
             <objects>
-                <viewController storyboardIdentifier="Providers" id="d3v-OK-Unm" customClass="ProvidersViewController" customModule="eduVPN" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="Providers" id="d3v-OK-Unm" customClass="ProvidersViewController" customModule="Let_s_connect_" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" wantsLayer="YES" id="mHf-nK-qZy">
                         <rect key="frame" x="0.0" y="0.0" width="378" height="575"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -1709,7 +1709,7 @@ DQ
         <!--Enter Provider URL View Controller-->
         <scene sceneID="D1l-yj-M3U">
             <objects>
-                <viewController storyboardIdentifier="EnterProviderURL" id="JTX-Fe-25d" customClass="EnterProviderURLViewController" customModule="eduVPN" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="EnterProviderURL" id="JTX-Fe-25d" customClass="EnterProviderURLViewController" customModule="Let_s_connect_" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" wantsLayer="YES" id="C5T-y0-cXd">
                         <rect key="frame" x="0.0" y="0.0" width="378" height="575"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -1778,7 +1778,7 @@ DQ
         <!--Enter2FA View Controller-->
         <scene sceneID="3Lr-zQ-H48">
             <objects>
-                <viewController storyboardIdentifier="Enter2FA" id="nGZ-CL-mTb" customClass="Enter2FAViewController" customModule="eduVPN" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="Enter2FA" id="nGZ-CL-mTb" customClass="Enter2FAViewController" customModule="Let_s_connect_" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" wantsLayer="YES" id="cVK-LL-9ZC">
                         <rect key="frame" x="0.0" y="0.0" width="378" height="575"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -1862,7 +1862,7 @@ DQ
         <!--Enroll2FA View Controller-->
         <scene sceneID="8aH-wQ-FRP">
             <objects>
-                <viewController storyboardIdentifier="Enroll2FA" id="b5G-d1-wPp" customClass="Enroll2FAViewController" customModule="eduVPN" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="Enroll2FA" id="b5G-d1-wPp" customClass="Enroll2FAViewController" customModule="Let_s_connect_" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" wantsLayer="YES" id="I1t-t4-8ax">
                         <rect key="frame" x="0.0" y="0.0" width="378" height="575"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -1924,12 +1924,11 @@ DQ
                                 <font key="font" metaFont="system"/>
                                 <tabViewItems>
                                     <tabViewItem label="TOTP" identifier="totp" id="Tm9-O7-UlM">
-                                        <view key="view" id="CzY-x5-Y9R">
-                                            <rect key="frame" x="0.0" y="0.0" width="338" height="363"/>
+                                        <view key="view" ambiguous="YES" id="CzY-x5-Y9R">
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                             <subviews>
                                                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="XoX-vt-Rlk">
-                                                    <rect key="frame" x="-2" y="74" width="342" height="26"/>
+                                                    <rect key="frame" x="-2" y="-289" width="342" height="26"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" sendsActionOnEndEditing="YES" alignment="center" title="&lt;&lt;&lt; SECRET HERE &gt;&gt;&gt;" id="obf-Vz-ND1">
                                                         <font key="font" metaFont="system"/>
@@ -1938,7 +1937,7 @@ DQ
                                                     </textFieldCell>
                                                 </textField>
                                                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="pSj-3B-JEt">
-                                                    <rect key="frame" x="-2" y="312" width="342" height="51"/>
+                                                    <rect key="frame" x="-2" y="-51" width="342" height="51"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                     <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="You need to setup two factor authentication. To enroll scan the QR-code below or enter the code into your authenticator app." id="hhm-6Y-8g0">
                                                         <font key="font" metaFont="system"/>
@@ -1947,7 +1946,7 @@ DQ
                                                     </textFieldCell>
                                                 </textField>
                                                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1h7-re-8yN">
-                                                    <rect key="frame" x="-2" y="52" width="308" height="17"/>
+                                                    <rect key="frame" x="-2" y="-311" width="308" height="17"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Then enter the generated code below to continue:" id="NXb-u3-azC">
                                                         <font key="font" metaFont="system"/>
@@ -1956,12 +1955,12 @@ DQ
                                                     </textFieldCell>
                                                 </textField>
                                                 <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="g8p-ub-P5d">
-                                                    <rect key="frame" x="69" y="104" width="200" height="200"/>
+                                                    <rect key="frame" x="69" y="-259" width="200" height="200"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                     <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" id="dul-ot-9Xs"/>
                                                 </imageView>
                                                 <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="XTq-qI-Fis">
-                                                    <rect key="frame" x="0.0" y="12" width="338" height="36"/>
+                                                    <rect key="frame" x="0.0" y="12" width="0.0" height="0.0"/>
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                     <textFieldCell key="cell" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" placeholderString="Enter code here" drawsBackground="YES" id="vO2-iI-5wx">
                                                         <font key="font" metaFont="system" size="26"/>
@@ -1976,7 +1975,7 @@ DQ
                                         </view>
                                     </tabViewItem>
                                     <tabViewItem label="YubiKey" identifier="yubikey" id="hi0-H5-NBZ">
-                                        <view key="view" ambiguous="YES" id="Gtg-G3-w4K">
+                                        <view key="view" id="Gtg-G3-w4K">
                                             <rect key="frame" x="0.0" y="0.0" width="338" height="363"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                             <subviews>

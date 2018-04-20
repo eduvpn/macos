@@ -17,6 +17,10 @@
 		C71847CF1F0E7EAF00296C61 /* Kingfisher.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = C71847CD1F0E7EAF00296C61 /* Kingfisher.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		C71912561F3C6942005409E0 /* PreferencesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C71912551F3C6942005409E0 /* PreferencesViewController.swift */; };
 		C71912581F3C8486005409E0 /* Defaults.plist in Resources */ = {isa = PBXBuildFile; fileRef = C71912571F3C8486005409E0 /* Defaults.plist */; };
+		C7251FC7208A2DDC000CE404 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7C4951720849DF20056D5E4 /* User.swift */; };
+		C7251FC8208A2DEF000CE404 /* TwoFactorService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7C495202084DE230056D5E4 /* TwoFactorService.swift */; };
+		C7251FC9208A2DF4000CE404 /* String+Random.swift in Sources */ = {isa = PBXBuildFile; fileRef = C77EF61220876B5A0097DEB2 /* String+Random.swift */; };
+		C7251FCA208A2DF8000CE404 /* Enroll2FAViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7C4951E2084BE600056D5E4 /* Enroll2FAViewController.swift */; };
 		C72A557A1F0D9FF2001DCA24 /* AppAuth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C72A55791F0D9FF2001DCA24 /* AppAuth.framework */; };
 		C72A557B1F0D9FF2001DCA24 /* AppAuth.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = C72A55791F0D9FF2001DCA24 /* AppAuth.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		C72A557F1F0DA01C001DCA24 /* AppAuth.framework.dSYM in CopyFiles */ = {isa = PBXBuildFile; fileRef = C72A557E1F0DA01C001DCA24 /* AppAuth.framework.dSYM */; };
@@ -60,9 +64,6 @@
 		C7BEF5DA1F03E4FD0038605E /* Provider.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7BEF5D91F03E4FD0038605E /* Provider.swift */; };
 		C7BEF5DC1F03F2CA0038605E /* MainWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7BEF5DB1F03F2CA0038605E /* MainWindowController.swift */; };
 		C7BEF5DE1F03F4020038605E /* AuthenticatingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7BEF5DD1F03F4020038605E /* AuthenticatingViewController.swift */; };
-		C7C4951820849DF20056D5E4 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7C4951720849DF20056D5E4 /* User.swift */; };
-		C7C4951F2084BE600056D5E4 /* Enroll2FAViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7C4951E2084BE600056D5E4 /* Enroll2FAViewController.swift */; };
-		C7C495212084DE230056D5E4 /* TwoFactorService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7C495202084DE230056D5E4 /* TwoFactorService.swift */; };
 		C7C494DA208484120056D5E4 /* EnterProviderURLViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7A4E1211FACD09C00B21262 /* EnterProviderURLViewController.swift */; };
 		C7C494DB208484120056D5E4 /* String+URL.swift in Sources */ = {isa = PBXBuildFile; fileRef = C732CEA71F0F7B7600698F28 /* String+URL.swift */; };
 		C7C494DC208484120056D5E4 /* Provider.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7BEF5D91F03E4FD0038605E /* Provider.swift */; };
@@ -113,6 +114,9 @@
 		C7C4950F208484120056D5E4 /* AppAuth.framework.dSYM in CopyFiles */ = {isa = PBXBuildFile; fileRef = C72A557E1F0DA01C001DCA24 /* AppAuth.framework.dSYM */; };
 		C7C49510208484120056D5E4 /* Kingfisher.framework.dSYM in CopyFiles */ = {isa = PBXBuildFile; fileRef = C71847CB1F0E7C7700296C61 /* Kingfisher.framework.dSYM */; };
 		C7C49511208484120056D5E4 /* Sodium.framework.dSYM in CopyFiles */ = {isa = PBXBuildFile; fileRef = C74487081F194FBA0072B472 /* Sodium.framework.dSYM */; };
+		C7C4951820849DF20056D5E4 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7C4951720849DF20056D5E4 /* User.swift */; };
+		C7C4951F2084BE600056D5E4 /* Enroll2FAViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7C4951E2084BE600056D5E4 /* Enroll2FAViewController.swift */; };
+		C7C495212084DE230056D5E4 /* TwoFactorService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7C495202084DE230056D5E4 /* TwoFactorService.swift */; };
 		C7D15FD11F0D165900719F38 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C7D15FD01F0D165900719F38 /* Cocoa.framework */; };
 		C7D15FD21F0D166100719F38 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C72AD7031F0A6AEE006DBDA5 /* Security.framework */; };
 		C7D15FD41F0D166800719F38 /* ServiceManagement.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C7D15FD31F0D166800719F38 /* ServiceManagement.framework */; };
@@ -309,11 +313,11 @@
 		C7BEF5DB1F03F2CA0038605E /* MainWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainWindowController.swift; sourceTree = "<group>"; };
 		C7BEF5DD1F03F4020038605E /* AuthenticatingViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AuthenticatingViewController.swift; sourceTree = "<group>"; };
 		C7BEF5DF1F03F4220038605E /* ConnectionViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConnectionViewController.swift; sourceTree = "<group>"; };
+		C7C49515208484120056D5E4 /* Let's connect!.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Let's connect!.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		C7C49516208484120056D5E4 /* LetsConnect-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "LetsConnect-Info.plist"; path = "/Users/jkool/Developer/Egeniq/eduvpn-macos/LetsConnect-Info.plist"; sourceTree = "<absolute>"; };
 		C7C4951720849DF20056D5E4 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = User.swift; path = eduVPN/User.swift; sourceTree = SOURCE_ROOT; };
 		C7C4951E2084BE600056D5E4 /* Enroll2FAViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Enroll2FAViewController.swift; sourceTree = "<group>"; };
 		C7C495202084DE230056D5E4 /* TwoFactorService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TwoFactorService.swift; sourceTree = "<group>"; };
-		C7C49515208484120056D5E4 /* Let's connect!.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Let's connect!.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		C7C49516208484120056D5E4 /* LetsConnect-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "LetsConnect-Info.plist"; path = "/Users/jkool/Developer/Egeniq/eduvpn-macos/LetsConnect-Info.plist"; sourceTree = "<absolute>"; };
 		C7D15FD01F0D165900719F38 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		C7D15FD31F0D166800719F38 /* ServiceManagement.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ServiceManagement.framework; path = System/Library/Frameworks/ServiceManagement.framework; sourceTree = SDKROOT; };
 		C7F345161F955473002120B9 /* ProvidersViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ProvidersViewController.swift; path = eduVPN/ProvidersViewController.swift; sourceTree = SOURCE_ROOT; };
@@ -845,6 +849,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C7251FC7208A2DDC000CE404 /* User.swift in Sources */,
 				C7C494DA208484120056D5E4 /* EnterProviderURLViewController.swift in Sources */,
 				C7C494DB208484120056D5E4 /* String+URL.swift in Sources */,
 				C7C494DC208484120056D5E4 /* Provider.swift in Sources */,
@@ -853,9 +858,12 @@
 				C7C494DF208484120056D5E4 /* AuthenticationService.swift in Sources */,
 				C7C494E0208484120056D5E4 /* DurationTransformer.swift in Sources */,
 				C7C494E1208484120056D5E4 /* ChooseProviderViewController.swift in Sources */,
+				C7251FC9208A2DF4000CE404 /* String+Random.swift in Sources */,
 				C7C494E2208484120056D5E4 /* Either.swift in Sources */,
 				C7C494E3208484120056D5E4 /* ChooseProfileViewController.swift in Sources */,
 				C7C494E4208484120056D5E4 /* ChooseConnectionTypeViewController.swift in Sources */,
+				C7251FCA208A2DF8000CE404 /* Enroll2FAViewController.swift in Sources */,
+				C7251FC8208A2DEF000CE404 /* TwoFactorService.swift in Sources */,
 				C7C494E5208484120056D5E4 /* Statistics.m in Sources */,
 				C7C494E6208484120056D5E4 /* PreferencesService.swift in Sources */,
 				C7C494E7208484120056D5E4 /* AppDelegate.swift in Sources */,

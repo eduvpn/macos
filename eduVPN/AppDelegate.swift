@@ -38,6 +38,17 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         
         mainWindowController = NSStoryboard(name: NSStoryboard.Name(rawValue: "Main"), bundle: nil).instantiateController(withIdentifier: NSStoryboard.SceneIdentifier(rawValue: "MainWindowController")) as! MainWindowController
         mainWindowController.window?.makeKeyAndOrderFront(nil)
+        
+        // Adjust app name in menu and window
+        let appName = ServiceContainer.appName
+        if appName != "eduVPN" {
+            NSApp.mainMenu?.items.forEach { menuItem in
+                menuItem.submenu?.items.forEach {
+                    $0.title = $0.title.replacingOccurrences(of: "eduVPN", with: appName)
+                }
+            }
+            mainWindowController.window?.title = appName
+        }
     }
     
     func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {
