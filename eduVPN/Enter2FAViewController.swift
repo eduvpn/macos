@@ -30,6 +30,8 @@ class Enter2FAViewController: NSViewController {
         }
     }
     
+    var initialTwoFactorType: TwoFactorType?
+    
     weak var delegate: Enter2FAViewControllerDelegate?
     
     @IBOutlet var segmentedControl: NSSegmentedControl!
@@ -45,6 +47,15 @@ class Enter2FAViewController: NSViewController {
         paragraphStyle.alignment = .center
         let attributes = [NSAttributedStringKey.font: NSFont.systemFont(ofSize: 17), NSAttributedStringKey.foregroundColor : NSColor.white, NSAttributedStringKey.paragraphStyle : paragraphStyle]
         doneButton.attributedTitle = NSAttributedString(string: doneButton.title, attributes: attributes)
+        
+        if let initialTwoFactorType = initialTwoFactorType {
+            switch initialTwoFactorType {
+             case .totp:
+                segmentedControl.selectSegment(withTag: 0)
+            case .yubico:
+                segmentedControl.selectSegment(withTag: 1)
+            }
+        }
     }
     
     @IBAction func goBack(_ sender: Any) {
@@ -62,7 +73,7 @@ class Enter2FAViewController: NSViewController {
             }
         case 1:
             if string.count == 44, string.rangeOfCharacter(from: CharacterSet.lowercaseLetters.inverted, options: []) == nil {
-                return .totp(string)
+                return .yubico(string)
             } else {
                 return nil
             }
@@ -84,6 +95,7 @@ class Enter2FAViewController: NSViewController {
         guard let token = validToken() else {
             let alert = NSAlert(error: Error.invalidToken)
             alert.beginSheetModal(for: self.view.window!) { (_) in
+                self.segmentedControl.isEnabled = true
                 self.textField.isEnabled = true
             }
             return

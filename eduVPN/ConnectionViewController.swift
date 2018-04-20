@@ -24,6 +24,7 @@ class ConnectionViewController: NSViewController {
     @IBOutlet var notificationsField: NSTextField!
     
     var profile: Profile!
+    var userInfo: UserInfo!
     @objc var statistics: Statistics?
     private var systemMessages: [Message] = []
     private var userMessages: [Message] = []
@@ -132,10 +133,23 @@ class ConnectionViewController: NSViewController {
         
         // Prompt user if we need two factor authentication token
         if profile.twoFactor, twoFactor == nil {
-            let enter2FAViewController = storyboard!.instantiateController(withIdentifier: NSStoryboard.SceneIdentifier(rawValue: "Enter2FA")) as! Enter2FAViewController
-            enter2FAViewController.delegate = self
-            mainWindowController?.present(viewController: enter2FAViewController)
-            return
+            if userInfo.twoFactorEnrolled {
+                let enter2FAViewController = storyboard!.instantiateController(withIdentifier: NSStoryboard.SceneIdentifier(rawValue: "Enter2FA")) as! Enter2FAViewController
+                if userInfo.twoFactorEnrolledWith.contains(.yubico) {
+                    enter2FAViewController.initialTwoFactorType = .yubico
+                } else if userInfo.twoFactorEnrolledWith.contains(.totp) {
+                    enter2FAViewController.initialTwoFactorType = .totp
+                }
+                enter2FAViewController.delegate = self
+                mainWindowController?.present(viewController: enter2FAViewController)
+                return
+            } else {
+                let enroll2FAViewController = storyboard!.instantiateController(withIdentifier: NSStoryboard.SceneIdentifier(rawValue: "Enroll2FA")) as! Enroll2FAViewController
+                enroll2FAViewController.delegate = self
+                enroll2FAViewController.providerInfo = profile.info
+                mainWindowController?.present(viewController: enroll2FAViewController)
+                return
+            }
         }
         
         guard let authState = ServiceContainer.authenticationService.authState(for: profile.info.provider) else {
@@ -268,6 +282,34 @@ extension ConnectionViewController: Enter2FAViewControllerDelegate {
     }
     
     func enter2FACancelled(controller: Enter2FAViewController) {
+        mainWindowController?.dismiss()
+    }
+    
+}
+
+extension ConnectionViewController: Enroll2FAViewControllerDelegate {
+    
+    func enroll2FA(controller: Enroll2FAViewController, didEnrollForType: TwoFactorType) {
+        // Fetch userInfo again so that connect method knows about twoFactor enrollment
+        ServiceContainer.providerService.fetchUserInfo(for: profile.info) { (result) in
+            DispatchQueue.main.async {
+                self.mainWindowController?.dismiss {
+                    switch result {
+                    case .success(let userInfo):
+                        self.userInfo = userInfo
+                        self.connect()
+                    case .failure(let error):
+                        let alert = NSAlert(error: error)
+                        alert.beginSheetModal(for: self.view.window!) { (_) in
+                            
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    func enroll2FACancelled(controller: Enroll2FAViewController) {
         mainWindowController?.dismiss()
     }
     

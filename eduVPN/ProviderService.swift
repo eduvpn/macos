@@ -23,6 +23,8 @@ class ProviderService {
         case providerVerificationFailed
         case noProfiles
         case invalidProfiles
+        case invalidUserInfo
+        case userIsDisabled
         case invalidMessages
         case missingToken
         
@@ -46,6 +48,10 @@ class ProviderService {
                 return NSLocalizedString("No profiles were found for this provider", comment: "")
             case .invalidProfiles:
                 return NSLocalizedString("Invalid profiles were found for this provider", comment: "")
+            case .invalidUserInfo:
+                return NSLocalizedString("Invalid user info was found for this provider", comment: "")
+            case .userIsDisabled:
+                return NSLocalizedString("User account is disabled", comment: "")
             case .invalidMessages:
                 return NSLocalizedString("Invalid messages were received from this provider", comment: "")
             case .missingToken:
@@ -57,6 +63,8 @@ class ProviderService {
             switch self {
             case .invalidProviderURL:
                 return NSLocalizedString("Verify URL.", comment: "")
+            case .userIsDisabled:
+                return NSLocalizedString("Contact administrator.", comment: "")
             default:
                 return NSLocalizedString("Try again later.", comment: "")
             }
@@ -482,6 +490,117 @@ class ProviderService {
         task.resume()
     }
 
+    /// Fetches both user info and profiles available for provider
+    ///
+    /// - Parameters:
+    ///   - info: Provider info
+    ///   - handler: User info and profiles or error
+    func fetchUserInfoAndProfiles(for info: ProviderInfo, handler: @escaping (Result<(UserInfo, [Profile])>) -> ()) {
+        let group = DispatchGroup()
+        var userInfo: UserInfo? = nil
+        var profiles: [Profile]? = nil
+        var error: Error? = nil
+        
+        group.enter()
+        fetchUserInfo(for: info) { (result) in
+            switch result {
+            case .success(let fetchedUserInfo):
+                userInfo = fetchedUserInfo
+            case .failure(let fetchedError):
+                error = (fetchedError as! ProviderService.Error)
+            }
+            group.leave()
+        }
+        
+        group.enter()
+        fetchProfiles(for: info) { (result) in
+            switch result {
+            case .success(let fetchedProfiles):
+                profiles = fetchedProfiles
+            case .failure(let fetchedError):
+                error = (fetchedError as! ProviderService.Error)
+            }
+            group.leave()
+        }
+        
+        group.notify(queue: .main) {
+            if let error = error {
+                handler(.failure(error))
+                return
+            }
+            handler(.success((userInfo!, profiles!)))
+        }
+    }
+    
+    /// Fetch user info
+    ///
+    /// - Parameters:
+    ///   - info: Provider info
+    ///   - handler: User info or error
+    func fetchUserInfo(for info: ProviderInfo, handler: @escaping (Result<UserInfo>) -> ()) {
+        let path: String = "user_info"
+        
+        guard let url = URL(string: path, relativeTo: info.apiBaseURL) else {
+            handler(.failure(Error.invalidProviderInfo))
+            return
+        }
+        
+        authenticationService.performAction(for: info) { (accessToken, idToken, error) in
+            guard let accessToken = accessToken else {
+                handler(.failure(error ?? Error.missingToken))
+                return
+            }
+            var request = URLRequest(url: url)
+            request.setValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
+            
+            let task = self.urlSession.dataTask(with: request) { (data, response, error) in
+                guard let data = data, let response = response as? HTTPURLResponse, 200..<300 ~= response.statusCode else {
+                    handler(.failure(error ?? Error.unknown))
+                    return
+                }
+                do {
+                    guard let json = try JSONSerialization.jsonObject(with: data, options: []) as? NSDictionary else {
+                        handler(.failure(Error.invalidUserInfo))
+                        return
+                    }
+                    
+                    guard let instance = json.value(forKeyPath: path + ".data") as? [String: AnyObject] else {
+                        handler(.failure(Error.invalidUserInfo))
+                        return
+                    }
+                    
+                    guard let twoFactorEnrolled = instance["two_factor_enrolled"] as? Bool else {
+                        handler(.failure(Error.invalidUserInfo))
+                        return
+                    }
+                    
+                    guard let twoFactorEnrolledWithStrings = instance["two_factor_enrolled_with"] as? [String] else {
+                        handler(.failure(Error.invalidUserInfo))
+                        return
+                    }
+                    
+                    let twoFactorEnrolledWith = twoFactorEnrolledWithStrings.compactMap({ TwoFactorType(rawValue: $0) })
+                    guard let isDisabled = instance["is_disabled"] as? Bool else {
+                        handler(.failure(Error.invalidUserInfo))
+                        return
+                    }
+                    
+                    let userInfo = UserInfo(twoFactorEnrolled: twoFactorEnrolled, twoFactorEnrolledWith: twoFactorEnrolledWith, isDisabled: isDisabled)
+                    
+                    if userInfo.isDisabled {
+                        handler(.failure(Error.userIsDisabled))
+                    } else {
+                        handler(.success(userInfo))
+                    }
+                } catch(let error) {
+                    handler(.failure(error))
+                    return
+                }
+            }
+            task.resume()
+        }
+    }
+    
     /// Fetches profiles available for provider
     ///
     /// - Parameters:
@@ -541,7 +660,7 @@ class ProviderService {
             task.resume()
         }
     }
-    
+
     private lazy var dateFormatter = ISO8601DateFormatter()
     
     /// Fetch system or user messages
@@ -615,4 +734,6 @@ class ProviderService {
             task.resume()
         }
     }
+    
+    
 }
