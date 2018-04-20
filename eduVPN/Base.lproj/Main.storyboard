@@ -1839,7 +1839,7 @@ DQ
                                     <font key="font" metaFont="system"/>
                                     <segments>
                                         <segment label="TOTP" width="168" selected="YES"/>
-                                        <segment label="YubiKey" width="168" tag="1"/>
+                                        <segment label="YubiKey" width="167" tag="1"/>
                                     </segments>
                                 </segmentedCell>
                                 <connections>
@@ -1911,7 +1911,7 @@ DQ
                                     <font key="font" metaFont="system"/>
                                     <segments>
                                         <segment label="TOTP" width="168" selected="YES"/>
-                                        <segment label="YubiKey" width="168" tag="1"/>
+                                        <segment label="YubiKey" width="167" tag="1"/>
                                     </segments>
                                 </segmentedCell>
                                 <connections>
@@ -1925,10 +1925,11 @@ DQ
                                 <tabViewItems>
                                     <tabViewItem label="TOTP" identifier="totp" id="Tm9-O7-UlM">
                                         <view key="view" ambiguous="YES" id="CzY-x5-Y9R">
+                                            <rect key="frame" x="0.0" y="0.0" width="338" height="363"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                             <subviews>
                                                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="XoX-vt-Rlk">
-                                                    <rect key="frame" x="-2" y="-289" width="342" height="26"/>
+                                                    <rect key="frame" x="-2" y="74" width="342" height="26"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" sendsActionOnEndEditing="YES" alignment="center" title="&lt;&lt;&lt; SECRET HERE &gt;&gt;&gt;" id="obf-Vz-ND1">
                                                         <font key="font" metaFont="system"/>
@@ -1937,7 +1938,7 @@ DQ
                                                     </textFieldCell>
                                                 </textField>
                                                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="pSj-3B-JEt">
-                                                    <rect key="frame" x="-2" y="-51" width="342" height="51"/>
+                                                    <rect key="frame" x="-2" y="312" width="342" height="51"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                     <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="You need to setup two factor authentication. To enroll scan the QR-code below or enter the code into your authenticator app." id="hhm-6Y-8g0">
                                                         <font key="font" metaFont="system"/>
@@ -1946,7 +1947,7 @@ DQ
                                                     </textFieldCell>
                                                 </textField>
                                                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1h7-re-8yN">
-                                                    <rect key="frame" x="-2" y="-311" width="308" height="17"/>
+                                                    <rect key="frame" x="-2" y="52" width="308" height="17"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Then enter the generated code below to continue:" id="NXb-u3-azC">
                                                         <font key="font" metaFont="system"/>
@@ -1955,12 +1956,12 @@ DQ
                                                     </textFieldCell>
                                                 </textField>
                                                 <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="g8p-ub-P5d">
-                                                    <rect key="frame" x="69" y="-259" width="200" height="200"/>
+                                                    <rect key="frame" x="69" y="104" width="200" height="200"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                                     <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" id="dul-ot-9Xs"/>
                                                 </imageView>
                                                 <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="XTq-qI-Fis">
-                                                    <rect key="frame" x="0.0" y="12" width="0.0" height="0.0"/>
+                                                    <rect key="frame" x="0.0" y="12" width="338" height="363"/>
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                     <textFieldCell key="cell" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" placeholderString="Enter code here" drawsBackground="YES" id="vO2-iI-5wx">
                                                         <font key="font" metaFont="system" size="26"/>
