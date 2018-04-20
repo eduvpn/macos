@@ -114,5 +114,14 @@ struct Profile: Codable {
 enum TwoFactor {
     case totp(String)
     case yubico(String)
+    
+    var twoFactorType: TwoFactorType {
+        switch self {
+        case .totp:
+            return .totp
+        case .yubico:
+            return .yubico
+        }
+    }
 }
 
