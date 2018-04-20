@@ -74,48 +74,7 @@ class TwoFactorService {
             request.httpBody = "yubi_key_otp=\(otp)".data(using: .utf8)
             request.setValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
             
-            let task = self.urlSession.dataTask(with: request) { (data, response, error) in
-                guard let data = data, let response = response as? HTTPURLResponse, 200..<300 ~= response.statusCode else {
-                    handler(.failure(error ?? Error.unknown))
-                    return
-                }
-                do {
-                    guard let json = try JSONSerialization.jsonObject(with: data, options: []) as? NSDictionary else {
-                        handler(.failure(Error.invalidTwoFactor))
-                        return
-                    }
-                    
-                    guard let instance = json.value(forKeyPath: path) as? [String: AnyObject] else {
-                        handler(.failure(Error.invalidTwoFactor))
-                        return
-                    }
-                    
-                    guard let isOk = instance["ok"] as? Bool else {
-                        handler(.failure(Error.invalidTwoFactor))
-                        return
-                    }
-                    
-                    if isOk {
-                        handler(.success(Void()))
-                    } else {
-                        guard let error = instance["error"] as? String else {
-                            handler(.failure(Error.invalidTwoFactor))
-                            return
-                        }
-                        
-                        switch error {
-                        case "user already enrolled":
-                            handler(.failure(Error.userAlreadyEnrolled))
-                        default:
-                            handler(.failure(Error.invalidTwoFactor))
-                        }
-                    }
-                } catch(let error) {
-                    handler(.failure(error))
-                    return
-                }
-            }
-            task.resume()
+            self.performEnrollmentRequest(request, handler: handler)
         }
     }
     
@@ -188,49 +147,54 @@ class TwoFactorService {
             request.httpBody = "totp_secret=\(secret)&totp_key=\(otp)".data(using: .utf8)
             request.setValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
             
-            let task = self.urlSession.dataTask(with: request) { (data, response, error) in
-                guard let data = data, let response = response as? HTTPURLResponse, 200..<300 ~= response.statusCode else {
-                    handler(.failure(error ?? Error.unknown))
-                    return
-                }
-                do {
-                    guard let json = try JSONSerialization.jsonObject(with: data, options: []) as? NSDictionary else {
-                        handler(.failure(Error.invalidTwoFactor))
-                        return
-                    }
-                    
-                    guard let instance = json.value(forKeyPath: path) as? [String: AnyObject] else {
-                        handler(.failure(Error.invalidTwoFactor))
-                        return
-                    }
-                    
-                    guard let isOk = instance["ok"] as? Bool else {
-                        handler(.failure(Error.invalidTwoFactor))
-                        return
-                    }
-                    
-                    if isOk {
-                        handler(.success(Void()))
-                    } else {
-                        guard let error = instance["error"] as? String else {
-                            handler(.failure(Error.invalidTwoFactor))
-                            return
-                        }
-                        
-                        switch error {
-                        case "user already enrolled":
-                            handler(.failure(Error.userAlreadyEnrolled))
-                        default:
-                            handler(.failure(Error.invalidTwoFactor))
-                        }
-                    }
-                } catch(let error) {
-                    handler(.failure(error))
-                    return
-                }
-            }
-            task.resume()
+            self.performEnrollmentRequest(request, handler: handler)
         }
+    }
+    
+    /// Performs enrollment request which is identical for both totp and yubico
+    private func performEnrollmentRequest(_ request: URLRequest, handler: @escaping (Result<Void>) -> ()) {
+        let task = self.urlSession.dataTask(with: request) { (data, response, error) in
+            guard let data = data, let response = response as? HTTPURLResponse, 200..<300 ~= response.statusCode else {
+                handler(.failure(error ?? Error.unknown))
+                return
+            }
+            do {
+                guard let json = try JSONSerialization.jsonObject(with: data, options: []) as? NSDictionary else {
+                    handler(.failure(Error.invalidTwoFactor))
+                    return
+                }
+                
+                guard let path = request.url?.path, let instance = json.value(forKeyPath: path) as? [String: AnyObject] else {
+                    handler(.failure(Error.invalidTwoFactor))
+                    return
+                }
+                
+                guard let isOk = instance["ok"] as? Bool else {
+                    handler(.failure(Error.invalidTwoFactor))
+                    return
+                }
+                
+                if isOk {
+                    handler(.success(Void()))
+                } else {
+                    guard let error = instance["error"] as? String else {
+                        handler(.failure(Error.invalidTwoFactor))
+                        return
+                    }
+                    
+                    switch error {
+                    case "user already enrolled":
+                        handler(.failure(Error.userAlreadyEnrolled))
+                    default:
+                        handler(.failure(Error.invalidTwoFactor))
+                    }
+                }
+            } catch(let error) {
+                handler(.failure(error))
+                return
+            }
+        }
+        task.resume()
     }
     
 }
