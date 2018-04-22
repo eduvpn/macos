@@ -32,11 +32,13 @@ class MainViewController: NSViewController {
         currentViewController.view.superview?.wantsLayer = true
         
         if animated {
+            assert(currentViewController.view.superview != nil)
             transition(from: currentViewController, to: viewController, options: options) {
                 currentViewController.removeFromParentViewController()
                 completionHandler?()
             }
         } else {
+            assert(currentViewController.view.superview != nil)
             NSAnimationContext.runAnimationGroup({ (context) in
                 context.duration = 0
                 transition(from: currentViewController, to: viewController, options: options) {
