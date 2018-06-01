@@ -55,6 +55,13 @@
  */
 - (void)readStatisticsWithReply:(void(^_Nonnull)(Statistics * _Nullable statistics))reply;
 
+/**
+ Retrieves logs for the current OpenVPN connection
+ 
+ @param reply Logs
+ */
+- (void)readLogsWithReply:(void(^_Nonnull)(NSArray <NSString *> * _Nullable logs))reply;
+
 @end
 
 @protocol ClientProtocol <NSObject>

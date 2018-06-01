@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="14109" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="14113" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14109"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14113"/>
         <capability name="box content view" minToolsVersion="7.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -1134,7 +1134,7 @@ CA
                             <userLayoutGuide location="119" affinity="minX"/>
                             <userLayoutGuide location="258" affinity="minX"/>
                             <userLayoutGuide location="240" affinity="minX"/>
-                            <userLayoutGuide location="179" affinity="minX"/>
+                            <userLayoutGuide location="178" affinity="minX"/>
                         </userGuides>
                         <subviews>
                             <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="6bp-mx-zdF">
@@ -1221,14 +1221,14 @@ CA
                                 </textFieldCell>
                             </textField>
                             <box fixedFrame="YES" borderType="none" title="Connection Info" translatesAutoresizingMaskIntoConstraints="NO" id="gLA-m0-Zbt">
-                                <rect key="frame" x="10" y="121" width="358" height="151"/>
+                                <rect key="frame" x="10" y="112" width="358" height="160"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <view key="contentView" id="DVk-f7-A1z">
-                                    <rect key="frame" x="0.0" y="0.0" width="358" height="133"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="358" height="142"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" allowsExpansionToolTips="YES" translatesAutoresizingMaskIntoConstraints="NO" id="3f5-fB-3Gb">
-                                            <rect key="frame" x="8" y="91" width="50" height="14"/>
+                                            <rect key="frame" x="8" y="100" width="50" height="14"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" sendsActionOnEndEditing="YES" alignment="right" title="Bytes In" id="CzO-Dw-pCl">
                                                 <font key="font" metaFont="smallSystemBold"/>
@@ -1237,9 +1237,9 @@ CA
                                             </textFieldCell>
                                         </textField>
                                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" allowsExpansionToolTips="YES" translatesAutoresizingMaskIntoConstraints="NO" id="WzZ-Bk-ezY">
-                                            <rect key="frame" x="72" y="91" width="101" height="14"/>
+                                            <rect key="frame" x="91" y="100" width="101" height="14"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" sendsActionOnEndEditing="YES" alignment="left" title="0 KB" id="7my-uL-F9n">
+                                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" sendsActionOnEndEditing="YES" alignment="left" id="7my-uL-F9n">
                                                 <byteCountFormatter key="formatter" countStyle="binary" zeroPadsFractionDigits="YES" id="5gX-Kq-aNS"/>
                                                 <font key="font" metaFont="smallSystem"/>
                                                 <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -1250,7 +1250,7 @@ CA
                                             </connections>
                                         </textField>
                                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" allowsExpansionToolTips="YES" translatesAutoresizingMaskIntoConstraints="NO" id="kDF-pN-QJq">
-                                            <rect key="frame" x="8" y="71" width="60" height="14"/>
+                                            <rect key="frame" x="8" y="80" width="60" height="14"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" sendsActionOnEndEditing="YES" alignment="right" title="Bytes Out" id="VE1-hl-xMh">
                                                 <font key="font" metaFont="smallSystemBold"/>
@@ -1259,9 +1259,9 @@ CA
                                             </textFieldCell>
                                         </textField>
                                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" allowsExpansionToolTips="YES" translatesAutoresizingMaskIntoConstraints="NO" id="NyI-Nb-iH3">
-                                            <rect key="frame" x="72" y="71" width="101" height="14"/>
+                                            <rect key="frame" x="91" y="80" width="101" height="14"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" sendsActionOnEndEditing="YES" alignment="left" title="0 KB" id="1rB-Yp-fQH">
+                                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" sendsActionOnEndEditing="YES" alignment="left" id="1rB-Yp-fQH">
                                                 <byteCountFormatter key="formatter" countStyle="binary" zeroPadsFractionDigits="YES" id="3ih-gh-5ar"/>
                                                 <font key="font" metaFont="smallSystem"/>
                                                 <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -1271,8 +1271,44 @@ CA
                                                 <binding destination="HQd-Dk-ag3" name="value" keyPath="selection.tcpUdpWriteBytes" id="49a-nu-NVX"/>
                                             </connections>
                                         </textField>
+                                        <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" allowsExpansionToolTips="YES" translatesAutoresizingMaskIntoConstraints="NO" id="i8S-eG-fax">
+                                            <rect key="frame" x="8" y="58" width="79" height="14"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" sendsActionOnEndEditing="YES" alignment="right" title="IPv4 Address" id="97z-ai-2S6">
+                                                <font key="font" metaFont="smallSystemBold"/>
+                                                <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                            </textFieldCell>
+                                        </textField>
+                                        <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" allowsExpansionToolTips="YES" translatesAutoresizingMaskIntoConstraints="NO" id="8Nc-td-rKB">
+                                            <rect key="frame" x="91" y="58" width="141" height="14"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" sendsActionOnEndEditing="YES" alignment="left" title="v4" id="uiV-Ac-KOg">
+                                                <font key="font" metaFont="smallSystem"/>
+                                                <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                            </textFieldCell>
+                                        </textField>
+                                        <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" allowsExpansionToolTips="YES" translatesAutoresizingMaskIntoConstraints="NO" id="UPx-Zp-TUA">
+                                            <rect key="frame" x="8" y="36" width="79" height="14"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" sendsActionOnEndEditing="YES" alignment="right" title="IPv6 Address" id="WUx-fR-no6">
+                                                <font key="font" metaFont="smallSystemBold"/>
+                                                <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                            </textFieldCell>
+                                        </textField>
+                                        <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" allowsExpansionToolTips="YES" translatesAutoresizingMaskIntoConstraints="NO" id="x0q-mR-SMg">
+                                            <rect key="frame" x="91" y="36" width="259" height="14"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" sendsActionOnEndEditing="YES" alignment="left" title="v6" id="omE-nE-LU5">
+                                                <font key="font" metaFont="smallSystem"/>
+                                                <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                            </textFieldCell>
+                                        </textField>
                                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" allowsExpansionToolTips="YES" translatesAutoresizingMaskIntoConstraints="NO" id="5YG-l3-VrO">
-                                            <rect key="frame" x="8" y="111" width="53" height="14"/>
+                                            <rect key="frame" x="8" y="120" width="53" height="14"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" sendsActionOnEndEditing="YES" alignment="left" title="Duration" id="lim-5g-Y6s">
                                                 <font key="font" metaFont="smallSystemBold"/>
@@ -1281,9 +1317,9 @@ CA
                                             </textFieldCell>
                                         </textField>
                                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" allowsExpansionToolTips="YES" translatesAutoresizingMaskIntoConstraints="NO" id="cUC-W7-yfr">
-                                            <rect key="frame" x="72" y="111" width="101" height="14"/>
+                                            <rect key="frame" x="91" y="120" width="101" height="14"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" sendsActionOnEndEditing="YES" alignment="left" title="1 m 43 s" id="BNe-tt-jZA">
+                                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" sendsActionOnEndEditing="YES" alignment="left" id="BNe-tt-jZA">
                                                 <font key="font" metaFont="smallSystem"/>
                                                 <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                 <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
@@ -1297,7 +1333,7 @@ CA
                                             </connections>
                                         </textField>
                                         <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Yjd-E0-Eam">
-                                            <rect key="frame" x="189" y="70" width="97" height="19"/>
+                                            <rect key="frame" x="93" y="9" width="97" height="19"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <buttonCell key="cell" type="roundRect" title="View Log" bezelStyle="roundedRect" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="hfa-Gc-j1c">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -1353,6 +1389,8 @@ DQ
                         <outlet property="backButton" destination="6bp-mx-zdF" id="C1o-UP-Ou5"/>
                         <outlet property="connectButton" destination="Lha-yM-Uco" id="o5W-mH-GgU"/>
                         <outlet property="disconnectButton" destination="smu-HX-KlD" id="IKt-W2-IuE"/>
+                        <outlet property="ipv4AddressField" destination="8Nc-td-rKB" id="YfW-ne-p5T"/>
+                        <outlet property="ipv6AddressField" destination="x0q-mR-SMg" id="YfW-ne-p5U"/>
                         <outlet property="locationImageView" destination="lQa-Os-EgV" id="Hvw-1H-X5b"/>
                         <outlet property="notificationsBox" destination="foZ-Fb-y44" id="YfW-ne-p5H"/>
                         <outlet property="notificationsField" destination="Bkm-Qe-VuB" id="YfW-ne-p5S"/>
@@ -1371,7 +1409,7 @@ DQ
                     </connections>
                 </objectController>
             </objects>
-            <point key="canvasLocation" x="1403" y="335"/>
+            <point key="canvasLocation" x="1403" y="334.5"/>
         </scene>
         <!--Choose Connection Type View Controller-->
         <scene sceneID="R5C-VG-0tb">

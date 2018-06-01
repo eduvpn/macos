@@ -22,10 +22,18 @@ class ConnectionViewController: NSViewController {
     @IBOutlet var statisticsBox: NSBox!
     @IBOutlet var notificationsBox: NSBox!
     @IBOutlet var notificationsField: NSTextField!
+    @IBOutlet var ipv4AddressField: NSTextField!
+    @IBOutlet var ipv6AddressField: NSTextField!
     
     var profile: Profile!
     var userInfo: UserInfo!
     @objc var statistics: Statistics?
+    private var addresses: IPAddresses? {
+        didSet {
+            self.ipv4AddressField.stringValue = addresses?.v4 ?? ""
+            self.ipv6AddressField.stringValue = addresses?.v6 ?? ""
+        }
+    }
     private var systemMessages: [Message] = []
     private var userMessages: [Message] = []
     
@@ -226,6 +234,7 @@ class ConnectionViewController: NSViewController {
     private func stopUpdatingStatistics() {
         statisticsTimer?.invalidate()
         statisticsTimer = nil
+        addresses = nil
     }
     
     private func readStatistics() {
@@ -239,6 +248,10 @@ class ConnectionViewController: NSViewController {
                     break
                 }
             }
+        }
+        
+        if addresses == nil {
+            findIPAddresses()
         }
     }
     
@@ -271,6 +284,18 @@ class ConnectionViewController: NSViewController {
         mainWindowController?.popToRoot()
     }
     
+    private func findIPAddresses() {
+        ServiceContainer.connectionService.findIPAddresses { (result) in
+            switch result {
+            case .success(let addresses):
+                DispatchQueue.main.async {
+                    self.addresses = addresses
+                }
+            case .failure:
+                break
+            }
+        }
+    }
 }
 
 extension ConnectionViewController: Enter2FAViewControllerDelegate {

@@ -39,6 +39,7 @@ class ConnectionService: NSObject {
         case helperRejected
         case statisticsUnavailable
         case unexpectedState
+        case logsUnavailable
         
         var errorDescription: String? {
             switch self {
@@ -50,6 +51,8 @@ class ConnectionService: NSObject {
                 return NSLocalizedString("No connection statistics available", comment: "")
             case .unexpectedState:
                 return NSLocalizedString("Connection in unexpected state", comment: "")
+            case .logsUnavailable:
+                return NSLocalizedString("No logs available", comment: "")
             }
         }
 
@@ -59,7 +62,7 @@ class ConnectionService: NSObject {
                 return NSLocalizedString("Try reinstalling eduVPN.", comment: "")
             case .helperRejected:
                 return NSLocalizedString("Try reinstalling eduVPN.", comment: "")
-            case .statisticsUnavailable:
+            case .statisticsUnavailable, .logsUnavailable:
                 return NSLocalizedString("Try again later.", comment: "")
             case .unexpectedState:
                 return NSLocalizedString("Try again.", comment: "")
@@ -254,6 +257,87 @@ class ConnectionService: NSObject {
                 handler(.failure(Error.statisticsUnavailable))
             }
         }
+    }
+    
+    /// Asks helper for logs about current VPN connection
+    ///
+    /// - Parameter handler: Logs or error
+    func readLogs(_ handler: @escaping (Result<[String]>) -> ()) {
+        guard let helper = helperService.connection?.remoteObjectProxy as? OpenVPNHelperProtocol else {
+            handler(.failure(Error.noHelperConnection))
+            return
+        }
+        
+        helper.readLogs{ (logs) in
+            if let logs = logs {
+                handler(.success(logs))
+            } else {
+                handler(.failure(Error.logsUnavailable))
+            }
+        }
+    }
+    
+    // Asks helper for IP addresses for current VPN connection
+    ///
+    /// - Parameter handler: IP addresses or error
+    func findIPAddresses(_ handler: @escaping (Result<IPAddresses>) -> ()) {
+        guard let helper = helperService.connection?.remoteObjectProxy as? OpenVPNHelperProtocol else {
+            handler(.failure(Error.noHelperConnection))
+            return
+        }
+        
+        helper.readLogs { (logs) in
+            if let logs = logs, let addresses = self.findIPAddresses(logs: logs) {
+                handler(.success(addresses))
+            } else {
+                handler(.failure(Error.logsUnavailable))
+            }
+        }
+    }
+    
+    private let controlMessageIndicator: String = "PUSH: Received control message:"
+    
+    private func findIPAddresses(logs: [String]) -> IPAddresses? {
+        func extractControlMessage(_ log: String) -> String? {
+            if let firstQuote = log.index(of: "'"),
+                let lastQuote = log[log.index(firstQuote, offsetBy: 1)...].index(of: "'") {
+                return String(log[firstQuote..<lastQuote])
+            } else {
+                return nil
+            }
+        }
+        
+        func extractLineComponents(key: String, from lines: [String.SubSequence]) -> [String] {
+            if let line = lines.first(where: { $0.hasPrefix(key + " ") }) {
+                let components = line.components(separatedBy: " ")
+                return Array(components.suffix(from: 1))
+            } else {
+                return []
+            }
+        }
+        
+        func extractIPAddresses(_ lines: [String.SubSequence]) -> IPAddresses {
+            let addresses = IPAddresses()
+            
+            if let ipv4Address = extractLineComponents(key: "ifconfig", from: lines).first {
+                addresses.v4 = ipv4Address
+            }
+            
+            if let ipv6Address = extractLineComponents(key: "ifconfig-ipv6", from: lines).first {
+                addresses.v6 = ipv6Address
+            }
+            
+            return addresses
+        }
+        
+        for log in logs where log.contains(controlMessageIndicator) {
+            if let controlMessage = extractControlMessage(log) {
+                let lines = controlMessage.split(separator: ",")
+                return extractIPAddresses(lines)
+            }
+        }
+        
+        return nil
     }
     
     /// URL to the last loaded config (which may have been deleted already!)

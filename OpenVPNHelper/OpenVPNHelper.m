@@ -15,6 +15,7 @@
 @property (atomic, strong) NSTask *openVPNTask;
 @property (atomic, strong) NSDate *startDate;
 @property (atomic, copy) NSString *statisticsPath;
+@property (atomic, copy) NSString *logFilePath;
 @property (atomic, strong) id <ClientProtocol> remoteObject;
 
 @end
@@ -117,8 +118,9 @@
     }];
     [task launch];
     
-    // Make log file readable
+    // Create and make log file readable
     NSError *error;
+    [[NSFileManager defaultManager] createFileAtPath:logFilePath contents:nil attributes:nil];
     if (![[NSFileManager defaultManager] setAttributes:@{NSFilePosixPermissions: [NSNumber numberWithShort:0644]} ofItemAtPath:logFilePath error:&error]) {
         syslog(LOG_WARNING, "Error making log file %s readable (chmod 644): %s", logFilePath.UTF8String, error.description.UTF8String);
     }
@@ -126,6 +128,7 @@
     self.openVPNTask = task;
     self.startDate = [NSDate date];
     self.statisticsPath = statisticsPath;
+    self.logFilePath = logFilePath;
     
     reply(task.isRunning);
 }
@@ -180,6 +183,21 @@
                                                    predecompressBytes:[self bytesForKey:@"pre-decompress bytes," inScanner:scanner]
                                                   postdecompressBytes:[self bytesForKey:@"post-decompress bytes," inScanner:scanner]];
         reply(statistics);
+    } else {
+        reply(nil);
+    }
+}
+
+- (void)readLogsWithReply:(void(^_Nonnull)(NSArray <NSString *> * _Nullable logs))reply {
+    if (self.openVPNTask && self.logFilePath) {
+        NSError *error = nil;
+        NSString *string = [NSString stringWithContentsOfFile:self.logFilePath encoding:NSUTF8StringEncoding error:&error];
+        if (string == nil) {
+            syslog(LOG_WARNING, "Read log file error: %s", error.description.UTF8String);
+            reply(nil);
+            return;
+        }
+        reply([string componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]]);
     } else {
         reply(nil);
     }

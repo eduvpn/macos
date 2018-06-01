@@ -14,7 +14,7 @@ import ServiceManagement
 /// Installs and connects helper
 class HelperService {
     
-    static let helperVersion = "0.1-5"
+    static let helperVersion = "0.1-6"
     static let helperIdentifier = "org.eduvpn.app.openvpnhelper"
 
     enum Error: Swift.Error, LocalizedError {
