@@ -78,6 +78,7 @@ class ProvidersViewController: NSViewController {
             addOtherProvider(animated: false)
         }
         
+        discoverAccessibleProviders()
         try? reachability?.startNotifier()
     }
     
