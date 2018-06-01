@@ -1,5 +1,5 @@
 github "ashleymills/Reachability.swift" "43b206183f2bf9523561263cb6d19aa0e2576ed0"
 github "jedisct1/swift-sodium" "4eb2b5e884a55ca96bf8a0cdbaaaf1ffd0fd954c"
 github "onevcat/Kingfisher" "e3ecfea740a709a5f4f66f45817bbee11b3adc35"
-github "openid/AppAuth-iOS" "b420522dae9f74d536ab81dfe9c5aaee7ecb0099"
+github "openid/AppAuth-iOS" "c16ebbe27d683d3c9055708ab44387a8c02ae391"
 github "sparkle-project/Sparkle" "d60b16f633a6e937dfe4f147a2627f3e2701950b"

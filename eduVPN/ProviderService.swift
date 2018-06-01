@@ -494,7 +494,7 @@ class ProviderService {
         let group = DispatchGroup()
         var userInfo: UserInfo? = nil
         var profiles: [Profile]? = nil
-        var error: Error? = nil
+        var error: Swift.Error? = nil
         
         group.enter()
         fetchUserInfo(for: info) { (result) in
@@ -502,7 +502,7 @@ class ProviderService {
             case .success(let fetchedUserInfo):
                 userInfo = fetchedUserInfo
             case .failure(let fetchedError):
-                error = (fetchedError as! ProviderService.Error)
+                error = fetchedError
             }
             group.leave()
         }
@@ -513,7 +513,7 @@ class ProviderService {
             case .success(let fetchedProfiles):
                 profiles = fetchedProfiles
             case .failure(let fetchedError):
-                error = (fetchedError as! ProviderService.Error)
+                error = fetchedError
             }
             group.leave()
         }
