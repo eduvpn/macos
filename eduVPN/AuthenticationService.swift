@@ -50,25 +50,38 @@ class AuthenticationService {
     ///   - info: Provider info
     ///   - handler: Auth state or error
     func authenticate(using info: ProviderInfo, handler: @escaping (Result<OIDAuthState>) -> ()) {
+        handlersAfterAuthenticating.append(handler)
+        if isAuthenticating {
+            return
+        }
+        isAuthenticating = true
+        
         let configuration = OIDServiceConfiguration(authorizationEndpoint: info.authorizationURL, tokenEndpoint: info.tokenURL)
         
         redirectHTTPHandler = OIDRedirectHTTPHandler(successURL: nil)
         let redirectURL = URL(string: "callback", relativeTo: redirectHTTPHandler!.startHTTPListener(nil))!
         let request = OIDAuthorizationRequest(configuration: configuration, clientId: "org.eduvpn.app.macos", clientSecret: nil, scopes: ["config"], redirectURL: redirectURL, responseType: OIDResponseTypeCode, additionalParameters: nil)
-        
+      
         redirectHTTPHandler!.currentAuthorizationFlow = OIDAuthState.authState(byPresenting: request) { (authState, error) in
             NSRunningApplication.current.activate(options: [.activateAllWindows, .activateIgnoringOtherApps])
-            
-            if let authState = authState {
-                self.store(for: info.provider, authState: authState)
-                handler(.success(authState))
-            } else if let error = error {
-                handler(.failure(error))
-            } else {
-                handler(.failure(Error.unknown))
+         
+            self.isAuthenticating = false
+            self.handlersAfterAuthenticating.forEach { handler in
+                if let authState = authState {
+                    self.store(for: info.provider, authState: authState)
+                    handler(.success(authState))
+                } else if let error = error {
+                    handler(.failure(error))
+                } else {
+                    handler(.failure(Error.unknown))
+                }
             }
+            self.handlersAfterAuthenticating.removeAll()
         }
     }
+    
+    private var isAuthenticating = false
+    private var handlersAfterAuthenticating: [(Result<OIDAuthState>) -> ()] = []
     
     /// Cancel authentication
     func cancelAuthentication() {
