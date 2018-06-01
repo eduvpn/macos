@@ -12,9 +12,11 @@ import Reachability
 
 class ProvidersViewController: NSViewController {
 
-    @IBOutlet var tableView: NSTableView!
+    @IBOutlet var tableView: DeselectingTableView!
     @IBOutlet var unreachableLabel: NSTextField!
     @IBOutlet var otherProviderButton: NSButton!
+    @IBOutlet var connectButton: NSButton!
+    @IBOutlet var removeButton: NSButton!
     
     private var providers: [ConnectionType: [Provider]]! {
         didSet {
@@ -53,6 +55,7 @@ class ProvidersViewController: NSViewController {
         paragraphStyle.alignment = .center
         let attributes = [NSAttributedStringKey.font: NSFont.systemFont(ofSize: 17), NSAttributedStringKey.foregroundColor : NSColor.white, NSAttributedStringKey.paragraphStyle : paragraphStyle]
         otherProviderButton.attributedTitle = NSAttributedString(string: otherProviderButton.title, attributes: attributes)
+        connectButton.attributedTitle = NSAttributedString(string: connectButton.title, attributes: attributes)
         
         // Handle internet connection state
         reachability?.whenReachable = { [weak self] reachability in
@@ -94,6 +97,7 @@ class ProvidersViewController: NSViewController {
                 case .success(let providers):
                     self.providers = providers
                     self.tableView.reloadData()
+                    self.updateButtons()
                 case .failure(let error):
                     let alert = NSAlert(error: error)
                     alert.beginSheetModal(for: self.view.window!) { (_) in
@@ -114,6 +118,58 @@ class ProvidersViewController: NSViewController {
         #else
         mainWindowController?.showChooseConnectionType(allowClose: !rows.isEmpty, animated: animated)
         #endif
+    }
+    
+    @IBAction func connectProvider(_ sender: Any) {
+        let row = tableView.selectedRow
+        guard row >= 0 else {
+            return
+        }
+        
+        let tableRow = rows[row]
+        switch tableRow {
+        case .section:
+            // Ignore
+            break
+        case .provider(let provider):
+            authenticateAndConnect(to: provider)
+        }
+    }
+    
+    @IBAction func removeProvider(_ sender: Any) {
+        let row = tableView.selectedRow
+        guard row >= 0 else {
+            return
+        }
+        
+        let tableRow = rows[row]
+        switch tableRow {
+        case .section:
+            // Ignore
+            break
+        case .provider(let provider):
+            let alert = NSAlert()
+            alert.alertStyle = .critical
+            alert.messageText = NSLocalizedString("Remove \(provider.displayName)?", comment: "")
+            alert.informativeText = NSLocalizedString("You will no longer be able to connect to \(provider.displayName).", comment: "")
+            switch provider.authorizationType {
+            case .local:
+                break
+            case .distributed, .federated:
+                alert.informativeText += NSLocalizedString(" You may also no longer be able to connect to additional providers that were authorized via this provider.", comment: "")
+            }
+            alert.addButton(withTitle: NSLocalizedString("Remove", comment: ""))
+            alert.addButton(withTitle: NSLocalizedString("Cancel", comment: ""))
+            alert.beginSheetModal(for: self.view.window!) { response in
+                switch response {
+                case NSApplication.ModalResponse.alertFirstButtonReturn:
+                    ServiceContainer.providerService.deleteProvider(provider: provider)
+                    self.discoverAccessibleProviders()
+                default:
+                    break
+                }
+            }
+        }
     }
     
     fileprivate func authenticateAndConnect(to provider: Provider) {
@@ -179,6 +235,32 @@ class ProvidersViewController: NSViewController {
             }
         }
     }
+    
+    fileprivate func updateButtons() {
+        let row = tableView.selectedRow
+        let providerSelected: Bool
+        let canRemoveProvider: Bool
+        
+        if row < 0 {
+            providerSelected = false
+            canRemoveProvider = false
+        } else {
+            let tableRow = rows[row]
+            switch tableRow {
+            case .section:
+                providerSelected = false
+                canRemoveProvider = false
+            case .provider(let provider):
+                providerSelected = true
+                canRemoveProvider = ServiceContainer.providerService.storedProviders[provider.connectionType]?.contains(where: { $0.id == provider.id }) ?? false
+            }
+        }
+        
+        otherProviderButton.isHidden = providerSelected
+        connectButton.isHidden = !providerSelected
+        removeButton.isHidden = !providerSelected
+        removeButton.isEnabled = canRemoveProvider
+    }
 }
 
 extension ProvidersViewController: NSTableViewDataSource {
@@ -217,20 +299,30 @@ extension ProvidersViewController: NSTableViewDelegate {
     }
     
     func tableViewSelectionDidChange(_ notification: Notification) {
-        let row = tableView.selectedRow
-        guard row >= 0 else {
-            return
-        }
-        
-        let tableRow = rows[row]
-        switch tableRow {
-        case .section:
-            // Ignore
-            break
-        case .provider(let provider):
-            authenticateAndConnect(to: provider)
-        }
+        updateButtons()
     }
     
 }
 
+class DeselectingTableView: NSTableView {
+    
+    override open func mouseDown(with event: NSEvent) {
+        let beforeIndex = selectedRow
+        
+        super.mouseDown(with: event)
+        
+        let point = convert(event.locationInWindow, from: nil)
+        let rowIndex = row(at: point)
+        
+        if rowIndex < 0 {
+            deselectAll(nil)
+        } else if rowIndex == beforeIndex {
+            deselectRow(rowIndex)
+        } else if let delegate = delegate {
+            if !delegate.tableView!(self, shouldSelectRow: rowIndex) {
+                deselectAll(nil)
+            }
+        }
+    }
+    
+}
