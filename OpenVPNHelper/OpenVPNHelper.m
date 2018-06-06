@@ -93,10 +93,15 @@
     task.launchPath = launchURL.path;
     NSString *logFilePath = [config.path stringByAppendingString:@".log"];
     NSString *statisticsPath = [config.path stringByAppendingString:@".status"];
+    NSString *socketPath = @"/private/tmp/eduvpn.socket";
     
     NSMutableArray *arguments = [NSMutableArray arrayWithArray:@[@"--config", [self pathWithSpacesEscaped:config.path],
                        @"--log", [self pathWithSpacesEscaped:logFilePath],
-                       @"--status", [self pathWithSpacesEscaped:statisticsPath], @"1"]];
+                       @"--status", [self pathWithSpacesEscaped:statisticsPath], @"1",
+                       @"--management", [self pathWithSpacesEscaped:socketPath], @"unix",
+                       @"--management-external-key",
+                       @"--management-external-cert", @"macosx-keychain"]];
+    
     if (authUserPass.path) {
         [arguments addObjectsFromArray:@[@"--auth-user-pass", [self pathWithSpacesEscaped:authUserPass.path]]];
     }

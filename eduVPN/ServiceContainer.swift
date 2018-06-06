@@ -41,12 +41,14 @@ struct ServiceContainer {
     static let authenticationService = AuthenticationService(appName: appName)
    
     /// Fetches configuration
-    static let configurationService = ConfigurationService(urlSession: urlSession, authenticationService: authenticationService)
+    static let configurationService = ConfigurationService(urlSession: urlSession, authenticationService: authenticationService, keychainService: keychainService)
     
     /// Connects to VPN
-    static let connectionService = ConnectionService(configurationService: configurationService, helperService: helperService)
+    static let connectionService = ConnectionService(configurationService: configurationService, helperService: helperService, keychainService: keychainService)
     
     /// Handles preferences
     static let preferencesService = PreferencesService()
     
+    /// Imports, retrieves certificates, signs data
+    static let keychainService = KeychainService()
 }
