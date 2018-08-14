@@ -389,7 +389,7 @@ class ConnectionService: NSObject {
         queue.async { [unowned self] in
             
             do {
-               let socket = try Socket.create(family: .unix, type: .stream, proto: .unix)
+                let socket = try Socket.create(family: .unix, type: .stream, proto: .unix)
                 self.socket = socket
                 
                 try socket.connect(to: self.socketPath)
@@ -452,7 +452,7 @@ class ConnectionService: NSObject {
         let signature = try self.keychainService.sign(using: self.commonNameCertificate, dataToSign: data)
         let signatureString = signature.base64EncodedString(options: [.lineLength64Characters])
         let response = "rsa-sig\n\(signatureString)\nEND\n"
-        print(response)
+        
         try socket?.write(from: response)
     }
     

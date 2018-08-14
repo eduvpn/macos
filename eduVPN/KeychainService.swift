@@ -35,6 +35,7 @@ class KeychainService {
     }
     
     func importKeyPair(data: Data, passphrase: String) throws -> String {
+        // WIP:
         //let access = SecAcces()
         let options: NSDictionary = [kSecImportExportPassphrase: passphrase]//, kSecImportExportAccess: access]
         
@@ -75,6 +76,7 @@ class KeychainService {
         guard queryError == noErr else {
             throw Error.unknownCommonName
         }
+        // WIP
 //        guard let identity = secureItemValue as? SecIdentity else {
 //            throw Error.unknownCommonName
 //        }
