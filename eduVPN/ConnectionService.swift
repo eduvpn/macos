@@ -10,6 +10,7 @@ import Foundation
 import AppKit
 import ServiceManagement
 import AppAuth
+import Socket
 
 typealias Config = String
 
@@ -70,9 +71,6 @@ class ConnectionService: NSObject {
         }
     }
  
-    private let configurationService: ConfigurationService
-    private let helperService: HelperService
-    
     /// Describes current connection state
     private(set) var state: State = .disconnected {
         didSet {
@@ -82,9 +80,14 @@ class ConnectionService: NSObject {
         }
     }
     
-    init(configurationService: ConfigurationService, helperService: HelperService) {
+    private let configurationService: ConfigurationService
+    private let helperService: HelperService
+    private let keychainService: KeychainService
+    
+    init(configurationService: ConfigurationService, helperService: HelperService, keychainService: KeychainService) {
         self.configurationService = configurationService
         self.helperService = helperService
+        self.keychainService = keychainService
     }
 
     /// Asks helper service to start VPN connection after helper and config are ready and available
@@ -106,7 +109,7 @@ class ConnectionService: NSObject {
             case .success:
                 self.configurationService.configure(for: profile, authState: authState) { (result) in
                     switch result {
-                    case .success(let config):
+                    case .success(let config, let certificateCommonName):
                         do {
                             let configURL = try self.install(config: config)
                             let authUserPassURL: URL?
@@ -115,6 +118,7 @@ class ConnectionService: NSObject {
                             } else {
                                 authUserPassURL = nil
                             }
+                            self.commonNameCertificate = certificateCommonName
                             self.activateConfig(at: configURL, authUserPassURL: authUserPassURL, handler: handler)
                         } catch(let error) {
                             self.state = .disconnected
@@ -194,6 +198,10 @@ class ConnectionService: NSObject {
         helper.startOpenVPN(at: openvpnURL, withConfig: configURL, authUserPass: authUserPassURL, upScript: upScript, downScript: downScript) { (success) in
             if success {
                 self.state = .connected
+                
+                DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                    self.openManagingSocket()
+                }
                 handler(.success(Void()))
             } else {
                 self.state = .disconnected
@@ -238,6 +246,7 @@ class ConnectionService: NSObject {
             self.configURL = nil
             self.authUserPassURL = nil
             handler(.success(Void()))
+            self.closeManagingSocket()
         }
     }
     
@@ -362,6 +371,96 @@ class ConnectionService: NSObject {
     var logURL: URL? {
         return configURL?.appendingPathExtension("log")
     }
+    
+    /// Path to socket
+    private let socketPath = "/private/tmp/eduvpn.socket"
+    
+    private var socket: Socket?
+    private var managing: Bool = false
+    private var commonNameCertificate: String = ""
+    
+    func openManagingSocket() {
+        guard !managing else {
+            return
+        }
+        
+        let queue = DispatchQueue.global(qos: .userInteractive)
+        
+        queue.async { [unowned self] in
+            
+            do {
+                let socket = try Socket.create(family: .unix, type: .stream, proto: .unix)
+                self.socket = socket
+                
+                try socket.connect(to: self.socketPath)
+                self.managing = true
+                repeat {
+                    if let string = try socket.readString() {
+                        print(string)
+                        try self.parseRead(string)
+                    }
+                } while self.managing
+               
+            } catch (let error) {
+                dump(error)
+            }
+            
+        }
+
+    }
+    
+    private func parseRead(_ string: String) throws {
+        guard string.hasPrefix(">") else {
+            // It's a response, not a command
+            return
+        }
+        
+        let components = string.split(separator: ":")
+        
+        guard let command = components.first else {
+            return
+        }
+        
+        switch String(command) {
+        case ">INFO":
+            break
+        case ">NEED-CERTIFICATE":
+           try needCertificate()
+        case ">RSA_SIGN":
+            guard let argumentSubstring = components.last else {
+                return
+            }
+            let argument = String(argumentSubstring)
+            try rsaSign(argument)
+        default:
+            break
+        }
+    }
+    
+    private func needCertificate() throws {
+        let certificate = try self.keychainService.certificate(for: self.commonNameCertificate)
+        let certificateString = certificate.base64EncodedString(options: [.lineLength64Characters])
+        let response = "certificate\n-----BEGIN CERTIFICATE-----\n\(certificateString)\n-----END CERTIFICATE-----\nEND\n"
+        print(response)
+        try socket?.write(from: response)
+    }
+    
+    private func rsaSign(_ stringToSign: String) throws {
+        guard let data = stringToSign.data(using: .utf8) else {
+            throw Error.helperRejected
+        }
+        let signature = try self.keychainService.sign(using: self.commonNameCertificate, dataToSign: data)
+        let signatureString = signature.base64EncodedString(options: [.lineLength64Characters])
+        let response = "rsa-sig\n\(signatureString)\nEND\n"
+        
+        try socket?.write(from: response)
+    }
+    
+    func closeManagingSocket() {
+        managing = false
+        socket?.close()
+    }
+    
 }
 
 extension ConnectionService: ClientProtocol {
@@ -375,3 +474,4 @@ extension ConnectionService: ClientProtocol {
     }
 
 }
+

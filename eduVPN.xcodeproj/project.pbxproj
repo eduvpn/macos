@@ -57,6 +57,20 @@
 		C765819D1F063C47003DEC92 /* ConnectionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C765819C1F063C47003DEC92 /* ConnectionService.swift */; };
 		C77EF61320876B5A0097DEB2 /* String+Random.swift in Sources */ = {isa = PBXBuildFile; fileRef = C77EF61220876B5A0097DEB2 /* String+Random.swift */; };
 		C78250A61FC7291000B33892 /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = C78250A51FC7291000B33892 /* Message.swift */; };
+		C789DCC320C727B900A0668E /* Reachability.framework.dSYM in CopyFiles */ = {isa = PBXBuildFile; fileRef = C761E2DF2080B08200A98B90 /* Reachability.framework.dSYM */; };
+		C789DCC420C727BE00A0668E /* Sparkle.framework.dSYM in CopyFiles */ = {isa = PBXBuildFile; fileRef = C741F43B1FC6DE9000B1EB83 /* Sparkle.framework.dSYM */; };
+		C789DCC620C727CB00A0668E /* Reachability.framework.dSYM in CopyFiles */ = {isa = PBXBuildFile; fileRef = C761E2DF2080B08200A98B90 /* Reachability.framework.dSYM */; };
+		C789DCC720C727CF00A0668E /* Sparkle.framework.dSYM in CopyFiles */ = {isa = PBXBuildFile; fileRef = C741F43B1FC6DE9000B1EB83 /* Sparkle.framework.dSYM */; };
+		C789DCCB20C7E3CB00A0668E /* Socket.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C789DCC920C7E3CA00A0668E /* Socket.framework */; };
+		C789DCCD20C7E3CB00A0668E /* Socket.framework.dSYM in Resources */ = {isa = PBXBuildFile; fileRef = C789DCCA20C7E3CB00A0668E /* Socket.framework.dSYM */; };
+		C789DCCE20C7E3CB00A0668E /* Socket.framework.dSYM in Resources */ = {isa = PBXBuildFile; fileRef = C789DCCA20C7E3CB00A0668E /* Socket.framework.dSYM */; };
+		C789DCCF20C7E3E000A0668E /* Socket.framework.dSYM in CopyFiles */ = {isa = PBXBuildFile; fileRef = C789DCCA20C7E3CB00A0668E /* Socket.framework.dSYM */; };
+		C789DCD120C7E3ED00A0668E /* Socket.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = C789DCC920C7E3CA00A0668E /* Socket.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		C789DCD220C7E41100A0668E /* Socket.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C789DCC920C7E3CA00A0668E /* Socket.framework */; };
+		C789DCD320C7E41100A0668E /* Socket.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = C789DCC920C7E3CA00A0668E /* Socket.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		C789DCD420C7E41B00A0668E /* Socket.framework.dSYM in CopyFiles */ = {isa = PBXBuildFile; fileRef = C789DCCA20C7E3CB00A0668E /* Socket.framework.dSYM */; };
+		C789DCD620C8227000A0668E /* KeychainService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C789DCD520C8227000A0668E /* KeychainService.swift */; };
+		C789DCD720C8227000A0668E /* KeychainService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C789DCD520C8227000A0668E /* KeychainService.swift */; };
 		C79265C32080F340005E86E7 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C7BEF5CE1F03E0D80038605E /* Main.storyboard */; };
 		C795BAA220616C9300304431 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7BEF5C81F03E0D80038605E /* AppDelegate.swift */; };
 		C7A4E1221FACD09C00B21262 /* EnterProviderURLViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7A4E1211FACD09C00B21262 /* EnterProviderURLViewController.swift */; };
@@ -94,11 +108,9 @@
 		C7C494F4208484120056D5E4 /* AppAuth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C72A55791F0D9FF2001DCA24 /* AppAuth.framework */; };
 		C7C494F5208484120056D5E4 /* Sparkle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C741F43C1FC6DE9000B1EB83 /* Sparkle.framework */; };
 		C7C494F6208484120056D5E4 /* ServiceManagement.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C7D15FD31F0D166800719F38 /* ServiceManagement.framework */; };
-		C7C494F7208484120056D5E4 /* Reachability.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C761E2DD2080B07B00A98B90 /* Reachability.framework */; };
 		C7C494F8208484120056D5E4 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C72AD7031F0A6AEE006DBDA5 /* Security.framework */; };
 		C7C494F9208484120056D5E4 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C7D15FD01F0D165900719F38 /* Cocoa.framework */; };
 		C7C494FA208484120056D5E4 /* Sodium.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C74487051F194FAB0072B472 /* Sodium.framework */; };
-		C7C494FB208484120056D5E4 /* Reachability.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C761E2DD2080B07B00A98B90 /* Reachability.framework */; };
 		C7C494FD208484120056D5E4 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C7BEF5CE1F03E0D80038605E /* Main.storyboard */; };
 		C7C494FE208484120056D5E4 /* Defaults.plist in Resources */ = {isa = PBXBuildFile; fileRef = C71912571F3C8486005409E0 /* Defaults.plist */; };
 		C7C494FF208484120056D5E4 /* dsa_pub.pem in Resources */ = {isa = PBXBuildFile; fileRef = C741F4411FC6E2D400B1EB83 /* dsa_pub.pem */; };
@@ -169,6 +181,7 @@
 				C71847CF1F0E7EAF00296C61 /* Kingfisher.framework in Embed Frameworks */,
 				C74487071F194FAB0072B472 /* Sodium.framework in Embed Frameworks */,
 				C761E2E22080B08C00A98B90 /* Reachability.framework in Embed Frameworks */,
+				C789DCD320C7E41100A0668E /* Socket.framework in Embed Frameworks */,
 				C72A557B1F0D9FF2001DCA24 /* AppAuth.framework in Embed Frameworks */,
 				C741F4401FC6DEED00B1EB83 /* Sparkle.framework in Embed Frameworks */,
 			);
@@ -182,8 +195,11 @@
 			dstSubfolderSpec = 16;
 			files = (
 				C72A557F1F0DA01C001DCA24 /* AppAuth.framework.dSYM in CopyFiles */,
+				C789DCD420C7E41B00A0668E /* Socket.framework.dSYM in CopyFiles */,
 				C71847CC1F0E7C7700296C61 /* Kingfisher.framework.dSYM in CopyFiles */,
+				C789DCC320C727B900A0668E /* Reachability.framework.dSYM in CopyFiles */,
 				C74487091F194FBA0072B472 /* Sodium.framework.dSYM in CopyFiles */,
+				C789DCC420C727BE00A0668E /* Sparkle.framework.dSYM in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -236,6 +252,7 @@
 				C7C49509208484120056D5E4 /* Kingfisher.framework in Embed Frameworks */,
 				C7C4950A208484120056D5E4 /* Sodium.framework in Embed Frameworks */,
 				C7C4950B208484120056D5E4 /* Reachability.framework in Embed Frameworks */,
+				C789DCD120C7E3ED00A0668E /* Socket.framework in Embed Frameworks */,
 				C7C4950C208484120056D5E4 /* AppAuth.framework in Embed Frameworks */,
 				C7C4950D208484120056D5E4 /* Sparkle.framework in Embed Frameworks */,
 			);
@@ -250,7 +267,10 @@
 			files = (
 				C7C4950F208484120056D5E4 /* AppAuth.framework.dSYM in CopyFiles */,
 				C7C49510208484120056D5E4 /* Kingfisher.framework.dSYM in CopyFiles */,
+				C789DCC620C727CB00A0668E /* Reachability.framework.dSYM in CopyFiles */,
+				C789DCCF20C7E3E000A0668E /* Socket.framework.dSYM in CopyFiles */,
 				C7C49511208484120056D5E4 /* Sodium.framework.dSYM in CopyFiles */,
+				C789DCC720C727CF00A0668E /* Sparkle.framework.dSYM in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -304,6 +324,9 @@
 		C765819C1F063C47003DEC92 /* ConnectionService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = ConnectionService.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		C77EF61220876B5A0097DEB2 /* String+Random.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Random.swift"; sourceTree = "<group>"; };
 		C78250A51FC7291000B33892 /* Message.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Message.swift; path = eduVPN/Message.swift; sourceTree = SOURCE_ROOT; };
+		C789DCC920C7E3CA00A0668E /* Socket.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Socket.framework; path = Carthage/Build/Mac/Socket.framework; sourceTree = "<group>"; };
+		C789DCCA20C7E3CB00A0668E /* Socket.framework.dSYM */ = {isa = PBXFileReference; lastKnownFileType = wrapper.dsym; name = Socket.framework.dSYM; path = Carthage/Build/Mac/Socket.framework.dSYM; sourceTree = "<group>"; };
+		C789DCD520C8227000A0668E /* KeychainService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = KeychainService.swift; path = eduVPN/KeychainService.swift; sourceTree = SOURCE_ROOT; };
 		C7A4E1211FACD09C00B21262 /* EnterProviderURLViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = EnterProviderURLViewController.swift; path = eduVPN/EnterProviderURLViewController.swift; sourceTree = SOURCE_ROOT; };
 		C7A9F1D01FB3C81B007A752F /* ReadMe.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = ReadMe.md; sourceTree = "<group>"; };
 		C7BEF5C51F03E0D80038605E /* eduVPN.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = eduVPN.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -350,11 +373,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				C72A557A1F0D9FF2001DCA24 /* AppAuth.framework in Frameworks */,
+				C789DCD220C7E41100A0668E /* Socket.framework in Frameworks */,
 				C741F43E1FC6DE9000B1EB83 /* Sparkle.framework in Frameworks */,
 				C7D15FD41F0D166800719F38 /* ServiceManagement.framework in Frameworks */,
 				C761E2E12080B08C00A98B90 /* Reachability.framework in Frameworks */,
 				C7D15FD21F0D166100719F38 /* Security.framework in Frameworks */,
 				C7D15FD11F0D165900719F38 /* Cocoa.framework in Frameworks */,
+				C789DCCB20C7E3CB00A0668E /* Socket.framework in Frameworks */,
 				C74487061F194FAB0072B472 /* Sodium.framework in Frameworks */,
 				C761E2DE2080B07B00A98B90 /* Reachability.framework in Frameworks */,
 			);
@@ -367,11 +392,9 @@
 				C7C494F4208484120056D5E4 /* AppAuth.framework in Frameworks */,
 				C7C494F5208484120056D5E4 /* Sparkle.framework in Frameworks */,
 				C7C494F6208484120056D5E4 /* ServiceManagement.framework in Frameworks */,
-				C7C494F7208484120056D5E4 /* Reachability.framework in Frameworks */,
 				C7C494F8208484120056D5E4 /* Security.framework in Frameworks */,
 				C7C494F9208484120056D5E4 /* Cocoa.framework in Frameworks */,
 				C7C494FA208484120056D5E4 /* Sodium.framework in Frameworks */,
-				C7C494FB208484120056D5E4 /* Reachability.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -401,6 +424,8 @@
 				C71847CB1F0E7C7700296C61 /* Kingfisher.framework.dSYM */,
 				C761E2DD2080B07B00A98B90 /* Reachability.framework */,
 				C761E2DF2080B08200A98B90 /* Reachability.framework.dSYM */,
+				C789DCC920C7E3CA00A0668E /* Socket.framework */,
+				C789DCCA20C7E3CB00A0668E /* Socket.framework.dSYM */,
 				C74487051F194FAB0072B472 /* Sodium.framework */,
 				C74487081F194FBA0072B472 /* Sodium.framework.dSYM */,
 				C741F43C1FC6DE9000B1EB83 /* Sparkle.framework */,
@@ -499,6 +524,7 @@
 				C71847C31F0E4A4A00296C61 /* AuthenticationService.swift */,
 				C71847C51F0E5AC600296C61 /* ConfigurationService.swift */,
 				C765819C1F063C47003DEC92 /* ConnectionService.swift */,
+				C789DCD520C8227000A0668E /* KeychainService.swift */,
 				C75527F91F3C55F100076078 /* PreferencesService.swift */,
 				C7C495202084DE230056D5E4 /* TwoFactorService.swift */,
 				C77EF61220876B5A0097DEB2 /* String+Random.swift */,
@@ -694,6 +720,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C79265C32080F340005E86E7 /* Main.storyboard in Resources */,
+				C789DCCD20C7E3CB00A0668E /* Socket.framework.dSYM in Resources */,
 				C71912581F3C8486005409E0 /* Defaults.plist in Resources */,
 				C741F4421FC6E2D400B1EB83 /* dsa_pub.pem in Resources */,
 				C7BEF5CD1F03E0D80038605E /* Assets.xcassets in Resources */,
@@ -708,6 +735,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C7C494FD208484120056D5E4 /* Main.storyboard in Resources */,
+				C789DCCE20C7E3CB00A0668E /* Socket.framework.dSYM in Resources */,
 				C7C494FE208484120056D5E4 /* Defaults.plist in Resources */,
 				C7C494FF208484120056D5E4 /* dsa_pub.pem in Resources */,
 				C7C49500208484120056D5E4 /* Assets.xcassets in Resources */,
@@ -846,6 +874,7 @@
 				C78250A61FC7291000B33892 /* Message.swift in Sources */,
 				C761DF071FE4002A009F0154 /* Enter2FAViewController.swift in Sources */,
 				C7BEF5DE1F03F4020038605E /* AuthenticatingViewController.swift in Sources */,
+				C789DCD620C8227000A0668E /* KeychainService.swift in Sources */,
 				C7BEF5DC1F03F2CA0038605E /* MainWindowController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -883,6 +912,7 @@
 				C7C494EF208484120056D5E4 /* Message.swift in Sources */,
 				C7C494F0208484120056D5E4 /* Enter2FAViewController.swift in Sources */,
 				C7C494F1208484120056D5E4 /* AuthenticatingViewController.swift in Sources */,
+				C789DCD720C8227000A0668E /* KeychainService.swift in Sources */,
 				C7C494F2208484120056D5E4 /* MainWindowController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

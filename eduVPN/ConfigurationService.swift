@@ -52,10 +52,12 @@ class ConfigurationService {
     
     private let urlSession: URLSession
     private let authenticationService: AuthenticationService
+    private let keychainService: KeychainService
     
-    init(urlSession: URLSession, authenticationService: AuthenticationService) {
+    init(urlSession: URLSession, authenticationService: AuthenticationService, keychainService: KeychainService) {
         self.urlSession = urlSession
         self.authenticationService = authenticationService
+        self.keychainService = keychainService
     }
     
     /// Fetches configuration for a profile including certificate and private key
@@ -64,15 +66,14 @@ class ConfigurationService {
     ///   - profile: Profile
     ///   - authState: Authentication token
     ///   - handler: Config or error
-    func configure(for profile: Profile, authState: OIDAuthState, handler: @escaping (Result<Config>) -> ()) {
+    func configure(for profile: Profile, authState: OIDAuthState, handler: @escaping (Result<(config: Config, certificateCommonName: String)>) -> ()) {
         restoreOrCreateKeyPair(for: profile.info, authState: authState) { (result) in
             switch result {
-            case .success((let certificate, let privateKey)):
+            case .success(let certificateCommonName):
                 self.fetchConfig(for: profile, authState: authState) { (result) in
                     switch result {
                     case .success(let config):
-                        let profileConfig = self.consolidate(config: config, certificate: certificate, privateKey: privateKey)
-                        handler(.success(profileConfig))
+                        handler(.success((config: config, certificateCommonName: certificateCommonName)))
                     case .failure(let error):
                         handler(.failure(error))
                     }
@@ -88,12 +89,11 @@ class ConfigurationService {
     /// - Parameters:
     ///   - info: Provider info
     ///   - authState: Authentication token
-    ///   - handler: Keypair or error
-    private func restoreOrCreateKeyPair(for info: ProviderInfo, authState: OIDAuthState, handler: @escaping (Result<(certificate: String, privateKey: String)>) -> ()) {
-        // TODO: restore key pair from keychain instead of user defaults
+    ///   - handler: Certificate common name or error
+    private func restoreOrCreateKeyPair(for info: ProviderInfo, authState: OIDAuthState, handler: @escaping (Result<String>) -> ()) {
         var keyPairs = UserDefaults.standard.array(forKey: "keyPairs") ?? []
         
-        let pairs = keyPairs.lazy.flatMap { keyPair -> (certificate: String, privateKey: String)? in
+        let certificateCommonNames = keyPairs.lazy.compactMap { keyPair -> String? in
             guard let keyPair = keyPair as? [String: AnyObject] else {
                 return nil
             }
@@ -102,29 +102,33 @@ class ConfigurationService {
                 return nil
             }
             
-            guard let certificate = keyPair["certificate"] as? String else {
+            guard let certificateCommonName = keyPair["certificateCommonName"] as? String else {
                 return nil
             }
             
-            guard let privateKey = keyPair["privateKey"] as? String else {
-                return nil
-            }
-            
-            return (certificate, privateKey)
+            return certificateCommonName
         }
         
-        if let keyPair = pairs.first {
-            handler(.success(keyPair))
+        if let certificateCommonName = certificateCommonNames.first {
+            // TODO: Check if still valid!
+            handler(.success(certificateCommonName))
         } else {
             // No key pair found, create new one and store it
             createKeyPair(for: info, authState: authState) { result in
                 switch result {
                 case .success((let certificate, let privateKey)):
-                    // TODO: store key pair in keychain instead of user defaults
-                    let keyPair = ["provider": info.provider.displayName, "providerBaseURL": info.provider.baseURL.absoluteString, "certificate": certificate, "privateKey": privateKey]
-                    keyPairs.append(keyPair)
-                    UserDefaults.standard.set(keyPairs, forKey: "keyPairs")
-                    handler(.success((certificate: certificate, privateKey: privateKey)))
+                    do {
+                        // TODO: Proper p12
+                        let data = NSData(contentsOfFile: "/Users/jkool/foo.p12")!
+                        let certificateCommonName = try self.keychainService.importKeyPair(data: data as Data, passphrase: "Test")
+                        
+                        let keyPair = ["provider": info.provider.displayName, "providerBaseURL": info.provider.baseURL.absoluteString, "certificateCommonName": certificateCommonName]
+                        keyPairs.append(keyPair)
+                        UserDefaults.standard.set(keyPairs, forKey: "keyPairs")
+                        handler(.success(certificateCommonName))
+                    } catch (let error) {
+                        handler(.failure(error))
+                    }
                 case .failure(let error):
                     handler(.failure(error))
                 }
@@ -237,17 +241,6 @@ class ConfigurationService {
             }
             task.resume()
         }
-    }
-    
-    /// Combines configuration with keypair
-    ///
-    /// - Parameters:
-    ///   - config: Config
-    ///   - certificate: Certificate
-    ///   - privateKey: Private key
-    /// - Returns: Configuration including keypair
-    private func consolidate(config: Config, certificate: String, privateKey: String) -> Config {
-        return config + "\n<cert>\n" + certificate + "\n</cert>\n<key>\n" + privateKey + "\n</key>"
     }
     
 }
