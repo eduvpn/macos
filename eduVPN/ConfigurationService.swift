@@ -117,17 +117,23 @@ class ConfigurationService {
             createKeyPair(for: info, authState: authState) { result in
                 switch result {
                 case .success((let certificate, let privateKey)):
-                    do {
-                        // TODO: Proper p12
-                        let data = NSData(contentsOfFile: "/Users/jkool/foo.p12")!
-                        let certificateCommonName = try self.keychainService.importKeyPair(data: data as Data, passphrase: "Test")
-                        
-                        let keyPair = ["provider": info.provider.displayName, "providerBaseURL": info.provider.baseURL.absoluteString, "certificateCommonName": certificateCommonName]
-                        keyPairs.append(keyPair)
-                        UserDefaults.standard.set(keyPairs, forKey: "keyPairs")
-                        handler(.success(certificateCommonName))
-                    } catch (let error) {
-                        handler(.failure(error))
+                    let passphrase = String.random()
+                    self.createPKCS12(certificate: certificate, privateKey: privateKey, passphrase: passphrase) { result in
+                        switch result {
+                        case .success(let data):
+                            do {
+                                let certificateCommonName = try self.keychainService.importKeyPair(data: data, passphrase: passphrase)
+                                
+                                let keyPair = ["provider": info.provider.displayName, "providerBaseURL": info.provider.baseURL.absoluteString, "certificateCommonName": certificateCommonName]
+                                keyPairs.append(keyPair)
+                                UserDefaults.standard.set(keyPairs, forKey: "keyPairs")
+                                handler(.success(certificateCommonName))
+                            } catch {
+                                handler(.failure(error))
+                            }
+                        case .failure(let error):
+                            handler(.failure(error))
+                        }
                     }
                 case .failure(let error):
                     handler(.failure(error))
@@ -243,4 +249,64 @@ class ConfigurationService {
         }
     }
     
+    /// Creates a PKCS#12 file suitable for Keychain import
+    ///
+    /// - Parameters:
+    ///   - certificate: Certificate as PEM string
+    ///   - privateKey: Private key as PEM string
+    ///   - passphrase: Passphrase to set on PKCS#12 file
+    ///   - handler: PKCS#12 file as data or error
+    private func createPKCS12(certificate: String, privateKey: String, passphrase: String, handler: @escaping ((Result<Data>) -> ())) {
+        do {
+            let process = Process()
+            process.launchPath = "/usr/bin/openssl"
+            
+            let inkeyPath = try temporaryPath(for: "key.pem")
+            try privateKey.write(to: URL(fileURLWithPath: inkeyPath), atomically: true, encoding: .utf8)
+            
+            let inPath = try temporaryPath(for: "cert.pem")
+            try certificate.write(to: URL(fileURLWithPath: inPath), atomically: true, encoding: .utf8)
+            
+            let outPath = try temporaryPath(for: "out.p12")
+            
+            process.arguments = ["pkcs12", "-export", "-out", outPath.spacesEscaped, "-inkey", inkeyPath.spacesEscaped, "-in", inPath.spacesEscaped, "-passout", "pass:\(passphrase)"]
+            
+            process.terminationHandler = { _ in
+                do {
+                    let outData = try Data(contentsOf: URL(fileURLWithPath: outPath))
+                    handler(.success(outData))
+                } catch  {
+                    handler(.failure(error))
+                }
+                
+                // Cleanup
+                try? FileManager.default.removeItem(atPath: inkeyPath)
+                try? FileManager.default.removeItem(atPath: inPath)
+                try? FileManager.default.removeItem(atPath: outPath)
+            }
+            process.launch()
+        } catch {
+            handler(.failure(error))
+        }
+    }
+    
+    /// Path for file in temporary directory
+    ///
+    /// - Parameter fileName: File name
+    /// - Returns: Path
+    /// - Throws: Error creating directory
+    private func temporaryPath(for fileName: String) throws -> String {
+        let tempDir = (NSTemporaryDirectory() as NSString).appendingPathComponent("org.eduvpn.app.temp") // Added .temp because .app lets the Finder show the folder as an app
+        try FileManager.default.createDirectory(atPath: tempDir, withIntermediateDirectories: true, attributes: nil)
+        let fileURL = URL(fileURLWithPath: (tempDir as NSString).appendingPathComponent(fileName))
+        return fileURL.path
+    }
+}
+
+private extension String {
+    
+    /// Escapes spaces in a path
+    var spacesEscaped: String {
+        return replacingOccurrences(of: " ", with: "\\ ")
+    }
 }
