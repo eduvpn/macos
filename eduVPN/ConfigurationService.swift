@@ -18,6 +18,11 @@ class ConfigurationService {
         case missingToken
         case invalidKeyPair
         case invalidConfiguration
+        case certificateCheckFailed
+        case certificateMissing // CN never exist, was deleted by the user, or the server was reinstalled and the certificate is no longer there
+        case userDisabled // The user account was disabled by an administrator
+        case certificateNotYetValid // The certificate is not yet valid
+        case certificateExpired // The certificate is no longer valid (expired)
         
         var errorDescription: String? {
             switch self {
@@ -31,6 +36,16 @@ class ConfigurationService {
                 return NSLocalizedString("Invalid keypair received from provider", comment: "")
             case .invalidConfiguration:
                 return NSLocalizedString("Invalid configuration received from provider", comment: "")
+            case .certificateCheckFailed:
+                return NSLocalizedString("Could not check certificate", comment: "")
+            case .certificateMissing:
+                return NSLocalizedString("No certificate available", comment: "")
+            case .userDisabled:
+                return NSLocalizedString("This user account is disabled", comment: "")
+            case .certificateNotYetValid:
+                return NSLocalizedString("The certificate is not yet valid", comment: "")
+            case .certificateExpired:
+                return NSLocalizedString("The certificate is no longer valid", comment: "")
             }
         }
         
@@ -46,6 +61,16 @@ class ConfigurationService {
                 return NSLocalizedString("Try to connect again later.", comment: "")
             case .invalidConfiguration:
                 return NSLocalizedString("Try to connect again later.", comment: "")
+            case .certificateCheckFailed:
+                return NSLocalizedString("Try to connect again.", comment: "")
+            case .certificateMissing:
+                return NSLocalizedString("Try to connect again.", comment: "")
+            case .userDisabled:
+                return NSLocalizedString("Contact your provider for further details", comment: "")
+            case .certificateNotYetValid:
+                return NSLocalizedString("Try to connect again.", comment: "")
+            case .certificateExpired:
+                return NSLocalizedString("Try to connect again.", comment: "")
             }
         }
     }
@@ -110,8 +135,16 @@ class ConfigurationService {
         }
         
         if let certificateCommonName = certificateCommonNames.first {
-            // TODO: Check if still valid!
-            handler(.success(certificateCommonName))
+            // Check if still valid
+            checkCertificate(for: info, authState: authState, certificateCommonName: certificateCommonName) { result in
+                switch result {
+                case .success:
+                    handler(.success(certificateCommonName))
+                case .failure(let error):
+                    // TODO: Certains errors -> create new keypair
+                    handler(.failure(error))
+                }
+            }
         } else {
             // No key pair found, create new one and store it
             createKeyPair(for: info, authState: authState) { result in
@@ -192,6 +225,87 @@ class ConfigurationService {
                 } catch(let error) {
                     handler(.failure(error))
                     return
+                }
+            }
+            task.resume()
+        }
+    }
+    
+    /// Checks if a certificate is still valid
+    ///
+    /// - Parameters:
+    ///   - info: Provider info
+    ///   - authState: Authentication token
+    ///   - certificateCommonName: Common name of the certificate
+    ///   - handler: Void (valid) or an error
+    private func checkCertificate(for info: ProviderInfo, authState: OIDAuthState, certificateCommonName: String, handler: @escaping (Result<Void>) -> ()) {
+        guard let bareURL = URL(string: "check_certificate", relativeTo: info.apiBaseURL) else {
+            handler(.failure(Error.invalidURL))
+            return
+        }
+        
+        guard var urlComponents = URLComponents(url: bareURL, resolvingAgainstBaseURL: true) else {
+            handler(.failure(Error.invalidURL))
+            return
+        }
+        
+        urlComponents.queryItems = [URLQueryItem(name: "common_name", value: certificateCommonName)]
+        guard let url = urlComponents.url else {
+            handler(.failure(Error.invalidURL))
+            return
+        }
+        
+        authenticationService.performAction(for: info) { (accessToken, idToken, error) in
+            guard let accessToken = accessToken else {
+                handler(.failure(error ?? Error.missingToken))
+                return
+            }
+            var request = URLRequest(url: url)
+            request.setValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
+            
+            let task = self.urlSession.dataTask(with: request) { (data, response, error) in
+                guard let data = data, let response = response as? HTTPURLResponse, 200..<300 ~= response.statusCode else {
+                    handler(.failure(error ?? Error.certificateCheckFailed))
+                    return
+                }
+                
+                do {
+                    guard let json = try JSONSerialization.jsonObject(with: data, options: []) as? NSDictionary else {
+                        handler(.failure(Error.certificateCheckFailed))
+                        return
+                    }
+                    
+                    guard let isValid = json.value(forKeyPath: "check_certificate.data.is_valid") as? Bool else {
+                        handler(.failure(Error.certificateCheckFailed))
+                        return
+                    }
+                    
+                    guard let reason = json.value(forKeyPath: "check_certificate.data.reason") as? String else {
+                        if isValid {
+                            handler(.success(Void()))
+                        } else {
+                            handler(.failure(Error.certificateCheckFailed))
+                        }
+                        return
+                    }
+                    
+                    let error: Error
+                    switch reason {
+                    case "certificate_missing":
+                        error = Error.certificateMissing
+                    case "user_disabled":
+                        error = Error.userDisabled
+                    case "certificate_not_yet_valid":
+                        error = Error.certificateNotYetValid
+                    case "certificate_expired":
+                        error = Error.certificateExpired
+                    default:
+                        error = Error.certificateCheckFailed
+                    }
+                    
+                    handler(.failure(error))
+                } catch {
+                    handler(.failure(error))
                 }
             }
             task.resume()
