@@ -178,6 +178,7 @@ class ConnectionViewController: NSViewController {
                 }
             }
         }
+        updateForStateChange()
     }
     
     private func disconnect() {

@@ -55,6 +55,8 @@
 		C761E2E22080B08C00A98B90 /* Reachability.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = C761E2DD2080B07B00A98B90 /* Reachability.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		C765819B1F063BC9003DEC92 /* ServiceContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = C765819A1F063BC9003DEC92 /* ServiceContainer.swift */; };
 		C765819D1F063C47003DEC92 /* ConnectionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C765819C1F063C47003DEC92 /* ConnectionService.swift */; };
+		C766150E2125B4F2002A8E4D /* Debug.swift in Sources */ = {isa = PBXBuildFile; fileRef = C766150D2125B4F2002A8E4D /* Debug.swift */; };
+		C766150F2125B4F2002A8E4D /* Debug.swift in Sources */ = {isa = PBXBuildFile; fileRef = C766150D2125B4F2002A8E4D /* Debug.swift */; };
 		C77EF61320876B5A0097DEB2 /* String+Random.swift in Sources */ = {isa = PBXBuildFile; fileRef = C77EF61220876B5A0097DEB2 /* String+Random.swift */; };
 		C78250A61FC7291000B33892 /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = C78250A51FC7291000B33892 /* Message.swift */; };
 		C789DCC320C727B900A0668E /* Reachability.framework.dSYM in CopyFiles */ = {isa = PBXBuildFile; fileRef = C761E2DF2080B08200A98B90 /* Reachability.framework.dSYM */; };
@@ -322,6 +324,7 @@
 		C761E2DF2080B08200A98B90 /* Reachability.framework.dSYM */ = {isa = PBXFileReference; lastKnownFileType = wrapper.dsym; name = Reachability.framework.dSYM; path = Carthage/Build/Mac/Reachability.framework.dSYM; sourceTree = "<group>"; };
 		C765819A1F063BC9003DEC92 /* ServiceContainer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceContainer.swift; sourceTree = "<group>"; };
 		C765819C1F063C47003DEC92 /* ConnectionService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = ConnectionService.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
+		C766150D2125B4F2002A8E4D /* Debug.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Debug.swift; path = eduVPN/Debug.swift; sourceTree = SOURCE_ROOT; };
 		C77EF61220876B5A0097DEB2 /* String+Random.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Random.swift"; sourceTree = "<group>"; };
 		C78250A51FC7291000B33892 /* Message.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Message.swift; path = eduVPN/Message.swift; sourceTree = SOURCE_ROOT; };
 		C789DCC920C7E3CA00A0668E /* Socket.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Socket.framework; path = Carthage/Build/Mac/Socket.framework; sourceTree = "<group>"; };
@@ -528,6 +531,7 @@
 				C75527F91F3C55F100076078 /* PreferencesService.swift */,
 				C7C495202084DE230056D5E4 /* TwoFactorService.swift */,
 				C77EF61220876B5A0097DEB2 /* String+Random.swift */,
+				C766150D2125B4F2002A8E4D /* Debug.swift */,
 			);
 			name = Services;
 			sourceTree = "<group>";
@@ -858,6 +862,7 @@
 				C732CEA51F0F720800698F28 /* ChooseProfileViewController.swift in Sources */,
 				C71847C81F0E5E2800296C61 /* ChooseConnectionTypeViewController.swift in Sources */,
 				C7610D441F3AFBF400D6C063 /* Statistics.m in Sources */,
+				C766150E2125B4F2002A8E4D /* Debug.swift in Sources */,
 				C75527FA1F3C55F100076078 /* PreferencesService.swift in Sources */,
 				C795BAA220616C9300304431 /* AppDelegate.swift in Sources */,
 				C765819D1F063C47003DEC92 /* ConnectionService.swift in Sources */,
@@ -896,6 +901,7 @@
 				C7C494E2208484120056D5E4 /* Either.swift in Sources */,
 				C7C494E3208484120056D5E4 /* ChooseProfileViewController.swift in Sources */,
 				C7C494E4208484120056D5E4 /* ChooseConnectionTypeViewController.swift in Sources */,
+				C766150F2125B4F2002A8E4D /* Debug.swift in Sources */,
 				C7251FCA208A2DF8000CE404 /* Enroll2FAViewController.swift in Sources */,
 				C7251FC8208A2DEF000CE404 /* TwoFactorService.swift in Sources */,
 				C7C494E5208484120056D5E4 /* Statistics.m in Sources */,

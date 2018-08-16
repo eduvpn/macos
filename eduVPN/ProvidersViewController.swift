@@ -57,6 +57,13 @@ class ProvidersViewController: NSViewController {
         otherProviderButton.attributedTitle = NSAttributedString(string: otherProviderButton.title, attributes: attributes)
         connectButton.attributedTitle = NSAttributedString(string: connectButton.title, attributes: attributes)
         
+        // Close orphaned connection
+        busy = true
+        ServiceContainer.connectionService.closeOrphanedConnectionIfNeeded { _ in
+            self.busy = false
+            self.updateInterface()
+        }
+        
         // Handle internet connection state
         if let reachability = reachability {
             reachability.whenReachable = { [weak self] reachability in
@@ -69,8 +76,8 @@ class ProvidersViewController: NSViewController {
             }
         } else {
             discoverAccessibleProviders()
-            updateInterface()
         }
+        updateInterface()
     }
     
     override func viewDidAppear() {
@@ -279,6 +286,7 @@ class ProvidersViewController: NSViewController {
         tableView.isHidden = !reachable
         tableView.isEnabled = !busy
         otherProviderButton.isHidden = providerSelected || !reachable
+        otherProviderButton.isEnabled = !busy
         connectButton.isHidden = !providerSelected || !reachable
         connectButton.isEnabled = !busy
         removeButton.isHidden = !providerSelected || !reachable
