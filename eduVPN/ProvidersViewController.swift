@@ -58,17 +58,18 @@ class ProvidersViewController: NSViewController {
         connectButton.attributedTitle = NSAttributedString(string: connectButton.title, attributes: attributes)
         
         // Handle internet connection state
-        reachability?.whenReachable = { [weak self] reachability in
-            self?.discoverAccessibleProviders()
-            self?.unreachableLabel.isHidden = true
-            self?.tableView.isHidden = false
-            self?.otherProviderButton.isHidden = false
-        }
-        
-        reachability?.whenUnreachable = { [weak self] _ in
-            self?.unreachableLabel.isHidden = false
-            self?.tableView.isHidden = true
-            self?.otherProviderButton.isHidden = true
+        if let reachability = reachability {
+            reachability.whenReachable = { [weak self] reachability in
+                self?.discoverAccessibleProviders()
+                self?.updateInterface()
+            }
+            
+            reachability.whenUnreachable = { [weak self] _ in
+                self?.updateInterface()
+            }
+        } else {
+            discoverAccessibleProviders()
+            updateInterface()
         }
     }
     
@@ -97,7 +98,7 @@ class ProvidersViewController: NSViewController {
                 case .success(let providers):
                     self.providers = providers
                     self.tableView.reloadData()
-                    self.updateButtons()
+                    self.updateInterface()
                 case .failure(let error):
                     let alert = NSAlert(error: error)
                     alert.beginSheetModal(for: self.view.window!) { (_) in
@@ -172,12 +173,17 @@ class ProvidersViewController: NSViewController {
         }
     }
     
+    private var busy: Bool = false
+    
     fileprivate func authenticateAndConnect(to provider: Provider) {
         if let authState = ServiceContainer.authenticationService.authState(for: provider), authState.isAuthorized {
-            tableView.isEnabled = false
+            busy = true
+            updateInterface()
+            
             ServiceContainer.providerService.fetchInfo(for: provider) { (result) in
                 DispatchQueue.main.async {
-                    self.tableView.isEnabled = true
+                    self.busy = false
+                    self.updateInterface()
                     
                     switch result {
                     case .success(let info):
@@ -192,10 +198,13 @@ class ProvidersViewController: NSViewController {
             }
         } else {
             // No (valid) authentication token
-            self.tableView.isEnabled = false
+            busy = true
+            updateInterface()
+            
             ServiceContainer.providerService.fetchInfo(for: provider) { (result) in
                 DispatchQueue.main.async {
-                    self.tableView.isEnabled = true
+                    self.busy = false
+                    self.updateInterface()
                     
                     switch result {
                     case .success(let info):
@@ -212,10 +221,13 @@ class ProvidersViewController: NSViewController {
     }
     
     private func fetchProfiles(for info: ProviderInfo, authState: OIDAuthState) {
-        tableView.isEnabled = false
+        busy = true
+        updateInterface()
+        
         ServiceContainer.providerService.fetchUserInfoAndProfiles(for: info) { (result) in
             DispatchQueue.main.async {
-                self.tableView.isEnabled = true
+                self.busy = false
+                self.updateInterface()
                 
                 switch result {
                 case .success(let userInfo, let profiles):
@@ -236,7 +248,7 @@ class ProvidersViewController: NSViewController {
         }
     }
     
-    fileprivate func updateButtons() {
+    fileprivate func updateInterface() {
         let row = tableView.selectedRow
         let providerSelected: Bool
         let canRemoveProvider: Bool
@@ -256,10 +268,21 @@ class ProvidersViewController: NSViewController {
             }
         }
         
-        otherProviderButton.isHidden = providerSelected
-        connectButton.isHidden = !providerSelected
-        removeButton.isHidden = !providerSelected
-        removeButton.isEnabled = canRemoveProvider
+        let reachable: Bool
+        if let reachability = reachability {
+            reachable = reachability.connection != .none
+        } else {
+            reachable = true
+        }
+    
+        unreachableLabel.isHidden = reachable
+        tableView.isHidden = !reachable
+        tableView.isEnabled = !busy
+        otherProviderButton.isHidden = providerSelected || !reachable
+        connectButton.isHidden = !providerSelected || !reachable
+        connectButton.isEnabled = !busy
+        removeButton.isHidden = !providerSelected || !reachable
+        removeButton.isEnabled = canRemoveProvider && !busy
     }
 }
 
@@ -299,7 +322,7 @@ extension ProvidersViewController: NSTableViewDelegate {
     }
     
     func tableViewSelectionDidChange(_ notification: Notification) {
-        updateButtons()
+        updateInterface()
     }
     
 }
