@@ -134,20 +134,8 @@ class ConfigurationService {
             return certificateCommonName
         }
         
-        if let certificateCommonName = certificateCommonNames.first {
-            // Check if still valid
-            checkCertificate(for: info, authState: authState, certificateCommonName: certificateCommonName) { result in
-                switch result {
-                case .success:
-                    handler(.success(certificateCommonName))
-                case .failure(let error):
-                    // TODO: Certains errors -> create new keypair
-                    handler(.failure(error))
-                }
-            }
-        } else {
-            // No key pair found, create new one and store it
-            createKeyPair(for: info, authState: authState) { result in
+        let createKeyPair: () -> () = {
+            self.createKeyPair(for: info, authState: authState) { result in
                 switch result {
                 case .success((let certificate, let privateKey)):
                     let passphrase = String.random()
@@ -172,6 +160,47 @@ class ConfigurationService {
                     handler(.failure(error))
                 }
             }
+        }
+        
+        func forgetKeyPair(certificateCommonName: String) {
+            var keyPairs = UserDefaults.standard.array(forKey: "keyPairs") ?? []
+            keyPairs = keyPairs.filter { keyPair -> Bool in
+                guard let keyPair = keyPair as? [String: AnyObject] else {
+                    return false
+                }
+                
+                guard let currentCertificateCommonName = keyPair["certificateCommonName"] as? String else {
+                    return false
+                }
+                
+                return currentCertificateCommonName != certificateCommonName
+            }
+            UserDefaults.standard.set(keyPairs, forKey: "keyPairs")
+        }
+        
+        if let certificateCommonName = certificateCommonNames.first {
+            // Check if still valid
+            checkCertificate(for: info, authState: authState, certificateCommonName: certificateCommonName) { result in
+                switch result {
+                case .success:
+                    handler(.success(certificateCommonName))
+                case .failure(let error):
+                    // Certain errors -> create new keypair
+                    switch error {
+                    case Error.certificateNotYetValid, Error.certificateExpired, Error.certificateMissing:
+                        forgetKeyPair(certificateCommonName: certificateCommonName)
+                        createKeyPair()
+                    case Error.userDisabled:
+                        // Inform user
+                        handler(.failure(error))
+                    default:
+                        handler(.failure(error))
+                    }
+                }
+            }
+        } else {
+            // No key pair found, create new one and store it
+            createKeyPair()
         }
     }
     
