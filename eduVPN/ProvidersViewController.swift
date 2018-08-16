@@ -83,12 +83,12 @@ class ProvidersViewController: NSViewController {
         }
         
         discoverAccessibleProviders()
-        try? reachability.startNotifier()
+        try? reachability?.startNotifier()
     }
     
     override func viewWillDisappear() {
         super.viewWillDisappear()
-        reachability.stopNotifier()
+        reachability?.stopNotifier()
     }
     
     private func discoverAccessibleProviders() {
@@ -173,12 +173,17 @@ class ProvidersViewController: NSViewController {
         }
     }
     
+    private var busy: Bool = false
+    
     fileprivate func authenticateAndConnect(to provider: Provider) {
         if let authState = ServiceContainer.authenticationService.authState(for: provider), authState.isAuthorized {
-            tableView.isEnabled = false
+            busy = true
+            updateInterface()
+            
             ServiceContainer.providerService.fetchInfo(for: provider) { (result) in
                 DispatchQueue.main.async {
-                    self.tableView.isEnabled = true
+                    self.busy = false
+                    self.updateInterface()
                     
                     switch result {
                     case .success(let info):
@@ -193,10 +198,13 @@ class ProvidersViewController: NSViewController {
             }
         } else {
             // No (valid) authentication token
-            self.tableView.isEnabled = false
+            busy = true
+            updateInterface()
+            
             ServiceContainer.providerService.fetchInfo(for: provider) { (result) in
                 DispatchQueue.main.async {
-                    self.tableView.isEnabled = true
+                    self.busy = false
+                    self.updateInterface()
                     
                     switch result {
                     case .success(let info):
@@ -213,10 +221,13 @@ class ProvidersViewController: NSViewController {
     }
     
     private func fetchProfiles(for info: ProviderInfo, authState: OIDAuthState) {
-        tableView.isEnabled = false
+        busy = true
+        updateInterface()
+        
         ServiceContainer.providerService.fetchUserInfoAndProfiles(for: info) { (result) in
             DispatchQueue.main.async {
-                self.tableView.isEnabled = true
+                self.busy = false
+                self.updateInterface()
                 
                 switch result {
                 case .success(let userInfo, let profiles):
@@ -266,10 +277,12 @@ class ProvidersViewController: NSViewController {
     
         unreachableLabel.isHidden = reachable
         tableView.isHidden = !reachable
+        tableView.isEnabled = !busy
         otherProviderButton.isHidden = providerSelected || !reachable
         connectButton.isHidden = !providerSelected || !reachable
+        connectButton.isEnabled = !busy
         removeButton.isHidden = !providerSelected || !reachable
-        removeButton.isEnabled = canRemoveProvider
+        removeButton.isEnabled = canRemoveProvider && !busy
     }
 }
 
