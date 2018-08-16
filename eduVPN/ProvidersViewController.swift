@@ -58,17 +58,18 @@ class ProvidersViewController: NSViewController {
         connectButton.attributedTitle = NSAttributedString(string: connectButton.title, attributes: attributes)
         
         // Handle internet connection state
-        reachability?.whenReachable = { [weak self] reachability in
-            self?.discoverAccessibleProviders()
-            self?.unreachableLabel.isHidden = true
-            self?.tableView.isHidden = false
-            self?.otherProviderButton.isHidden = false
-        }
-        
-        reachability?.whenUnreachable = { [weak self] _ in
-            self?.unreachableLabel.isHidden = false
-            self?.tableView.isHidden = true
-            self?.otherProviderButton.isHidden = true
+        if let reachability = reachability {
+            reachability.whenReachable = { [weak self] reachability in
+                self?.discoverAccessibleProviders()
+                self?.updateInterface()
+            }
+            
+            reachability.whenUnreachable = { [weak self] _ in
+                self?.updateInterface()
+            }
+        } else {
+            discoverAccessibleProviders()
+            updateInterface()
         }
     }
     
@@ -82,12 +83,12 @@ class ProvidersViewController: NSViewController {
         }
         
         discoverAccessibleProviders()
-        try? reachability?.startNotifier()
+        try? reachability.startNotifier()
     }
     
     override func viewWillDisappear() {
         super.viewWillDisappear()
-        reachability?.stopNotifier()
+        reachability.stopNotifier()
     }
     
     private func discoverAccessibleProviders() {
@@ -97,7 +98,7 @@ class ProvidersViewController: NSViewController {
                 case .success(let providers):
                     self.providers = providers
                     self.tableView.reloadData()
-                    self.updateButtons()
+                    self.updateInterface()
                 case .failure(let error):
                     let alert = NSAlert(error: error)
                     alert.beginSheetModal(for: self.view.window!) { (_) in
@@ -236,7 +237,7 @@ class ProvidersViewController: NSViewController {
         }
     }
     
-    fileprivate func updateButtons() {
+    fileprivate func updateInterface() {
         let row = tableView.selectedRow
         let providerSelected: Bool
         let canRemoveProvider: Bool
@@ -256,9 +257,18 @@ class ProvidersViewController: NSViewController {
             }
         }
         
-        otherProviderButton.isHidden = providerSelected
-        connectButton.isHidden = !providerSelected
-        removeButton.isHidden = !providerSelected
+        let reachable: Bool
+        if let reachability = reachability {
+            reachable = reachability.connection != .none
+        } else {
+            reachable = true
+        }
+    
+        unreachableLabel.isHidden = reachable
+        tableView.isHidden = !reachable
+        otherProviderButton.isHidden = providerSelected || !reachable
+        connectButton.isHidden = !providerSelected || !reachable
+        removeButton.isHidden = !providerSelected || !reachable
         removeButton.isEnabled = canRemoveProvider
     }
 }
@@ -299,7 +309,7 @@ extension ProvidersViewController: NSTableViewDelegate {
     }
     
     func tableViewSelectionDidChange(_ notification: Notification) {
-        updateButtons()
+        updateInterface()
     }
     
 }
