@@ -22,7 +22,7 @@ struct ServiceContainer {
         case "org.eduvpn.app":
             return "eduVPN"
         case "org.eduvpn.app.home":
-            return "Let's connect!"
+            return "Let's Connect!"
         default:
             fatalError()
         }
