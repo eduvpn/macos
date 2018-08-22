@@ -41,6 +41,7 @@ class ConnectionService: NSObject {
         case statisticsUnavailable
         case unexpectedState
         case logsUnavailable
+        case unexpectedError
         
         var errorDescription: String? {
             switch self {
@@ -54,6 +55,8 @@ class ConnectionService: NSObject {
                 return NSLocalizedString("Connection in unexpected state", comment: "")
             case .logsUnavailable:
                 return NSLocalizedString("No logs available", comment: "")
+            case .unexpectedError:
+                return NSLocalizedString("Connection encountered unexpected error", comment: "")
             }
         }
 
@@ -65,7 +68,7 @@ class ConnectionService: NSObject {
                 return NSLocalizedString("Try reinstalling eduVPN.", comment: "")
             case .statisticsUnavailable, .logsUnavailable:
                 return NSLocalizedString("Try again later.", comment: "")
-            case .unexpectedState:
+            case .unexpectedState, .unexpectedError:
                 return NSLocalizedString("Try again.", comment: "")
             }
         }
@@ -412,15 +415,34 @@ class ConnectionService: NSObject {
 
     }
     
+    // See https://github.com/OpenVPN/openvpn/blob/master/doc/management-notes.txt
     private func parseRead(_ string: String) throws {
-        debugLog(string)
         
-        guard string.hasPrefix(">") else {
+        let stringToParse: String
+        let remainder: String?
+        
+        if let range = string.range(of: "\r\n>") {
+            // Multiple commands in string, split and parse separately
+            let index = string.index(range.upperBound, offsetBy: -1)
+            stringToParse = String(string[..<index])
+            remainder = String(string[index...])
+        } else {
+            stringToParse = string
+            remainder = nil
+        }
+        
+        guard stringToParse.hasPrefix(">") else {
             // It's a response, not a command
+            debugLog("<<< " + stringToParse)
+            if let remainder = remainder {
+                try parseRead(remainder)
+            }
             return
         }
         
-        let components = string.split(separator: ":")
+        debugLog("CMD " + stringToParse)
+        
+        let components = stringToParse.split(separator: ":")
         
         guard let command = components.first else {
             return
@@ -428,7 +450,7 @@ class ConnectionService: NSObject {
         
         switch String(command) {
         case ">INFO":
-            break
+            try readState() // Turn on state to help debugging
         case ">NEED-CERTIFICATE":
            try needCertificate()
         case ">RSA_SIGN":
@@ -440,31 +462,42 @@ class ConnectionService: NSObject {
         default:
             break
         }
+        
+        if let remainder = remainder {
+            try parseRead(remainder)
+        }
+    }
+    
+    private func write(_ string: String) throws {
+        debugLog(">>> " + string)
+        try socket?.write(from: string)
+    }
+    
+    private func readState() throws {
+        try write("help\nstate on\n")
     }
     
     private func needCertificate() throws {
         let certificate = try keychainService.certificate(for: commonNameCertificate)
         let certificateString = certificate.base64EncodedString(options: [.lineLength64Characters])
         let response = "certificate\n-----BEGIN CERTIFICATE-----\n\(certificateString)\n-----END CERTIFICATE-----\nEND\n"
-      
-        try socket?.write(from: response)
+        try write(response)
     }
     
     private func rsaSign(_ stringToSign: String) throws {
-        guard let data = stringToSign.data(using: .utf8) else {
-            throw Error.helperRejected
+        guard let data = Data(base64Encoded: stringToSign, options: [.ignoreUnknownCharacters]) else {
+            throw Error.unexpectedError
         }
         let signature = try keychainService.sign(using: commonNameCertificate, dataToSign: data)
         let signatureString = signature.base64EncodedString(options: [.lineLength64Characters])
         let response = "rsa-sig\n\(signatureString)\nEND\n"
-        
-        try socket?.write(from: response)
+        try write(response)
     }
 
     private func closeManagingSocket() {
         managing = false
         do {
-            try socket?.write(from: "signal SIGTERM\n")
+            try write("signal SIGTERM\n")
         } catch {
             debugLog(error)
         }
