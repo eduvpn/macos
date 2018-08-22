@@ -342,7 +342,7 @@
 		C7BEF5DB1F03F2CA0038605E /* MainWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainWindowController.swift; sourceTree = "<group>"; };
 		C7BEF5DD1F03F4020038605E /* AuthenticatingViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AuthenticatingViewController.swift; sourceTree = "<group>"; };
 		C7BEF5DF1F03F4220038605E /* ConnectionViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConnectionViewController.swift; sourceTree = "<group>"; };
-		C7C49515208484120056D5E4 /* Let's connect!.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Let's connect!.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		C7C49515208484120056D5E4 /* Let's Connect!.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Let's Connect!.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		C7C49516208484120056D5E4 /* LetsConnect-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "LetsConnect-Info.plist"; path = "/Users/jkool/Developer/Egeniq/eduvpn-macos/LetsConnect-Info.plist"; sourceTree = "<absolute>"; };
 		C7C4951720849DF20056D5E4 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = User.swift; path = eduVPN/User.swift; sourceTree = SOURCE_ROOT; };
 		C7C4951E2084BE600056D5E4 /* Enroll2FAViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Enroll2FAViewController.swift; sourceTree = "<group>"; };
@@ -480,7 +480,7 @@
 				C7BEF5C51F03E0D80038605E /* eduVPN.app */,
 				C72AD6F31F0A692F006DBDA5 /* org.eduvpn.app.openvpnhelper */,
 				C75527E11F3C531B00076078 /* LoginItemHelper.app */,
-				C7C49515208484120056D5E4 /* Let's connect!.app */,
+				C7C49515208484120056D5E4 /* Let's Connect!.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -627,9 +627,9 @@
 			productReference = C7BEF5C51F03E0D80038605E /* eduVPN.app */;
 			productType = "com.apple.product-type.application";
 		};
-		C7C494D2208484120056D5E4 /* Let's connect! */ = {
+		C7C494D2208484120056D5E4 /* LetsConnect */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = C7C49512208484120056D5E4 /* Build configuration list for PBXNativeTarget "Let's connect!" */;
+			buildConfigurationList = C7C49512208484120056D5E4 /* Build configuration list for PBXNativeTarget "LetsConnect" */;
 			buildPhases = (
 				C7C494D7208484120056D5E4 /* Sign OpenVPN */,
 				C7C494D8208484120056D5E4 /* Set SMPrivilegedExecutables */,
@@ -647,9 +647,9 @@
 				C7C494D3208484120056D5E4 /* PBXTargetDependency */,
 				C7C494D5208484120056D5E4 /* PBXTargetDependency */,
 			);
-			name = "Let's connect!";
+			name = LetsConnect;
 			productName = EduVPN;
-			productReference = C7C49515208484120056D5E4 /* Let's connect!.app */;
+			productReference = C7C49515208484120056D5E4 /* Let's Connect!.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -702,7 +702,7 @@
 			projectRoot = "";
 			targets = (
 				C7BEF5C41F03E0D80038605E /* eduVPN */,
-				C7C494D2208484120056D5E4 /* Let's connect! */,
+				C7C494D2208484120056D5E4 /* LetsConnect */,
 				C72AD6F21F0A692F006DBDA5 /* org.eduvpn.app.openvpnhelper */,
 				C75527E01F3C531B00076078 /* LoginItemHelper */,
 			);
@@ -807,7 +807,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
-			shellScript = "signed=$( codesign -d -vv ${SOURCE_ROOT}/openvpn-2.4.4-openssl-1.0.2o/openvpn 2>&1 >/dev/null | grep \"${EXPANDED_CODE_SIGN_IDENTITY_NAME}\" )\necho $signed\nif [ -n \"$signed\" ]\nthen\n    echo \"Already signed for ${EXPANDED_CODE_SIGN_IDENTITY_NAME}, skipping\"\nelse\n    echo \"Signing for ${EXPANDED_CODE_SIGN_IDENTITY_NAME}\"\n    codesign -f -s \"${EXPANDED_CODE_SIGN_IDENTITY_NAME}\" \"${SOURCE_ROOT}/openvpn-2.4.4-openssl-1.0.2o/openvpn\"\nfi\n\n";
+			shellScript = "signed=$( codesign -d -vv ${SOURCE_ROOT}/openvpn-2.4.6-openssl-1.1.0h/openvpn 2>&1 >/dev/null | grep \"${EXPANDED_CODE_SIGN_IDENTITY_NAME}\" )\necho $signed\nif [ -n \"$signed\" ]\nthen\n    echo \"Already signed for ${EXPANDED_CODE_SIGN_IDENTITY_NAME}, skipping\"\nelse\n    echo \"Signing for ${EXPANDED_CODE_SIGN_IDENTITY_NAME}\"\n    codesign -f -s \"${EXPANDED_CODE_SIGN_IDENTITY_NAME}\" \"${SOURCE_ROOT}/openvpn-2.4.6-openssl-1.1.0h/openvpn\"\nfi\n";
 		};
 		C7C494D8208484120056D5E4 /* Set SMPrivilegedExecutables */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -1213,7 +1213,8 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				OTHER_SWIFT_FLAGS = "-DAPI_DISCOVERY_DISABLED";
 				PRODUCT_BUNDLE_IDENTIFIER = org.eduvpn.app.home;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_MODULE_NAME = LetsConnect;
+				PRODUCT_NAME = "Let's Connect!";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "eduVPN/eduVPN-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -1237,7 +1238,8 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				OTHER_SWIFT_FLAGS = "-DAPI_DISCOVERY_DISABLED";
 				PRODUCT_BUNDLE_IDENTIFIER = org.eduvpn.app.home;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_MODULE_NAME = LetsConnect;
+				PRODUCT_NAME = "Let's Connect!";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "eduVPN/eduVPN-Bridging-Header.h";
 				SWIFT_VERSION = 4.0;
@@ -1283,7 +1285,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		C7C49512208484120056D5E4 /* Build configuration list for PBXNativeTarget "Let's connect!" */ = {
+		C7C49512208484120056D5E4 /* Build configuration list for PBXNativeTarget "LetsConnect" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C7C49513208484120056D5E4 /* Debug */,

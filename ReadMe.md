@@ -16,13 +16,27 @@ The bundle identifier (`CFBundleIdentifier`) in the helper's Info.plist should b
 
 You need [Carthage](https://github.com/Carthage/Carthage) to build dependencies.
 
-    $ carthage bootstrap
+A version for distribution can be build using the provided script `build.sh`:
 
-1. Select eduVPN target
-2. Product > Archive
-3. Export
-4. Developer Id
-5. Select profiles
+    > ./build.sh 
+    Build Script for eduVPN (and derivatives)
+
+    Which target do you want to build?
+    1. eduVPN
+    2. Let's Connect!
+    0-9?1
+
+    Which signing identity do you want to use?
+    1. SURFnet B.V. (ZYJ4TZX4UU)
+    2. Egeniq (E85CT7ZDJC)
+    3. Other
+    0-9?1
+
+    You are currently on branch release/test1.
+
+    Continue building eduVPN.app version test1 (using Developer ID Application: SURFnet B.V. (ZYJ4TZX4UU)) (y/n)?y
+    
+    (etc.)
 
 
 ### Uninstalling

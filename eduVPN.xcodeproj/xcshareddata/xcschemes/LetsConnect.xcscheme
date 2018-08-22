@@ -15,8 +15,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "C7C494D2208484120056D5E4"
-               BuildableName = "Let&apos;s connect!.app"
-               BlueprintName = "Let&apos;s connect!"
+               BuildableName = "Let&apos;s Connect!.app"
+               BlueprintName = "LetsConnect"
                ReferencedContainer = "container:eduVPN.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -33,8 +33,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "C7C494D2208484120056D5E4"
-            BuildableName = "Let&apos;s connect!.app"
-            BlueprintName = "Let&apos;s connect!"
+            BuildableName = "Let&apos;s Connect!.app"
+            BlueprintName = "LetsConnect"
             ReferencedContainer = "container:eduVPN.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -56,8 +56,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "C7C494D2208484120056D5E4"
-            BuildableName = "Let&apos;s connect!.app"
-            BlueprintName = "Let&apos;s connect!"
+            BuildableName = "Let&apos;s Connect!.app"
+            BlueprintName = "LetsConnect"
             ReferencedContainer = "container:eduVPN.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
@@ -75,8 +75,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "C7C494D2208484120056D5E4"
-            BuildableName = "Let&apos;s connect!.app"
-            BlueprintName = "Let&apos;s connect!"
+            BuildableName = "Let&apos;s Connect!.app"
+            BlueprintName = "LetsConnect"
             ReferencedContainer = "container:eduVPN.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>

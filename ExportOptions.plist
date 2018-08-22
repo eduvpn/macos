@@ -2,6 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>compileBitcode</key>
+	<true/>
 	<key>method</key>
 	<string>developer-id</string>
 	<key>signingCertificate</key>
@@ -10,7 +12,5 @@
 	<string>manual</string>
 	<key>teamID</key>
 	<string>ZYJ4TZX4UU</string>
-	<key>compileBitcode</key>
-	<true/>
 </dict>
 </plist>
