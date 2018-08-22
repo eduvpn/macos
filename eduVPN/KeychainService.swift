@@ -105,7 +105,7 @@ class KeychainService {
             throw Error.privateKeyError(privateKeyError)
         }
         
-        let algorithm: SecKeyAlgorithm = .rsaSignatureDigestPKCS1v15Raw // ?? or rsaSignatureDigestPKCS1v15SHA1
+        let algorithm: SecKeyAlgorithm = .rsaSignatureDigestPKCS1v15Raw
 
         guard SecKeyIsAlgorithmSupported(secKey!, .sign, algorithm) else {
             throw Error.unsupportedAlgorithm
