@@ -41,11 +41,15 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         // Adjust app name in menu and window
         let appName = ServiceContainer.appName
         if appName != "eduVPN" {
+            let fix: (NSMenuItem) -> Void = { menuItem in
+                menuItem.title = menuItem.title.replacingOccurrences(of: "eduVPN", with: appName)
+            }
             NSApp.mainMenu?.items.forEach { menuItem in
                 menuItem.submenu?.items.forEach {
-                    $0.title = $0.title.replacingOccurrences(of: "eduVPN", with: appName)
+                    fix($0)
                 }
             }
+            statusMenu.items.forEach(fix)
             mainWindowController.window?.title = appName
         }
     }

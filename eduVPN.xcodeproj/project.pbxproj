@@ -57,6 +57,8 @@
 		C765819D1F063C47003DEC92 /* ConnectionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C765819C1F063C47003DEC92 /* ConnectionService.swift */; };
 		C766150E2125B4F2002A8E4D /* Debug.swift in Sources */ = {isa = PBXBuildFile; fileRef = C766150D2125B4F2002A8E4D /* Debug.swift */; };
 		C766150F2125B4F2002A8E4D /* Debug.swift in Sources */ = {isa = PBXBuildFile; fileRef = C766150D2125B4F2002A8E4D /* Debug.swift */; };
+		C766FB87212D6AF000306271 /* eduVPNAssets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C766FB86212D6AF000306271 /* eduVPNAssets.xcassets */; };
+		C766FB89212D6AF900306271 /* LetsConnectAssets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C766FB88212D6AF900306271 /* LetsConnectAssets.xcassets */; };
 		C77EF61320876B5A0097DEB2 /* String+Random.swift in Sources */ = {isa = PBXBuildFile; fileRef = C77EF61220876B5A0097DEB2 /* String+Random.swift */; };
 		C78250A61FC7291000B33892 /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = C78250A51FC7291000B33892 /* Message.swift */; };
 		C789DCC320C727B900A0668E /* Reachability.framework.dSYM in CopyFiles */ = {isa = PBXBuildFile; fileRef = C761E2DF2080B08200A98B90 /* Reachability.framework.dSYM */; };
@@ -77,7 +79,6 @@
 		C795BAA220616C9300304431 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7BEF5C81F03E0D80038605E /* AppDelegate.swift */; };
 		C7A4E1221FACD09C00B21262 /* EnterProviderURLViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7A4E1211FACD09C00B21262 /* EnterProviderURLViewController.swift */; };
 		C7AA7FBF1FE4989000845D62 /* ConnectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7BEF5DF1F03F4220038605E /* ConnectionViewController.swift */; };
-		C7BEF5CD1F03E0D80038605E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C7BEF5CC1F03E0D80038605E /* Assets.xcassets */; };
 		C7BEF5D81F03E4B50038605E /* ChooseProviderViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7BEF5D71F03E4B50038605E /* ChooseProviderViewController.swift */; };
 		C7BEF5DA1F03E4FD0038605E /* Provider.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7BEF5D91F03E4FD0038605E /* Provider.swift */; };
 		C7BEF5DC1F03F2CA0038605E /* MainWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7BEF5DB1F03F2CA0038605E /* MainWindowController.swift */; };
@@ -116,7 +117,6 @@
 		C7C494FD208484120056D5E4 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C7BEF5CE1F03E0D80038605E /* Main.storyboard */; };
 		C7C494FE208484120056D5E4 /* Defaults.plist in Resources */ = {isa = PBXBuildFile; fileRef = C71912571F3C8486005409E0 /* Defaults.plist */; };
 		C7C494FF208484120056D5E4 /* dsa_pub.pem in Resources */ = {isa = PBXBuildFile; fileRef = C741F4411FC6E2D400B1EB83 /* dsa_pub.pem */; };
-		C7C49500208484120056D5E4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C7BEF5CC1F03E0D80038605E /* Assets.xcassets */; };
 		C7C49501208484120056D5E4 /* Sparkle.framework.dSYM in Resources */ = {isa = PBXBuildFile; fileRef = C741F43B1FC6DE9000B1EB83 /* Sparkle.framework.dSYM */; };
 		C7C49502208484120056D5E4 /* openvpn-2.4.6-openssl-1.1.0h in Resources */ = {isa = PBXBuildFile; fileRef = C7FA902B1F0BC83E0037FF88 /* openvpn-2.4.6-openssl-1.1.0h */; };
 		C7C49503208484120056D5E4 /* Reachability.framework.dSYM in Resources */ = {isa = PBXBuildFile; fileRef = C761E2DF2080B08200A98B90 /* Reachability.framework.dSYM */; };
@@ -325,6 +325,8 @@
 		C765819A1F063BC9003DEC92 /* ServiceContainer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceContainer.swift; sourceTree = "<group>"; };
 		C765819C1F063C47003DEC92 /* ConnectionService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = ConnectionService.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		C766150D2125B4F2002A8E4D /* Debug.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Debug.swift; path = eduVPN/Debug.swift; sourceTree = SOURCE_ROOT; };
+		C766FB86212D6AF000306271 /* eduVPNAssets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = eduVPNAssets.xcassets; sourceTree = "<group>"; };
+		C766FB88212D6AF900306271 /* LetsConnectAssets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = LetsConnectAssets.xcassets; sourceTree = "<group>"; };
 		C77EF61220876B5A0097DEB2 /* String+Random.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Random.swift"; sourceTree = "<group>"; };
 		C78250A51FC7291000B33892 /* Message.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Message.swift; path = eduVPN/Message.swift; sourceTree = SOURCE_ROOT; };
 		C789DCC920C7E3CA00A0668E /* Socket.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Socket.framework; path = Carthage/Build/Mac/Socket.framework; sourceTree = "<group>"; };
@@ -334,7 +336,6 @@
 		C7A9F1D01FB3C81B007A752F /* ReadMe.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = ReadMe.md; sourceTree = "<group>"; };
 		C7BEF5C51F03E0D80038605E /* eduVPN.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = eduVPN.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C7BEF5C81F03E0D80038605E /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		C7BEF5CC1F03E0D80038605E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		C7BEF5CF1F03E0D80038605E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		C7BEF5D11F03E0D80038605E /* eduVPN-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "eduVPN-Info.plist"; path = "../eduVPN/eduVPN-Info.plist"; sourceTree = "<group>"; };
 		C7BEF5D71F03E4B50038605E /* ChooseProviderViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChooseProviderViewController.swift; sourceTree = "<group>"; };
@@ -552,7 +553,8 @@
 		C7FA902A1F0BA9F30037FF88 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				C7BEF5CC1F03E0D80038605E /* Assets.xcassets */,
+				C766FB86212D6AF000306271 /* eduVPNAssets.xcassets */,
+				C766FB88212D6AF900306271 /* LetsConnectAssets.xcassets */,
 				C7BEF5CE1F03E0D80038605E /* Main.storyboard */,
 				C7BEF5D11F03E0D80038605E /* eduVPN-Info.plist */,
 				C7C49516208484120056D5E4 /* LetsConnect-Info.plist */,
@@ -724,10 +726,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				C79265C32080F340005E86E7 /* Main.storyboard in Resources */,
+				C766FB87212D6AF000306271 /* eduVPNAssets.xcassets in Resources */,
 				C789DCCD20C7E3CB00A0668E /* Socket.framework.dSYM in Resources */,
 				C71912581F3C8486005409E0 /* Defaults.plist in Resources */,
 				C741F4421FC6E2D400B1EB83 /* dsa_pub.pem in Resources */,
-				C7BEF5CD1F03E0D80038605E /* Assets.xcassets in Resources */,
 				C741F43D1FC6DE9000B1EB83 /* Sparkle.framework.dSYM in Resources */,
 				C7FA902C1F0BC83E0037FF88 /* openvpn-2.4.6-openssl-1.1.0h in Resources */,
 				C761E2E02080B08200A98B90 /* Reachability.framework.dSYM in Resources */,
@@ -742,7 +744,7 @@
 				C789DCCE20C7E3CB00A0668E /* Socket.framework.dSYM in Resources */,
 				C7C494FE208484120056D5E4 /* Defaults.plist in Resources */,
 				C7C494FF208484120056D5E4 /* dsa_pub.pem in Resources */,
-				C7C49500208484120056D5E4 /* Assets.xcassets in Resources */,
+				C766FB89212D6AF900306271 /* LetsConnectAssets.xcassets in Resources */,
 				C7C49501208484120056D5E4 /* Sparkle.framework.dSYM in Resources */,
 				C7C49502208484120056D5E4 /* openvpn-2.4.6-openssl-1.1.0h in Resources */,
 				C7C49503208484120056D5E4 /* Reachability.framework.dSYM in Resources */,
@@ -1155,7 +1157,7 @@
 		C7BEF5D51F03E0D80038605E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = eduVPNAppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
@@ -1178,7 +1180,7 @@
 		C7BEF5D61F03E0D80038605E /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = eduVPNAppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
@@ -1200,7 +1202,7 @@
 		C7C49513208484120056D5E4 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = LetsConnectAppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
@@ -1225,7 +1227,7 @@
 		C7C49514208484120056D5E4 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = LetsConnectAppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
