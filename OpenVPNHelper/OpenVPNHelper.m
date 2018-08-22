@@ -117,6 +117,7 @@
     }
     task.arguments = arguments;
     [task setTerminationHandler:^(NSTask *task){
+        [[NSFileManager defaultManager] removeItemAtPath:socketPath error:NULL];
         [self.remoteObject taskTerminatedWithReply:^{
             syslog(LOG_NOTICE, "Terminated task");
         }];

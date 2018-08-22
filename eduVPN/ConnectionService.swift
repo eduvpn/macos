@@ -379,7 +379,7 @@ class ConnectionService: NSObject {
     private var managing: Bool = false
     private var commonNameCertificate: String = ""
     
-    func openManagingSocket() {
+    private func openManagingSocket() {
         guard !managing else {
             return
         }
@@ -393,16 +393,19 @@ class ConnectionService: NSObject {
                 self.socket = socket
                 
                 try socket.connect(to: self.socketPath)
+             
                 self.managing = true
+              
+                try _ = Socket.wait(for: [socket], timeout: 10_000 /* ms */)
+                
                 repeat {
                     if let string = try socket.readString() {
-                        print(string)
                         try self.parseRead(string)
                     }
                 } while self.managing
                
-            } catch (let error) {
-                dump(error)
+            } catch {
+                debugLog(error)
             }
             
         }
@@ -410,6 +413,8 @@ class ConnectionService: NSObject {
     }
     
     private func parseRead(_ string: String) throws {
+        debugLog(string)
+        
         guard string.hasPrefix(">") else {
             // It's a response, not a command
             return
@@ -438,10 +443,10 @@ class ConnectionService: NSObject {
     }
     
     private func needCertificate() throws {
-        let certificate = try self.keychainService.certificate(for: self.commonNameCertificate)
+        let certificate = try keychainService.certificate(for: commonNameCertificate)
         let certificateString = certificate.base64EncodedString(options: [.lineLength64Characters])
         let response = "certificate\n-----BEGIN CERTIFICATE-----\n\(certificateString)\n-----END CERTIFICATE-----\nEND\n"
-        print(response)
+      
         try socket?.write(from: response)
     }
     
@@ -449,16 +454,49 @@ class ConnectionService: NSObject {
         guard let data = stringToSign.data(using: .utf8) else {
             throw Error.helperRejected
         }
-        let signature = try self.keychainService.sign(using: self.commonNameCertificate, dataToSign: data)
+        let signature = try keychainService.sign(using: commonNameCertificate, dataToSign: data)
         let signatureString = signature.base64EncodedString(options: [.lineLength64Characters])
         let response = "rsa-sig\n\(signatureString)\nEND\n"
         
         try socket?.write(from: response)
     }
-    
-    func closeManagingSocket() {
+
+    private func closeManagingSocket() {
         managing = false
+        do {
+            try socket?.write(from: "signal SIGTERM\n")
+        } catch {
+            debugLog(error)
+        }
         socket?.close()
+    }
+    
+    func closeOrphanedConnectionIfNeeded(handler: @escaping (Bool) -> Void) {
+        guard FileManager.default.fileExists(atPath: socketPath) else {
+            handler(false)
+            return
+        }
+        
+        let queue = DispatchQueue.global(qos: .userInteractive)
+        queue.async { [unowned self] in
+            do {
+                let socket = try Socket.create(family: .unix, type: .stream, proto: .unix)
+                self.socket = socket
+                
+                try socket.connect(to: self.socketPath)
+                
+                try _ = Socket.wait(for: [socket], timeout: 10_000 /* ms */)
+                
+                self.closeManagingSocket()
+            
+                // Allow some time to close up
+                DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                   handler(true)
+                }
+            } catch {
+                debugLog(error)
+            }
+        }
     }
     
 }
@@ -466,11 +504,11 @@ class ConnectionService: NSObject {
 extension ConnectionService: ClientProtocol {
     
     func taskTerminated(reply: @escaping () -> Void) {
-        self.state = .disconnecting
+        state = .disconnecting
         reply()
-        self.state = .disconnected
-        self.configURL = nil
-        self.authUserPassURL = nil
+        state = .disconnected
+        configURL = nil
+        authUserPassURL = nil
     }
 
 }
