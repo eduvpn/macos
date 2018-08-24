@@ -13,8 +13,6 @@
 
 @property (atomic, strong, readwrite) NSXPCListener *listener;
 @property (atomic, strong) NSTask *openVPNTask;
-@property (atomic, strong) NSDate *startDate;
-@property (atomic, copy) NSString *statisticsPath;
 @property (atomic, copy) NSString *logFilePath;
 @property (atomic, strong) id <ClientProtocol> remoteObject;
 
@@ -61,7 +59,7 @@
     reply([NSString stringWithFormat:@"%@-%@", version, buildVersion]);
 }
 
-- (void)startOpenVPNAtURL:(NSURL *_Nonnull)launchURL withConfig:(NSURL *_Nonnull)config authUserPass:(NSURL *_Nullable)authUserPass upScript:(NSURL *_Nullable)upScript downScript:(NSURL *_Nullable)downScript reply:(void(^_Nonnull)(BOOL))reply {
+- (void)startOpenVPNAtURL:(NSURL *_Nonnull)launchURL withConfig:(NSURL *_Nonnull)config authUserPass:(NSURL *_Nullable)authUserPass upScript:(NSURL *_Nullable)upScript downScript:(NSURL *_Nullable)downScript scriptOptions:(NSArray <NSString *>*_Nullable)scriptOptions reply:(void(^_Nonnull)(BOOL))reply {
     // Verify that binary at URL is signed by me
     SecStaticCodeRef staticCodeRef = 0;
     OSStatus status = SecStaticCodeCreateWithPath((__bridge CFURLRef _Nonnull)(launchURL), kSecCSDefaultFlags, &staticCodeRef);
@@ -92,12 +90,10 @@
     NSTask *task = [[NSTask alloc] init];
     task.launchPath = launchURL.path;
     NSString *logFilePath = [config.path stringByAppendingString:@".log"];
-    NSString *statisticsPath = [config.path stringByAppendingString:@".status"];
     NSString *socketPath = @"/private/tmp/eduvpn.socket";
     
     NSMutableArray *arguments = [NSMutableArray arrayWithArray:@[@"--config", [self pathWithSpacesEscaped:config.path],
                        @"--log", [self pathWithSpacesEscaped:logFilePath],
-                       @"--status", [self pathWithSpacesEscaped:statisticsPath], @"1",
                        @"--management", [self pathWithSpacesEscaped:socketPath], @"unix",
                        @"--management-external-key",
                        @"--management-external-cert", @"macosx-keychain"]];
@@ -106,10 +102,10 @@
         [arguments addObjectsFromArray:@[@"--auth-user-pass", [self pathWithSpacesEscaped:authUserPass.path]]];
     }
     if (upScript.path) {
-        [arguments addObjectsFromArray:@[@"--up", [self pathWithSpacesEscaped:upScript.path]]];
+        [arguments addObjectsFromArray:@[@"--up", [self scriptPath:upScript.path withOptions:scriptOptions]]];
     }
     if (downScript.path) {
-        [arguments addObjectsFromArray:@[@"--down", [self pathWithSpacesEscaped:downScript.path]]];
+        [arguments addObjectsFromArray:@[@"--down", [self scriptPath:downScript.path withOptions:scriptOptions]]];
     }
     if (upScript.path || downScript.path) {
         // 2 -- allow calling of built-ins and scripts
@@ -132,97 +128,29 @@
     }
     
     self.openVPNTask = task;
-    self.startDate = [NSDate date];
-    self.statisticsPath = statisticsPath;
     self.logFilePath = logFilePath;
     
     reply(task.isRunning);
 }
 
 - (void)closeWithReply:(void(^)(void))reply {
-    [self.openVPNTask terminate];
+    [self.openVPNTask interrupt];
     self.openVPNTask = nil;
     reply();
 }
 
-- (void)readStatisticsWithReply:(void (^)(Statistics * _Nullable))reply {
-    if (self.openVPNTask && self.statisticsPath) {
-        NSError *error = nil;
-        NSString *string = [NSString stringWithContentsOfFile:self.statisticsPath encoding:NSUTF8StringEncoding error:&error];
-        if (string == nil) {
-            syslog(LOG_WARNING, "Read statistics file error: %s", error.description.UTF8String);
-            reply(nil);
-            return;
-        }
-        
-        // Sample file:
-        
-//        OpenVPN STATISTICS
-//        Updated,Wed Aug  9 12:32:46 2017
-//        TUN/TAP read bytes,151771
-//        TUN/TAP write bytes,269590
-//        TCP/UDP read bytes,290152
-//        TCP/UDP write bytes,176751
-//        Auth read bytes,269590
-//        pre-compress bytes,0
-//        post-compress bytes,0
-//        pre-decompress bytes,0
-//        post-decompress bytes,0
-//        END
-        
-        NSScanner *scanner = [[NSScanner alloc] initWithString:string];
-        [scanner scanString:@"OpenVPN STATISTICS" intoString:NULL];
-        NSString *dateString;
-        [scanner scanString:@"Updated," intoString:&dateString];
-        [scanner scanUpToString:@"\n" intoString:&dateString];
-        
-        NSDateComponents *duration = [[NSCalendar currentCalendar] components:NSCalendarUnitHour | NSCalendarUnitMinute | NSCalendarUnitSecond fromDate:self.startDate toDate:[NSDate date] options:0];
-        
-        Statistics *statistics = [[Statistics alloc] initWithDuration:duration
-                                                      tunTapReadBytes:[self bytesForKey:@"TUN/TAP read bytes," inScanner:scanner]
-                                                     tunTapWriteBytes:[self bytesForKey:@"TUN/TAP write bytes," inScanner:scanner]
-                                                      tcpUdpReadBytes:[self bytesForKey:@"TCP/UDP read bytes," inScanner:scanner]
-                                                     tcpUdpWriteBytes:[self bytesForKey:@"TCP/UDP write bytes," inScanner:scanner]
-                                                        authReadBytes:[self bytesForKey:@"Auth read bytes," inScanner:scanner]
-                                                     precompressBytes:[self bytesForKey:@"pre-compress bytes," inScanner:scanner]
-                                                    postcompressBytes:[self bytesForKey:@"post-compress bytes," inScanner:scanner]
-                                                   predecompressBytes:[self bytesForKey:@"pre-decompress bytes," inScanner:scanner]
-                                                  postdecompressBytes:[self bytesForKey:@"post-decompress bytes," inScanner:scanner]];
-        reply(statistics);
-    } else {
-        reply(nil);
-    }
-}
-
-- (void)readLogsWithReply:(void(^_Nonnull)(NSArray <NSString *> * _Nullable logs))reply {
-    if (self.openVPNTask && self.logFilePath) {
-        NSError *error = nil;
-        NSString *string = [NSString stringWithContentsOfFile:self.logFilePath encoding:NSUTF8StringEncoding error:&error];
-        if (string == nil) {
-            syslog(LOG_WARNING, "Read log file error: %s", error.description.UTF8String);
-            reply(nil);
-            return;
-        }
-        reply([string componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]]);
-    } else {
-        reply(nil);
-    }
-}
-
-- (NSInteger)bytesForKey:(NSString *)key inScanner:(NSScanner *)scanner {
-    if (![scanner scanString:key intoString:NULL]) {
-        return 0;
-    }
-    NSInteger bytes = 0;
-    if (![scanner scanInteger:&bytes]) {
-        return 0;
-    } else {
-        return bytes;
-    }
-}
-
 - (NSString *)pathWithSpacesEscaped:(NSString *)path {
     return [path stringByReplacingOccurrencesOfString:@" " withString:@"\\ "];
+}
+    
+- (NSString *)scriptPath:(NSString *)path withOptions:(NSArray <NSString *>*)scriptOptions {
+    if (scriptOptions && [scriptOptions count] > 0) {
+        NSString *escapedPath = [self pathWithSpacesEscaped:path];
+        return [NSString stringWithFormat:@"%@ %@", escapedPath, [scriptOptions componentsJoinedByString:@" "]];
+    } else {
+        NSString *escapedPath = [self pathWithSpacesEscaped:path];
+        return escapedPath;
+    }
 }
 
 @end

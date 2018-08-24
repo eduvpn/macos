@@ -107,6 +107,19 @@ class ConnectionService: NSObject {
         }
         state = .connecting
         
+        // Reset
+        bytesIn = 0
+        bytesOut = 0
+        startDate = Date()
+        openVPNState = .unknown
+        openVPNStateDescription = nil
+        localTUNTAPIPv4Address = nil
+        remoteIPv4Address = nil
+        remotePort = nil
+        localIPv4Address = nil
+        localPort = nil
+        localTUNTAPIPv6Address = nil
+        
         helperService.installHelperIfNeeded(client: self) { (result) in
             switch result {
             case .success:
@@ -196,12 +209,18 @@ class ConnectionService: NSObject {
         let openvpnURL = bundle.url(forResource: "openvpn", withExtension: nil, subdirectory: ConnectionService.openVPNSubdirectory)!
         let upScript = bundle.url(forResource: "client.up.eduvpn", withExtension: "sh", subdirectory: ConnectionService.openVPNSubdirectory)!
         let downScript = bundle.url(forResource: "client.down.eduvpn", withExtension: "sh", subdirectory: ConnectionService.openVPNSubdirectory)!
+        let scriptOptions = [
+            "-6" /* ARG_ENABLE_IPV6_ON_TAP */,
+            "-f" /* ARG_FLUSH_DNS_CACHE */,
+            "-l" /* ARG_EXTRA_LOGGING */,
+            "-o" /* ARG_OVERRIDE_MANUAL_NETWORK_SETTINGS */,
+            "-r" /* ARG_RESET_PRIMARY_INTERFACE_ON_DISCONNECT */,
+            "-w" /* ARG_RESTORE_ON_WINS_RESET */
+        ]
         self.configURL = configURL
         self.authUserPassURL = authUserPassURL
-        helper.startOpenVPN(at: openvpnURL, withConfig: configURL, authUserPass: authUserPassURL, upScript: upScript, downScript: downScript) { (success) in
+        helper.startOpenVPN(at: openvpnURL, withConfig: configURL, authUserPass: authUserPassURL, upScript: upScript, downScript: downScript, scriptOptions: scriptOptions) { (success) in
             if success {
-                self.state = .connected
-                
                 DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
                     self.openManagingSocket()
                 }
@@ -237,119 +256,18 @@ class ConnectionService: NSObject {
         }
         
         state = .disconnecting
-        
+
         guard let helper = helperService.connection?.remoteObjectProxy as? OpenVPNHelperProtocol else {
             self.state = .connected
             handler(.failure(Error.noHelperConnection))
             return
         }
-        
-        helper.close { 
-            self.state = .disconnected
+
+        helper.close {
             self.configURL = nil
             self.authUserPassURL = nil
             handler(.success(Void()))
-            self.closeManagingSocket()
         }
-    }
-    
-    /// Asks helper for statistics about current VPN connection
-    ///
-    /// - Parameter handler: Statistics or error
-    func readStatistics(_ handler: @escaping (Result<Statistics>) -> ()) {
-        guard let helper = helperService.connection?.remoteObjectProxy as? OpenVPNHelperProtocol else {
-            handler(.failure(Error.noHelperConnection))
-            return
-        }
-        
-        helper.readStatistics { (statistics) in
-            if let statistics = statistics {
-                handler(.success(statistics))
-            } else {
-                handler(.failure(Error.statisticsUnavailable))
-            }
-        }
-    }
-    
-    /// Asks helper for logs about current VPN connection
-    ///
-    /// - Parameter handler: Logs or error
-    func readLogs(_ handler: @escaping (Result<[String]>) -> ()) {
-        guard let helper = helperService.connection?.remoteObjectProxy as? OpenVPNHelperProtocol else {
-            handler(.failure(Error.noHelperConnection))
-            return
-        }
-        
-        helper.readLogs{ (logs) in
-            if let logs = logs {
-                handler(.success(logs))
-            } else {
-                handler(.failure(Error.logsUnavailable))
-            }
-        }
-    }
-    
-    // Asks helper for IP addresses for current VPN connection
-    ///
-    /// - Parameter handler: IP addresses or error
-    func findIPAddresses(_ handler: @escaping (Result<IPAddresses>) -> ()) {
-        guard let helper = helperService.connection?.remoteObjectProxy as? OpenVPNHelperProtocol else {
-            handler(.failure(Error.noHelperConnection))
-            return
-        }
-        
-        helper.readLogs { (logs) in
-            if let logs = logs, let addresses = self.findIPAddresses(logs: logs) {
-                handler(.success(addresses))
-            } else {
-                handler(.failure(Error.logsUnavailable))
-            }
-        }
-    }
-    
-    private let controlMessageIndicator: String = "PUSH: Received control message:"
-    
-    private func findIPAddresses(logs: [String]) -> IPAddresses? {
-        func extractControlMessage(_ log: String) -> String? {
-            if let firstQuote = log.index(of: "'"),
-                let lastQuote = log[log.index(firstQuote, offsetBy: 1)...].index(of: "'") {
-                return String(log[firstQuote..<lastQuote])
-            } else {
-                return nil
-            }
-        }
-        
-        func extractLineComponents(key: String, from lines: [String.SubSequence]) -> [String] {
-            if let line = lines.first(where: { $0.hasPrefix(key + " ") }) {
-                let components = line.components(separatedBy: " ")
-                return Array(components.suffix(from: 1))
-            } else {
-                return []
-            }
-        }
-        
-        func extractIPAddresses(_ lines: [String.SubSequence]) -> IPAddresses {
-            let addresses = IPAddresses()
-            
-            if let ipv4Address = extractLineComponents(key: "ifconfig", from: lines).first {
-                addresses.v4 = ipv4Address
-            }
-            
-            if let ipv6Address = extractLineComponents(key: "ifconfig-ipv6", from: lines).first {
-                addresses.v6 = ipv6Address
-            }
-            
-            return addresses
-        }
-        
-        for log in logs where log.contains(controlMessageIndicator) {
-            if let controlMessage = extractControlMessage(log) {
-                let lines = controlMessage.split(separator: ",")
-                return extractIPAddresses(lines)
-            }
-        }
-        
-        return nil
     }
     
     /// URL to the last loaded config (which may have been deleted already!)
@@ -374,6 +292,8 @@ class ConnectionService: NSObject {
     var logURL: URL? {
         return configURL?.appendingPathExtension("log")
     }
+    
+    // MARK: - Socket
     
     /// Path to socket
     private let socketPath = "/private/tmp/eduvpn.socket"
@@ -417,7 +337,6 @@ class ConnectionService: NSObject {
     
     // See https://github.com/OpenVPN/openvpn/blob/master/doc/management-notes.txt
     private func parseRead(_ string: String) throws {
-        
         let stringToParse: String
         let remainder: String?
         
@@ -442,6 +361,14 @@ class ConnectionService: NSObject {
         
         debugLog("CMD " + stringToParse)
         
+        let argumentString: String?
+        if let start = stringToParse.range(of: ":")?.upperBound {
+            let end = stringToParse.range(of: "\r\n")?.lowerBound ?? stringToParse.endIndex
+            argumentString = String(stringToParse[start..<end])
+        } else {
+            argumentString = nil
+        }
+        
         let components = stringToParse.split(separator: ":")
         
         guard let command = components.first else {
@@ -450,15 +377,24 @@ class ConnectionService: NSObject {
         
         switch String(command) {
         case ">INFO":
-            try readState() // Turn on state to help debugging
+            try enableStateAndByteCountNotificatons()
         case ">NEED-CERTIFICATE":
            try needCertificate()
         case ">RSA_SIGN":
-            guard let argumentSubstring = components.last else {
+            guard let argumentString = argumentString else {
                 return
             }
-            let argument = String(argumentSubstring)
-            try rsaSign(argument)
+            try rsaSign(argumentString)
+        case ">STATE":
+            guard let argumentString = argumentString else {
+                return
+            }
+            parseState(argumentString)
+        case ">BYTECOUNT":
+            guard let argumentString = argumentString else {
+                return
+            }
+            parseByteCounts(argumentString)
         default:
             break
         }
@@ -473,8 +409,132 @@ class ConnectionService: NSObject {
         try socket?.write(from: string)
     }
     
-    private func readState() throws {
-        try write("help\nstate on\n")
+    private func enableStateAndByteCountNotificatons() throws {
+        try write("state on\nbytecount 1\n")
+    }
+    
+    enum OpenVPNState: String {
+        case unknown
+        case connecting = "CONNECTING"      // OpenVPN's initial state.
+        case waiting = "WAIT"               // (Client only) Waiting for initial response from server.
+        case authenticating = "AUTH"        // (Client only) Authenticating with server.
+        case fetchingConfig = "GET_CONFIG"  // (Client only) Downloading configuration options from server.
+        case assigningIP = "ASSIGN_IP"      // Assigning IP address to virtual network interface.
+        case addingRoutes = "ADD_ROUTES"    // Adding routes to system.
+        case connected = "CONNECTED"        // Initialization Sequence Completed.
+        case reconnecting = "RECONNECTING"  // A restart has occurred.
+        case exiting = "EXITING"            // A graceful exit is in progress.
+        case resolving = "RESOLVE"          // (Client only) DNS lookup
+        case connectingTCP = "TCP_CONNECT"  // (Client only) Connecting to TCP server
+        
+        var localizedDescription: String? {
+            switch self {
+            case .unknown:
+                return nil
+            case .connecting:
+                return NSLocalizedString("Connecting", comment: "")
+            case .waiting:
+                return NSLocalizedString("Waiting for initial response from server", comment: "")
+            case .authenticating:
+                return NSLocalizedString("Authenticating with server", comment: "")
+            case .fetchingConfig:
+                return NSLocalizedString("Downloading configuration options from server", comment: "")
+            case .assigningIP:
+                return NSLocalizedString("Assigning IP address to virtual network interface", comment: "")
+            case .addingRoutes:
+                return NSLocalizedString("Adding routes to system", comment: "")
+            case .connected:
+                return NSLocalizedString("Connected", comment: "")
+            case .reconnecting:
+                return NSLocalizedString("Reconnecting", comment: "")
+            case .exiting:
+                return NSLocalizedString("Disconnected", comment: "")
+            case .resolving :
+                return NSLocalizedString("Performing DNS lookup", comment: "")
+            case .connectingTCP:
+                return NSLocalizedString("Connecting to TCP server", comment: "")
+            }
+        }
+    }
+    
+    private(set) var openVPNState: OpenVPNState = .unknown {
+        didSet {
+            switch openVPNState {
+            case .connected:
+                state = .connected
+            case .reconnecting:
+                state = .connecting
+            case .exiting:
+                state = .disconnected
+            default:
+                break
+            }
+        }
+    }
+    private(set) var openVPNStateDescription: String? = nil
+    private(set) var localTUNTAPIPv4Address: String?
+    private(set) var remoteIPv4Address: String?
+    private(set) var remotePort: String?
+    private(set) var localIPv4Address: String?
+    private(set) var localPort: String?
+    private(set) var localTUNTAPIPv6Address: String?
+    
+    private func parseState(_ string: String) {
+        let components = string.components(separatedBy: ",")
+        guard components.count >= 8 else {
+            // When returning certain states OpenVPN forgets one comma
+            return
+        }
+        
+        // The output format consists of up to 9 comma-separated parameters:
+        
+        // (a) the integer unix date/time
+        // ignored
+        
+        // (b) the state name,
+        openVPNState = OpenVPNState(rawValue: String(components[1])) ?? .unknown
+        
+        // (c) optional descriptive string (used mostly on RECONNECTING and EXITING to show the reason for the disconnect)
+        openVPNStateDescription = String(components[2])
+        
+        // (d) optional TUN/TAP local IPv4 address
+        localTUNTAPIPv4Address = String(components[3])
+        
+        // (e) optional address of remote server
+        remoteIPv4Address = String(components[4])
+        
+        // (f) optional port of remote server
+        remotePort = String(components[5])
+        
+        // (g) optional local address
+        localIPv4Address = String(components[6])
+        
+        // (h) optional local port
+        localPort = String(components[7])
+        
+        guard components.count == 9 else {
+            // Unexpected number of parameters
+            return
+        }
+        
+        // (i) optional TUN/TAP local IPv6 address.
+        localTUNTAPIPv6Address = String(components[8])
+    }
+    
+    private(set) var bytesIn: Int = 0
+    private(set) var bytesOut: Int = 0
+    private var startDate: Date = Date()
+    var duration: DateComponents {
+        return Calendar.current.dateComponents([.hour, .minute, .second], from: startDate, to: Date())
+    }
+    
+    private func parseByteCounts(_ string: String) {
+        let components = string.components(separatedBy: ",")
+        guard components.count == 2 else {
+            return
+        }
+        bytesIn = Int(components[0]) ?? bytesIn
+        bytesOut = Int(components[1]) ?? bytesOut
     }
     
     private func needCertificate() throws {

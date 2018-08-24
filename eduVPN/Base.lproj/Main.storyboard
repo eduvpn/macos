@@ -4,6 +4,7 @@
         <deployment identifier="macosx"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14113"/>
         <capability name="box content view" minToolsVersion="7.0"/>
+        <capability name="cells containing NSDateComponentsFormatter" minSystemVersion="10.12"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -1245,9 +1246,6 @@ CA
                                                 <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                 <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                             </textFieldCell>
-                                            <connections>
-                                                <binding destination="HQd-Dk-ag3" name="value" keyPath="selection.tcpUdpReadBytes" id="Wjs-s2-Yz2"/>
-                                            </connections>
                                         </textField>
                                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" allowsExpansionToolTips="YES" translatesAutoresizingMaskIntoConstraints="NO" id="kDF-pN-QJq">
                                             <rect key="frame" x="8" y="80" width="60" height="14"/>
@@ -1267,9 +1265,6 @@ CA
                                                 <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                 <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                             </textFieldCell>
-                                            <connections>
-                                                <binding destination="HQd-Dk-ag3" name="value" keyPath="selection.tcpUdpWriteBytes" id="49a-nu-NVX"/>
-                                            </connections>
                                         </textField>
                                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" allowsExpansionToolTips="YES" translatesAutoresizingMaskIntoConstraints="NO" id="i8S-eG-fax">
                                             <rect key="frame" x="8" y="58" width="79" height="14"/>
@@ -1283,7 +1278,7 @@ CA
                                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" allowsExpansionToolTips="YES" translatesAutoresizingMaskIntoConstraints="NO" id="8Nc-td-rKB">
                                             <rect key="frame" x="91" y="58" width="141" height="14"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" sendsActionOnEndEditing="YES" alignment="left" title="v4" id="uiV-Ac-KOg">
+                                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" sendsActionOnEndEditing="YES" alignment="left" id="uiV-Ac-KOg">
                                                 <font key="font" metaFont="smallSystem"/>
                                                 <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                 <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
@@ -1301,7 +1296,7 @@ CA
                                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" allowsExpansionToolTips="YES" translatesAutoresizingMaskIntoConstraints="NO" id="x0q-mR-SMg">
                                             <rect key="frame" x="91" y="36" width="259" height="14"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" sendsActionOnEndEditing="YES" alignment="left" title="v6" id="omE-nE-LU5">
+                                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" sendsActionOnEndEditing="YES" alignment="left" id="omE-nE-LU5">
                                                 <font key="font" metaFont="smallSystem"/>
                                                 <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                 <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
@@ -1320,17 +1315,13 @@ CA
                                             <rect key="frame" x="91" y="120" width="101" height="14"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" sendsActionOnEndEditing="YES" alignment="left" id="BNe-tt-jZA">
+                                                <dateComponentsFormatter key="formatter" unitsStyle="positional" id="X0e-z2-oj5">
+                                                    <zeroFormattingBehavior key="zeroFormattingBehavior" none="YES"/>
+                                                </dateComponentsFormatter>
                                                 <font key="font" metaFont="smallSystem"/>
                                                 <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                 <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                             </textFieldCell>
-                                            <connections>
-                                                <binding destination="HQd-Dk-ag3" name="value" keyPath="selection.duration" id="7b1-3D-9PK">
-                                                    <dictionary key="options">
-                                                        <string key="NSValueTransformerName">DurationTransformer</string>
-                                                    </dictionary>
-                                                </binding>
-                                            </connections>
                                         </textField>
                                         <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Yjd-E0-Eam">
                                             <rect key="frame" x="93" y="9" width="97" height="19"/>
@@ -1387,8 +1378,11 @@ DQ
                     </view>
                     <connections>
                         <outlet property="backButton" destination="6bp-mx-zdF" id="C1o-UP-Ou5"/>
+                        <outlet property="bytesInField" destination="WzZ-Bk-ezY" id="YfW-ne-p5V"/>
+                        <outlet property="bytesOutField" destination="NyI-Nb-iH3" id="YfW-ne-p5W"/>
                         <outlet property="connectButton" destination="Lha-yM-Uco" id="o5W-mH-GgU"/>
                         <outlet property="disconnectButton" destination="smu-HX-KlD" id="IKt-W2-IuE"/>
+                        <outlet property="durationField" destination="cUC-W7-yfr" id="YfW-ne-p5X"/>
                         <outlet property="ipv4AddressField" destination="8Nc-td-rKB" id="YfW-ne-p5T"/>
                         <outlet property="ipv6AddressField" destination="x0q-mR-SMg" id="YfW-ne-p5U"/>
                         <outlet property="locationImageView" destination="lQa-Os-EgV" id="Hvw-1H-X5b"/>
@@ -1398,16 +1392,9 @@ DQ
                         <outlet property="spinner" destination="HSo-Og-0y9" id="Zgf-Sd-zdc"/>
                         <outlet property="stateImageView" destination="ico-ME-n8x" id="cif-EW-M48"/>
                         <outlet property="statisticsBox" destination="gLA-m0-Zbt" id="YfW-ne-p5G"/>
-                        <outlet property="statisticsController" destination="HQd-Dk-ag3" id="c2q-VA-WWg"/>
                     </connections>
                 </viewController>
                 <customObject id="FhF-Bg-4GD" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
-                <objectController objectClassName="Statistics" editable="NO" id="HQd-Dk-ag3" userLabel="Statistics Controller">
-                    <connections>
-                        <binding destination="f5D-Eq-JOa" name="contentObject" keyPath="self.statistics" id="oUX-w2-eS9"/>
-                        <outlet property="content" destination="f5D-Eq-JOa" id="FZc-Vk-gu6"/>
-                    </connections>
-                </objectController>
             </objects>
             <point key="canvasLocation" x="1403" y="334.5"/>
         </scene>
@@ -2097,7 +2084,7 @@ DQ
         <image name="Button" width="210" height="44"/>
         <image name="NSActionTemplate" width="14" height="14"/>
         <image name="Remove" width="28" height="28"/>
-        <image name="disconnected" width="44" height="55"/>
+        <image name="disconnected" width="44" height="37"/>
         <image name="secure_access" width="212" height="130"/>
         <image name="secure_internet" width="212" height="130"/>
     </resources>

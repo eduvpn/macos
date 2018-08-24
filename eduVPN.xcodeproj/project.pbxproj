@@ -46,8 +46,6 @@
 		C75527FA1F3C55F100076078 /* PreferencesService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C75527F91F3C55F100076078 /* PreferencesService.swift */; };
 		C75C8F4820B56AF4004B028C /* IPAddress.swift in Sources */ = {isa = PBXBuildFile; fileRef = C75C8F4720B56AF3004B028C /* IPAddress.swift */; };
 		C75C8F4920B56AF4004B028C /* IPAddress.swift in Sources */ = {isa = PBXBuildFile; fileRef = C75C8F4720B56AF3004B028C /* IPAddress.swift */; };
-		C7610D441F3AFBF400D6C063 /* Statistics.m in Sources */ = {isa = PBXBuildFile; fileRef = C7610D431F3AFBF400D6C063 /* Statistics.m */; };
-		C7610D451F3AFBF400D6C063 /* Statistics.m in Sources */ = {isa = PBXBuildFile; fileRef = C7610D431F3AFBF400D6C063 /* Statistics.m */; };
 		C761DF071FE4002A009F0154 /* Enter2FAViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C761DF061FE4002A009F0154 /* Enter2FAViewController.swift */; };
 		C761E2DE2080B07B00A98B90 /* Reachability.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C761E2DD2080B07B00A98B90 /* Reachability.framework */; };
 		C761E2E02080B08200A98B90 /* Reachability.framework.dSYM in Resources */ = {isa = PBXBuildFile; fileRef = C761E2DF2080B08200A98B90 /* Reachability.framework.dSYM */; };
@@ -78,6 +76,7 @@
 		C79265C32080F340005E86E7 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C7BEF5CE1F03E0D80038605E /* Main.storyboard */; };
 		C795BAA220616C9300304431 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7BEF5C81F03E0D80038605E /* AppDelegate.swift */; };
 		C7A4E1221FACD09C00B21262 /* EnterProviderURLViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7A4E1211FACD09C00B21262 /* EnterProviderURLViewController.swift */; };
+		C7A8412221304F5E003EB3A5 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C7BEF5CE1F03E0D80038605E /* Main.storyboard */; };
 		C7AA7FBF1FE4989000845D62 /* ConnectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7BEF5DF1F03F4220038605E /* ConnectionViewController.swift */; };
 		C7BEF5D81F03E4B50038605E /* ChooseProviderViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7BEF5D71F03E4B50038605E /* ChooseProviderViewController.swift */; };
 		C7BEF5DA1F03E4FD0038605E /* Provider.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7BEF5D91F03E4FD0038605E /* Provider.swift */; };
@@ -94,7 +93,6 @@
 		C7C494E2208484120056D5E4 /* Either.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7FA902D1F0BD1A60037FF88 /* Either.swift */; };
 		C7C494E3208484120056D5E4 /* ChooseProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C732CEA31F0F720800698F28 /* ChooseProfileViewController.swift */; };
 		C7C494E4208484120056D5E4 /* ChooseConnectionTypeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C71847C71F0E5E2800296C61 /* ChooseConnectionTypeViewController.swift */; };
-		C7C494E5208484120056D5E4 /* Statistics.m in Sources */ = {isa = PBXBuildFile; fileRef = C7610D431F3AFBF400D6C063 /* Statistics.m */; };
 		C7C494E6208484120056D5E4 /* PreferencesService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C75527F91F3C55F100076078 /* PreferencesService.swift */; };
 		C7C494E7208484120056D5E4 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7BEF5C81F03E0D80038605E /* AppDelegate.swift */; };
 		C7C494E8208484120056D5E4 /* ConnectionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C765819C1F063C47003DEC92 /* ConnectionService.swift */; };
@@ -114,7 +112,6 @@
 		C7C494F8208484120056D5E4 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C72AD7031F0A6AEE006DBDA5 /* Security.framework */; };
 		C7C494F9208484120056D5E4 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C7D15FD01F0D165900719F38 /* Cocoa.framework */; };
 		C7C494FA208484120056D5E4 /* Sodium.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C74487051F194FAB0072B472 /* Sodium.framework */; };
-		C7C494FD208484120056D5E4 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C7BEF5CE1F03E0D80038605E /* Main.storyboard */; };
 		C7C494FE208484120056D5E4 /* Defaults.plist in Resources */ = {isa = PBXBuildFile; fileRef = C71912571F3C8486005409E0 /* Defaults.plist */; };
 		C7C494FF208484120056D5E4 /* dsa_pub.pem in Resources */ = {isa = PBXBuildFile; fileRef = C741F4411FC6E2D400B1EB83 /* dsa_pub.pem */; };
 		C7C49501208484120056D5E4 /* Sparkle.framework.dSYM in Resources */ = {isa = PBXBuildFile; fileRef = C741F43B1FC6DE9000B1EB83 /* Sparkle.framework.dSYM */; };
@@ -317,8 +314,6 @@
 		C75527F11F3C531B00076078 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C75527F91F3C55F100076078 /* PreferencesService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PreferencesService.swift; sourceTree = "<group>"; };
 		C75C8F4720B56AF3004B028C /* IPAddress.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IPAddress.swift; sourceTree = "<group>"; };
-		C7610D421F3AFBF400D6C063 /* Statistics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Statistics.h; sourceTree = "<group>"; };
-		C7610D431F3AFBF400D6C063 /* Statistics.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Statistics.m; sourceTree = "<group>"; };
 		C761DF061FE4002A009F0154 /* Enter2FAViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Enter2FAViewController.swift; path = eduVPN/Enter2FAViewController.swift; sourceTree = SOURCE_ROOT; };
 		C761E2DD2080B07B00A98B90 /* Reachability.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Reachability.framework; path = Carthage/Build/Mac/Reachability.framework; sourceTree = "<group>"; };
 		C761E2DF2080B08200A98B90 /* Reachability.framework.dSYM */ = {isa = PBXFileReference; lastKnownFileType = wrapper.dsym; name = Reachability.framework.dSYM; path = Carthage/Build/Mac/Reachability.framework.dSYM; sourceTree = "<group>"; };
@@ -413,8 +408,6 @@
 				C72AD6F51F0A692F006DBDA5 /* main.m */,
 				C72AD6FB1F0A69BF006DBDA5 /* OpenVPNHelper.h */,
 				C72AD6FC1F0A69BF006DBDA5 /* OpenVPNHelper.m */,
-				C7610D421F3AFBF400D6C063 /* Statistics.h */,
-				C7610D431F3AFBF400D6C063 /* Statistics.m */,
 			);
 			path = OpenVPNHelper;
 			sourceTree = "<group>";
@@ -740,7 +733,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C7C494FD208484120056D5E4 /* Main.storyboard in Resources */,
+				C7A8412221304F5E003EB3A5 /* Main.storyboard in Resources */,
 				C789DCCE20C7E3CB00A0668E /* Socket.framework.dSYM in Resources */,
 				C7C494FE208484120056D5E4 /* Defaults.plist in Resources */,
 				C7C494FF208484120056D5E4 /* dsa_pub.pem in Resources */,
@@ -833,7 +826,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				C72AD6FD1F0A69BF006DBDA5 /* OpenVPNHelper.m in Sources */,
-				C7610D451F3AFBF400D6C063 /* Statistics.m in Sources */,
 				C72AD6F61F0A692F006DBDA5 /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -863,7 +855,6 @@
 				C7FA902E1F0BD1A60037FF88 /* Either.swift in Sources */,
 				C732CEA51F0F720800698F28 /* ChooseProfileViewController.swift in Sources */,
 				C71847C81F0E5E2800296C61 /* ChooseConnectionTypeViewController.swift in Sources */,
-				C7610D441F3AFBF400D6C063 /* Statistics.m in Sources */,
 				C766150E2125B4F2002A8E4D /* Debug.swift in Sources */,
 				C75527FA1F3C55F100076078 /* PreferencesService.swift in Sources */,
 				C795BAA220616C9300304431 /* AppDelegate.swift in Sources */,
@@ -906,7 +897,6 @@
 				C766150F2125B4F2002A8E4D /* Debug.swift in Sources */,
 				C7251FCA208A2DF8000CE404 /* Enroll2FAViewController.swift in Sources */,
 				C7251FC8208A2DEF000CE404 /* TwoFactorService.swift in Sources */,
-				C7C494E5208484120056D5E4 /* Statistics.m in Sources */,
 				C7C494E6208484120056D5E4 /* PreferencesService.swift in Sources */,
 				C7C494E7208484120056D5E4 /* AppDelegate.swift in Sources */,
 				C7C494E8208484120056D5E4 /* ConnectionService.swift in Sources */,
