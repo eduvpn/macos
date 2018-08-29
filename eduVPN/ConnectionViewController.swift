@@ -22,22 +22,16 @@ class ConnectionViewController: NSViewController {
     @IBOutlet var statisticsBox: NSBox!
     @IBOutlet var notificationsBox: NSBox!
     @IBOutlet var notificationsField: NSTextField!
+    @IBOutlet var durationField: NSTextField!
+    @IBOutlet var bytesInField: NSTextField!
+    @IBOutlet var bytesOutField: NSTextField!
     @IBOutlet var ipv4AddressField: NSTextField!
     @IBOutlet var ipv6AddressField: NSTextField!
     
     var profile: Profile!
     var userInfo: UserInfo!
-    @objc var statistics: Statistics?
-    private var addresses: IPAddresses? {
-        didSet {
-            self.ipv4AddressField.stringValue = addresses?.v4 ?? ""
-            self.ipv6AddressField.stringValue = addresses?.v6 ?? ""
-        }
-    }
     private var systemMessages: [Message] = []
     private var userMessages: [Message] = []
-    
-    @IBOutlet var statisticsController: NSObjectController!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -100,14 +94,15 @@ class ConnectionViewController: NSViewController {
             self.disconnectButton.isHidden = true
             self.connectButton.isHidden = true
             self.statisticsBox.isHidden = false
+            self.startUpdatingStatistics()
             
         case .connected:
             self.backButton.isHidden = true
+            self.stateImageView.image = #imageLiteral(resourceName: "connected")
             self.spinner.stopAnimation(self)
             self.disconnectButton.isHidden = false
             self.connectButton.isHidden = true
             self.statisticsBox.isHidden = false
-            self.startUpdatingStatistics()
             
         case .disconnecting:
             self.backButton.isHidden = true
@@ -116,7 +111,6 @@ class ConnectionViewController: NSViewController {
             self.disconnectButton.isHidden = true
             self.connectButton.isHidden = true
             self.statisticsBox.isHidden = false
-            self.stopUpdatingStatistics()
             
         case .disconnected:
             self.backButton.isHidden = false
@@ -125,6 +119,7 @@ class ConnectionViewController: NSViewController {
             self.disconnectButton.isHidden = true
             self.connectButton.isHidden = false
             self.statisticsBox.isHidden = false
+            self.readStatistics() // Last read before stopping
             self.stopUpdatingStatistics()
             
         }
@@ -137,8 +132,6 @@ class ConnectionViewController: NSViewController {
     }
     
     func connect(twoFactor: TwoFactor? = nil) {
-        statisticsController.content = nil
-        
         // Prompt user if we need two factor authentication token
         if profile.twoFactor, twoFactor == nil {
             if userInfo.twoFactorEnrolled {
@@ -235,33 +228,20 @@ class ConnectionViewController: NSViewController {
     private func stopUpdatingStatistics() {
         statisticsTimer?.invalidate()
         statisticsTimer = nil
-        addresses = nil
+        ipv4AddressField.stringValue = ""
+        ipv6AddressField.stringValue = ""
     }
     
     private func readStatistics() {
-        ServiceContainer.connectionService.readStatistics { (result) in
-            DispatchQueue.main.async {
-                switch result {
-                case .success(let statistics):
-                    self.statisticsController.content = statistics
-                    self.updateStatusImage()
-                case .failure:
-                    break
-                }
-            }
-        }
+        durationField.objectValue = ServiceContainer.connectionService.duration
         
-        if addresses == nil {
-            findIPAddresses()
-        }
-    }
-    
-    /// Wait with showing state as connected until first byte has been read or written
-    private func updateStatusImage() {
-        guard let statistics = statisticsController.content as? Statistics else {
-            return
-        }
-        stateImageView.image = (statistics.tcpUdpReadBytes > 0  || statistics.tcpUdpWriteBytes > 0) ? #imageLiteral(resourceName: "connected") : #imageLiteral(resourceName: "connecting")
+        bytesInField.integerValue = ServiceContainer.connectionService.bytesIn
+        bytesOutField.integerValue = ServiceContainer.connectionService.bytesOut
+        
+        ipv4AddressField.stringValue = ServiceContainer.connectionService.localTUNTAPIPv4Address ?? ""
+        ipv6AddressField.stringValue = ServiceContainer.connectionService.localTUNTAPIPv6Address ?? ""
+        
+        stateImageView.toolTip = ServiceContainer.connectionService.openVPNState.localizedDescription
     }
     
     @objc @IBAction func connect(_ sender: Any) {
@@ -285,18 +265,6 @@ class ConnectionViewController: NSViewController {
         mainWindowController?.popToRoot()
     }
     
-    private func findIPAddresses() {
-        ServiceContainer.connectionService.findIPAddresses { (result) in
-            switch result {
-            case .success(let addresses):
-                DispatchQueue.main.async {
-                    self.addresses = addresses
-                }
-            case .failure:
-                break
-            }
-        }
-    }
 }
 
 extension ConnectionViewController: Enter2FAViewControllerDelegate {

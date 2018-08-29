@@ -16,8 +16,6 @@
 // HelperToolProtocol is the NSXPCConnection-based protocol implemented by the helper tool
 // and called by the app.
 
-#import "Statistics.h"
-
 @protocol OpenVPNHelperProtocol
 
 @required
@@ -39,7 +37,7 @@
  @param downScript URL to down script
  @param reply Success or not
  */
-- (void)startOpenVPNAtURL:(NSURL *_Nonnull)launchURL withConfig:(NSURL *_Nonnull)config authUserPass:(NSURL *_Nullable)authUserPass upScript:(NSURL *_Nullable)upScript downScript:(NSURL *_Nullable)downScript reply:(void(^_Nonnull)(BOOL))reply;
+- (void)startOpenVPNAtURL:(NSURL *_Nonnull)launchURL withConfig:(NSURL *_Nonnull)config authUserPass:(NSURL *_Nullable)authUserPass upScript:(NSURL *_Nullable)upScript downScript:(NSURL *_Nullable)downScript scriptOptions:(NSArray <NSString *>*_Nullable)scriptOptions reply:(void(^_Nonnull)(BOOL))reply;
 
 /**
  Closes OpenVPN connection
@@ -47,20 +45,6 @@
  @param reply Success
  */
 - (void)closeWithReply:(void(^_Nonnull)(void))reply;
-
-/**
- Retrieves statistics for the current OpenVPN connection
- 
- @param reply Statistics or nil
- */
-- (void)readStatisticsWithReply:(void(^_Nonnull)(Statistics * _Nullable statistics))reply;
-
-/**
- Retrieves logs for the current OpenVPN connection
- 
- @param reply Logs
- */
-- (void)readLogsWithReply:(void(^_Nonnull)(NSArray <NSString *> * _Nullable logs))reply;
 
 @end
 
