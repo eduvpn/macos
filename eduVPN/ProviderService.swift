@@ -533,8 +533,9 @@ class ProviderService {
     ///
     /// - Parameters:
     ///   - info: Provider info
+    ///   - authenticationBehavior: Whether authentication should retried when token is revoked or expired
     ///   - handler: User info or error
-    func fetchUserInfo(for info: ProviderInfo, handler: @escaping (Result<UserInfo>) -> ()) {
+    func fetchUserInfo(for info: ProviderInfo, authenticationBehavior: AuthenticationService.Behavior = .ifNeeded, handler: @escaping (Result<UserInfo>) -> ()) {
         let path: String = "user_info"
         
         guard let url = URL(string: path, relativeTo: info.apiBaseURL) else {
@@ -542,7 +543,7 @@ class ProviderService {
             return
         }
         
-        authenticationService.performAction(for: info) { (accessToken, idToken, error) in
+        authenticationService.performAction(for: info, authenticationBehavior: authenticationBehavior) { (accessToken, idToken, error) in
             guard let accessToken = accessToken else {
                 handler(.failure(error ?? Error.missingToken))
                 return
@@ -551,10 +552,22 @@ class ProviderService {
             request.setValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
             
             let task = self.urlSession.dataTask(with: request) { (data, response, error) in
-                guard let data = data, let response = response as? HTTPURLResponse, 200..<300 ~= response.statusCode else {
+                guard let data = data, let response = response as? HTTPURLResponse else {
                     handler(.failure(error ?? Error.unknown))
                     return
                 }
+                
+                guard response.statusCode != 401 else {
+                    // Unauthorized! Try to authenticate again
+                    self.fetchUserInfo(for: info, authenticationBehavior: .always, handler: handler)
+                    return
+                }
+                
+                guard 200..<300 ~= response.statusCode else {
+                    handler(.failure(error ?? Error.unknown))
+                    return
+                }
+                
                 do {
                     guard let json = try JSONSerialization.jsonObject(with: data, options: []) as? NSDictionary else {
                         handler(.failure(Error.invalidUserInfo))
@@ -602,14 +615,15 @@ class ProviderService {
     ///
     /// - Parameters:
     ///   - info: Provider info
+    ///   - authenticationBehavior: Whether authentication should retried when token is revoked or expired
     ///   - handler: Profiles or error
-    func fetchProfiles(for info: ProviderInfo, handler: @escaping (Result<[Profile]>) -> ()) {
+    func fetchProfiles(for info: ProviderInfo, authenticationBehavior: AuthenticationService.Behavior = .ifNeeded, handler: @escaping (Result<[Profile]>) -> ()) {
         guard let url = URL(string: "profile_list", relativeTo: info.apiBaseURL) else {
             handler(.failure(Error.invalidProviderInfo))
             return
         }
         
-        authenticationService.performAction(for: info) { (accessToken, idToken, error) in
+        authenticationService.performAction(for: info, authenticationBehavior: authenticationBehavior) { (accessToken, idToken, error) in
             guard let accessToken = accessToken else {
                 
                 handler(.failure(error ?? Error.missingToken))
@@ -619,10 +633,22 @@ class ProviderService {
             request.setValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
             
             let task = self.urlSession.dataTask(with: request) { (data, response, error) in
-                guard let data = data, let response = response as? HTTPURLResponse, 200..<300 ~= response.statusCode else {
+                guard let data = data, let response = response as? HTTPURLResponse else {
                     handler(.failure(error ?? Error.unknown))
                     return
                 }
+                
+                guard response.statusCode != 401 else {
+                    // Unauthorized! Try to authenticate again
+                    self.fetchProfiles(for: info, authenticationBehavior: .always, handler: handler)
+                    return
+                }
+                
+                guard 200..<300 ~= response.statusCode else {
+                    handler(.failure(error ?? Error.unknown))
+                    return
+                }
+                
                 do {
                     guard let json = try JSONSerialization.jsonObject(with: data, options: []) as? NSDictionary else {
                         handler(.failure(Error.invalidProfiles))
@@ -665,8 +691,9 @@ class ProviderService {
     /// - Parameters:
     ///   - info: Provider info
     ///   - audience: System or user
+    ///   - authenticationBehavior: Whether authentication should retried when token is revoked or expired
     ///   - handler: Messages or error
-    func fetchMessages(for info: ProviderInfo, audience: MessageAudience, handler: @escaping (Result<[Message]>) -> ()) {
+    func fetchMessages(for info: ProviderInfo, audience: MessageAudience, authenticationBehavior: AuthenticationService.Behavior = .ifNeeded, handler: @escaping (Result<[Message]>) -> ()) {
         let path: String
         switch audience {
         case .system:
@@ -680,7 +707,7 @@ class ProviderService {
             return
         }
         
-        authenticationService.performAction(for: info) { (accessToken, idToken, error) in
+        authenticationService.performAction(for: info, authenticationBehavior: authenticationBehavior) { (accessToken, idToken, error) in
             guard let accessToken = accessToken else {
                 handler(.failure(error ?? Error.missingToken))
                 return
@@ -689,10 +716,22 @@ class ProviderService {
             request.setValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
             
             let task = self.urlSession.dataTask(with: request) { (data, response, error) in
-                guard let data = data, let response = response as? HTTPURLResponse, 200..<300 ~= response.statusCode else {
+                guard let data = data, let response = response as? HTTPURLResponse else {
                     handler(.failure(error ?? Error.unknown))
                     return
                 }
+                
+                guard response.statusCode != 401 else {
+                    // Unauthorized! Try to authenticate again
+                    self.fetchMessages(for: info, audience: audience, authenticationBehavior: .always, handler: handler)
+                    return
+                }
+                
+                guard 200..<300 ~= response.statusCode else {
+                    handler(.failure(error ?? Error.unknown))
+                    return
+                }
+                
                 do {
                     guard let json = try JSONSerialization.jsonObject(with: data, options: []) as? NSDictionary else {
                         handler(.failure(Error.invalidMessages))

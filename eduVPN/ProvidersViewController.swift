@@ -194,12 +194,9 @@ class ProvidersViewController: NSViewController {
                     
                     switch result {
                     case .success(let info):
-                        self.fetchProfiles(for: info, authState: authState)
+                        self.fetchProfiles(for: info)
                     case .failure(let error):
-                        let alert = NSAlert(error: error)
-                        alert.beginSheetModal(for: self.view.window!) { (_) in
-                            
-                        }
+                        self.handleError(error)
                     }
                 }
             }
@@ -215,19 +212,37 @@ class ProvidersViewController: NSViewController {
                     
                     switch result {
                     case .success(let info):
-                        self.mainWindowController?.showAuthenticating(with: info, connect: true)
+                        self.authenticate(with: info)
                     case .failure(let error):
-                        let alert = NSAlert(error: error)
-                        alert.beginSheetModal(for: self.view.window!) { (_) in
-                            
-                        }
+                        self.handleError(error)
                     }
                 }
             }
         }
     }
     
-    private func fetchProfiles(for info: ProviderInfo, authState: OIDAuthState) {
+    
+    private func authenticate(with info: ProviderInfo) {
+        busy = true
+        updateInterface()
+        ServiceContainer.authenticationService.authenticate(using: info) { (result) in
+            DispatchQueue.main.async {
+                
+                self.busy = false
+                self.updateInterface()
+                
+                switch result {
+                case .success:
+                    ServiceContainer.providerService.storeProvider(provider: info.provider)
+                    self.fetchProfiles(for: info)
+                case .failure(let error):
+                    self.handleError(error)
+                }
+            }
+        }
+    }
+
+    private func fetchProfiles(for info: ProviderInfo) {
         busy = true
         updateInterface()
         
@@ -246,12 +261,24 @@ class ProvidersViewController: NSViewController {
                         self.mainWindowController?.showChooseProfile(from: profiles, userInfo: userInfo)
                     }
                 case .failure(let error):
-                    let alert = NSAlert(error: error)
-                    alert.beginSheetModal(for: self.view.window!) { (_) in
-                        
-                    }
+                    self.handleError(error)
                 }
             }
+        }
+    }
+    
+    private func handleError(_ error: Error) {
+        // User knows he cancelled, no alert needed
+        if (error as NSError).domain == "org.openid.appauth.general" && (error as NSError).code == -4 {
+            return
+        }
+        // User knows he rejected, no alert needed
+        if (error as NSError).domain == "org.openid.appauth.oauth_authorization" && (error as NSError).code == -4 {
+            return
+        }
+        let alert = NSAlert(error: error)
+        alert.beginSheetModal(for: self.view.window!) { (_) in
+            // Nothing
         }
     }
     

@@ -39,6 +39,13 @@ class MainWindowController: NSWindowController {
 //        window?.contentView?.addSubview(topView)
 
         navigationStack.append(mainViewController.currentViewController)
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(didStartAuthenticating(notification:)), name: AuthenticationService.authenticationStarted, object: ServiceContainer.authenticationService)
+        NotificationCenter.default.addObserver(self, selector: #selector(didFinishAuthenticating(notification:)), name: AuthenticationService.authenticationFinished, object: ServiceContainer.authenticationService)
+    }
+    
+    deinit {
+        NotificationCenter.default.removeObserver(self)
     }
     
     private var mainViewController: MainViewController {
@@ -62,7 +69,7 @@ class MainWindowController: NSWindowController {
     }
     
     func close(viewController: NSViewController, animated: Bool = true, completionHandler: (() -> ())? = nil) {
-        if  navigationStack.count > 1, navigationStack.last == viewController {
+        if navigationStack.count > 1, navigationStack.last == viewController {
             pop(animated: animated, completionHandler: completionHandler)
         } else if navigationStackStack.count > 1, navigationStackStack.last!.last == viewController {
             dismiss(animated: animated, completionHandler: completionHandler)
@@ -90,17 +97,31 @@ class MainWindowController: NSWindowController {
         mainViewController.show(viewController: navigationStack.last!, options: .slideBackward, animated: animated, completionHandler: completionHandler)
     }
     
-    func present(viewController: NSViewController, animated: Bool = true, completionHandler: (() -> ())? = nil) {
+    func present(viewController: NSViewController, options: NSViewController.TransitionOptions = .slideUp, animated: Bool = true, completionHandler: (() -> ())? = nil) {
         navigationStackStack.append([viewController])
-        mainViewController.show(viewController: viewController, options: .slideUp, animated: animated, completionHandler: completionHandler)
+        mainViewController.show(viewController: viewController, options: options, animated: animated, completionHandler: completionHandler)
     }
     
-    func dismiss(animated: Bool = true, completionHandler: (() -> ())? = nil) {
+    func dismiss(options: NSViewController.TransitionOptions = .slideDown, animated: Bool = true, completionHandler: (() -> ())? = nil) {
         guard navigationStackStack.count > 1 else {
             return
         }
         navigationStackStack.removeLast()
-        mainViewController.show(viewController: navigationStack.last!, options: .slideDown, animated: animated, completionHandler: completionHandler)
+        mainViewController.show(viewController: navigationStack.last!, options: options, animated: animated, completionHandler: completionHandler)
+    }
+    
+    // MARK: - Authenticating
+    @objc private func didStartAuthenticating(notification: NSNotification) {
+        let authenticatingViewController = storyboard!.instantiateController(withIdentifier: NSStoryboard.SceneIdentifier(rawValue: "Authenticating")) as! AuthenticatingViewController
+        present(viewController: authenticatingViewController)
+    }
+    
+    @objc private func didFinishAuthenticating(notification: NSNotification) {
+        if let success = notification.userInfo?["success"] as? Bool, success {
+             dismiss()
+        } else {
+             dismiss()
+        }
     }
     
     // MARK: - Switching to screens
@@ -137,19 +158,6 @@ class MainWindowController: NSWindowController {
         let enterProviderURLViewController = storyboard!.instantiateController(withIdentifier: NSStoryboard.SceneIdentifier(rawValue: "EnterProviderURL")) as! EnterProviderURLViewController
         enterProviderURLViewController.allowClose = allowClose
         show(viewController: enterProviderURLViewController, presentation: presentation, animated: animated)
-    }
-    
-    /// Prompts user to authenticate with provider
-    ///
-    /// - Parameters:
-    ///   - info: Provider to authenticate with
-    ///   - connect: If true initiates connection with this provider when authentication succeeds
-    ///   - animated: Wether to show with animation
-    func showAuthenticating(with info: ProviderInfo, connect: Bool = false, animated: Bool = true) {
-        let authenticatingViewController = storyboard!.instantiateController(withIdentifier: NSStoryboard.SceneIdentifier(rawValue: "Authenticating")) as! AuthenticatingViewController
-        authenticatingViewController.info = info
-        authenticatingViewController.connect = connect
-        push(viewController: authenticatingViewController, animated: animated)
     }
     
     /// Prompts user to choose a profile

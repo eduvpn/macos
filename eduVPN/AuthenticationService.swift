@@ -36,6 +36,12 @@ class AuthenticationService {
         }
     }
     
+    /// Notification posted when authentication starts
+    static let authenticationStarted = NSNotification.Name("AuthenticationService.authenticationStarted")
+   
+    /// Notification posted when authentication finishes
+    static let authenticationFinished = NSNotification.Name("AuthenticationService.authenticationFinished")
+    
     private var redirectHTTPHandler: OIDRedirectHTTPHandler?
     private let appName: String
     
@@ -66,6 +72,10 @@ class AuthenticationService {
             NSRunningApplication.current.activate(options: [.activateAllWindows, .activateIgnoringOtherApps])
          
             self.isAuthenticating = false
+           
+            let success = authState != nil
+            NotificationCenter.default.post(name: AuthenticationService.authenticationFinished, object: self, userInfo: ["success": success])
+            
             self.handlersAfterAuthenticating.forEach { handler in
                 if let authState = authState {
                     self.store(for: info.provider, authState: authState)
@@ -78,6 +88,8 @@ class AuthenticationService {
             }
             self.handlersAfterAuthenticating.removeAll()
         }
+        
+        NotificationCenter.default.post(name: AuthenticationService.authenticationStarted, object: self)
     }
     
     private var isAuthenticating = false
@@ -105,18 +117,24 @@ class AuthenticationService {
         }
     }
     
+    enum Behavior {
+        case never
+        case ifNeeded
+        case always
+    }
+    
     /// Performs an authenticated action
     ///
     /// - Parameters:
     ///   - info: Provider info
-    ///   - reauthenticateIfNeeded: Whether authentication should retried when token is revoked or expired
+    ///   - authenticationBehavior: Whether authentication should retried when token is revoked or expired
     ///   - action: The action to perform
-    func performAction(for info: ProviderInfo, reauthenticateIfNeeded: Bool = true, action: @escaping OIDAuthStateAction) {
+    func performAction(for info: ProviderInfo, authenticationBehavior: Behavior = .ifNeeded, action: @escaping OIDAuthStateAction) {
         func reauthenticate() {
             authenticate(using: info, handler: { (result) in
                 switch result {
                 case .success:
-                    self.performAction(for: info, reauthenticateIfNeeded: false, action: action)
+                    self.performAction(for: info, authenticationBehavior: .never, action: action)
                 case .failure(let error):
                     action(nil, nil, error)
                 }
@@ -124,19 +142,29 @@ class AuthenticationService {
         }
         
         guard let authState = authState(for: info.provider) else {
-            if reauthenticateIfNeeded {
-                reauthenticate()
-            } else {
+            switch authenticationBehavior {
+            case .always, .ifNeeded:
+                 reauthenticate()
+            case .never:
                 action(nil, nil, Error.noToken)
             }
             return
         }
         
+        switch authenticationBehavior {
+        case .always:
+            reauthenticate()
+            return
+        case .ifNeeded, .never:
+            break
+        }
+        
         authState.performAction { (accessToken, idToken, error) in
             guard let accessToken = accessToken else {
-                if reauthenticateIfNeeded {
+                switch authenticationBehavior {
+                case .always, .ifNeeded:
                     reauthenticate()
-                } else {
+                case .never:
                     action(nil, idToken, error)
                 }
                 return
