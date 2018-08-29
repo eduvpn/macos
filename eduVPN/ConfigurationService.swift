@@ -138,6 +138,9 @@ class ConfigurationService {
             self.createKeyPair(for: info, authState: authState) { result in
                 switch result {
                 case .success((let certificate, let privateKey)):
+                    // To use ovpn config file with Tunnelblick, use the output of the line below
+                    // debugLog( "<<config here>" + "\n<cert>\n" + certificate + "\n</cert>\n<key>\n" + privateKey + "\n</key>")
+                    
                     let passphrase = String.random()
                     self.createPKCS12(certificate: certificate, privateKey: privateKey, passphrase: passphrase) { result in
                         switch result {

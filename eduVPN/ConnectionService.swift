@@ -266,6 +266,7 @@ class ConnectionService: NSObject {
         helper.close {
             self.configURL = nil
             self.authUserPassURL = nil
+            self.closeManagingSocket(force: false)
             handler(.success(Void()))
         }
     }
@@ -303,10 +304,6 @@ class ConnectionService: NSObject {
     private var commonNameCertificate: String = ""
     
     private func openManagingSocket() {
-        guard !managing else {
-            return
-        }
-        
         let queue = DispatchQueue.global(qos: .userInteractive)
         
         queue.async { [unowned self] in
@@ -554,12 +551,14 @@ class ConnectionService: NSObject {
         try write(response)
     }
 
-    private func closeManagingSocket() {
+    private func closeManagingSocket(force: Bool) {
         managing = false
-        do {
-            try write("signal SIGTERM\n")
-        } catch {
-            debugLog(error)
+        if force {
+            do {
+                try write("signal SIGTERM\n")
+            } catch {
+                debugLog(error)
+            }
         }
         socket?.close()
     }
@@ -580,7 +579,7 @@ class ConnectionService: NSObject {
                 
                 try _ = Socket.wait(for: [socket], timeout: 10_000 /* ms */)
                 
-                self.closeManagingSocket()
+                self.closeManagingSocket(force: true)
             
                 // Allow some time to close up
                 DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
