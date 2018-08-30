@@ -26,6 +26,15 @@ class PreferencesService: NSObject {
         }
     }
     
+    var developerMode: Bool {
+        get {
+            return  UserDefaults.standard.bool(forKey: "developerMode")
+        }
+        set {
+            UserDefaults.standard.set(developerMode, forKey: "developerMode")
+        }
+    }
+    
     private static var loginHelperBundle: Bundle {
         let mainBundle = Bundle.main
         let bundlePath = (mainBundle.bundlePath as NSString).appendingPathComponent("Contents/Library/LoginItems/LoginItemHelper.app")

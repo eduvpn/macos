@@ -86,11 +86,13 @@ class ConnectionService: NSObject {
     private let configurationService: ConfigurationService
     private let helperService: HelperService
     private let keychainService: KeychainService
+    private let preferencesService: PreferencesService
     
-    init(configurationService: ConfigurationService, helperService: HelperService, keychainService: KeychainService) {
+    init(configurationService: ConfigurationService, helperService: HelperService, keychainService: KeychainService, preferencesService: PreferencesService) {
         self.configurationService = configurationService
         self.helperService = helperService
         self.keychainService = keychainService
+        self.preferencesService = preferencesService
     }
 
     /// Asks helper service to start VPN connection after helper and config are ready and available
@@ -209,14 +211,18 @@ class ConnectionService: NSObject {
         let openvpnURL = bundle.url(forResource: "openvpn", withExtension: nil, subdirectory: ConnectionService.openVPNSubdirectory)!
         let upScript = bundle.url(forResource: "client.up.eduvpn", withExtension: "sh", subdirectory: ConnectionService.openVPNSubdirectory)!
         let downScript = bundle.url(forResource: "client.down.eduvpn", withExtension: "sh", subdirectory: ConnectionService.openVPNSubdirectory)!
-        let scriptOptions = [
+        var scriptOptions = [
             "-6" /* ARG_ENABLE_IPV6_ON_TAP */,
             "-f" /* ARG_FLUSH_DNS_CACHE */,
-            "-l" /* ARG_EXTRA_LOGGING */,
             "-o" /* ARG_OVERRIDE_MANUAL_NETWORK_SETTINGS */,
             "-r" /* ARG_RESET_PRIMARY_INTERFACE_ON_DISCONNECT */,
             "-w" /* ARG_RESTORE_ON_WINS_RESET */
         ]
+        let developerMode = preferencesService.developerMode
+        if developerMode {
+            scriptOptions.append("-l" /* ARG_EXTRA_LOGGING */)
+        }
+       
         self.configURL = configURL
         self.authUserPassURL = authUserPassURL
         helper.startOpenVPN(at: openvpnURL, withConfig: configURL, authUserPass: authUserPassURL, upScript: upScript, downScript: downScript, scriptOptions: scriptOptions) { (success) in

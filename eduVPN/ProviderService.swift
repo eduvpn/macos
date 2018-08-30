@@ -73,11 +73,13 @@ class ProviderService {
     
     private let urlSession: URLSession
     private let authenticationService: AuthenticationService
+    private let preferencesService: PreferencesService
     private let appName: String
     
-    init(urlSession: URLSession, authenticationService: AuthenticationService, appName: String) {
+    init(urlSession: URLSession, authenticationService: AuthenticationService, preferencesService: PreferencesService, appName: String) {
         self.urlSession = urlSession
         self.authenticationService = authenticationService
+        self.preferencesService = preferencesService
         self.appName = appName
         readFromDisk()
     }
@@ -268,9 +270,9 @@ class ProviderService {
     /// - Parameter connectionType: Connection type
     /// - Returns: URL
     private func url(for connectionType: ConnectionType) -> URL {
-        let debug = UserDefaults.standard.bool(forKey: "developerMode")
+        let developerMode = preferencesService.developerMode
         let path: String
-        switch (connectionType, debug) {
+        switch (connectionType, developerMode) {
         case (.secureInternet, false):
             path = "secure_internet"
         case (.secureInternet, true):
@@ -290,9 +292,9 @@ class ProviderService {
     /// - Parameter connectionType: Connection type
     /// - Returns: URL
     private func signatureUrl(for connectionType: ConnectionType) -> URL {
-        let debug = UserDefaults.standard.bool(forKey: "developerMode")
+        let developerMode = preferencesService.developerMode
         let path: String
-        switch (connectionType, debug) {
+        switch (connectionType, developerMode) {
         case (.secureInternet, false):
             path = "secure_internet"
         case (.secureInternet, true):
@@ -338,8 +340,8 @@ class ProviderService {
                         return
                     }
                     
-                    let debug = UserDefaults.standard.bool(forKey: "developerMode")
-                    let publicKeyString = debug ? "zzls4TZTXHEyV3yxaxag1DZw3tSpIdBoaaOjUGH/Rwg=" : "E5On0JTtyUVZmcWd+I/FXRm32nSq8R2ioyW7dcu/U88="
+                    let developerMode = self.preferencesService.developerMode
+                    let publicKeyString = developerMode ? "zzls4TZTXHEyV3yxaxag1DZw3tSpIdBoaaOjUGH/Rwg=" : "E5On0JTtyUVZmcWd+I/FXRm32nSq8R2ioyW7dcu/U88="
                     guard let publicKey = NSData(base64Encoded: publicKeyString, options: []) as Data? else {
                         handler(.failure(Error.providerVerificationFailed))
                         return
