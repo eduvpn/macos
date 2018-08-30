@@ -2,15 +2,16 @@
 # Note: must be bash; uses bash-specific tricks
 #
 # ******************************************************************************************************************
-# This eduVPN script does everything! It handles TUN and TAP interfaces, 
+# This eduVPN script does everything! It handles TUN and TAP interfaces,
 # pushed configurations and DHCP leases. :)
-# 
-# This is the "Down" version of the script, executed after the connection is 
+#
+# This is the "Down" version of the script, executed after the connection is
 # closed.
 #
 # Created by: Nick Williams (using original code and parts of old Tblk scripts)
-# 
+#
 # Modified by eduVPN to avoid filename collisions: tunnelblick -> eduvpn, Tunnelblick -> eduVPN, TUNNELBLICK -> EDUVPN
+#
 # ******************************************************************************************************************
 
 # @param String message - The message to log
@@ -88,7 +89,7 @@ flushDNSCache()
 			else
 				logMessage "WARNING: /usr/bin/dscacheutil not present. Not flushing the DNS cache via dscacheutil"
 			fi
-		
+
 			if [ -f /usr/sbin/discoveryutil ] ; then
 				set +e # we will catch errors from discoveryutil
 				/usr/sbin/discoveryutil udnsflushcaches
@@ -107,7 +108,7 @@ flushDNSCache()
 			else
 				logMessage "/usr/sbin/discoveryutil not present. Not flushing the DNS cache via discoveryutil"
 			fi
-			
+
 			set +e # "grep" will return error status (1) if no matches are found, so don't fail on individual errors
 			hands_off_ps="$( ps -ax | grep HandsOffDaemon | grep -v grep.HandsOffDaemon )"
 			set -e # We instruct bash that it CAN again fail on errors
@@ -127,26 +128,42 @@ flushDNSCache()
 			else
 				logMessage "WARNING: Hands Off is running.  Not notifying mDNSResponder that the DNS cache was flushed"
 			fi
-		
+
 		fi
     fi
 }
 
 ##########################################################################################
+# @param Bool true if should reset if disconnect was expected
+# @param Bool true if should reset if disconnect was not expected
+
 resetPrimaryInterface()
 {
+	expected_path="/Library/Application Support/eduVPN/expect-disconnect.txt"
+
+	if [ -e "$expected_path" ] ; then
+		rm -f "$expected_path"
+		should_reset="$1"
+	else
+		should_reset="$2"
+	fi
+
+	if [ "$should_reset" != "true" ] ; then
+		return
+	fi
+
 	set +e # "grep" will return error status (1) if no matches are found, so don't fail on individual errors
-	WIFI_INTERFACE="$(networksetup -listallhardwareports | awk '$3=="Wi-Fi" {getline; print $2}')"
-	if [ "${WIFI_INTERFACE}" == "" ] ; then
-		WIFI_INTERFACE="$(networksetup -listallhardwareports | awk '$3=="AirPort" {getline; print $2}')"
-    fi
-	PINTERFACE="$( scutil <<-EOF |
-        open
-        show State:/Network/Global/IPv4
-        quit
+		WIFI_INTERFACE="$(networksetup -listallhardwareports | awk '$3=="Wi-Fi" {getline; print $2}')"
+		if [ "${WIFI_INTERFACE}" == "" ] ; then
+			WIFI_INTERFACE="$(networksetup -listallhardwareports | awk '$3=="AirPort" {getline; print $2}')"
+		fi
+		PINTERFACE="$( scutil <<-EOF |
+			open
+			show State:/Network/Global/IPv4
+			quit
 EOF
-    grep PrimaryInterface | sed -e 's/.*PrimaryInterface : //'
-    )"
+		grep PrimaryInterface | sed -e 's/.*PrimaryInterface : //'
+		)"
     set -e # resume abort on error
 
     if [ "${PINTERFACE}" != "" ] ; then
@@ -201,31 +218,38 @@ fi
 #
 # We do the same thing for the -f eduVPN option (Flush DNS cache after connecting or disconnecting)
 ARG_RESET_PRIMARY_INTERFACE_ON_DISCONNECT="false"
+ARG_RESET_PRIMARY_INTERFACE_ON_DISCONNECT_UNEXPECTED="false"
 ARG_FLUSH_DNS_CACHE="false"
 while [ {$#} ] ; do
-    if [ "${1:0:1}" != "-" ] ; then				# eduVPN arguments start with "-" and come first
+
+	if [ "${1:0:1}" != "-" ] ; then				# eduVPN arguments start with "-" and come first
         break                                   # so if this one doesn't start with "-" we are done processing eduVPN arguments
     fi
-    if [ "$1" = "-r" ] ; then
+
+	if [ "$1" = "-r" ] ; then
         ARG_RESET_PRIMARY_INTERFACE_ON_DISCONNECT="true"
-    else
-	    if [ "$1" = "-f" ] ; then
-            ARG_FLUSH_DNS_CACHE="true"
-        fi
+
+	elif [ "$1" = "-ru" ] ; then
+		ARG_RESET_PRIMARY_INTERFACE_ON_DISCONNECT_UNEXPECTED="true"
+
+	elif [ "$1" = "-f" ] ; then
+		ARG_FLUSH_DNS_CACHE="true"
     fi
+
     shift                                       # Shift arguments to examine the next option (if there is one)
 done
+
+readonly ARG_DISABLE_INTERNET_ACCESS_AFTER_DISCONNECTING ARG_DISABLE_INTERNET_ACCESS_AFTER_DISCONNECTING_UNEXPECTED ARG_FLUSH_DNS_CACHE
 
 # Quick check - is the configuration there?
 if ! scutil -w State:/Network/OpenVPN &>/dev/null -t 1 ; then
 	# Configuration isn't there
     logMessage "WARNING: Not restoring DNS settings because no saved eduVPN DNS information was found."
-	
+
 	flushDNSCache
-    
-	if ${ARG_RESET_PRIMARY_INTERFACE_ON_DISCONNECT} ; then
-        resetPrimaryInterface
-    fi
+
+	resetPrimaryInterface $ARG_RESET_PRIMARY_INTERFACE_ON_DISCONNECT $ARG_RESET_PRIMARY_INTERFACE_ON_DISCONNECT_UNEXPECTED
+
     logMessage "End of output from ${OUR_NAME}"
     logMessage "**********************************************"
 	exit 0
@@ -243,14 +267,13 @@ ARG_MONITOR_NETWORK_CONFIGURATION="$(echo "${EDUVPN_CONFIG}" | grep -i '^[[:spac
 LEASEWATCHER_PLIST_PATH="$(echo "${EDUVPN_CONFIG}" | grep -i '^[[:space:]]*LeaseWatcherPlistPath :' | sed -e 's/^.*: //g')"
 REMOVE_LEASEWATCHER_PLIST="$(echo "${EDUVPN_CONFIG}" | grep -i '^[[:space:]]*RemoveLeaseWatcherPlist :' | sed -e 's/^.*: //g')"
 PSID="$(echo "${EDUVPN_CONFIG}" | grep -i '^[[:space:]]*Service :' | sed -e 's/^.*: //g')"
+VPN_SID="$(echo "${EDUVPN_CONFIG}" | grep -i '^[[:space:]]*VpnService :' | sed -e 's/^.*: //g')"
 # Don't need: SCRIPT_LOG_FILE="$(echo "${EDUVPN_CONFIG}" | grep -i '^[[:space:]]*ScriptLogFile :' | sed -e 's/^.*: //g')"
 # Don't need: ARG_RESTORE_ON_DNS_RESET="$(echo "${EDUVPN_CONFIG}" | grep -i '^[[:space:]]*RestoreOnDNSReset :' | sed -e 's/^.*: //g')"
 # Don't need: ARG_RESTORE_ON_WINS_RESET="$(echo "${EDUVPN_CONFIG}" | grep -i '^[[:space:]]*RestoreOnWINSReset :' | sed -e 's/^.*: //g')"
 # Don't need: PROCESS="$(echo "${EDUVPN_CONFIG}" | grep -i '^[[:space:]]*PID :' | sed -e 's/^.*: //g')"
 # Don't need: ARG_IGNORE_OPTION_FLAGS="$(echo "${EDUVPN_CONFIG}" | grep -i '^[[:space:]]*IgnoreOptionFlags :' | sed -e 's/^.*: //g')"
 ARG_TAP="$(echo "${EDUVPN_CONFIG}" | grep -i '^[[:space:]]*IsTapInterface :' | sed -e 's/^.*: //g')"
-ARG_FLUSH_DNS_CACHE="$(echo "${EDUVPN_CONFIG}" | grep -i '^[[:space:]]*FlushDNSCache :' | sed -e 's/^.*: //g')"
-ARG_RESET_PRIMARY_INTERFACE_ON_DISCONNECT="$(echo "${EDUVPN_CONFIG}" | grep -i '^[[:space:]]*ResetPrimaryInterface :' | sed -e 's/^.*: //g')"
 bRouteGatewayIsDhcp="$(echo "${EDUVPN_CONFIG}" | grep -i '^[[:space:]]*RouteGatewayIsDhcp :' | sed -e 's/^.*: //g')"
 bTapDeviceHasBeenSetNone="$(echo "${EDUVPN_CONFIG}" | grep -i '^[[:space:]]*TapDeviceHasBeenSetNone :' | sed -e 's/^.*: //g')"
 bAlsoUsingSetupKeys="$(echo "${EDUVPN_CONFIG}" | grep -i '^[[:space:]]*bAlsoUsingSetupKeys :' | sed -e 's/^.*: //g')"
@@ -297,14 +320,14 @@ fi
 set +e # "grep" will return error status (1) if no matches are found, so don't fail if not found
 PSID_CURRENT="$( scutil <<-EOF |
 	open
-	show State:/Network/OpenVPN
+	show State:/Network/Global/IPv4
 	quit
 EOF
 grep 'Service : ' | sed -e 's/.*Service : //'
 )"
 set -e # resume abort on error
-if [ "${PSID}" != "${PSID_CURRENT}" ] ; then
-	logMessage "Ignoring change of Network Primary Service from ${PSID} to ${PSID_CURRENT}"
+if [ "${VPN_SID}" != "${PSID_CURRENT}" ] ; then
+	logMessage "Ignoring change of Network Primary Service from ${VPN_SID} to ${PSID_CURRENT}"
 fi
 
 # Restore configurations
@@ -385,6 +408,38 @@ else
 EOF
 fi
 
+GLOBAL_IPv4_OLD="$( scutil <<-EOF
+	open
+	show State:/Network/Global/PreVPNIPv4
+	quit
+EOF
+)"
+
+GLOBAL_IPv6_OLD="$( scutil <<-EOF
+	open
+	show State:/Network/Global/PreVPNIPv6
+	quit
+EOF
+)"
+
+if [ "${GLOBAL_IPv4_OLD}" = "${TB_NO_SUCH_KEY}" ] ; then
+	scutil > /dev/null <<-EOF
+		open
+		get State:/Network/Global/PreVPNIPv4
+		set State:/Network/Global/IPv4
+		quit
+	EOF
+fi
+
+if [ "${GLOBAL_IPv6_OLD}" = "${TB_NO_SUCH_KEY}" ] ; then
+	scutil > /dev/null <<-EOF
+		open
+		get State:/Network/Global/PreVPNIPv6
+		set State:/Network/Global/IPv6
+		quit
+	EOF
+fi
+
 logMessage "Restored the DNS and SMB configurations"
 
 set +e # "grep" will return error status (1) if no matches are found, so don't fail if not found
@@ -413,12 +468,19 @@ scutil <<-EOF
 	remove State:/Network/OpenVPN/DNS
 	remove State:/Network/OpenVPN/SMB
 	remove State:/Network/OpenVPN
+
+	remove State:/Network/Global/PreVPNIPv4
+	remove State:/Network/Global/PreVPNIPv6
+
+	remove State:/Network/Service/${VPN_SID}/DNS
+	remove Setup:/Network/Service/${VPN_SID}/DNS
+	remove State:/Network/Service/${VPN_SID}/SMB
+	remove State:/Network/Service/${VPN_SID}/IPv4
+	remove State:/Network/Service/${VPN_SID}/IPv6
 	quit
 EOF
 
-if ${ARG_RESET_PRIMARY_INTERFACE_ON_DISCONNECT} ; then
-    resetPrimaryInterface
-fi
+resetPrimaryInterface $ARG_RESET_PRIMARY_INTERFACE_ON_DISCONNECT $ARG_RESET_PRIMARY_INTERFACE_ON_DISCONNECT_UNEXPECTED
 
 logMessage "End of output from ${OUR_NAME}"
 logMessage "**********************************************"
