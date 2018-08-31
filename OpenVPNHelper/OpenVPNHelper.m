@@ -59,7 +59,7 @@
     reply([NSString stringWithFormat:@"%@-%@", version, buildVersion]);
 }
 
-- (void)startOpenVPNAtURL:(NSURL *_Nonnull)launchURL withConfig:(NSURL *_Nonnull)config authUserPass:(NSURL *_Nullable)authUserPass upScript:(NSURL *_Nullable)upScript downScript:(NSURL *_Nullable)downScript scriptOptions:(NSArray <NSString *>*_Nullable)scriptOptions reply:(void(^_Nonnull)(BOOL))reply {
+- (void)startOpenVPNAtURL:(NSURL *_Nonnull)launchURL withConfig:(NSURL *_Nonnull)config upScript:(NSURL *_Nullable)upScript downScript:(NSURL *_Nullable)downScript scriptOptions:(NSArray <NSString *>*_Nullable)scriptOptions reply:(void(^_Nonnull)(BOOL))reply {
     // Verify that binary at URL is signed by me
     SecStaticCodeRef staticCodeRef = 0;
     OSStatus status = SecStaticCodeCreateWithPath((__bridge CFURLRef _Nonnull)(launchURL), kSecCSDefaultFlags, &staticCodeRef);
@@ -96,11 +96,10 @@
                        @"--log", [self pathWithSpacesEscaped:logFilePath],
                        @"--management", [self pathWithSpacesEscaped:socketPath], @"unix",
                        @"--management-external-key",
-                       @"--management-external-cert", @"macosx-keychain"]];
+                       @"--management-external-cert", @"macosx-keychain",
+                       @"--management-query-passwords",
+                       @"--management-forget-disconnect"]];
     
-    if (authUserPass.path) {
-        [arguments addObjectsFromArray:@[@"--auth-user-pass", [self pathWithSpacesEscaped:authUserPass.path]]];
-    }
     if (upScript.path) {
         [arguments addObjectsFromArray:@[@"--up", [self scriptPath:upScript.path withOptions:scriptOptions]]];
     }

@@ -37,7 +37,7 @@
  @param downScript URL to down script
  @param reply Success or not
  */
-- (void)startOpenVPNAtURL:(NSURL *_Nonnull)launchURL withConfig:(NSURL *_Nonnull)config authUserPass:(NSURL *_Nullable)authUserPass upScript:(NSURL *_Nullable)upScript downScript:(NSURL *_Nullable)downScript scriptOptions:(NSArray <NSString *>*_Nullable)scriptOptions reply:(void(^_Nonnull)(BOOL))reply;
+- (void)startOpenVPNAtURL:(NSURL *_Nonnull)launchURL withConfig:(NSURL *_Nonnull)config upScript:(NSURL *_Nullable)upScript downScript:(NSURL *_Nullable)downScript scriptOptions:(NSArray <NSString *>*_Nullable)scriptOptions reply:(void(^_Nonnull)(BOOL))reply;
 
 /**
  Closes OpenVPN connection
