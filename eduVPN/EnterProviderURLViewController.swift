@@ -76,7 +76,7 @@ class EnterProviderURLViewController: NSViewController {
                 DispatchQueue.main.async {
                     self.textField.isEnabled = true
                     self.doneButton.isEnabled = true
-                    self.mainWindowController?.showAuthenticating(with: info)
+                    self.authenticate(with: info)
                 }
             case .failure(let error):
                 DispatchQueue.main.async {
@@ -84,6 +84,33 @@ class EnterProviderURLViewController: NSViewController {
                     alert.beginSheetModal(for: self.view.window!) { (_) in
                         self.textField.isEnabled = true
                         self.doneButton.isEnabled = true
+                    }
+                }
+            }
+        }
+    }
+    
+    private func authenticate(with info: ProviderInfo) {
+        ServiceContainer.authenticationService.authenticate(using: info) { (result) in
+            DispatchQueue.main.async {
+                switch result {
+                case .success:
+                    ServiceContainer.providerService.storeProvider(provider: info.provider)
+                    self.mainWindowController?.dismiss()
+                case .failure(let error):
+                    // User knows he cancelled, no alert needed
+                    if (error as NSError).domain == "org.openid.appauth.general" && (error as NSError).code == -4 {
+                        self.mainWindowController?.dismiss()
+                        return
+                    }
+                    // User knows he rejected, no alert needed
+                    if (error as NSError).domain == "org.openid.appauth.oauth_authorization" && (error as NSError).code == -4 {
+                        self.mainWindowController?.dismiss()
+                        return
+                    }
+                    let alert = NSAlert(error: error)
+                    alert.beginSheetModal(for: self.view.window!) { (_) in
+                        self.mainWindowController?.dismiss()
                     }
                 }
             }

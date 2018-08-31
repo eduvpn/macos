@@ -100,9 +100,8 @@ class ConnectionService: NSObject {
     /// - Parameters:
     ///   - profile: Profile
     ///   - twoFactor: Optional two factor authentication token
-    ///   - authState: Authentication token
     ///   - handler: Success or error
-    func connect(to profile: Profile, twoFactor: TwoFactor?, authState: OIDAuthState, handler: @escaping (Result<Void>) -> ()) {
+    func connect(to profile: Profile, twoFactor: TwoFactor?, handler: @escaping (Result<Void>) -> ()) {
         guard state == .disconnected else {
             handler(.failure(Error.unexpectedState))
             return
@@ -125,7 +124,7 @@ class ConnectionService: NSObject {
         helperService.installHelperIfNeeded(client: self) { (result) in
             switch result {
             case .success:
-                self.configurationService.configure(for: profile, authState: authState) { (result) in
+                self.configurationService.configure(for: profile) { (result) in
                     switch result {
                     case .success(let config, let certificateCommonName):
                         do {

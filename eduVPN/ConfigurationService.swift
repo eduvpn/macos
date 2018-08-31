@@ -89,13 +89,12 @@ class ConfigurationService {
     ///
     /// - Parameters:
     ///   - profile: Profile
-    ///   - authState: Authentication token
     ///   - handler: Config or error
-    func configure(for profile: Profile, authState: OIDAuthState, handler: @escaping (Result<(config: Config, certificateCommonName: String)>) -> ()) {
-        restoreOrCreateKeyPair(for: profile.info, authState: authState) { (result) in
+    func configure(for profile: Profile, handler: @escaping (Result<(config: Config, certificateCommonName: String)>) -> ()) {
+        restoreOrCreateKeyPair(for: profile.info) { (result) in
             switch result {
             case .success(let certificateCommonName):
-                self.fetchConfig(for: profile, authState: authState) { (result) in
+                self.fetchConfig(for: profile) { (result) in
                     switch result {
                     case .success(let config):
                         handler(.success((config: config, certificateCommonName: certificateCommonName)))
@@ -113,9 +112,8 @@ class ConfigurationService {
     ///
     /// - Parameters:
     ///   - info: Provider info
-    ///   - authState: Authentication token
     ///   - handler: Certificate common name or error
-    private func restoreOrCreateKeyPair(for info: ProviderInfo, authState: OIDAuthState, handler: @escaping (Result<String>) -> ()) {
+    private func restoreOrCreateKeyPair(for info: ProviderInfo, handler: @escaping (Result<String>) -> ()) {
         var keyPairs = UserDefaults.standard.array(forKey: "keyPairs") ?? []
         
         let certificateCommonNames = keyPairs.lazy.compactMap { keyPair -> String? in
@@ -135,7 +133,7 @@ class ConfigurationService {
         }
         
         let createKeyPair: () -> () = {
-            self.createKeyPair(for: info, authState: authState) { result in
+            self.createKeyPair(for: info) { result in
                 switch result {
                 case .success((let certificate, let privateKey)):
                     // To use ovpn config file with Tunnelblick, use the output of the line below
@@ -183,7 +181,7 @@ class ConfigurationService {
         
         if let certificateCommonName = certificateCommonNames.first {
             // Check if still valid
-            checkCertificate(for: info, authState: authState, certificateCommonName: certificateCommonName) { result in
+            checkCertificate(for: info, certificateCommonName: certificateCommonName) { result in
                 switch result {
                 case .success:
                     handler(.success(certificateCommonName))
@@ -211,15 +209,15 @@ class ConfigurationService {
     ///
     /// - Parameters:
     ///   - info: Provider info
-    ///   - authState: Authentication token
+    ///   - authenticationBehavior: Whether authentication should be retried when token is revoked or expired
     ///   - handler: Keypair or error
-    private func createKeyPair(for info: ProviderInfo, authState: OIDAuthState, handler: @escaping (Result<(certificate: String, privateKey: String)>) -> ()) {
+    private func createKeyPair(for info: ProviderInfo, authenticationBehavior: AuthenticationService.Behavior = .ifNeeded, handler: @escaping (Result<(certificate: String, privateKey: String)>) -> ()) {
         guard let url = URL(string: "create_keypair", relativeTo: info.apiBaseURL) else {
             handler(.failure(Error.invalidURL))
             return
         }
         
-        authenticationService.performAction(for: info) { (accessToken, idToken, error) in
+        authenticationService.performAction(for: info, authenticationBehavior: authenticationBehavior) { (accessToken, idToken, error) in
             guard let accessToken = accessToken else {
                 handler(.failure(error ?? Error.missingToken))
                 return
@@ -232,11 +230,23 @@ class ConfigurationService {
             request.httpBody = data
             request.setValue("\(data.count)", forHTTPHeaderField: "Content-Length")
             
-            let task = self.urlSession.dataTask(with: request) { (data, _, error) in
-                guard let data = data else {
+            let task = self.urlSession.dataTask(with: request) { (data, response, error) in
+                guard let data = data, let response = response as? HTTPURLResponse else {
                     handler(.failure(error ?? Error.unknown))
                     return
                 }
+                
+                guard response.statusCode != 401 else {
+                    // Unauthorized! Try to authenticate again
+                    self.createKeyPair(for: info, authenticationBehavior: .always, handler: handler)
+                    return
+                }
+                
+                guard 200..<300 ~= response.statusCode else {
+                    handler(.failure(error ?? Error.unknown))
+                    return
+                }
+                
                 do {
                     guard let json = try JSONSerialization.jsonObject(with: data, options: []) as? NSDictionary else {
                         handler(.failure(Error.invalidKeyPair))
@@ -267,10 +277,10 @@ class ConfigurationService {
     ///
     /// - Parameters:
     ///   - info: Provider info
-    ///   - authState: Authentication token
     ///   - certificateCommonName: Common name of the certificate
+    ///   - authenticationBehavior: Whether authentication should be retried when token is revoked or expired
     ///   - handler: Void (valid) or an error
-    private func checkCertificate(for info: ProviderInfo, authState: OIDAuthState, certificateCommonName: String, handler: @escaping (Result<Void>) -> ()) {
+    private func checkCertificate(for info: ProviderInfo, certificateCommonName: String, authenticationBehavior: AuthenticationService.Behavior = .ifNeeded, handler: @escaping (Result<Void>) -> ()) {
         guard let bareURL = URL(string: "check_certificate", relativeTo: info.apiBaseURL) else {
             handler(.failure(Error.invalidURL))
             return
@@ -287,7 +297,7 @@ class ConfigurationService {
             return
         }
         
-        authenticationService.performAction(for: info) { (accessToken, idToken, error) in
+        authenticationService.performAction(for: info, authenticationBehavior: authenticationBehavior) { (accessToken, idToken, error) in
             guard let accessToken = accessToken else {
                 handler(.failure(error ?? Error.missingToken))
                 return
@@ -296,8 +306,19 @@ class ConfigurationService {
             request.setValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
             
             let task = self.urlSession.dataTask(with: request) { (data, response, error) in
-                guard let data = data, let response = response as? HTTPURLResponse, 200..<300 ~= response.statusCode else {
-                    handler(.failure(error ?? Error.certificateCheckFailed))
+                guard let data = data, let response = response as? HTTPURLResponse else {
+                    handler(.failure(error ?? Error.unknown))
+                    return
+                }
+                
+                guard response.statusCode != 401 else {
+                    // Unauthorized! Try to authenticate again
+                    self.checkCertificate(for: info, certificateCommonName: certificateCommonName, authenticationBehavior: .always, handler: handler)
+                    return
+                }
+                
+                guard 200..<300 ~= response.statusCode else {
+                    handler(.failure(error ?? Error.unknown))
                     return
                 }
                 
@@ -348,9 +369,9 @@ class ConfigurationService {
     ///
     /// - Parameters:
     ///   - profile: Profile
-    ///   - authState: Authentication token
+    ///   - authenticationBehavior: Whether authentication should be retried when token is revoked or expired
     ///   - handler: Config or error
-    private func fetchConfig(for profile: Profile, authState: OIDAuthState, handler: @escaping (Result<Config>) -> ()) {
+    private func fetchConfig(for profile: Profile, authenticationBehavior: AuthenticationService.Behavior = .ifNeeded, handler: @escaping (Result<Config>) -> ()) {
         guard let url = URL(string: "profile_config", relativeTo: profile.info.apiBaseURL) else {
             handler(.failure(Error.invalidURL))
             return
@@ -370,7 +391,7 @@ class ConfigurationService {
             return
         }
 
-        authenticationService.performAction(for: profile.info) { (accessToken, idToken, error) in
+        authenticationService.performAction(for: profile.info, authenticationBehavior: authenticationBehavior) { (accessToken, idToken, error) in
             guard let accessToken = accessToken else {
                 handler(.failure(error ?? Error.missingToken))
                 return
@@ -379,7 +400,18 @@ class ConfigurationService {
             request.setValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
             
             let task = self.urlSession.dataTask(with: request) { (data, response, error) in
-                guard let data = data, let response = response as? HTTPURLResponse, 200..<300 ~= response.statusCode else {
+                guard let data = data, let response = response as? HTTPURLResponse else {
+                    handler(.failure(error ?? Error.unknown))
+                    return
+                }
+                
+                guard response.statusCode != 401 else {
+                    // Unauthorized! Try to authenticate again
+                    self.fetchConfig(for: profile, authenticationBehavior: .always, handler: handler)
+                    return
+                }
+                
+                guard 200..<300 ~= response.statusCode else {
                     handler(.failure(error ?? Error.unknown))
                     return
                 }

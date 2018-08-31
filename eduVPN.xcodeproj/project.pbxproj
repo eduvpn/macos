@@ -47,7 +47,6 @@
 		C75C8F4820B56AF4004B028C /* IPAddress.swift in Sources */ = {isa = PBXBuildFile; fileRef = C75C8F4720B56AF3004B028C /* IPAddress.swift */; };
 		C75C8F4920B56AF4004B028C /* IPAddress.swift in Sources */ = {isa = PBXBuildFile; fileRef = C75C8F4720B56AF3004B028C /* IPAddress.swift */; };
 		C761DF071FE4002A009F0154 /* Enter2FAViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C761DF061FE4002A009F0154 /* Enter2FAViewController.swift */; };
-		C761E2DE2080B07B00A98B90 /* Reachability.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C761E2DD2080B07B00A98B90 /* Reachability.framework */; };
 		C761E2E02080B08200A98B90 /* Reachability.framework.dSYM in Resources */ = {isa = PBXBuildFile; fileRef = C761E2DF2080B08200A98B90 /* Reachability.framework.dSYM */; };
 		C761E2E12080B08C00A98B90 /* Reachability.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C761E2DD2080B07B00A98B90 /* Reachability.framework */; };
 		C761E2E22080B08C00A98B90 /* Reachability.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = C761E2DD2080B07B00A98B90 /* Reachability.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -63,7 +62,6 @@
 		C789DCC420C727BE00A0668E /* Sparkle.framework.dSYM in CopyFiles */ = {isa = PBXBuildFile; fileRef = C741F43B1FC6DE9000B1EB83 /* Sparkle.framework.dSYM */; };
 		C789DCC620C727CB00A0668E /* Reachability.framework.dSYM in CopyFiles */ = {isa = PBXBuildFile; fileRef = C761E2DF2080B08200A98B90 /* Reachability.framework.dSYM */; };
 		C789DCC720C727CF00A0668E /* Sparkle.framework.dSYM in CopyFiles */ = {isa = PBXBuildFile; fileRef = C741F43B1FC6DE9000B1EB83 /* Sparkle.framework.dSYM */; };
-		C789DCCB20C7E3CB00A0668E /* Socket.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C789DCC920C7E3CA00A0668E /* Socket.framework */; };
 		C789DCCD20C7E3CB00A0668E /* Socket.framework.dSYM in Resources */ = {isa = PBXBuildFile; fileRef = C789DCCA20C7E3CB00A0668E /* Socket.framework.dSYM */; };
 		C789DCCE20C7E3CB00A0668E /* Socket.framework.dSYM in Resources */ = {isa = PBXBuildFile; fileRef = C789DCCA20C7E3CB00A0668E /* Socket.framework.dSYM */; };
 		C789DCCF20C7E3E000A0668E /* Socket.framework.dSYM in CopyFiles */ = {isa = PBXBuildFile; fileRef = C789DCCA20C7E3CB00A0668E /* Socket.framework.dSYM */; };
@@ -378,9 +376,7 @@
 				C761E2E12080B08C00A98B90 /* Reachability.framework in Frameworks */,
 				C7D15FD21F0D166100719F38 /* Security.framework in Frameworks */,
 				C7D15FD11F0D165900719F38 /* Cocoa.framework in Frameworks */,
-				C789DCCB20C7E3CB00A0668E /* Socket.framework in Frameworks */,
 				C74487061F194FAB0072B472 /* Sodium.framework in Frameworks */,
-				C761E2DE2080B07B00A98B90 /* Reachability.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -654,7 +650,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0830;
-				LastUpgradeCheck = 0930;
+				LastUpgradeCheck = 0940;
 				ORGANIZATIONNAME = EduVPN;
 				TargetAttributes = {
 					C72AD6F21F0A692F006DBDA5 = {

@@ -153,12 +153,7 @@ class ConnectionViewController: NSViewController {
             }
         }
         
-        guard let authState = ServiceContainer.authenticationService.authState(for: profile.info.provider) else {
-            // This should in theory never happen
-            return
-        }
-        
-        ServiceContainer.connectionService.connect(to: profile, twoFactor: twoFactor, authState: authState) { (result) in
+        ServiceContainer.connectionService.connect(to: profile, twoFactor: twoFactor) { (result) in
             DispatchQueue.main.async {
                 switch result {
                 case .success:
