@@ -34,6 +34,7 @@ class ProvidersViewController: NSViewController {
             addRows(connectionType: .secureInternet)
             addRows(connectionType: .instituteAccess)
             addRows(connectionType: .custom)
+            addRows(connectionType: .localConfig)
             
             self.rows = rows
         }

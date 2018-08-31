@@ -12,6 +12,7 @@ enum ConnectionType: String, Codable {
     case secureInternet
     case instituteAccess
     case custom
+    case localConfig
     
     var localizedDescription: String {
         switch self {
@@ -21,6 +22,8 @@ enum ConnectionType: String, Codable {
             return NSLocalizedString("Institute Access", comment: "")
         case .custom:
             return NSLocalizedString("Custom", comment: "")
+        case .localConfig:
+            return NSLocalizedString("Local", comment: "")
         }
     }
 }

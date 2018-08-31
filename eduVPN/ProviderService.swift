@@ -120,6 +120,7 @@ class ProviderService {
         }
         
         addProviders(type: .custom)
+        addProviders(type: .localConfig)
         
         handler(.success(accessibleProviders))
         
@@ -183,6 +184,7 @@ class ProviderService {
             addProviders(type: .secureInternet)
             addProviders(type: .instituteAccess)
             addProviders(type: .custom)
+            addProviders(type: .localConfig)
 
             handler(.success(accessibleProviders))
         }
@@ -246,7 +248,9 @@ class ProviderService {
         do {
             let url = try storedProvidersFileURL()
             let data = try Data(contentsOf: url)
-            let restoredProviders = try decoder.decode([ConnectionType: [Provider]].self, from: data)
+            var restoredProviders = try decoder.decode([ConnectionType: [Provider]].self, from: data)
+            let lcp = Provider(displayName: "filename.ovpn", baseURL: URL(fileURLWithPath: "/Users/jkool/config.ovpn"), logoURL: nil, publicKey: nil, connectionType: .localConfig, authorizationType: .local)
+            restoredProviders[.localConfig] = [lcp]
             storedProviders = restoredProviders
         } catch (let error) {
             NSLog("Failed to read stored providers from disk at \(url): \(error)")
@@ -281,7 +285,7 @@ class ProviderService {
             path = "institute_access"
         case (.instituteAccess, true):
             path = "institute_access_dev"
-        case (.custom, _):
+        case (.custom, _), (.localConfig, _):
             fatalError("Can't discover custom providers")
         }
         return URL(string: path + ".json", relativeTo: URL(string: "https://static.eduvpn.nl/disco/")!)!
@@ -303,7 +307,7 @@ class ProviderService {
             path = "institute_access"
         case (.instituteAccess, true):
             path = "institute_access_dev"
-        case (.custom, _):
+        case (.custom, _), (.localConfig, _):
             fatalError("Can't discover custom provider signatures")
         }
         return URL(string: path + ".json.sig", relativeTo: URL(string: "https://static.eduvpn.nl/disco/")!)!
@@ -443,6 +447,12 @@ class ProviderService {
     ///   - provider: Provider
     ///   - handler: Info about provider or error
     func fetchInfo(for provider: Provider, handler: @escaping (Result<ProviderInfo>) -> ()) {
+        guard provider.connectionType != .localConfig else {
+            let providerInfo = ProviderInfo(apiBaseURL: URL(fileURLWithPath: "/dev/null"), authorizationURL: URL(fileURLWithPath: "/dev/null"), tokenURL: URL(fileURLWithPath: "/dev/null"), provider: provider)
+            handler(.success(providerInfo))
+            return
+        }
+        
         guard let url = URL(string: "info.json", relativeTo: provider.baseURL) else {
             handler(.failure(Error.invalidProvider))
             return
@@ -456,6 +466,8 @@ class ProviderService {
                     handler(.failure(error ?? Error.unknown))
                 case .custom:
                     handler(.failure(error ?? Error.invalidProviderURL))
+                case .localConfig:
+                    fatalError("Can't fetch provider info for local config")
                 }
                 return
             }
@@ -493,6 +505,14 @@ class ProviderService {
     ///   - info: Provider info
     ///   - handler: User info and profiles or error
     func fetchUserInfoAndProfiles(for info: ProviderInfo, handler: @escaping (Result<(UserInfo, [Profile])>) -> ()) {
+        guard info.provider.connectionType != .localConfig else {
+            let userInfo = UserInfo(twoFactorEnrolled: false, twoFactorEnrolledWith: [], isDisabled: false)
+            let profile = Profile(profileId: info.provider.displayName, displayName: info.provider.displayName, twoFactor: false, info: info)
+            handler(.success((userInfo, [profile])))
+            return
+        }
+
+        
         let group = DispatchGroup()
         var userInfo: UserInfo? = nil
         var profiles: [Profile]? = nil

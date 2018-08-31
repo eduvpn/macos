@@ -55,7 +55,13 @@ class AuthenticationService {
     /// - Parameters:
     ///   - info: Provider info
     ///   - handler: Auth state or error
-    func authenticate(using info: ProviderInfo, handler: @escaping (Result<OIDAuthState>) -> ()) {
+    func authenticate(using info: ProviderInfo, handler: @escaping (Result<Void>) -> ()) {
+        // No need to authenticate for local config
+        guard info.provider.connectionType != .localConfig else {
+            handler(.success(Void()))
+            return
+        }
+        
         handlersAfterAuthenticating.append(handler)
         if isAuthenticating {
             return
@@ -79,7 +85,7 @@ class AuthenticationService {
             self.handlersAfterAuthenticating.forEach { handler in
                 if let authState = authState {
                     self.store(for: info.provider, authState: authState)
-                    handler(.success(authState))
+                    handler(.success(Void()))
                 } else if let error = error {
                     handler(.failure(error))
                 } else {
@@ -93,7 +99,7 @@ class AuthenticationService {
     }
     
     private var isAuthenticating = false
-    private var handlersAfterAuthenticating: [(Result<OIDAuthState>) -> ()] = []
+    private var handlersAfterAuthenticating: [(Result<Void>) -> ()] = []
     
     /// Cancel authentication
     func cancelAuthentication() {

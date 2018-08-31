@@ -32,7 +32,6 @@
 
  @param launchURL URL to openvpn binary
  @param config URL to config file
- @param authUserPass URL to auth-user-pass file
  @param upScript URL to up script
  @param downScript URL to down script
  @param reply Success or not

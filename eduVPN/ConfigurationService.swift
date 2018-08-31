@@ -114,6 +114,12 @@ class ConfigurationService {
     ///   - info: Provider info
     ///   - handler: Certificate common name or error
     private func restoreOrCreateKeyPair(for info: ProviderInfo, handler: @escaping (Result<String>) -> ()) {
+        guard info.provider.connectionType != .localConfig else {
+            handler(.success(""))
+            return
+        }
+
+        
         var keyPairs = UserDefaults.standard.array(forKey: "keyPairs") ?? []
         
         let certificateCommonNames = keyPairs.lazy.compactMap { keyPair -> String? in
@@ -372,6 +378,17 @@ class ConfigurationService {
     ///   - authenticationBehavior: Whether authentication should be retried when token is revoked or expired
     ///   - handler: Config or error
     private func fetchConfig(for profile: Profile, authenticationBehavior: AuthenticationService.Behavior = .ifNeeded, handler: @escaping (Result<Config>) -> ()) {
+        guard profile.info.provider.connectionType != .localConfig else {
+            do {
+                let config = try String(contentsOf: profile.info.provider.baseURL)
+                handler(.success(config))
+            }
+            catch {
+                handler(.failure(error))
+            }
+            return
+        }
+        
         guard let url = URL(string: "profile_config", relativeTo: profile.info.apiBaseURL) else {
             handler(.failure(Error.invalidURL))
             return

@@ -56,6 +56,8 @@
 		C766150F2125B4F2002A8E4D /* Debug.swift in Sources */ = {isa = PBXBuildFile; fileRef = C766150D2125B4F2002A8E4D /* Debug.swift */; };
 		C766FB87212D6AF000306271 /* eduVPNAssets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C766FB86212D6AF000306271 /* eduVPNAssets.xcassets */; };
 		C766FB89212D6AF900306271 /* LetsConnectAssets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C766FB88212D6AF900306271 /* LetsConnectAssets.xcassets */; };
+		C775F5F121397FF70092D09A /* SecurityInterface.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C775F5F021397FF70092D09A /* SecurityInterface.framework */; };
+		C775F5F2213980010092D09A /* SecurityInterface.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C775F5F021397FF70092D09A /* SecurityInterface.framework */; };
 		C77EF61320876B5A0097DEB2 /* String+Random.swift in Sources */ = {isa = PBXBuildFile; fileRef = C77EF61220876B5A0097DEB2 /* String+Random.swift */; };
 		C78250A61FC7291000B33892 /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = C78250A51FC7291000B33892 /* Message.swift */; };
 		C789DCC320C727B900A0668E /* Reachability.framework.dSYM in CopyFiles */ = {isa = PBXBuildFile; fileRef = C761E2DF2080B08200A98B90 /* Reachability.framework.dSYM */; };
@@ -320,6 +322,7 @@
 		C766150D2125B4F2002A8E4D /* Debug.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Debug.swift; path = eduVPN/Debug.swift; sourceTree = SOURCE_ROOT; };
 		C766FB86212D6AF000306271 /* eduVPNAssets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = eduVPNAssets.xcassets; sourceTree = "<group>"; };
 		C766FB88212D6AF900306271 /* LetsConnectAssets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = LetsConnectAssets.xcassets; sourceTree = "<group>"; };
+		C775F5F021397FF70092D09A /* SecurityInterface.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SecurityInterface.framework; path = System/Library/Frameworks/SecurityInterface.framework; sourceTree = SDKROOT; };
 		C77EF61220876B5A0097DEB2 /* String+Random.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Random.swift"; sourceTree = "<group>"; };
 		C78250A51FC7291000B33892 /* Message.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Message.swift; path = eduVPN/Message.swift; sourceTree = SOURCE_ROOT; };
 		C789DCC920C7E3CA00A0668E /* Socket.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Socket.framework; path = Carthage/Build/Mac/Socket.framework; sourceTree = "<group>"; };
@@ -369,6 +372,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C775F5F121397FF70092D09A /* SecurityInterface.framework in Frameworks */,
 				C72A557A1F0D9FF2001DCA24 /* AppAuth.framework in Frameworks */,
 				C789DCD220C7E41100A0668E /* Socket.framework in Frameworks */,
 				C741F43E1FC6DE9000B1EB83 /* Sparkle.framework in Frameworks */,
@@ -384,6 +388,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C775F5F2213980010092D09A /* SecurityInterface.framework in Frameworks */,
 				C7C494F4208484120056D5E4 /* AppAuth.framework in Frameworks */,
 				C7C494F5208484120056D5E4 /* Sparkle.framework in Frameworks */,
 				C7C494F6208484120056D5E4 /* ServiceManagement.framework in Frameworks */,
@@ -411,6 +416,7 @@
 		C72AD7001F0A6AE8006DBDA5 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				C775F5F021397FF70092D09A /* SecurityInterface.framework */,
 				C72A55791F0D9FF2001DCA24 /* AppAuth.framework */,
 				C72A557E1F0DA01C001DCA24 /* AppAuth.framework.dSYM */,
 				C71847CD1F0E7EAF00296C61 /* Kingfisher.framework */,

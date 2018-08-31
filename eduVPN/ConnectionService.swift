@@ -11,6 +11,7 @@ import AppKit
 import ServiceManagement
 import AppAuth
 import Socket
+import SecurityInterface
 
 typealias Config = String
 
@@ -518,13 +519,81 @@ class ConnectionService: NSObject {
         bytesOut = Int(components[1]) ?? bytesOut
     }
     
+    open func getAllKeyChainItemsOfClass(_ secClass: String) -> [String:String] {
+        
+        let query: [String: Any] = [
+            kSecClass as String : secClass,
+            kSecReturnData as String  : kCFBooleanTrue,
+            kSecReturnAttributes as String : kCFBooleanTrue,
+            kSecReturnRef as String : kCFBooleanTrue,
+            kSecMatchLimit as String: kSecMatchLimitAll
+        ]
+        
+        var result: AnyObject?
+        
+        let lastResultCode = withUnsafeMutablePointer(to: &result) {
+            SecItemCopyMatching(query as CFDictionary, UnsafeMutablePointer($0))
+        }
+        
+        var values = [String:String]()
+        if lastResultCode == noErr {
+            let array = result as? Array<Dictionary<String, Any>>
+            
+            for item in array! {
+                if let key = item[kSecAttrAccount as String] as? String,
+                    let value = item[kSecValueData as String] as? Data {
+                    values[key] = String(data: value, encoding:.utf8)
+                }
+            }
+        }
+        
+        return values
+    }
+    
     private func needCertificate() throws {
+        if commonNameCertificate == "" {
+            let query: NSDictionary = [kSecClass: kSecClassIdentity, kSecMatchLimit: kSecMatchLimitAll] // This could be stricter!
+            
+            var result: AnyObject?
+            
+            let lastResultCode = withUnsafeMutablePointer(to: &result) {
+                SecItemCopyMatching(query as CFDictionary, UnsafeMutablePointer($0))
+            }
+            
+            if lastResultCode == noErr {
+                let array = result as? Array<SecIdentity>
+                
+                
+                DispatchQueue.main.async {
+                    do {
+                        let panel = SFChooseIdentityPanel.shared()!
+                        panel.setInformativeText("Your choice will be remembered for future use. (to be implemented)")
+                        panel.setAlternateButtonTitle("Cancel")
+                        let a = panel.runModal(forIdentities: array, message: "Choose the certificate to use for this connection")
+                        if a == NSOKButton {
+                            if let identity = panel.identity() {
+                                let certificate = try self.keychainService.certificate(for: identity.takeUnretainedValue())
+                                let certificateString = certificate.base64EncodedString(options: [.lineLength64Characters])
+                                let response = "certificate\n-----BEGIN CERTIFICATE-----\n\(certificateString)\n-----END CERTIFICATE-----\nEND\n"
+                                try self.write(response)
+                                
+                            }
+                        }
+                        
+                    }
+                    catch {
+                        dump(error)
+                    }
+                }
+            }
+            return
+        }
         let certificate = try keychainService.certificate(for: commonNameCertificate)
         let certificateString = certificate.base64EncodedString(options: [.lineLength64Characters])
         let response = "certificate\n-----BEGIN CERTIFICATE-----\n\(certificateString)\n-----END CERTIFICATE-----\nEND\n"
         try write(response)
     }
-    
+        
     private func needPassword(_ string: String) throws {
         switch string {
         case "Need \'Auth\' username/password":
