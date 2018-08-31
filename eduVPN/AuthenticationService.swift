@@ -127,7 +127,7 @@ class AuthenticationService {
     ///
     /// - Parameters:
     ///   - info: Provider info
-    ///   - authenticationBehavior: Whether authentication should retried when token is revoked or expired
+    ///   - authenticationBehavior: Whether authentication should be retried when token is revoked or expired
     ///   - action: The action to perform
     func performAction(for info: ProviderInfo, authenticationBehavior: Behavior = .ifNeeded, action: @escaping OIDAuthStateAction) {
         func reauthenticate() {

@@ -209,7 +209,7 @@ class ConfigurationService {
     ///
     /// - Parameters:
     ///   - info: Provider info
-    ///   - authenticationBehavior: Whether authentication should retried when token is revoked or expired
+    ///   - authenticationBehavior: Whether authentication should be retried when token is revoked or expired
     ///   - handler: Keypair or error
     private func createKeyPair(for info: ProviderInfo, authenticationBehavior: AuthenticationService.Behavior = .ifNeeded, handler: @escaping (Result<(certificate: String, privateKey: String)>) -> ()) {
         guard let url = URL(string: "create_keypair", relativeTo: info.apiBaseURL) else {
@@ -278,7 +278,7 @@ class ConfigurationService {
     /// - Parameters:
     ///   - info: Provider info
     ///   - certificateCommonName: Common name of the certificate
-    ///   - authenticationBehavior: Whether authentication should retried when token is revoked or expired
+    ///   - authenticationBehavior: Whether authentication should be retried when token is revoked or expired
     ///   - handler: Void (valid) or an error
     private func checkCertificate(for info: ProviderInfo, certificateCommonName: String, authenticationBehavior: AuthenticationService.Behavior = .ifNeeded, handler: @escaping (Result<Void>) -> ()) {
         guard let bareURL = URL(string: "check_certificate", relativeTo: info.apiBaseURL) else {
@@ -369,7 +369,7 @@ class ConfigurationService {
     ///
     /// - Parameters:
     ///   - profile: Profile
-    ///   - authenticationBehavior: Whether authentication should retried when token is revoked or expired
+    ///   - authenticationBehavior: Whether authentication should be retried when token is revoked or expired
     ///   - handler: Config or error
     private func fetchConfig(for profile: Profile, authenticationBehavior: AuthenticationService.Behavior = .ifNeeded, handler: @escaping (Result<Config>) -> ()) {
         guard let url = URL(string: "profile_config", relativeTo: profile.info.apiBaseURL) else {

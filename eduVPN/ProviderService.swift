@@ -533,7 +533,7 @@ class ProviderService {
     ///
     /// - Parameters:
     ///   - info: Provider info
-    ///   - authenticationBehavior: Whether authentication should retried when token is revoked or expired
+    ///   - authenticationBehavior: Whether authentication should be retried when token is revoked or expired
     ///   - handler: User info or error
     func fetchUserInfo(for info: ProviderInfo, authenticationBehavior: AuthenticationService.Behavior = .ifNeeded, handler: @escaping (Result<UserInfo>) -> ()) {
         let path: String = "user_info"
@@ -615,7 +615,7 @@ class ProviderService {
     ///
     /// - Parameters:
     ///   - info: Provider info
-    ///   - authenticationBehavior: Whether authentication should retried when token is revoked or expired
+    ///   - authenticationBehavior: Whether authentication should be retried when token is revoked or expired
     ///   - handler: Profiles or error
     func fetchProfiles(for info: ProviderInfo, authenticationBehavior: AuthenticationService.Behavior = .ifNeeded, handler: @escaping (Result<[Profile]>) -> ()) {
         guard let url = URL(string: "profile_list", relativeTo: info.apiBaseURL) else {
@@ -691,7 +691,7 @@ class ProviderService {
     /// - Parameters:
     ///   - info: Provider info
     ///   - audience: System or user
-    ///   - authenticationBehavior: Whether authentication should retried when token is revoked or expired
+    ///   - authenticationBehavior: Whether authentication should be retried when token is revoked or expired
     ///   - handler: Messages or error
     func fetchMessages(for info: ProviderInfo, audience: MessageAudience, authenticationBehavior: AuthenticationService.Behavior = .ifNeeded, handler: @escaping (Result<[Message]>) -> ()) {
         let path: String
