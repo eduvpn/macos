@@ -1,5 +1,9 @@
 # eduVPN for macOS
 
+### OpenVPN
+
+This app includes openvpn as a binary. It is taken from the Tunnelblick binary distributions. The current version is `openvpn-2.4.6-openssl-1.1.0h`. No patches are applied to the openvpn binary, though the up and down scripts are slightly edited to avoid namespace collisions. Note that Tunnelblick does apply some (minor) patches to the official openvpn source code.
+
 ### Notes
 
 The helper will only run binaries that are signed. This is automatically done with a run script during the build process.
@@ -41,6 +45,8 @@ A version for distribution can be build using the provided script `build.sh`:
 
 ### Uninstalling
 
+You can use the provided script `uninstall.sh` to uninstall the helper files.
+
 Besides deleting the app, files are installed at these locations:
 
     /Library/LaunchDaemons/org.eduvpn.app.openvpnhelper.plist
@@ -52,3 +58,4 @@ Besides deleting the app, files are installed at these locations:
 and in a temporary folder as provided by macOS, usually somewhere under `/private/var/folders`.
 
 You need to logout or even restart your computer to complete the uninstall.
+
