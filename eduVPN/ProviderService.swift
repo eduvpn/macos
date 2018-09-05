@@ -27,6 +27,7 @@ class ProviderService {
         case userIsDisabled
         case invalidMessages
         case missingToken
+        case invalidConfigFile(displayName: String, containsCert: Bool, containsKey: Bool)
         
         var errorDescription: String? {
             switch self {
@@ -56,6 +57,17 @@ class ProviderService {
                 return NSLocalizedString("Invalid messages were received from this provider", comment: "")
             case .missingToken:
                 return NSLocalizedString("Profiles could not be retrieved because no valid token was available", comment: "")
+            case .invalidConfigFile(let displayName, let containsCert, let containsKey):
+                switch (containsCert, containsKey) {
+                case (true, true):
+                    return NSLocalizedString("The file “\(displayName)” needs to be adjusted because it contains a certificate and a private key", comment: "")
+                case (true, false):
+                    return NSLocalizedString("The file “\(displayName)” needs to be adjusted because it contains a certificate", comment: "")
+                case (false, true):
+                    return NSLocalizedString("The file “\(displayName)” needs to be adjusted because it contains a private key", comment: "")
+                case (false, false):
+                    return NSLocalizedString("The file “\(displayName)” couldn’t be imported", comment: "")
+                }
             }
         }
         
@@ -65,8 +77,37 @@ class ProviderService {
                 return NSLocalizedString("Verify URL.", comment: "")
             case .userIsDisabled:
                 return NSLocalizedString("Contact administrator.", comment: "")
+            case .invalidConfigFile(_, let containsCert, let containsKey):
+                switch (containsCert, containsKey) {
+                case (true, true):
+                    return NSLocalizedString("Do you want to import the certificate and private key into your keychain and remove them from the imported OpenVPN configuration file?", comment: "")
+                case (true, false):
+                    return NSLocalizedString("Do you want to remove the certificate from the imported OpenVPN configuration file?\n\nYou may be prompted to select a certificate from your keychain when connecting. If you have a certificate and private key you need to import them into your keychain first.", comment: "")
+                case (false, true):
+                    return NSLocalizedString("Do you want to remove the private key from the imported OpenVPN configuration file?\n\nYou may be prompted to select a certificate from your keychain when connecting. If you have a certificate and private key you need to import them into your keychain first.", comment: "")
+                case (false, false):
+                    return NSLocalizedString("It is malformed.", comment: "")
+                }
             default:
                 return NSLocalizedString("Try again later.", comment: "")
+            }
+        }
+        
+        var recoveryOptions: [String] {
+            switch self {
+            case .invalidConfigFile(_, let containsCert, let containsKey):
+                switch (containsCert, containsKey) {
+                case (true, true):
+                    return [NSLocalizedString("Import into Keychain", comment: ""), NSLocalizedString("Cancel", comment: "")]
+                case (true, false):
+                    return [NSLocalizedString("Remove Certificate", comment: ""), NSLocalizedString("Cancel", comment: "")]
+                case (false, true):
+                    return [NSLocalizedString("Remove Private Key", comment: ""), NSLocalizedString("Cancel", comment: "")]
+                case (false, false):
+                    return []
+                }
+            default:
+                return []
             }
         }
     }
@@ -207,6 +248,9 @@ class ProviderService {
     ///
     /// - Parameter provider: provider
     func storeProvider(provider: Provider) {
+        guard provider.connectionType != .localConfig else {
+            return
+        }
         let connectionType = provider.connectionType
         var providers = storedProviders[connectionType] ?? []
         providers.append(provider)
@@ -219,6 +263,7 @@ class ProviderService {
     /// - Parameter provider: provider
     func deleteProvider(provider: Provider) {
         let connectionType = provider.connectionType
+        // TODO: for local config: delete config
         var providers = storedProviders[connectionType] ?? []
         let index = providers.index(where: { (otherProvider) -> Bool in
             return otherProvider.id == provider.id
@@ -789,10 +834,86 @@ class ProviderService {
         }
     }
     
-    func addProvider(configFileURL: URL) {
-        let displayName = FileManager.default.displayName(atPath: configFileURL.path)
-        let provider = Provider(displayName: displayName, baseURL: configFileURL, logoURL: nil, publicKey: "", connectionType: .localConfig, authorizationType: .local)
-        storedProviders[.localConfig]?.append(provider)
+    func addProvider(configFileURL: URL, recover: Bool = false, handler: @escaping ((Result<Provider>) -> Void))  {
+        preflightCheck(configFileURL: configFileURL, recover: recover) { result in
+            switch result {
+            case .success(let config, let commonName):
+                // TODO: Copy to Application Support folder
+                let displayName = FileManager.default.displayName(atPath: configFileURL.path)
+                let provider = Provider(displayName: displayName, baseURL: configFileURL, logoURL: nil, publicKey: commonName, connectionType: .localConfig, authorizationType: .local)
+                self.storedProviders[.localConfig]?.append(provider)
+                handler(.success(provider))
+            case .failure(let error):
+                handler(.failure(error))
+            }
+        }
+    }
+    
+    private func preflightCheck(configFileURL: URL, recover: Bool, handler: @escaping ((Result<(Config, String?)>) -> Void)) {
+        do {
+            let config = try String(contentsOf: configFileURL)
+            let certStartRange = config.range(of: "<cert>")
+            let certEndRange = config.range(of: "</cert>")
+            let keyStartRange = config.range(of: "<key>")
+            let keyEndRange = config.range(of: "</key>")
+            
+            if certStartRange == nil, certEndRange == nil, keyStartRange == nil, keyEndRange == nil {
+                handler(.success((config, nil)))
+            } else {
+                let certificate: String?
+                if let certStartRange = certStartRange, let certEndRange = certEndRange, certStartRange.upperBound < certEndRange.lowerBound {
+                    certificate = String(config[certStartRange.upperBound..<certEndRange.lowerBound])
+                } else {
+                    certificate = nil
+                }
+                let privateKey: String?
+                if let keyStartRange = keyStartRange, let keyEndRange = keyEndRange, keyStartRange.upperBound < keyEndRange.lowerBound {
+                    privateKey = String(config[keyStartRange.upperBound..<keyEndRange.lowerBound])
+                } else {
+                    privateKey = nil
+                }
+                
+                if recover {
+                    if let certificate = certificate, let privateKey = privateKey {
+                        // Import into Keychain
+                        let passphrase = String.random()
+                        ServiceContainer.configurationService.createPKCS12(certificate: certificate, privateKey: privateKey, passphrase: passphrase) { result in
+                            switch result {
+                            case .success(let data):
+                                let commonName = try? ServiceContainer.keychainService.importKeyPair(data: data, passphrase: passphrase)
+                                dump(commonName)
+                                // TODO: Remove Certificate and Private Key
+                                handler(.success((config, commonName)))
+                                break
+                            case .failure(let error):
+                                dump(error)
+                                handler(.failure(error))
+                                break
+                            }
+                        }
+                        
+                        return
+                    } else if let certificate = certificate {
+                        // TODO: Remove Certificate
+                        return
+                    } else if let privateKey = privateKey {
+                        // TODO: Remove Private Key
+                        return
+                    } else {
+                        let displayName = FileManager.default.displayName(atPath: configFileURL.path)
+                        let error = Error.invalidConfigFile(displayName: displayName, containsCert: false, containsKey: false)
+                        handler(.failure(error))
+                    }
+                } else {
+                    
+                    let displayName = FileManager.default.displayName(atPath: configFileURL.path)
+                    let error = Error.invalidConfigFile(displayName: displayName, containsCert: certificate != nil, containsKey: privateKey != nil)
+                    handler(.failure(error))
+                }
+            }
+        } catch {
+            handler(.failure(error))
+        }
     }
     
     func saveCommonCertificate(_ name: String, for provider: Provider) {

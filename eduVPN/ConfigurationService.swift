@@ -451,7 +451,7 @@ class ConfigurationService {
     ///   - privateKey: Private key as PEM string
     ///   - passphrase: Passphrase to set on PKCS#12 file
     ///   - handler: PKCS#12 file as data or error
-    private func createPKCS12(certificate: String, privateKey: String, passphrase: String, handler: @escaping ((Result<Data>) -> ())) {
+    func createPKCS12(certificate: String, privateKey: String, passphrase: String, handler: @escaping ((Result<Data>) -> ())) {
         do {
             let process = Process()
             process.launchPath = "/usr/bin/openssl"
