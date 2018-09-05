@@ -574,6 +574,7 @@ class ConnectionService: NSObject {
                             if let identity = panel.identity() {
                                 let certificate = try self.keychainService.certificate(for: identity.takeUnretainedValue())
                                 let certificateString = certificate.base64EncodedString(options: [.lineLength64Characters])
+                                self.commonNameCertificate = try self.keychainService.commonName(for: identity.takeUnretainedValue())
                                 let response = "certificate\n-----BEGIN CERTIFICATE-----\n\(certificateString)\n-----END CERTIFICATE-----\nEND\n"
                                 try self.write(response)
                                 

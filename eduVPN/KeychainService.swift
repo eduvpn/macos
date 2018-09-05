@@ -67,18 +67,7 @@ class KeychainService {
         let dictionary = newArray.object(at: 0)
         let secIdentity = (dictionary as AnyObject)[kSecImportItemIdentity as String] as! SecIdentity
         
-        var certificateRef: SecCertificate? = nil
-        let certificateError = SecIdentityCopyCertificate(secIdentity, &certificateRef)
-        guard certificateError == noErr else {
-           throw Error.unknown
-        }
-    
-        var commonName: CFString? = nil
-        let commonNameError = SecCertificateCopyCommonName(certificateRef!, &commonName)
-        guard commonNameError == noErr else {
-            throw Error.unknown
-        }
-        return commonName! as String
+        return try commonName(for: secIdentity)
     }
     
     private func identity(for commonName: String) throws -> SecIdentity {
@@ -105,6 +94,21 @@ class KeychainService {
         
         let dataOut = SecCertificateCopyData(certificateRef!)
         return dataOut as Data
+    }
+    
+    func commonName(for secIdentity: SecIdentity) throws -> String {
+        var certificateRef: SecCertificate? = nil
+        let certificateError = SecIdentityCopyCertificate(secIdentity, &certificateRef)
+        guard certificateError == noErr else {
+            throw Error.unknown
+        }
+        
+        var commonName: CFString? = nil
+        let commonNameError = SecCertificateCopyCommonName(certificateRef!, &commonName)
+        guard commonNameError == noErr else {
+            throw Error.unknown
+        }
+        return commonName! as String
     }
     
     func sign(using commonName: String, dataToSign: Data) throws -> Data {
