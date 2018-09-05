@@ -91,13 +91,18 @@ struct Provider: Codable {
     let displayName: String
     let baseURL: URL
     let logoURL: URL?
-    let publicKey: String?
+    
+    /// The public key of the API, or for connection type `.localConfig`: the common name of the associated certificate
+    var publicKey: String?
+    
     let connectionType: ConnectionType
     let authorizationType: AuthorizationType
     
     var id: String {
         return connectionType.rawValue + ":" + baseURL.absoluteString
     }
+    
+    
 }
 
 struct ProviderInfo: Codable {

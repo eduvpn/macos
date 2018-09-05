@@ -248,9 +248,7 @@ class ProviderService {
         do {
             let url = try storedProvidersFileURL()
             let data = try Data(contentsOf: url)
-            var restoredProviders = try decoder.decode([ConnectionType: [Provider]].self, from: data)
-            let lcp = Provider(displayName: "filename.ovpn", baseURL: URL(fileURLWithPath: "/Users/jkool/config.ovpn"), logoURL: nil, publicKey: nil, connectionType: .localConfig, authorizationType: .local)
-            restoredProviders[.localConfig] = [lcp]
+            let restoredProviders = try decoder.decode([ConnectionType: [Provider]].self, from: data)
             storedProviders = restoredProviders
         } catch (let error) {
             NSLog("Failed to read stored providers from disk at \(url): \(error)")
@@ -791,5 +789,35 @@ class ProviderService {
         }
     }
     
+    func addProvider(configFileURL: URL) {
+        let displayName = FileManager.default.displayName(atPath: configFileURL.path)
+        let provider = Provider(displayName: displayName, baseURL: configFileURL, logoURL: nil, publicKey: "", connectionType: .localConfig, authorizationType: .local)
+        storedProviders[.localConfig]?.append(provider)
+    }
+    
+    func saveCommonCertificate(_ name: String, for provider: Provider) {
+        guard provider.connectionType == .localConfig else {
+            return
+        }
+        
+        guard provider.publicKey != name else {
+            return
+        }
+        
+        var providers = storedProviders[.localConfig] ?? []
+        let index = providers.index(where: { $0.id == provider.id })
+        if let index = index {
+            var storedProvider = providers.remove(at: index)
+            storedProvider.publicKey = name
+            providers.insert(storedProvider, at: index)
+        } else {
+            var newProvider = provider
+            newProvider.publicKey = name
+            providers.append(newProvider)
+        }
+
+        storedProviders[.localConfig] = providers
+        saveToDisk()
+    }
     
 }

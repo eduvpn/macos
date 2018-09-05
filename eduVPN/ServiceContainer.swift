@@ -44,7 +44,7 @@ struct ServiceContainer {
     static let configurationService = ConfigurationService(urlSession: urlSession, authenticationService: authenticationService, keychainService: keychainService)
     
     /// Connects to VPN
-    static let connectionService = ConnectionService(configurationService: configurationService, helperService: helperService, keychainService: keychainService, preferencesService: preferencesService)
+    static let connectionService = ConnectionService(providerService: providerService, configurationService: configurationService, helperService: helperService, keychainService: keychainService, preferencesService: preferencesService)
     
     /// Handles preferences
     static let preferencesService = PreferencesService()

@@ -86,18 +86,23 @@ class ConnectionService: NSObject {
     /// Describes current connection state
     private(set) var state: State = .disconnected {
         didSet {
+            if state == .connected {
+                didConnect()
+            }
             if oldValue != state {
                 NotificationCenter.default.post(name: ConnectionService.stateChanged, object: self)
             }
         }
     }
     
+    private let providerService: ProviderService
     private let configurationService: ConfigurationService
     private let helperService: HelperService
     private let keychainService: KeychainService
     private let preferencesService: PreferencesService
     
-    init(configurationService: ConfigurationService, helperService: HelperService, keychainService: KeychainService, preferencesService: PreferencesService) {
+    init(providerService: ProviderService, configurationService: ConfigurationService, helperService: HelperService, keychainService: KeychainService, preferencesService: PreferencesService) {
+        self.providerService = providerService
         self.configurationService = configurationService
         self.helperService = helperService
         self.keychainService = keychainService
@@ -129,6 +134,7 @@ class ConnectionService: NSObject {
         localIPv4Address = nil
         localPort = nil
         localTUNTAPIPv6Address = nil
+        currentProfile = nil
         
         helperService.installHelperIfNeeded(client: self) { (result) in
             switch result {
@@ -140,6 +146,7 @@ class ConnectionService: NSObject {
                             let configURL = try self.install(config: config)
                             self.twoFactor = twoFactor
                             self.commonNameCertificate = certificateCommonName
+                            self.currentProfile = profile
                             self.activateConfig(at: configURL, handler: handler)
                         } catch(let error) {
                             self.state = .disconnected
@@ -155,6 +162,15 @@ class ConnectionService: NSObject {
                 handler(.failure(error))
             }
         }
+    }
+    
+    private var currentProfile: Profile?
+    
+    private func didConnect() {
+        guard let provider = currentProfile?.info.provider, provider.connectionType == .localConfig else {
+            return
+        }
+        providerService.saveCommonCertificate(commonNameCertificate, for: provider)
     }
     
     /// Installs configuration
@@ -392,7 +408,7 @@ class ConnectionService: NSObject {
     }
     
     private func enableStateAndByteCountNotificatons() throws {
-        try write("help\nstate on\nbytecount 1\n")
+        try write("state on\nbytecount 1\n")
     }
     
     enum OpenVPNState: String {
@@ -552,7 +568,7 @@ class ConnectionService: NSObject {
     
     private func needCertificate() throws {
         if commonNameCertificate == "" {
-            let query: NSDictionary = [kSecClass: kSecClassIdentity, kSecMatchLimit: kSecMatchLimitAll] // This could be stricter!
+            let query: NSDictionary = [kSecClass: kSecClassIdentity, kSecMatchLimit: kSecMatchLimitAll] // This could be stricter?
             
             var result: AnyObject?
             
@@ -563,38 +579,50 @@ class ConnectionService: NSObject {
             if lastResultCode == noErr {
                 let array = result as? Array<SecIdentity>
                 
-                
                 DispatchQueue.main.async {
-                    do {
-                        let panel = SFChooseIdentityPanel.shared()!
-                        panel.setInformativeText("Your choice will be remembered for future use. (to be implemented)")
-                        panel.setAlternateButtonTitle("Cancel")
-                        let a = panel.runModal(forIdentities: array, message: "Choose the certificate to use for this connection")
-                        if a == NSOKButton {
-                            if let identity = panel.identity() {
-                                let certificate = try self.keychainService.certificate(for: identity.takeUnretainedValue())
-                                let certificateString = certificate.base64EncodedString(options: [.lineLength64Characters])
-                                self.commonNameCertificate = try self.keychainService.commonName(for: identity.takeUnretainedValue())
-                                let response = "certificate\n-----BEGIN CERTIFICATE-----\n\(certificateString)\n-----END CERTIFICATE-----\nEND\n"
-                                try self.write(response)
-                                
-                            }
-                        }
-                        
-                    }
-                    catch {
-                        dump(error)
-                    }
+                    let panel = SFChooseIdentityPanel.shared()!
+                    self.identityPanel = panel
+                    panel.setInformativeText(NSLocalizedString("Your choice will be remembered for future use.", comment: ""))
+                    panel.setAlternateButtonTitle(NSLocalizedString("Cancel", comment: ""))
+                    let message = NSLocalizedString("Choose the certificate you want to use for this connection", comment: "")
+                    let window = NSApp.mainWindow
+                    panel.beginSheet(for: window, modalDelegate: self, didEnd: #selector(ConnectionService.chooseIdentitySheetDidEnd(sheet:returnCode:contextInfo:)), contextInfo: nil, identities: array, message: message)
                 }
             }
             return
         }
+        
         let certificate = try keychainService.certificate(for: commonNameCertificate)
         let certificateString = certificate.base64EncodedString(options: [.lineLength64Characters])
         let response = "certificate\n-----BEGIN CERTIFICATE-----\n\(certificateString)\n-----END CERTIFICATE-----\nEND\n"
         try write(response)
     }
-        
+    
+    private var identityPanel: SFChooseIdentityPanel?
+    
+    @objc func chooseIdentitySheetDidEnd(sheet: SFChooseIdentityPanel, returnCode: NSApplication.ModalResponse, contextInfo: AnyObject?) {
+        guard let identityPanel = identityPanel else {
+            return
+        }
+        do {
+            switch returnCode {
+            case .OK:
+                let identity = identityPanel.identity().takeUnretainedValue()
+                let certificate = try self.keychainService.certificate(for: identity)
+                let certificateString = certificate.base64EncodedString(options: [.lineLength64Characters])
+                self.commonNameCertificate = (try? self.keychainService.commonName(for: identity)) ?? ""
+                let response = "certificate\n-----BEGIN CERTIFICATE-----\n\(certificateString)\n-----END CERTIFICATE-----\nEND\n"
+                try self.write(response)
+            default:
+                fatalError("Not yet implemented")
+                return
+            }
+        }
+        catch {
+            dump(error)
+        }
+    }
+    
     private func needPassword(_ string: String) throws {
         switch string {
         case "Need \'Auth\' username/password":
