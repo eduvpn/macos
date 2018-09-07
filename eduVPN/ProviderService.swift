@@ -263,7 +263,12 @@ class ProviderService {
     /// - Parameter provider: provider
     func deleteProvider(provider: Provider) {
         let connectionType = provider.connectionType
-        // TODO: for local config: delete config
+        
+        // For local config: delete config
+        if connectionType == .localConfig {
+            try? FileManager.default.removeItem(at: provider.baseURL)
+        }
+        
         var providers = storedProviders[connectionType] ?? []
         let index = providers.index(where: { (otherProvider) -> Bool in
             return otherProvider.id == provider.id
@@ -275,16 +280,36 @@ class ProviderService {
         }
     }
     
+    /// URL for Application Support folder
+    ///
+    /// - Returns: URL
+    /// - Throws: Error finding or creating directory
+    private func applicationSupportDirectoryURL() throws -> URL  {
+        var applicationSupportDirectory = try FileManager.default.url(for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
+        applicationSupportDirectory.appendPathComponent(appName)
+        try FileManager.default.createDirectory(at: applicationSupportDirectory, withIntermediateDirectories: true, attributes: nil)
+        return applicationSupportDirectory
+    }
+    
     /// URL for saving providers to disk
     ///
     /// - Returns: URL
     /// - Throws: Error finding or creating directory
     private func storedProvidersFileURL() throws -> URL  {
-        var applicationSupportDirectory = try FileManager.default.url(for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
-        applicationSupportDirectory.appendPathComponent(appName)
-        try FileManager.default.createDirectory(at: applicationSupportDirectory, withIntermediateDirectories: true, attributes: nil)
-        applicationSupportDirectory.appendPathComponent("Providers.plist")
-        return applicationSupportDirectory
+        var storedProvidersFileURL = try applicationSupportDirectoryURL()
+        storedProvidersFileURL.appendPathComponent("Providers.plist")
+        return storedProvidersFileURL
+    }
+    
+    /// URL for saving local configs
+    ///
+    /// - Returns: URL
+    /// - Throws: Error finding or creating directory
+    private func localConfigsDirectoryURL() throws -> URL  {
+        var localConfigsDirectoryURL = try applicationSupportDirectoryURL()
+        localConfigsDirectoryURL.appendPathComponent("Local")
+        try FileManager.default.createDirectory(at: localConfigsDirectoryURL, withIntermediateDirectories: true, attributes: nil)
+        return localConfigsDirectoryURL
     }
     
     /// Reads providers from disk
@@ -835,27 +860,57 @@ class ProviderService {
     }
     
     func addProvider(configFileURL: URL, recover: Bool = false, handler: @escaping ((Result<Provider>) -> Void))  {
-        preflightCheck(configFileURL: configFileURL, recover: recover) { result in
+        configFileCheck(configFileURL: configFileURL, recover: recover) { result in
             switch result {
             case .success(let config, let commonName):
-                // TODO: Copy to Application Support folder
-                let displayName = FileManager.default.displayName(atPath: configFileURL.path)
-                let provider = Provider(displayName: displayName, baseURL: configFileURL, logoURL: nil, publicKey: commonName, connectionType: .localConfig, authorizationType: .local)
-                self.storedProviders[.localConfig]?.append(provider)
-                handler(.success(provider))
+                do {
+                    // Copy to Application Support folder
+                    let localConfigsDirectoryURL = try self.localConfigsDirectoryURL()
+                    var displayName = configFileURL.lastPathComponent
+                    let importedConfigFileURL = try localConfigsDirectoryURL.appendingPathComponent(displayName).nextUnusedFileURL()
+                    displayName = importedConfigFileURL.lastPathComponent
+                    try config.write(to: importedConfigFileURL, atomically: true, encoding: .utf8)
+                    let provider = Provider(displayName: displayName, baseURL: importedConfigFileURL, logoURL: nil, publicKey: commonName, connectionType: .localConfig, authorizationType: .local)
+                    if self.storedProviders[.localConfig] != nil {
+                        self.storedProviders[.localConfig]?.append(provider)
+                    } else {
+                        self.storedProviders[.localConfig] = [provider]
+                    }
+                    self.saveToDisk()
+                    handler(.success(provider))
+                } catch {
+                    handler(.failure(error))
+                }
             case .failure(let error):
                 handler(.failure(error))
             }
         }
     }
     
-    private func preflightCheck(configFileURL: URL, recover: Bool, handler: @escaping ((Result<(Config, String?)>) -> Void)) {
+    private func configFileCheck(configFileURL: URL, recover: Bool, handler: @escaping ((Result<(Config, String?)>) -> Void)) {
         do {
             let config = try String(contentsOf: configFileURL)
             let certStartRange = config.range(of: "<cert>")
             let certEndRange = config.range(of: "</cert>")
             let keyStartRange = config.range(of: "<key>")
             let keyEndRange = config.range(of: "</key>")
+            
+            func remove(from config: String) -> String {
+                var config = config
+                
+                let certStartRange = config.range(of: "<cert>")
+                let certEndRange = config.range(of: "</cert>")
+                if let certStartRange = certStartRange, let certEndRange = certEndRange, certStartRange.upperBound < certEndRange.lowerBound {
+                    config.removeSubrange(certStartRange.lowerBound...certEndRange.upperBound)
+                }
+                
+                let keyStartRange = config.range(of: "<key>")
+                let keyEndRange = config.range(of: "</key>")
+                if let keyStartRange = keyStartRange, let keyEndRange = keyEndRange, keyStartRange.upperBound < keyEndRange.lowerBound {
+                    config.removeSubrange(keyStartRange.lowerBound...keyEndRange.upperBound)
+                }
+                return config
+            }
             
             if certStartRange == nil, certEndRange == nil, keyStartRange == nil, keyEndRange == nil {
                 handler(.success((config, nil)))
@@ -881,9 +936,8 @@ class ProviderService {
                             switch result {
                             case .success(let data):
                                 let commonName = try? ServiceContainer.keychainService.importKeyPair(data: data, passphrase: passphrase)
-                                dump(commonName)
-                                // TODO: Remove Certificate and Private Key
-                                handler(.success((config, commonName)))
+                                // Remove Certificate and Private Key
+                                handler(.success((remove(from: config), commonName)))
                                 break
                             case .failure(let error):
                                 dump(error)
@@ -893,12 +947,12 @@ class ProviderService {
                         }
                         
                         return
-                    } else if let certificate = certificate {
-                        // TODO: Remove Certificate
-                        return
-                    } else if let privateKey = privateKey {
-                        // TODO: Remove Private Key
-                        return
+                    } else if let _ = certificate {
+                        // Remove Certificate
+                        handler(.success((remove(from: config), nil)))
+                    } else if let _ = privateKey {
+                        // Remove Private Key
+                        handler(.success((remove(from: config), nil)))
                     } else {
                         let displayName = FileManager.default.displayName(atPath: configFileURL.path)
                         let error = Error.invalidConfigFile(displayName: displayName, containsCert: false, containsKey: false)

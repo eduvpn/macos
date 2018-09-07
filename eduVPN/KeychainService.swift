@@ -16,6 +16,8 @@ class KeychainService {
         case importError(Int32)
         case privateKeyError(Int32)
         case unsupportedAlgorithm
+        case signingFailed
+        case certificateReadFailed
         
         var errorDescription: String? {
             switch self {
@@ -27,6 +29,10 @@ class KeychainService {
                 return NSLocalizedString("Private key error occurred \(osstatus)", comment: "")
             case .unsupportedAlgorithm:
                 return NSLocalizedString("The requested key algorithm is not supported", comment: "")
+            case .signingFailed:
+                return NSLocalizedString("Failed to fulfill sign request", comment: "")
+            case .certificateReadFailed:
+                return NSLocalizedString("Failed to read certificate", comment: "")
             default:
                 return NSLocalizedString("An unknown error occurred", comment: "")
             }
@@ -42,6 +48,8 @@ class KeychainService {
                 return NSLocalizedString("Try again.", comment: "")
             case .unsupportedAlgorithm:
                 return NSLocalizedString("Check for app updates.", comment: "")
+            case .signingFailed, .certificateReadFailed:
+                return NSLocalizedString("Try again.", comment: "")
             default:
                 return NSLocalizedString("Try again later.", comment: "")
             }
@@ -60,7 +68,7 @@ class KeychainService {
         
         let theArray: CFArray = items!
         guard CFArrayGetCount(theArray) > 0 else {
-            throw Error.unknown
+            throw Error.importError(errSecInternalError)
         }
         
         let newArray = theArray as [AnyObject] as NSArray
@@ -100,13 +108,13 @@ class KeychainService {
         var certificateRef: SecCertificate? = nil
         let certificateError = SecIdentityCopyCertificate(secIdentity, &certificateRef)
         guard certificateError == noErr else {
-            throw Error.unknown
+            throw Error.certificateReadFailed
         }
         
         var commonName: CFString? = nil
         let commonNameError = SecCertificateCopyCommonName(certificateRef!, &commonName)
         guard commonNameError == noErr else {
-            throw Error.unknown
+            throw Error.certificateReadFailed
         }
         return commonName! as String
     }
@@ -128,7 +136,10 @@ class KeychainService {
        
         var error: Unmanaged<CFError>? = nil
         guard let signature = SecKeyCreateSignature(secKey!, algorithm, dataToSign as CFData, &error) else {
-            throw Error.unknown
+            if let error = error?.takeUnretainedValue() {
+                throw error
+            }
+            throw Error.signingFailed
         }
 
         return signature as Data

@@ -45,6 +45,8 @@ class ConnectionService: NSObject {
         case invalidTwoFactorPassword
         case invalidCredentials
         case unexpectedError
+        case userCancelled
+        case tlsError
         
         var errorDescription: String? {
             switch self {
@@ -64,6 +66,10 @@ class ConnectionService: NSObject {
                 return NSLocalizedString("Invalid credentials", comment: "")
             case .unexpectedError:
                 return NSLocalizedString("Connection encountered unexpected error", comment: "")
+            case .tlsError:
+                return NSLocalizedString("Signing failed", comment: "")
+            case .userCancelled:
+                return nil
             }
         }
 
@@ -77,8 +83,12 @@ class ConnectionService: NSObject {
                 return NSLocalizedString("Try again later.", comment: "")
             case .invalidTwoFactorPassword, .invalidCredentials:
                 return NSLocalizedString("Verify and try again.", comment: "")
+            case .tlsError:
+                return NSLocalizedString("Verify that you are using the correct certificate and try again.", comment: "")
             case .unexpectedState, .unexpectedError:
                 return NSLocalizedString("Try again.", comment: "")
+            case .userCancelled:
+                return nil
             }
         }
     }
@@ -173,6 +183,13 @@ class ConnectionService: NSObject {
         providerService.saveCommonCertificate(commonNameCertificate, for: provider)
     }
     
+    private func abortConnecting(error: Swift.Error) {
+        handler?(.failure(error))
+        disconnect { _ in
+            // Nothing
+        }
+    }
+    
     /// Installs configuration
     ///
     /// - Parameter config: Config
@@ -253,7 +270,7 @@ class ConnectionService: NSObject {
     ///
     /// - Parameter handler: Success or error
     func disconnect(_ handler: @escaping (Result<Void>) -> ()) {
-        guard state == .connected else {
+        guard state == .connected || state == .connecting else {
             handler(.failure(Error.unexpectedState))
             return
         }
@@ -271,6 +288,7 @@ class ConnectionService: NSObject {
             self.twoFactor = nil
             self.handler = nil
             self.closeManagingSocket(force: false)
+            self.state = .disconnected
             handler(.success(Void()))
         }
     }
@@ -494,6 +512,11 @@ class ConnectionService: NSObject {
         
         // (c) optional descriptive string (used mostly on RECONNECTING and EXITING to show the reason for the disconnect)
         openVPNStateDescription = String(components[2])
+
+        if openVPNState == .reconnecting && openVPNStateDescription == "tls-error" {
+            // Wrong certificate, signing wil fail, abort connecting
+            abortConnecting(error: Error.tlsError)
+        }
         
         // (d) optional TUN/TAP local IPv4 address
         localTUNTAPIPv4Address = String(components[3])
@@ -614,12 +637,11 @@ class ConnectionService: NSObject {
                 let response = "certificate\n-----BEGIN CERTIFICATE-----\n\(certificateString)\n-----END CERTIFICATE-----\nEND\n"
                 try self.write(response)
             default:
-                fatalError("Not yet implemented")
-                return
+                abortConnecting(error: Error.userCancelled)
             }
         }
         catch {
-            dump(error)
+            abortConnecting(error: error)
         }
     }
     
@@ -638,7 +660,8 @@ class ConnectionService: NSObject {
         }
         
         guard let twoFactor = twoFactor else {
-            fatalError()
+            abortConnecting(error: Error.unexpectedError)
+            return
         }
         let username: String
         let password: String
@@ -658,10 +681,14 @@ class ConnectionService: NSObject {
         guard let data = Data(base64Encoded: stringToSign, options: [.ignoreUnknownCharacters]) else {
             throw Error.unexpectedError
         }
-        let signature = try keychainService.sign(using: commonNameCertificate, dataToSign: data)
-        let signatureString = signature.base64EncodedString(options: [.lineLength64Characters])
-        let response = "rsa-sig\n\(signatureString)\nEND\n"
-        try write(response)
+        do {
+            let signature = try keychainService.sign(using: commonNameCertificate, dataToSign: data)
+            let signatureString = signature.base64EncodedString(options: [.lineLength64Characters])
+            let response = "rsa-sig\n\(signatureString)\nEND\n"
+            try write(response)
+        } catch {
+            abortConnecting(error: error)
+        }
     }
 
     private func closeManagingSocket(force: Bool) {

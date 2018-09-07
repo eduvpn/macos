@@ -76,11 +76,11 @@ class ChooseConnectionTypeViewController: NSViewController {
     
     private func chooseConfigFile(configFileURL: URL, recover: Bool = false) {
         ServiceContainer.providerService.addProvider(configFileURL: configFileURL, recover: recover) { result in
-            switch result {
-            case .success:
-                self.mainWindowController?.dismiss()
-            case .failure(let error):
-                DispatchQueue.main.async {
+            DispatchQueue.main.async {
+                switch result {
+                case .success:
+                    self.mainWindowController?.dismiss()
+                case .failure(let error):
                     let alert = NSAlert(error: error)
                     if let error = error as? ProviderService.Error, !error.recoveryOptions.isEmpty {
                         error.recoveryOptions.forEach {
@@ -99,7 +99,7 @@ class ChooseConnectionTypeViewController: NSViewController {
             }
         }
     }
-        
+    
     private func discoverProviders(connectionType: ConnectionType) {
         secureInternetButton.isEnabled = false
         instituteAccessButton.isEnabled = false
