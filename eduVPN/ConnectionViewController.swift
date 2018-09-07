@@ -162,7 +162,7 @@ class ConnectionViewController: NSViewController {
                 case .failure(let error):
                     if let error = error as? ConnectionService.Error, error == ConnectionService.Error.userCancelled {
                         return
-                    } else if let error = error as? NSError, error.domain == NSOSStatusErrorDomain, error.code == errSecUserCanceled {
+                    } else if (error as NSError).domain == NSOSStatusErrorDomain, (error as NSError).code == errSecUserCanceled {
                         return
                     } else if let error = error as? Socket.Error, error.errorCode == 1 {
                         return

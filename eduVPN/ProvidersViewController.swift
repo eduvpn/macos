@@ -122,11 +122,7 @@ class ProvidersViewController: NSViewController {
     }
     
     private func addOtherProvider(animated: Bool) {
-        #if API_DISCOVERY_DISABLED
-        mainWindowController?.showEnterProviderURL(allowClose: !rows.isEmpty, animated: animated, presentation: .present)
-        #else
         mainWindowController?.showChooseConnectionType(allowClose: !rows.isEmpty, animated: animated)
-        #endif
     }
     
     @IBAction func connectProvider(_ sender: Any) {
