@@ -29,22 +29,22 @@ class EnterProviderURLViewController: NSViewController {
     @IBOutlet var backButton: NSButton!
     @IBOutlet var doneButton: NSButton!
    
-    var allowClose: Bool = true
+    var url: URL?
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        backButton.isHidden = !allowClose
-        
-        // Change title color
-        let paragraphStyle = NSMutableParagraphStyle()
-        paragraphStyle.alignment = .center
-        let attributes = [NSAttributedStringKey.font: NSFont.systemFont(ofSize: 17), NSAttributedStringKey.foregroundColor : NSColor.white, NSAttributedStringKey.paragraphStyle : paragraphStyle]
-        doneButton.attributedTitle = NSAttributedString(string: doneButton.title, attributes: attributes)
+        doneButton.isEnabled = validURL() != nil
+    }
+    
+    override func viewDidAppear() {
+        super.viewDidAppear()
+        view.window?.contentMaxSize = view.frame.size
+        view.window?.contentMinSize = view.frame.size
     }
     
     @IBAction func goBack(_ sender: Any) {
-        mainWindowController?.close(viewController: self)
+        view.window?.sheetParent?.endSheet(view.window!, returnCode: .cancel)
     }
     
     private func validURL() -> URL? {
@@ -61,7 +61,7 @@ class EnterProviderURLViewController: NSViewController {
         textField.isEnabled = false
         doneButton.isEnabled = false
         
-        guard let url = validURL(), let host = url.host else {
+        guard let url = validURL(), let _ = url.host else {
             let alert = NSAlert(error: Error.invalidURL)
             alert.beginSheetModal(for: self.view.window!) { (_) in
                 self.textField.isEnabled = true
@@ -69,52 +69,9 @@ class EnterProviderURLViewController: NSViewController {
             return
         }
         
-        let provider = Provider(displayName: host, baseURL: url, logoURL: nil, publicKey: nil, connectionType: .custom, authorizationType: .local)
-        ServiceContainer.providerService.fetchInfo(for: provider) { result in
-            switch result {
-            case .success(let info):
-                DispatchQueue.main.async {
-                    self.textField.isEnabled = true
-                    self.doneButton.isEnabled = true
-                    self.authenticate(with: info)
-                }
-            case .failure(let error):
-                DispatchQueue.main.async {
-                    let alert = NSAlert(error: error)
-                    alert.beginSheetModal(for: self.view.window!) { (_) in
-                        self.textField.isEnabled = true
-                        self.doneButton.isEnabled = true
-                    }
-                }
-            }
-        }
-    }
-    
-    private func authenticate(with info: ProviderInfo) {
-        ServiceContainer.authenticationService.authenticate(using: info) { (result) in
-            DispatchQueue.main.async {
-                switch result {
-                case .success:
-                    ServiceContainer.providerService.storeProvider(provider: info.provider)
-                    self.mainWindowController?.dismiss()
-                case .failure(let error):
-                    // User knows he cancelled, no alert needed
-                    if (error as NSError).domain == "org.openid.appauth.general" && (error as NSError).code == -4 {
-                        self.mainWindowController?.dismiss()
-                        return
-                    }
-                    // User knows he rejected, no alert needed
-                    if (error as NSError).domain == "org.openid.appauth.oauth_authorization" && (error as NSError).code == -4 {
-                        self.mainWindowController?.dismiss()
-                        return
-                    }
-                    let alert = NSAlert(error: error)
-                    alert.beginSheetModal(for: self.view.window!) { (_) in
-                        self.mainWindowController?.dismiss()
-                    }
-                }
-            }
-        }
+        self.url = url
+        
+        view.window?.sheetParent?.endSheet(view.window!, returnCode: .OK)
     }
     
 }

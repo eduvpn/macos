@@ -149,17 +149,7 @@ class MainWindowController: NSWindowController {
         chooseProviderViewController.providers = providers
         push(viewController: chooseProviderViewController, animated: animated)
     }
-    
-    /// Prompts user to enter URL for a provider
-    ///
-    /// - Parameters:
-    ///   - animated: Wether to show with animation
-    func showEnterProviderURL(allowClose: Bool = true, animated: Bool = true, presentation: Presentation = .push) {
-        let enterProviderURLViewController = storyboard!.instantiateController(withIdentifier: NSStoryboard.SceneIdentifier(rawValue: "EnterProviderURL")) as! EnterProviderURLViewController
-        enterProviderURLViewController.allowClose = allowClose
-        show(viewController: enterProviderURLViewController, presentation: presentation, animated: animated)
-    }
-    
+        
     /// Prompts user to choose a profile
     ///
     /// - Parameters:

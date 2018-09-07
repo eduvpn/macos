@@ -82,17 +82,20 @@ class AuthenticationService {
             let success = authState != nil
             NotificationCenter.default.post(name: AuthenticationService.authenticationFinished, object: self, userInfo: ["success": success])
             
-            self.handlersAfterAuthenticating.forEach { handler in
-                if let authState = authState {
-                    self.store(for: info.provider, authState: authState)
-                    handler(.success(Void()))
-                } else if let error = error {
-                    handler(.failure(error))
-                } else {
-                    handler(.failure(Error.unknown))
+            // Little delay to make authentication screen is dismissed
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                self.handlersAfterAuthenticating.forEach { handler in
+                    if let authState = authState {
+                        self.store(for: info.provider, authState: authState)
+                        handler(.success(Void()))
+                    } else if let error = error {
+                        handler(.failure(error))
+                    } else {
+                        handler(.failure(Error.unknown))
+                    }
                 }
+                self.handlersAfterAuthenticating.removeAll()
             }
-            self.handlersAfterAuthenticating.removeAll()
         }
         
         NotificationCenter.default.post(name: AuthenticationService.authenticationStarted, object: self)

@@ -235,7 +235,7 @@ class ProviderService {
     
     /// Indicates wether at least one provider is setup
     var hasAtLeastOneStoredProvider: Bool {
-        return !storedProviders.isEmpty
+        return !storedProviders.flatMap({ $0.value }).isEmpty
     }
     
     /// All providers
@@ -253,7 +253,13 @@ class ProviderService {
         }
         let connectionType = provider.connectionType
         var providers = storedProviders[connectionType] ?? []
-        providers.append(provider)
+        let index = providers.index(where: { $0.id == provider.id })
+        if let index = index {
+            providers.remove(at: index)
+            providers.insert(provider, at: index)
+        } else {
+            providers.append(provider)
+        }
         storedProviders[connectionType] = providers
         saveToDisk()
     }
