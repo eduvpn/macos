@@ -14,6 +14,7 @@ class ChooseConnectionTypeViewController: NSViewController {
     @IBOutlet var instituteAccessButton: NSButton!
     @IBOutlet var closeButton: NSButton!
     @IBOutlet var enterProviderButton: NSButton!
+    @IBOutlet var chooseConfigFileButton: NSButton!
     
     var allowClose: Bool = true
     
@@ -28,6 +29,7 @@ class ChooseConnectionTypeViewController: NSViewController {
         paragraphStyle.alignment = .center
         let attributes = [NSAttributedStringKey.font: NSFont.systemFont(ofSize: 17), NSAttributedStringKey.foregroundColor : NSColor.white, NSAttributedStringKey.paragraphStyle : paragraphStyle]
         enterProviderButton.attributedTitle = NSAttributedString(string: enterProviderButton.title, attributes: attributes)
+        chooseConfigFileButton.attributedTitle = NSAttributedString(string: chooseConfigFileButton.title, attributes: attributes)
     }
     
     override func viewWillAppear() {
@@ -50,6 +52,52 @@ class ChooseConnectionTypeViewController: NSViewController {
     
     @IBAction func enterProviderURL(_ sender: Any) {
         mainWindowController?.showEnterProviderURL()
+    }
+    
+    @IBAction func chooseConfigFile(_ sender: Any) {
+        guard let window = view.window else {
+            return
+        }
+        let panel = NSOpenPanel()
+        panel.canChooseFiles = true
+        panel.canChooseDirectories = false
+        panel.allowedFileTypes = ["ovpn"]
+        panel.beginSheetModal(for: window) { (response) in
+            switch response {
+            case .OK:
+                if let url = panel.urls.first {
+                    self.chooseConfigFile(configFileURL: url)
+                }
+            default:
+                break
+            }
+        }
+    }
+    
+    private func chooseConfigFile(configFileURL: URL, recover: Bool = false) {
+        ServiceContainer.providerService.addProvider(configFileURL: configFileURL, recover: recover) { result in
+            DispatchQueue.main.async {
+                switch result {
+                case .success:
+                    self.mainWindowController?.dismiss()
+                case .failure(let error):
+                    let alert = NSAlert(error: error)
+                    if let error = error as? ProviderService.Error, !error.recoveryOptions.isEmpty {
+                        error.recoveryOptions.forEach {
+                            alert.addButton(withTitle: $0)
+                        }
+                    }
+                    alert.beginSheetModal(for: self.view.window!) { (response) in
+                        switch response.rawValue {
+                        case 1000:
+                            self.chooseConfigFile(configFileURL: configFileURL, recover: true)
+                        default:
+                            break
+                        }
+                    }
+                }
+            }
+        }
     }
     
     private func discoverProviders(connectionType: ConnectionType) {

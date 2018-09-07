@@ -30,6 +30,8 @@
 		C72AD7041F0A6AEE006DBDA5 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C72AD7031F0A6AEE006DBDA5 /* Security.framework */; };
 		C732CEA51F0F720800698F28 /* ChooseProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C732CEA31F0F720800698F28 /* ChooseProfileViewController.swift */; };
 		C732CEA81F0F7B7600698F28 /* String+URL.swift in Sources */ = {isa = PBXBuildFile; fileRef = C732CEA71F0F7B7600698F28 /* String+URL.swift */; };
+		C73690B7214267A5004AFB4E /* URL+Unused.swift in Sources */ = {isa = PBXBuildFile; fileRef = C73690B6214267A5004AFB4E /* URL+Unused.swift */; };
+		C73690B8214267A5004AFB4E /* URL+Unused.swift in Sources */ = {isa = PBXBuildFile; fileRef = C73690B6214267A5004AFB4E /* URL+Unused.swift */; };
 		C741F43D1FC6DE9000B1EB83 /* Sparkle.framework.dSYM in Resources */ = {isa = PBXBuildFile; fileRef = C741F43B1FC6DE9000B1EB83 /* Sparkle.framework.dSYM */; };
 		C741F43E1FC6DE9000B1EB83 /* Sparkle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C741F43C1FC6DE9000B1EB83 /* Sparkle.framework */; };
 		C741F4401FC6DEED00B1EB83 /* Sparkle.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = C741F43C1FC6DE9000B1EB83 /* Sparkle.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -56,6 +58,8 @@
 		C766150F2125B4F2002A8E4D /* Debug.swift in Sources */ = {isa = PBXBuildFile; fileRef = C766150D2125B4F2002A8E4D /* Debug.swift */; };
 		C766FB87212D6AF000306271 /* eduVPNAssets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C766FB86212D6AF000306271 /* eduVPNAssets.xcassets */; };
 		C766FB89212D6AF900306271 /* LetsConnectAssets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C766FB88212D6AF900306271 /* LetsConnectAssets.xcassets */; };
+		C775F5F121397FF70092D09A /* SecurityInterface.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C775F5F021397FF70092D09A /* SecurityInterface.framework */; };
+		C775F5F2213980010092D09A /* SecurityInterface.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C775F5F021397FF70092D09A /* SecurityInterface.framework */; };
 		C77EF61320876B5A0097DEB2 /* String+Random.swift in Sources */ = {isa = PBXBuildFile; fileRef = C77EF61220876B5A0097DEB2 /* String+Random.swift */; };
 		C78250A61FC7291000B33892 /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = C78250A51FC7291000B33892 /* Message.swift */; };
 		C789DCC320C727B900A0668E /* Reachability.framework.dSYM in CopyFiles */ = {isa = PBXBuildFile; fileRef = C761E2DF2080B08200A98B90 /* Reachability.framework.dSYM */; };
@@ -297,6 +301,7 @@
 		C72AD7051F0A6BFF006DBDA5 /* eduVPN-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "eduVPN-Bridging-Header.h"; sourceTree = "<group>"; };
 		C732CEA31F0F720800698F28 /* ChooseProfileViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChooseProfileViewController.swift; sourceTree = "<group>"; };
 		C732CEA71F0F7B7600698F28 /* String+URL.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "String+URL.swift"; sourceTree = "<group>"; };
+		C73690B6214267A5004AFB4E /* URL+Unused.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "URL+Unused.swift"; path = "eduVPN/URL+Unused.swift"; sourceTree = SOURCE_ROOT; };
 		C741F43B1FC6DE9000B1EB83 /* Sparkle.framework.dSYM */ = {isa = PBXFileReference; lastKnownFileType = wrapper.dsym; name = Sparkle.framework.dSYM; path = Carthage/Build/Mac/Sparkle.framework.dSYM; sourceTree = "<group>"; };
 		C741F43C1FC6DE9000B1EB83 /* Sparkle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Sparkle.framework; path = Carthage/Build/Mac/Sparkle.framework; sourceTree = "<group>"; };
 		C741F4411FC6E2D400B1EB83 /* dsa_pub.pem */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = dsa_pub.pem; sourceTree = "<group>"; };
@@ -320,6 +325,7 @@
 		C766150D2125B4F2002A8E4D /* Debug.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Debug.swift; path = eduVPN/Debug.swift; sourceTree = SOURCE_ROOT; };
 		C766FB86212D6AF000306271 /* eduVPNAssets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = eduVPNAssets.xcassets; sourceTree = "<group>"; };
 		C766FB88212D6AF900306271 /* LetsConnectAssets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = LetsConnectAssets.xcassets; sourceTree = "<group>"; };
+		C775F5F021397FF70092D09A /* SecurityInterface.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SecurityInterface.framework; path = System/Library/Frameworks/SecurityInterface.framework; sourceTree = SDKROOT; };
 		C77EF61220876B5A0097DEB2 /* String+Random.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Random.swift"; sourceTree = "<group>"; };
 		C78250A51FC7291000B33892 /* Message.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Message.swift; path = eduVPN/Message.swift; sourceTree = SOURCE_ROOT; };
 		C789DCC920C7E3CA00A0668E /* Socket.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Socket.framework; path = Carthage/Build/Mac/Socket.framework; sourceTree = "<group>"; };
@@ -369,6 +375,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C775F5F121397FF70092D09A /* SecurityInterface.framework in Frameworks */,
 				C72A557A1F0D9FF2001DCA24 /* AppAuth.framework in Frameworks */,
 				C789DCD220C7E41100A0668E /* Socket.framework in Frameworks */,
 				C741F43E1FC6DE9000B1EB83 /* Sparkle.framework in Frameworks */,
@@ -384,6 +391,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C775F5F2213980010092D09A /* SecurityInterface.framework in Frameworks */,
 				C7C494F4208484120056D5E4 /* AppAuth.framework in Frameworks */,
 				C7C494F5208484120056D5E4 /* Sparkle.framework in Frameworks */,
 				C7C494F6208484120056D5E4 /* ServiceManagement.framework in Frameworks */,
@@ -411,6 +419,7 @@
 		C72AD7001F0A6AE8006DBDA5 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				C775F5F021397FF70092D09A /* SecurityInterface.framework */,
 				C72A55791F0D9FF2001DCA24 /* AppAuth.framework */,
 				C72A557E1F0DA01C001DCA24 /* AppAuth.framework.dSYM */,
 				C71847CD1F0E7EAF00296C61 /* Kingfisher.framework */,
@@ -521,6 +530,7 @@
 				C75527F91F3C55F100076078 /* PreferencesService.swift */,
 				C7C495202084DE230056D5E4 /* TwoFactorService.swift */,
 				C77EF61220876B5A0097DEB2 /* String+Random.swift */,
+				C73690B6214267A5004AFB4E /* URL+Unused.swift */,
 				C766150D2125B4F2002A8E4D /* Debug.swift */,
 			);
 			name = Services;
@@ -868,6 +878,7 @@
 				C78250A61FC7291000B33892 /* Message.swift in Sources */,
 				C761DF071FE4002A009F0154 /* Enter2FAViewController.swift in Sources */,
 				C7BEF5DE1F03F4020038605E /* AuthenticatingViewController.swift in Sources */,
+				C73690B7214267A5004AFB4E /* URL+Unused.swift in Sources */,
 				C789DCD620C8227000A0668E /* KeychainService.swift in Sources */,
 				C7BEF5DC1F03F2CA0038605E /* MainWindowController.swift in Sources */,
 			);
@@ -906,6 +917,7 @@
 				C7C494EF208484120056D5E4 /* Message.swift in Sources */,
 				C7C494F0208484120056D5E4 /* Enter2FAViewController.swift in Sources */,
 				C7C494F1208484120056D5E4 /* AuthenticatingViewController.swift in Sources */,
+				C73690B8214267A5004AFB4E /* URL+Unused.swift in Sources */,
 				C789DCD720C8227000A0668E /* KeychainService.swift in Sources */,
 				C7C494F2208484120056D5E4 /* MainWindowController.swift in Sources */,
 			);

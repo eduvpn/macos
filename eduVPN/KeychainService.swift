@@ -12,15 +12,27 @@ class KeychainService {
     
     enum Error: Swift.Error, LocalizedError {
         case unknown
-        case unknownCommonName
+        case unknownCommonName(String)
         case importError(Int32)
         case privateKeyError(Int32)
         case unsupportedAlgorithm
+        case signingFailed
+        case certificateReadFailed
         
         var errorDescription: String? {
             switch self {
+            case .unknownCommonName(let commonName):
+                return NSLocalizedString("No certificate with common name \"\(commonName)\" found", comment: "")
             case .importError(let osstatus):
                 return NSLocalizedString("An import error occurred \(osstatus)", comment: "")
+            case .privateKeyError(let osstatus):
+                return NSLocalizedString("Private key error occurred \(osstatus)", comment: "")
+            case .unsupportedAlgorithm:
+                return NSLocalizedString("The requested key algorithm is not supported", comment: "")
+            case .signingFailed:
+                return NSLocalizedString("Failed to fulfill sign request", comment: "")
+            case .certificateReadFailed:
+                return NSLocalizedString("Failed to read certificate", comment: "")
             default:
                 return NSLocalizedString("An unknown error occurred", comment: "")
             }
@@ -28,6 +40,16 @@ class KeychainService {
         
         var recoverySuggestion: String? {
             switch self {
+            case .unknownCommonName:
+                return NSLocalizedString("Add the missing certificate to your keychain.", comment: "")
+            case .importError:
+                return NSLocalizedString("Try again.", comment: "")
+            case .privateKeyError:
+                return NSLocalizedString("Try again.", comment: "")
+            case .unsupportedAlgorithm:
+                return NSLocalizedString("Check for app updates.", comment: "")
+            case .signingFailed, .certificateReadFailed:
+                return NSLocalizedString("Try again.", comment: "")
             default:
                 return NSLocalizedString("Try again later.", comment: "")
             }
@@ -35,9 +57,7 @@ class KeychainService {
     }
     
     func importKeyPair(data: Data, passphrase: String) throws -> String {
-        // WIP:
-        //let access = SecAcces()
-        let options: NSDictionary = [kSecImportExportPassphrase: passphrase]//, kSecImportExportAccess: access]
+        let options: NSDictionary = [kSecImportExportPassphrase: passphrase]
         
         var items : CFArray?
         
@@ -48,25 +68,14 @@ class KeychainService {
         
         let theArray: CFArray = items!
         guard CFArrayGetCount(theArray) > 0 else {
-            throw Error.unknown
+            throw Error.importError(errSecInternalError)
         }
         
         let newArray = theArray as [AnyObject] as NSArray
         let dictionary = newArray.object(at: 0)
         let secIdentity = (dictionary as AnyObject)[kSecImportItemIdentity as String] as! SecIdentity
         
-        var certificateRef: SecCertificate? = nil
-        let certificateError = SecIdentityCopyCertificate(secIdentity, &certificateRef)
-        guard certificateError == noErr else {
-           throw Error.unknown
-        }
-    
-        var commonName: CFString? = nil
-        let commonNameError = SecCertificateCopyCommonName(certificateRef!, &commonName)
-        guard commonNameError == noErr else {
-            throw Error.unknown
-        }
-        return commonName! as String
+        return try commonName(for: secIdentity)
     }
     
     private func identity(for commonName: String) throws -> SecIdentity {
@@ -74,18 +83,17 @@ class KeychainService {
         let query: NSDictionary = [kSecClass: kSecClassIdentity, kSecMatchSubjectWholeString: commonName]
         let queryError = SecItemCopyMatching(query, &secureItemValue)
         guard queryError == noErr else {
-            throw Error.unknownCommonName
+            throw Error.unknownCommonName(commonName)
         }
-        // WIP
-//        guard let identity = secureItemValue as? SecIdentity else {
-//            throw Error.unknownCommonName
-//        }
         return secureItemValue as! SecIdentity
     }
     
     func certificate(for commonName: String) throws -> Data {
         let secIdentity = try identity(for: commonName)
-        
+        return try certificate(for: secIdentity)
+    }
+    
+    func certificate(for secIdentity: SecIdentity) throws -> Data {
         var certificateRef: SecCertificate? = nil
         let securityError = SecIdentityCopyCertificate(secIdentity , &certificateRef)
         if securityError != noErr {
@@ -94,6 +102,21 @@ class KeychainService {
         
         let dataOut = SecCertificateCopyData(certificateRef!)
         return dataOut as Data
+    }
+    
+    func commonName(for secIdentity: SecIdentity) throws -> String {
+        var certificateRef: SecCertificate? = nil
+        let certificateError = SecIdentityCopyCertificate(secIdentity, &certificateRef)
+        guard certificateError == noErr else {
+            throw Error.certificateReadFailed
+        }
+        
+        var commonName: CFString? = nil
+        let commonNameError = SecCertificateCopyCommonName(certificateRef!, &commonName)
+        guard commonNameError == noErr else {
+            throw Error.certificateReadFailed
+        }
+        return commonName! as String
     }
     
     func sign(using commonName: String, dataToSign: Data) throws -> Data {
@@ -113,7 +136,10 @@ class KeychainService {
        
         var error: Unmanaged<CFError>? = nil
         guard let signature = SecKeyCreateSignature(secKey!, algorithm, dataToSign as CFData, &error) else {
-            throw Error.unknown
+            if let error = error?.takeUnretainedValue() {
+                throw error
+            }
+            throw Error.signingFailed
         }
 
         return signature as Data

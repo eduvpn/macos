@@ -11,6 +11,7 @@ import AppKit
 import ServiceManagement
 import AppAuth
 import Socket
+import SecurityInterface
 
 typealias Config = String
 
@@ -41,7 +42,11 @@ class ConnectionService: NSObject {
         case statisticsUnavailable
         case unexpectedState
         case logsUnavailable
+        case invalidTwoFactorPassword
+        case invalidCredentials
         case unexpectedError
+        case userCancelled
+        case tlsError
         
         var errorDescription: String? {
             switch self {
@@ -55,8 +60,16 @@ class ConnectionService: NSObject {
                 return NSLocalizedString("Connection in unexpected state", comment: "")
             case .logsUnavailable:
                 return NSLocalizedString("No logs available", comment: "")
+            case .invalidTwoFactorPassword:
+                return NSLocalizedString("Invalid or expired two factor authentication code", comment: "")
+            case .invalidCredentials:
+                return NSLocalizedString("Invalid credentials", comment: "")
             case .unexpectedError:
                 return NSLocalizedString("Connection encountered unexpected error", comment: "")
+            case .tlsError:
+                return NSLocalizedString("Signing failed", comment: "")
+            case .userCancelled:
+                return nil
             }
         }
 
@@ -68,8 +81,14 @@ class ConnectionService: NSObject {
                 return NSLocalizedString("Try reinstalling eduVPN.", comment: "")
             case .statisticsUnavailable, .logsUnavailable:
                 return NSLocalizedString("Try again later.", comment: "")
+            case .invalidTwoFactorPassword, .invalidCredentials:
+                return NSLocalizedString("Verify and try again.", comment: "")
+            case .tlsError:
+                return NSLocalizedString("Verify that you are using the correct certificate and try again.", comment: "")
             case .unexpectedState, .unexpectedError:
                 return NSLocalizedString("Try again.", comment: "")
+            case .userCancelled:
+                return nil
             }
         }
     }
@@ -77,18 +96,23 @@ class ConnectionService: NSObject {
     /// Describes current connection state
     private(set) var state: State = .disconnected {
         didSet {
+            if state == .connected {
+                didConnect()
+            }
             if oldValue != state {
                 NotificationCenter.default.post(name: ConnectionService.stateChanged, object: self)
             }
         }
     }
     
+    private let providerService: ProviderService
     private let configurationService: ConfigurationService
     private let helperService: HelperService
     private let keychainService: KeychainService
     private let preferencesService: PreferencesService
     
-    init(configurationService: ConfigurationService, helperService: HelperService, keychainService: KeychainService, preferencesService: PreferencesService) {
+    init(providerService: ProviderService, configurationService: ConfigurationService, helperService: HelperService, keychainService: KeychainService, preferencesService: PreferencesService) {
+        self.providerService = providerService
         self.configurationService = configurationService
         self.helperService = helperService
         self.keychainService = keychainService
@@ -120,6 +144,7 @@ class ConnectionService: NSObject {
         localIPv4Address = nil
         localPort = nil
         localTUNTAPIPv6Address = nil
+        currentProfile = nil
         
         helperService.installHelperIfNeeded(client: self) { (result) in
             switch result {
@@ -129,14 +154,10 @@ class ConnectionService: NSObject {
                     case .success(let config, let certificateCommonName):
                         do {
                             let configURL = try self.install(config: config)
-                            let authUserPassURL: URL?
-                            if let twoFactor = twoFactor {
-                                authUserPassURL = try self.install(twoFactor: twoFactor)
-                            } else {
-                                authUserPassURL = nil
-                            }
+                            self.twoFactor = twoFactor
                             self.commonNameCertificate = certificateCommonName
-                            self.activateConfig(at: configURL, authUserPassURL: authUserPassURL, handler: handler)
+                            self.currentProfile = profile
+                            self.activateConfig(at: configURL, handler: handler)
                         } catch(let error) {
                             self.state = .disconnected
                             handler(.failure(error))
@@ -152,7 +173,23 @@ class ConnectionService: NSObject {
             }
         }
     }
-
+    
+    private var currentProfile: Profile?
+    
+    private func didConnect() {
+        guard let provider = currentProfile?.info.provider, provider.connectionType == .localConfig else {
+            return
+        }
+        providerService.saveCommonCertificate(commonNameCertificate, for: provider)
+    }
+    
+    private func abortConnecting(error: Swift.Error) {
+        handler?(.failure(error))
+        disconnect { _ in
+            // Nothing
+        }
+    }
+    
     /// Installs configuration
     ///
     /// - Parameter config: Config
@@ -166,36 +203,15 @@ class ConnectionService: NSObject {
         return fileURL
     }
     
-    /// Installs authUserPass
-    ///
-    /// - Parameter twoFactor: Two Factor Authenticationtoken
-    /// - Returns: URL where authUserPass was installed
-    /// - Throws: Error writing config to disk
-    private func install(twoFactor: TwoFactor) throws -> URL {
-        let username: String
-        let password: String
-        switch twoFactor {
-        case .totp(let token):
-            username = "totp"
-            password = token
-        case .yubico(let token):
-            username = "yubi"
-            password = token
-        }
-        
-        let tempDir = (NSTemporaryDirectory() as NSString).appendingPathComponent("org.eduvpn.app.temp") // Added .temp because .app lets the Finder show the folder as an app
-        try FileManager.default.createDirectory(atPath: tempDir, withIntermediateDirectories: true, attributes: nil)
-        let fileURL = URL(fileURLWithPath: (tempDir as NSString).appendingPathComponent("eduvpn.aup"))
-        try "\(username)\n\(password)".write(to: fileURL, atomically: true, encoding: .utf8)
-        return fileURL
-    }
-    
+    private var twoFactor: TwoFactor?
+    private var handler: ((Result<Void>) -> ())?
+
     /// Asks helper service to start VPN connection
     ///
     /// - Parameters:
     ///   - configURL: URL of config file
     ///   - handler: Succes or error
-    private func activateConfig(at configURL: URL, authUserPassURL: URL?, handler: @escaping (Result<Void>) -> ()) {
+    private func activateConfig(at configURL: URL, handler: @escaping (Result<Void>) -> ()) {
         guard state == .connecting else {
             handler(.failure(Error.unexpectedState))
             return
@@ -223,17 +239,16 @@ class ConnectionService: NSObject {
         }
        
         self.configURL = configURL
-        self.authUserPassURL = authUserPassURL
-        helper.startOpenVPN(at: openvpnURL, withConfig: configURL, authUserPass: authUserPassURL, upScript: upScript, downScript: downScript, scriptOptions: scriptOptions) { (success) in
+        helper.startOpenVPN(at: openvpnURL, withConfig: configURL, upScript: upScript, downScript: downScript, scriptOptions: scriptOptions) { (success) in
             if success {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
                     self.openManagingSocket()
                 }
+                self.handler = handler
                 handler(.success(Void()))
             } else {
                 self.state = .disconnected
                 self.configURL = nil
-                self.authUserPassURL = nil
                 handler(.failure(Error.helperRejected))
             }
         }
@@ -255,7 +270,7 @@ class ConnectionService: NSObject {
     ///
     /// - Parameter handler: Success or error
     func disconnect(_ handler: @escaping (Result<Void>) -> ()) {
-        guard state == .connected else {
+        guard state == .connected || state == .connecting else {
             handler(.failure(Error.unexpectedState))
             return
         }
@@ -270,23 +285,16 @@ class ConnectionService: NSObject {
 
         helper.close {
             self.configURL = nil
-            self.authUserPassURL = nil
+            self.twoFactor = nil
+            self.handler = nil
             self.closeManagingSocket(force: false)
+            self.state = .disconnected
             handler(.success(Void()))
         }
     }
     
     /// URL to the last loaded config (which may have been deleted already!)
     private(set) var configURL: URL? {
-        didSet(oldValue) {
-            if let oldURL = oldValue {
-                uninstall(fileURL: oldURL)
-            }
-        }
-    }
-    
-    /// URL to the last loaded auth-user-pass (which may have been deleted already!)
-    private(set) var authUserPassURL: URL? {
         didSet(oldValue) {
             if let oldURL = oldValue {
                 uninstall(fileURL: oldURL)
@@ -331,6 +339,7 @@ class ConnectionService: NSObject {
                
             } catch {
                 debugLog(error)
+                self.handler?(.failure(error))
             }
             
         }
@@ -381,7 +390,7 @@ class ConnectionService: NSObject {
         case ">INFO":
             try enableStateAndByteCountNotificatons()
         case ">NEED-CERTIFICATE":
-           try needCertificate()
+            try needCertificate()
         case ">RSA_SIGN":
             guard let argumentString = argumentString else {
                 return
@@ -397,6 +406,11 @@ class ConnectionService: NSObject {
                 return
             }
             parseByteCounts(argumentString)
+        case ">PASSWORD":
+            guard let argumentString = argumentString else {
+                return
+            }
+            try needPassword(argumentString)
         default:
             break
         }
@@ -498,6 +512,11 @@ class ConnectionService: NSObject {
         
         // (c) optional descriptive string (used mostly on RECONNECTING and EXITING to show the reason for the disconnect)
         openVPNStateDescription = String(components[2])
+
+        if openVPNState == .reconnecting && openVPNStateDescription == "tls-error" {
+            // Wrong certificate, signing wil fail, abort connecting
+            abortConnecting(error: Error.tlsError)
+        }
         
         // (d) optional TUN/TAP local IPv4 address
         localTUNTAPIPv4Address = String(components[3])
@@ -540,9 +559,90 @@ class ConnectionService: NSObject {
     }
     
     private func needCertificate() throws {
+        if commonNameCertificate == "" {
+            let query: NSDictionary = [kSecClass: kSecClassIdentity, kSecMatchLimit: kSecMatchLimitAll] // This could be stricter?
+            
+            var result: AnyObject?
+            
+            let lastResultCode = withUnsafeMutablePointer(to: &result) {
+                SecItemCopyMatching(query as CFDictionary, UnsafeMutablePointer($0))
+            }
+            
+            if lastResultCode == noErr {
+                let array = result as? Array<SecIdentity>
+                
+                DispatchQueue.main.async {
+                    let panel = SFChooseIdentityPanel.shared()!
+                    self.identityPanel = panel
+                    panel.setInformativeText(NSLocalizedString("Your choice will be remembered for future use.", comment: ""))
+                    panel.setAlternateButtonTitle(NSLocalizedString("Cancel", comment: ""))
+                    let message = NSLocalizedString("Choose the certificate you want to use for this connection", comment: "")
+                    let window = NSApp.mainWindow
+                    panel.beginSheet(for: window, modalDelegate: self, didEnd: #selector(ConnectionService.chooseIdentitySheetDidEnd(sheet:returnCode:contextInfo:)), contextInfo: nil, identities: array, message: message)
+                }
+            }
+            return
+        }
+        
         let certificate = try keychainService.certificate(for: commonNameCertificate)
         let certificateString = certificate.base64EncodedString(options: [.lineLength64Characters])
         let response = "certificate\n-----BEGIN CERTIFICATE-----\n\(certificateString)\n-----END CERTIFICATE-----\nEND\n"
+        try write(response)
+    }
+    
+    private var identityPanel: SFChooseIdentityPanel?
+    
+    @objc func chooseIdentitySheetDidEnd(sheet: SFChooseIdentityPanel, returnCode: NSApplication.ModalResponse, contextInfo: AnyObject?) {
+        guard let identityPanel = identityPanel else {
+            return
+        }
+        do {
+            switch returnCode {
+            case .OK:
+                let identity = identityPanel.identity().takeUnretainedValue()
+                let certificate = try self.keychainService.certificate(for: identity)
+                let certificateString = certificate.base64EncodedString(options: [.lineLength64Characters])
+                self.commonNameCertificate = (try? self.keychainService.commonName(for: identity)) ?? ""
+                let response = "certificate\n-----BEGIN CERTIFICATE-----\n\(certificateString)\n-----END CERTIFICATE-----\nEND\n"
+                try self.write(response)
+            default:
+                abortConnecting(error: Error.userCancelled)
+            }
+        }
+        catch {
+            abortConnecting(error: error)
+        }
+    }
+    
+    private func needPassword(_ string: String) throws {
+        switch string {
+        case "Need \'Auth\' username/password":
+            break
+         case "Verification Failed: \'Auth\'":
+            if twoFactor == nil {
+                throw Error.invalidCredentials
+            } else {
+                throw Error.invalidTwoFactorPassword
+            }
+        default:
+            return
+        }
+        
+        guard let twoFactor = twoFactor else {
+            abortConnecting(error: Error.unexpectedError)
+            return
+        }
+        let username: String
+        let password: String
+        switch twoFactor {
+        case .totp(let token):
+            username = "totp"
+            password = token
+        case .yubico(let token):
+            username = "yubi"
+            password = token
+        }
+        let response = "username \"Auth\" \(username)\npassword \"Auth\" \(password)\n"
         try write(response)
     }
     
@@ -550,10 +650,14 @@ class ConnectionService: NSObject {
         guard let data = Data(base64Encoded: stringToSign, options: [.ignoreUnknownCharacters]) else {
             throw Error.unexpectedError
         }
-        let signature = try keychainService.sign(using: commonNameCertificate, dataToSign: data)
-        let signatureString = signature.base64EncodedString(options: [.lineLength64Characters])
-        let response = "rsa-sig\n\(signatureString)\nEND\n"
-        try write(response)
+        do {
+            let signature = try keychainService.sign(using: commonNameCertificate, dataToSign: data)
+            let signatureString = signature.base64EncodedString(options: [.lineLength64Characters])
+            let response = "rsa-sig\n\(signatureString)\nEND\n"
+            try write(response)
+        } catch {
+            abortConnecting(error: error)
+        }
     }
 
     private func closeManagingSocket(force: Bool) {
@@ -605,7 +709,7 @@ extension ConnectionService: ClientProtocol {
         reply()
         state = .disconnected
         configURL = nil
-        authUserPassURL = nil
+        handler = nil
     }
 
 }

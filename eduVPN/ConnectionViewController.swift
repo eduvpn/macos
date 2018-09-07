@@ -9,6 +9,7 @@
 import Cocoa
 import AppAuth
 import Kingfisher
+import Socket
 
 class ConnectionViewController: NSViewController {
     
@@ -159,6 +160,13 @@ class ConnectionViewController: NSViewController {
                 case .success:
                     break
                 case .failure(let error):
+                    if let error = error as? ConnectionService.Error, error == ConnectionService.Error.userCancelled {
+                        return
+                    } else if let error = error as? NSError, error.domain == NSOSStatusErrorDomain, error.code == errSecUserCanceled {
+                        return
+                    } else if let error = error as? Socket.Error, error.errorCode == 1 {
+                        return
+                    }
                     let alert = NSAlert(error: error)
                     alert.beginSheetModal(for: self.view.window!) { (_) in
                         self.updateForStateChange()

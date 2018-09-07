@@ -1410,7 +1410,7 @@ DQ
                         </userGuides>
                         <subviews>
                             <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="bVa-Ah-Opn">
-                                <rect key="frame" x="20" y="63" width="338" height="210"/>
+                                <rect key="frame" x="20" y="124" width="338" height="164"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <buttonCell key="cell" type="smallSquare" bezelStyle="smallSquare" image="secure_access" imagePosition="above" alignment="center" imageScaling="proportionallyDown" inset="2" id="gDJ-XU-EmI">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -1452,7 +1452,7 @@ CA
                                 </connections>
                             </button>
                             <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Qcy-zA-XYg">
-                                <rect key="frame" x="84" y="20" width="210" height="44"/>
+                                <rect key="frame" x="84" y="72" width="210" height="44"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <buttonCell key="cell" type="smallSquare" title="Use Custom URL" bezelStyle="smallSquare" image="Button" imagePosition="overlaps" alignment="center" imageScaling="proportionallyDown" inset="2" id="Pyt-hE-lLA">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -1463,18 +1463,31 @@ CA
                                     <action selector="enterProviderURL:" target="Lns-jv-Aqp" id="bfK-7J-Uyf"/>
                                 </connections>
                             </button>
+                            <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="sey-v6-tfe">
+                                <rect key="frame" x="84" y="20" width="210" height="44"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <buttonCell key="cell" type="smallSquare" title="Use Local Config File" bezelStyle="smallSquare" image="Button" imagePosition="overlaps" alignment="center" imageScaling="proportionallyDown" inset="2" id="sOB-lu-So2">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system" size="17"/>
+                                    <string key="keyEquivalent">3</string>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="chooseConfigFile:" target="Lns-jv-Aqp" id="ZTE-Mp-NfD"/>
+                                </connections>
+                            </button>
                         </subviews>
                     </view>
                     <connections>
                         <outlet property="closeButton" destination="Dgk-N8-JjD" id="rVC-P5-Q9O"/>
                         <outlet property="enterProviderButton" destination="Qcy-zA-XYg" id="dyw-oR-xzP"/>
+                        <outlet property="chooseConfigFileButton" destination="sey-v6-tfe" id="dyw-oR-xzQ"/>
                         <outlet property="instituteAccessButton" destination="bVa-Ah-Opn" id="JJq-Gf-81o"/>
                         <outlet property="secureInternetButton" destination="2PS-WV-Mnd" id="iza-mD-rNn"/>
                     </connections>
                 </viewController>
                 <customObject id="dHH-k6-jKQ" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-441" y="1047"/>
+            <point key="canvasLocation" x="-441" y="1046.5"/>
         </scene>
         <!--Choose Profile View Controller-->
         <scene sceneID="q3V-V1-a5D">
