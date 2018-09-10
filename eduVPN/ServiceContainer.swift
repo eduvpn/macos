@@ -17,28 +17,20 @@ struct ServiceContainer {
         return urlSession
     }()
     
-    static var appName: String {
-        switch Bundle.main.bundleIdentifier! {
-        case "org.eduvpn.app":
-            return "eduVPN"
-        case "org.eduvpn.app.home":
-            return "Let's Connect!"
-        default:
-            fatalError()
-        }
-    }
+    /// Defines configuration values
+    static let appConfig: AppConfigType = AppConfig()
     
     /// Installs and connects helper
     static let helperService = HelperService()
     
     /// Discovers providers
-    static let providerService = ProviderService(urlSession: urlSession, authenticationService: authenticationService, preferencesService: preferencesService, appName: appName)
+    static let providerService = ProviderService(urlSession: urlSession, authenticationService: authenticationService, preferencesService: preferencesService, appConfig: appConfig)
     
     /// Registers 2FA
     static let twoFactorService = TwoFactorService(urlSession: urlSession, authenticationService: authenticationService)
     
     /// Authenticates user with provider
-    static let authenticationService = AuthenticationService(appName: appName)
+    static let authenticationService = AuthenticationService(appConfig: appConfig)
    
     /// Fetches configuration
     static let configurationService = ConfigurationService(urlSession: urlSession, authenticationService: authenticationService, keychainService: keychainService)
