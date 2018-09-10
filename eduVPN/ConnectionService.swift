@@ -629,7 +629,7 @@ class ConnectionService: NSObject {
         }
         
         guard let twoFactor = twoFactor else {
-            abortConnecting(error: Error.unexpectedError)
+            requestCredentials()
             return
         }
         let username: String
@@ -644,6 +644,34 @@ class ConnectionService: NSObject {
         }
         let response = "username \"Auth\" \(username)\npassword \"Auth\" \(password)\n"
         try write(response)
+    }
+    
+    private func requestCredentials() {
+        DispatchQueue.main.async {
+            let window = NSApp.mainWindow!
+            let storyboard = NSStoryboard(name: NSStoryboard.Name(rawValue: "Main"), bundle: nil)
+            let enterCredentialsViewController = storyboard.instantiateController(withIdentifier: NSStoryboard.SceneIdentifier(rawValue: "EnterCredentials")) as! EnterCredentialsViewController
+            let panel = NSPanel(contentViewController: enterCredentialsViewController)
+            window.beginSheet(panel) { (response) in
+                switch response {
+                case .OK:
+                    guard let credentials = enterCredentialsViewController.credentials else {
+                        self.abortConnecting(error: Error.unexpectedError)
+                        return
+                    }
+                    do {
+                        let response = "username \"Auth\" \(credentials.username)\npassword \"Auth\" \(credentials.password)\n"
+                        try self.write(response)
+                        // TODO: saveInKeychain (after successful connect) + read from keychain
+                    } catch {
+                        self.abortConnecting(error: error)
+                    }
+                default:
+                    self.abortConnecting(error: Error.userCancelled)
+                    break
+                }
+            }
+        }
     }
     
     private func rsaSign(_ stringToSign: String) throws {

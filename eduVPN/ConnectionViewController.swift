@@ -92,7 +92,7 @@ class ConnectionViewController: NSViewController {
             self.backButton.isHidden = true
             self.stateImageView.image = #imageLiteral(resourceName: "connecting")
             self.spinner.startAnimation(self)
-            self.disconnectButton.isHidden = true
+            self.disconnectButton.isHidden = false
             self.connectButton.isHidden = true
             self.statisticsBox.isHidden = false
             self.startUpdatingStatistics()
@@ -164,7 +164,7 @@ class ConnectionViewController: NSViewController {
                         return
                     } else if (error as NSError).domain == NSOSStatusErrorDomain, (error as NSError).code == errSecUserCanceled {
                         return
-                    } else if let error = error as? Socket.Error, error.errorCode == 1 {
+                    } else if let error = error as? Socket.Error, [1, -9974].contains(error.errorCode) {
                         return
                     }
                     let alert = NSAlert(error: error)

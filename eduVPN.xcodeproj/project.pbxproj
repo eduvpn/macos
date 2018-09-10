@@ -58,6 +58,8 @@
 		C766150F2125B4F2002A8E4D /* Debug.swift in Sources */ = {isa = PBXBuildFile; fileRef = C766150D2125B4F2002A8E4D /* Debug.swift */; };
 		C766FB87212D6AF000306271 /* eduVPNAssets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C766FB86212D6AF000306271 /* eduVPNAssets.xcassets */; };
 		C766FB89212D6AF900306271 /* LetsConnectAssets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C766FB88212D6AF900306271 /* LetsConnectAssets.xcassets */; };
+		C774BD0221469C51003FF7C8 /* EnterCredentialsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C774BD0121469C51003FF7C8 /* EnterCredentialsViewController.swift */; };
+		C774BD0321469C51003FF7C8 /* EnterCredentialsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C774BD0121469C51003FF7C8 /* EnterCredentialsViewController.swift */; };
 		C775F5F121397FF70092D09A /* SecurityInterface.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C775F5F021397FF70092D09A /* SecurityInterface.framework */; };
 		C775F5F2213980010092D09A /* SecurityInterface.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C775F5F021397FF70092D09A /* SecurityInterface.framework */; };
 		C77EF61320876B5A0097DEB2 /* String+Random.swift in Sources */ = {isa = PBXBuildFile; fileRef = C77EF61220876B5A0097DEB2 /* String+Random.swift */; };
@@ -325,6 +327,7 @@
 		C766150D2125B4F2002A8E4D /* Debug.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Debug.swift; path = eduVPN/Debug.swift; sourceTree = SOURCE_ROOT; };
 		C766FB86212D6AF000306271 /* eduVPNAssets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = eduVPNAssets.xcassets; sourceTree = "<group>"; };
 		C766FB88212D6AF900306271 /* LetsConnectAssets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = LetsConnectAssets.xcassets; sourceTree = "<group>"; };
+		C774BD0121469C51003FF7C8 /* EnterCredentialsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnterCredentialsViewController.swift; sourceTree = "<group>"; };
 		C775F5F021397FF70092D09A /* SecurityInterface.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SecurityInterface.framework; path = System/Library/Frameworks/SecurityInterface.framework; sourceTree = SDKROOT; };
 		C77EF61220876B5A0097DEB2 /* String+Random.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Random.swift"; sourceTree = "<group>"; };
 		C78250A51FC7291000B33892 /* Message.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Message.swift; path = eduVPN/Message.swift; sourceTree = SOURCE_ROOT; };
@@ -505,6 +508,7 @@
 				C7F345161F955473002120B9 /* ProvidersViewController.swift */,
 				C71847C71F0E5E2800296C61 /* ChooseConnectionTypeViewController.swift */,
 				C7A4E1211FACD09C00B21262 /* EnterProviderURLViewController.swift */,
+				C774BD0121469C51003FF7C8 /* EnterCredentialsViewController.swift */,
 				C7BEF5D71F03E4B50038605E /* ChooseProviderViewController.swift */,
 				C7BEF5DD1F03F4020038605E /* AuthenticatingViewController.swift */,
 				C732CEA31F0F720800698F28 /* ChooseProfileViewController.swift */,
@@ -861,6 +865,7 @@
 				C7FA902E1F0BD1A60037FF88 /* Either.swift in Sources */,
 				C732CEA51F0F720800698F28 /* ChooseProfileViewController.swift in Sources */,
 				C71847C81F0E5E2800296C61 /* ChooseConnectionTypeViewController.swift in Sources */,
+				C774BD0221469C51003FF7C8 /* EnterCredentialsViewController.swift in Sources */,
 				C766150E2125B4F2002A8E4D /* Debug.swift in Sources */,
 				C75527FA1F3C55F100076078 /* PreferencesService.swift in Sources */,
 				C795BAA220616C9300304431 /* AppDelegate.swift in Sources */,
@@ -900,6 +905,7 @@
 				C7251FC9208A2DF4000CE404 /* String+Random.swift in Sources */,
 				C7C494E2208484120056D5E4 /* Either.swift in Sources */,
 				C7C494E3208484120056D5E4 /* ChooseProfileViewController.swift in Sources */,
+				C774BD0321469C51003FF7C8 /* EnterCredentialsViewController.swift in Sources */,
 				C7C494E4208484120056D5E4 /* ChooseConnectionTypeViewController.swift in Sources */,
 				C766150F2125B4F2002A8E4D /* Debug.swift in Sources */,
 				C7251FCA208A2DF8000CE404 /* Enroll2FAViewController.swift in Sources */,
