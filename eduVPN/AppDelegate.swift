@@ -133,14 +133,15 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     private func updateStatusItemImage() {
         switch ServiceContainer.connectionService.state {
-        case .connecting:
-            statusItem?.image = #imageLiteral(resourceName: "disconnected-1")
+        case .connecting, .disconnecting:
+            statusItem?.image = #imageLiteral(resourceName: "Status-connecting")
+            NSApp.applicationIconImage = #imageLiteral(resourceName: "Icon-connecting")
         case .connected:
-            statusItem?.image = #imageLiteral(resourceName: "connected_bw")
-        case .disconnecting:
-            statusItem?.image = #imageLiteral(resourceName: "disconnected-1")
+            statusItem?.image = #imageLiteral(resourceName: "Status-connected")
+            NSApp.applicationIconImage = #imageLiteral(resourceName: "Icon-connected")
         case .disconnected:
-            statusItem?.image = #imageLiteral(resourceName: "disconnected-1")
+            statusItem?.image = #imageLiteral(resourceName: "Status-disconnected")
+            NSApp.applicationIconImage = #imageLiteral(resourceName: "Icon-disconnected")
         }
     }
     
