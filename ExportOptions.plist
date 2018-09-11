@@ -7,7 +7,7 @@
 	<key>method</key>
 	<string>developer-id</string>
 	<key>signingCertificate</key>
-	<string>Mac Developer</string>
+	<string>Developer ID Application</string>
 	<key>signingStyle</key>
 	<string>manual</string>
 	<key>teamID</key>

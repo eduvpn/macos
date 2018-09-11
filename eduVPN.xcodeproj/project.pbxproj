@@ -308,6 +308,7 @@
 		C732CEA31F0F720800698F28 /* ChooseProfileViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChooseProfileViewController.swift; sourceTree = "<group>"; };
 		C732CEA71F0F7B7600698F28 /* String+URL.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "String+URL.swift"; sourceTree = "<group>"; };
 		C73690B6214267A5004AFB4E /* URL+Unused.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "URL+Unused.swift"; path = "eduVPN/URL+Unused.swift"; sourceTree = SOURCE_ROOT; };
+		C73690B92142D04D004AFB4E /* ChangeLog.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = ChangeLog.md; sourceTree = "<group>"; };
 		C741F43B1FC6DE9000B1EB83 /* Sparkle.framework.dSYM */ = {isa = PBXFileReference; lastKnownFileType = wrapper.dsym; name = Sparkle.framework.dSYM; path = Carthage/Build/Mac/Sparkle.framework.dSYM; sourceTree = "<group>"; };
 		C741F43C1FC6DE9000B1EB83 /* Sparkle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Sparkle.framework; path = Carthage/Build/Mac/Sparkle.framework; sourceTree = "<group>"; };
 		C741F4411FC6E2D400B1EB83 /* dsa_pub.pem */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = dsa_pub.pem; sourceTree = "<group>"; };
@@ -500,6 +501,7 @@
 			isa = PBXGroup;
 			children = (
 				C7A9F1D01FB3C81B007A752F /* ReadMe.md */,
+				C73690B92142D04D004AFB4E /* ChangeLog.md */,
 				C7BEF5C71F03E0D80038605E /* eduVPN */,
 				C72AD6F41F0A692F006DBDA5 /* OpenVPNHelper */,
 				C75527E21F3C531B00076078 /* LoginItemHelper */,
