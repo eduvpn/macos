@@ -38,13 +38,13 @@
     {
       "size" : "256x256",
       "idiom" : "mac",
-      "filename" : "LetsConnect Icon.png",
+      "filename" : "Icon-off.png",
       "scale" : "2x"
     },
     {
       "size" : "512x512",
       "idiom" : "mac",
-      "filename" : "LetsConnect Icon-1.png",
+      "filename" : "Icon-off-1.png",
       "scale" : "1x"
     },
     {
