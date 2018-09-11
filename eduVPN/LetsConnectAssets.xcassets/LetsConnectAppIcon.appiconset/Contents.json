@@ -1,63 +1,55 @@
 {
   "images" : [
     {
+      "idiom" : "mac",
       "size" : "16x16",
-      "idiom" : "mac",
-      "filename" : "letsconnect-16.png",
       "scale" : "1x"
     },
     {
+      "idiom" : "mac",
       "size" : "16x16",
-      "idiom" : "mac",
-      "filename" : "letsconnect-33.png",
       "scale" : "2x"
     },
     {
-      "size" : "32x32",
       "idiom" : "mac",
-      "filename" : "letsconnect-32.png",
+      "size" : "32x32",
       "scale" : "1x"
     },
     {
-      "size" : "32x32",
       "idiom" : "mac",
-      "filename" : "letsconnect-64.png",
+      "size" : "32x32",
       "scale" : "2x"
     },
     {
-      "size" : "128x128",
       "idiom" : "mac",
-      "filename" : "letsconnect-128.png",
+      "size" : "128x128",
       "scale" : "1x"
     },
     {
-      "size" : "128x128",
       "idiom" : "mac",
-      "filename" : "letsconnect-257.png",
+      "size" : "128x128",
       "scale" : "2x"
     },
     {
+      "idiom" : "mac",
       "size" : "256x256",
-      "idiom" : "mac",
-      "filename" : "letsconnect-256.png",
       "scale" : "1x"
     },
     {
       "size" : "256x256",
       "idiom" : "mac",
-      "filename" : "letsconnect-513.png",
+      "filename" : "Icon-off.png",
       "scale" : "2x"
     },
     {
       "size" : "512x512",
       "idiom" : "mac",
-      "filename" : "letsconnect-512.png",
+      "filename" : "Icon-off-1.png",
       "scale" : "1x"
     },
     {
-      "size" : "512x512",
       "idiom" : "mac",
-      "filename" : "letsconnect-1024.png",
+      "size" : "512x512",
       "scale" : "2x"
     }
   ],
