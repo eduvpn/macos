@@ -43,10 +43,10 @@ class AuthenticationService {
     static let authenticationFinished = NSNotification.Name("AuthenticationService.authenticationFinished")
     
     private var redirectHTTPHandler: OIDRedirectHTTPHandler?
-    private let appName: String
+    private let appConfig: AppConfigType
     
-    init(appName: String) {
-        self.appName = appName
+    init(appConfig: AppConfigType) {
+        self.appConfig = appConfig
         readFromDisk()
     }
     
