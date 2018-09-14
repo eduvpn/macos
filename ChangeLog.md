@@ -4,6 +4,8 @@
 
 ### Version 1.1 (build 1)
 
+- new app icon which reflects connection state
+- new status bar icons
 - keychain support
 - update openvpn to 2.4.6
 - support for local config files

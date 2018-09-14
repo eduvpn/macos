@@ -82,8 +82,8 @@ class AuthenticationService {
             let success = authState != nil
             NotificationCenter.default.post(name: AuthenticationService.authenticationFinished, object: self, userInfo: ["success": success])
             
-            // Little delay to make authentication screen is dismissed
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            // Little delay to make sure authentication screen is dismissed
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
                 self.handlersAfterAuthenticating.forEach { handler in
                     if let authState = authState {
                         self.store(for: info.provider, authState: authState)
