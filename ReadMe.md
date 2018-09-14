@@ -52,6 +52,16 @@ A version for distribution can be build using the provided script `build.sh`:
     (etc.)
 
 
+### Building dependencies
+
+To build with Xcode 10 using Carthage use:
+
+    tee ${PWD}/Carthage/64bit.xcconfig <<-'EOF'
+    ARCHS = $(ARCHS_STANDARD_64_BIT)
+    EOF
+
+    XCODE_XCCONFIG_FILE="${PWD}/Carthage/64bit.xcconfig" carthage build --platform macOS --no-skip-current --verbose
+
 ### Uninstalling
 
 You can use the provided script `uninstall.sh` to uninstall the helper files.

@@ -1,6 +1,6 @@
-github "openid/AppAuth-iOS" "master"
-github "onevcat/Kingfisher" "master"
-github "jedisct1/swift-sodium" "master"
-github "sparkle-project/Sparkle" "master"
-github "ashleymills/Reachability.swift" "master"
-github "IBM-Swift/BlueSocket" "master"
+github "openid/AppAuth-iOS" ~> 0.94.0
+github "onevcat/Kingfisher" ~> 4.9.0
+github "jedisct1/swift-sodium" "master" # This project doesn't tag releases
+github "sparkle-project/Sparkle" ~> 1.20.0
+github "ashleymills/Reachability.swift" ~> 4.2.1
+github "IBM-Swift/BlueSocket" ~> 1.0.16

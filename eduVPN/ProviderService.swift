@@ -424,7 +424,7 @@ class ProviderService {
                         return
                     }
                     
-                    guard sodium.sign.verify(message: data, publicKey: publicKey, signature: signatureBin) else {
+                    guard sodium.sign.verify(message: Array(data), publicKey: Array(publicKey), signature: Array(signatureBin)) else {
                         handler(.failure(Error.invalidProviders))
                         return
                     }

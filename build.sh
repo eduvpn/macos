@@ -50,7 +50,12 @@ FILENAME="$TARGET-$VERSION"
 
 echo ""
 echo "Bootstrapping dependencies using carthage"
-carthage bootstrap --cache-builds --platform macOS
+# This is a workaround for getting Carthage to work with Xcode 10
+tee ${PWD}/Carthage/64bit.xcconfig <<-'EOF'
+ARCHS = $(ARCHS_STANDARD_64_BIT)
+EOF
+
+XCODE_XCCONFIG_FILE="${PWD}/Carthage/64bit.xcconfig" carthage bootstrap --cache-builds --platform macOS
 
 echo ""
 echo "Building and archiving"
