@@ -27,7 +27,7 @@ class ChooseConnectionTypeViewController: NSViewController {
         // Change title color
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.alignment = .center
-        let attributes = [NSAttributedStringKey.font: NSFont.systemFont(ofSize: 17), NSAttributedStringKey.foregroundColor : NSColor.white, NSAttributedStringKey.paragraphStyle : paragraphStyle]
+        let attributes = [NSAttributedString.Key.font: NSFont.systemFont(ofSize: 17), NSAttributedString.Key.foregroundColor : NSColor.white, NSAttributedString.Key.paragraphStyle : paragraphStyle]
         enterProviderButton.attributedTitle = NSAttributedString(string: enterProviderButton.title, attributes: attributes)
         chooseConfigFileButton.attributedTitle = NSAttributedString(string: chooseConfigFileButton.title, attributes: attributes)
     }
@@ -57,7 +57,7 @@ class ChooseConnectionTypeViewController: NSViewController {
         guard let window = view.window else {
             return
         }
-        let enterProviderURLViewController = storyboard!.instantiateController(withIdentifier: NSStoryboard.SceneIdentifier(rawValue: "EnterProviderURL")) as! EnterProviderURLViewController
+        let enterProviderURLViewController = storyboard!.instantiateController(withIdentifier: "EnterProviderURL") as! EnterProviderURLViewController
         let panel = NSPanel(contentViewController: enterProviderURLViewController)
         window.beginSheet(panel) { (response) in
             switch response {

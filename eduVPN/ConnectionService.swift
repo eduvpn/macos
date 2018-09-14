@@ -649,8 +649,8 @@ class ConnectionService: NSObject {
     private func requestCredentials() {
         DispatchQueue.main.async {
             let window = NSApp.mainWindow!
-            let storyboard = NSStoryboard(name: NSStoryboard.Name(rawValue: "Main"), bundle: nil)
-            let enterCredentialsViewController = storyboard.instantiateController(withIdentifier: NSStoryboard.SceneIdentifier(rawValue: "EnterCredentials")) as! EnterCredentialsViewController
+            let storyboard = NSStoryboard(name: "Main", bundle: nil)
+            let enterCredentialsViewController = storyboard.instantiateController(withIdentifier: "EnterCredentials") as! EnterCredentialsViewController
             let panel = NSPanel(contentViewController: enterCredentialsViewController)
             window.beginSheet(panel) { (response) in
                 switch response {

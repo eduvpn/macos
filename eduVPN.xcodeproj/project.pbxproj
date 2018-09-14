@@ -125,7 +125,7 @@
 		C7C49501208484120056D5E4 /* Sparkle.framework.dSYM in Resources */ = {isa = PBXBuildFile; fileRef = C741F43B1FC6DE9000B1EB83 /* Sparkle.framework.dSYM */; };
 		C7C49502208484120056D5E4 /* openvpn-2.4.6-openssl-1.1.0h in Resources */ = {isa = PBXBuildFile; fileRef = C7FA902B1F0BC83E0037FF88 /* openvpn-2.4.6-openssl-1.1.0h */; };
 		C7C49503208484120056D5E4 /* Reachability.framework.dSYM in Resources */ = {isa = PBXBuildFile; fileRef = C761E2DF2080B08200A98B90 /* Reachability.framework.dSYM */; };
-		C7C49505208484120056D5E4 /* org.eduvpn.app.openvpnhelper in CopyFiles */ = {isa = PBXBuildFile; fileRef = C72AD6F31F0A692F006DBDA5 /* org.eduvpn.app.openvpnhelper */; };
+		C7C49505208484120056D5E4 /* org.eduvpn.app.openvpnhelper in CopyFiles */ = {isa = PBXBuildFile; fileRef = C72AD6F31F0A692F006DBDA5 /* org.eduvpn.app.openvpnhelper */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		C7C49507208484120056D5E4 /* LoginItemHelper.app in CopyFiles */ = {isa = PBXBuildFile; fileRef = C75527E11F3C531B00076078 /* LoginItemHelper.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		C7C49509208484120056D5E4 /* Kingfisher.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = C71847CD1F0E7EAF00296C61 /* Kingfisher.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		C7C4950A208484120056D5E4 /* Sodium.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = C74487051F194FAB0072B472 /* Sodium.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -141,7 +141,7 @@
 		C7D15FD11F0D165900719F38 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C7D15FD01F0D165900719F38 /* Cocoa.framework */; };
 		C7D15FD21F0D166100719F38 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C72AD7031F0A6AEE006DBDA5 /* Security.framework */; };
 		C7D15FD41F0D166800719F38 /* ServiceManagement.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C7D15FD31F0D166800719F38 /* ServiceManagement.framework */; };
-		C7D15FD51F0D183600719F38 /* org.eduvpn.app.openvpnhelper in CopyFiles */ = {isa = PBXBuildFile; fileRef = C72AD6F31F0A692F006DBDA5 /* org.eduvpn.app.openvpnhelper */; };
+		C7D15FD51F0D183600719F38 /* org.eduvpn.app.openvpnhelper in CopyFiles */ = {isa = PBXBuildFile; fileRef = C72AD6F31F0A692F006DBDA5 /* org.eduvpn.app.openvpnhelper */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		C7F345171F955473002120B9 /* ProvidersViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7F345161F955473002120B9 /* ProvidersViewController.swift */; };
 		C7FA902C1F0BC83E0037FF88 /* openvpn-2.4.6-openssl-1.1.0h in Resources */ = {isa = PBXBuildFile; fileRef = C7FA902B1F0BC83E0037FF88 /* openvpn-2.4.6-openssl-1.1.0h */; };
 		C7FA902E1F0BD1A60037FF88 /* Either.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7FA902D1F0BD1A60037FF88 /* Either.swift */; };
@@ -700,7 +700,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0830;
-				LastUpgradeCheck = 0940;
+				LastUpgradeCheck = 1000;
 				ORGANIZATIONNAME = EduVPN;
 				TargetAttributes = {
 					C72AD6F21F0A692F006DBDA5 = {
@@ -716,7 +716,7 @@
 					C7BEF5C41F03E0D80038605E = {
 						CreatedOnToolsVersion = 8.3.3;
 						DevelopmentTeam = ZYJ4TZX4UU;
-						LastSwiftMigration = "";
+						LastSwiftMigration = 1000;
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.Sandbox = {
@@ -1201,7 +1201,6 @@
 		C7BEF5D51F03E0D80038605E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
 				ASSETCATALOG_COMPILER_APPICON_NAME = eduVPNAppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "Mac Developer";
@@ -1218,14 +1217,13 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "eduVPN/eduVPN-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 4.2;
 			};
 			name = Debug;
 		};
 		C7BEF5D61F03E0D80038605E /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
 				ASSETCATALOG_COMPILER_APPICON_NAME = eduVPNAppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "Mac Developer";
@@ -1241,14 +1239,13 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "eduVPN/eduVPN-Bridging-Header.h";
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 4.2;
 			};
 			name = Release;
 		};
 		C7C49513208484120056D5E4 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
 				ASSETCATALOG_COMPILER_APPICON_NAME = LetsConnectAppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "Mac Developer";
@@ -1273,7 +1270,6 @@
 		C7C49514208484120056D5E4 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
 				ASSETCATALOG_COMPILER_APPICON_NAME = LetsConnectAppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "Mac Developer";

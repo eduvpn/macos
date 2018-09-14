@@ -35,7 +35,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
       
         ValueTransformer.setValueTransformer(DurationTransformer(), forName: NSValueTransformerName(rawValue: "DurationTransformer"))
         
-        mainWindowController = NSStoryboard(name: NSStoryboard.Name(rawValue: "Main"), bundle: nil).instantiateController(withIdentifier: NSStoryboard.SceneIdentifier(rawValue: "MainWindowController")) as! MainWindowController
+        mainWindowController = NSStoryboard(name: "Main", bundle: nil).instantiateController(withIdentifier: "MainWindowController") as? MainWindowController
         mainWindowController.window?.makeKeyAndOrderFront(nil)
         
         // Adjust app name in menu and window
@@ -104,7 +104,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         window.makeKeyAndOrderFront(nil)
     }
     
-    private lazy var preferencesWindowController = NSStoryboard(name: NSStoryboard.Name(rawValue: "Main"), bundle: nil).instantiateController(withIdentifier: NSStoryboard.SceneIdentifier(rawValue: "PreferencesController")) as! NSWindowController
+    private lazy var preferencesWindowController = NSStoryboard(name: "Main", bundle: nil).instantiateController(withIdentifier: "PreferencesController") as! NSWindowController
     
     @objc @IBAction func showPreferences(_ sender: Any) {
         guard let window = mainWindowController.window, let preferencesWindow = preferencesWindowController.window else {

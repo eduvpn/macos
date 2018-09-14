@@ -68,7 +68,7 @@ class EnterCredentialsViewController: NSViewController {
 
 extension EnterCredentialsViewController: NSTextFieldDelegate {
     
-    override func controlTextDidChange(_ obj: Notification) {
+    func controlTextDidChange(_ obj: Notification) {
         okButton.isEnabled = validCredentials() != nil
     }
     

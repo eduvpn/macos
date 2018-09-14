@@ -40,7 +40,7 @@ class ConnectionViewController: NSViewController {
         // Change title color
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.alignment = .center
-        let attributes = [NSAttributedStringKey.font: NSFont.systemFont(ofSize: 17), NSAttributedStringKey.foregroundColor : NSColor.white, NSAttributedStringKey.paragraphStyle : paragraphStyle]
+        let attributes = [NSAttributedString.Key.font: NSFont.systemFont(ofSize: 17), NSAttributedString.Key.foregroundColor : NSColor.white, NSAttributedString.Key.paragraphStyle : paragraphStyle]
         connectButton.attributedTitle = NSAttributedString(string: connectButton.title, attributes: attributes)
         disconnectButton.attributedTitle = NSAttributedString(string: disconnectButton.title, attributes: attributes)
         
@@ -136,7 +136,7 @@ class ConnectionViewController: NSViewController {
         // Prompt user if we need two factor authentication token
         if profile.twoFactor, twoFactor == nil {
             if userInfo.twoFactorEnrolled {
-                let enter2FAViewController = storyboard!.instantiateController(withIdentifier: NSStoryboard.SceneIdentifier(rawValue: "Enter2FA")) as! Enter2FAViewController
+                let enter2FAViewController = storyboard!.instantiateController(withIdentifier: "Enter2FA") as! Enter2FAViewController
                 if userInfo.twoFactorEnrolledWith.contains(.yubico) {
                     enter2FAViewController.initialTwoFactorType = .yubico
                 } else if userInfo.twoFactorEnrolledWith.contains(.totp) {
@@ -146,7 +146,7 @@ class ConnectionViewController: NSViewController {
                 mainWindowController?.present(viewController: enter2FAViewController)
                 return
             } else {
-                let enroll2FAViewController = storyboard!.instantiateController(withIdentifier: NSStoryboard.SceneIdentifier(rawValue: "Enroll2FA")) as! Enroll2FAViewController
+                let enroll2FAViewController = storyboard!.instantiateController(withIdentifier: "Enroll2FA") as! Enroll2FAViewController
                 enroll2FAViewController.delegate = self
                 enroll2FAViewController.providerInfo = profile.info
                 mainWindowController?.present(viewController: enroll2FAViewController)

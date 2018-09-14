@@ -78,7 +78,7 @@ class EnterProviderURLViewController: NSViewController {
 
 extension EnterProviderURLViewController: NSTextFieldDelegate {
     
-    override func controlTextDidChange(_ obj: Notification) {
+    func controlTextDidChange(_ obj: Notification) {
         doneButton.isEnabled = validURL() != nil
     }
     

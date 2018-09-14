@@ -54,7 +54,7 @@ class ProvidersViewController: NSViewController {
         // Change title color
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.alignment = .center
-        let attributes = [NSAttributedStringKey.font: NSFont.systemFont(ofSize: 17), NSAttributedStringKey.foregroundColor : NSColor.white, NSAttributedStringKey.paragraphStyle : paragraphStyle]
+        let attributes = [NSAttributedString.Key.font: NSFont.systemFont(ofSize: 17), NSAttributedString.Key.foregroundColor : NSColor.white, NSAttributedString.Key.paragraphStyle : paragraphStyle]
         otherProviderButton.attributedTitle = NSAttributedString(string: otherProviderButton.title, attributes: attributes)
         connectButton.attributedTitle = NSAttributedString(string: connectButton.title, attributes: attributes)
         
