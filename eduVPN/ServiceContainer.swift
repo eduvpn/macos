@@ -13,7 +13,9 @@ struct ServiceContainer {
     
     /// URL session to perform network requests
     static let urlSession: URLSession = {
-        let urlSession =  URLSession(configuration: .ephemeral)
+        let configuration = URLSessionConfiguration.ephemeral
+        configuration.timeoutIntervalForRequest = 15
+        let urlSession =  URLSession(configuration: configuration)
         return urlSession
     }()
     
