@@ -25,7 +25,7 @@
 		C72A557B1F0D9FF2001DCA24 /* AppAuth.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = C72A55791F0D9FF2001DCA24 /* AppAuth.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		C72A557F1F0DA01C001DCA24 /* AppAuth.framework.dSYM in CopyFiles */ = {isa = PBXBuildFile; fileRef = C72A557E1F0DA01C001DCA24 /* AppAuth.framework.dSYM */; };
 		C72AD6F61F0A692F006DBDA5 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = C72AD6F51F0A692F006DBDA5 /* main.m */; };
-		C72AD6FD1F0A69BF006DBDA5 /* OpenVPNHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = C72AD6FC1F0A69BF006DBDA5 /* OpenVPNHelper.m */; };
+		C72AD6FD1F0A69BF006DBDA5 /* OpenVPNHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = C72AD6FC1F0A69BF006DBDA5 /* OpenVPNHelper.m */; settings = {COMPILER_FLAGS = "-D'TEAM=@\\\"$(DEVELOPMENT_TEAM)\\\"'"; }; };
 		C72AD7021F0A6AE9006DBDA5 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C72AD7011F0A6AE9006DBDA5 /* Foundation.framework */; };
 		C72AD7041F0A6AEE006DBDA5 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C72AD7031F0A6AEE006DBDA5 /* Security.framework */; };
 		C732CEA51F0F720800698F28 /* ChooseProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C732CEA31F0F720800698F28 /* ChooseProfileViewController.swift */; };
@@ -651,11 +651,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = C7BEF5D41F03E0D80038605E /* Build configuration list for PBXNativeTarget "eduVPN" */;
 			buildPhases = (
-				C76E5F7A1FFF945000E6F905 /* Sign OpenVPN */,
 				C77C7DB02029C7C70029F90E /* Set SMPrivilegedExecutables */,
 				C7BEF5C11F03E0D80038605E /* Sources */,
 				C7BEF5C21F03E0D80038605E /* Frameworks */,
 				C7BEF5C31F03E0D80038605E /* Resources */,
+				C754E230214D2C9D00CD3A5B /* Sign OpenVPN */,
 				C72AD6ED1F0A6641006DBDA5 /* CopyFiles */,
 				C75527F51F3C543600076078 /* CopyFiles */,
 				C72A557C1F0D9FF2001DCA24 /* Embed Frameworks */,
@@ -676,11 +676,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = C7C49512208484120056D5E4 /* Build configuration list for PBXNativeTarget "LetsConnect" */;
 			buildPhases = (
-				C7C494D7208484120056D5E4 /* Sign OpenVPN */,
 				C7C494D8208484120056D5E4 /* Set SMPrivilegedExecutables */,
 				C7C494D9208484120056D5E4 /* Sources */,
 				C7C494F3208484120056D5E4 /* Frameworks */,
 				C7C494FC208484120056D5E4 /* Resources */,
+				C7C494D7208484120056D5E4 /* Sign OpenVPN */,
 				C7C49504208484120056D5E4 /* CopyFiles */,
 				C7C49506208484120056D5E4 /* CopyFiles */,
 				C7C49508208484120056D5E4 /* Embed Frameworks */,
@@ -817,22 +817,26 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if test \"$ACTION\" == \"install\"\nthen\n    /usr/libexec/PlistBuddy -c \"Set :SMAuthorizedClients:0 \\\"anchor apple generic and identifier \\\\\\\"org.eduvpn.app\\\\\\\" and (certificate leaf[field.1.2.840.113635.100.6.1.9] /* exists */ or certificate 1[field.1.2.840.113635.100.6.2.6] /* exists */ and certificate leaf[field.1.2.840.113635.100.6.1.13] /* exists */ and certificate leaf[subject.OU] = ${DEVELOPMENT_TEAM})\\\"\" ${SOURCE_ROOT}/OpenVPNHelper/OpenVPNHelper-Info.plist\n    /usr/libexec/PlistBuddy -c \"Set :SMAuthorizedClients:1 \\\"anchor apple generic and identifier \\\\\\\"org.eduvpn.app.home\\\\\\\" and (certificate leaf[field.1.2.840.113635.100.6.1.9] /* exists */ or certificate 1[field.1.2.840.113635.100.6.2.6] /* exists */ and certificate leaf[field.1.2.840.113635.100.6.1.13] /* exists */ and certificate leaf[subject.OU] = ${DEVELOPMENT_TEAM})\\\"\" ${SOURCE_ROOT}/OpenVPNHelper/OpenVPNHelper-Info.plist\nelse\n    /usr/libexec/PlistBuddy -c \"Set :SMAuthorizedClients:0 \\\"identifier \\\\\\\"org.eduvpn.app\\\\\\\" and anchor apple generic and certificate leaf[subject.CN] = \\\\\\\"${EXPANDED_CODE_SIGN_IDENTITY_NAME}\\\\\\\" and certificate 1[field.1.2.840.113635.100.6.2.1] /* exists */\\\"\" ${SOURCE_ROOT}/OpenVPNHelper/OpenVPNHelper-Info.plist\n    /usr/libexec/PlistBuddy -c \"Set :SMAuthorizedClients:1 \\\"identifier \\\\\\\"org.eduvpn.app.home\\\\\\\" and anchor apple generic and certificate leaf[subject.CN] = \\\\\\\"${EXPANDED_CODE_SIGN_IDENTITY_NAME}\\\\\\\" and certificate 1[field.1.2.840.113635.100.6.2.1] /* exists */\\\"\" ${SOURCE_ROOT}/OpenVPNHelper/OpenVPNHelper-Info.plist\nfi";
+			shellScript = "if test \"$ACTION\" == \"install\"\nthen\n    /usr/libexec/PlistBuddy -c \"Set :SMAuthorizedClients:0 \\\"anchor apple generic and identifier \\\\\\\"org.eduvpn.app\\\\\\\" and (certificate leaf[field.1.2.840.113635.100.6.1.9] /* exists */ or certificate 1[field.1.2.840.113635.100.6.2.6] /* exists */ and certificate leaf[field.1.2.840.113635.100.6.1.13] /* exists */ and certificate leaf[subject.OU] = ${DEVELOPMENT_TEAM})\\\"\" ${SOURCE_ROOT}/OpenVPNHelper/OpenVPNHelper-Info.plist\n    /usr/libexec/PlistBuddy -c \"Set :SMAuthorizedClients:1 \\\"anchor apple generic and identifier \\\\\\\"org.eduvpn.app.home\\\\\\\" and (certificate leaf[field.1.2.840.113635.100.6.1.9] /* exists */ or certificate 1[field.1.2.840.113635.100.6.2.6] /* exists */ and certificate leaf[field.1.2.840.113635.100.6.1.13] /* exists */ and certificate leaf[subject.OU] = ${DEVELOPMENT_TEAM})\\\"\" ${SOURCE_ROOT}/OpenVPNHelper/OpenVPNHelper-Info.plist\nelse\n    /usr/libexec/PlistBuddy -c \"Set :SMAuthorizedClients:0 \\\"identifier \\\\\\\"org.eduvpn.app\\\\\\\" and anchor apple generic and certificate leaf[subject.CN] = \\\\\\\"${EXPANDED_CODE_SIGN_IDENTITY_NAME}\\\\\\\" and certificate 1[field.1.2.840.113635.100.6.2.1] /* exists */\\\"\" ${SOURCE_ROOT}/OpenVPNHelper/OpenVPNHelper-Info.plist\n    /usr/libexec/PlistBuddy -c \"Set :SMAuthorizedClients:1 \\\"identifier \\\\\\\"org.eduvpn.app.home\\\\\\\" and anchor apple generic and certificate leaf[subject.CN] = \\\\\\\"${EXPANDED_CODE_SIGN_IDENTITY_NAME}\\\\\\\" and certificate 1[field.1.2.840.113635.100.6.2.1] /* exists */\\\"\" ${SOURCE_ROOT}/OpenVPNHelper/OpenVPNHelper-Info.plist\nfi\n";
 			showEnvVarsInLog = 0;
 		};
-		C76E5F7A1FFF945000E6F905 /* Sign OpenVPN */ = {
+		C754E230214D2C9D00CD3A5B /* Sign OpenVPN */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
+			inputFileListPaths = (
+			);
 			inputPaths = (
 			);
 			name = "Sign OpenVPN";
+			outputFileListPaths = (
+			);
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
-			shellScript = "signed=$( codesign -d -vv ${SOURCE_ROOT}/openvpn-2.4.6-openssl-1.1.0h/openvpn 2>&1 >/dev/null | grep \"${EXPANDED_CODE_SIGN_IDENTITY_NAME}\" )\necho $signed\nif [ -n \"$signed\" ]\nthen\n    echo \"Already signed for ${EXPANDED_CODE_SIGN_IDENTITY_NAME}, skipping\"\nelse\n    echo \"Signing for ${EXPANDED_CODE_SIGN_IDENTITY_NAME}\"\n    codesign -f -s \"${EXPANDED_CODE_SIGN_IDENTITY_NAME}\" \"${SOURCE_ROOT}/openvpn-2.4.6-openssl-1.1.0h/openvpn\"\nfi\n\n";
+			shellScript = "folder=${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/${OPENVPN_FOLDER}\necho \"Verifying signatures in $folder\"\n\nsigned=$( codesign -d -vv $folder/openvpn 2>&1 >/dev/null | grep \"${EXPANDED_CODE_SIGN_IDENTITY_NAME}\" )\necho $signed\nif [ -n \"$signed\" ]\nthen\n    echo \"Already signed openvpn for ${EXPANDED_CODE_SIGN_IDENTITY_NAME}, skipping\"\nelse\n    echo \"Signing openvpn for ${EXPANDED_CODE_SIGN_IDENTITY_NAME}\"\n    codesign -f -s \"${EXPANDED_CODE_SIGN_IDENTITY_NAME}\" \"$folder/openvpn\"\nfi\n\nsignedup=$( codesign -d -vv $folder/client.up.eduvpn.sh 2>&1 >/dev/null | grep \"${EXPANDED_CODE_SIGN_IDENTITY_NAME}\" )\necho $signedup\nif [ -n \"$signedup\" ]\nthen\n    echo \"Already signed up script for ${EXPANDED_CODE_SIGN_IDENTITY_NAME}, skipping\"\nelse\n    echo \"Signing up script for ${EXPANDED_CODE_SIGN_IDENTITY_NAME}\"\n    codesign -f -s \"${EXPANDED_CODE_SIGN_IDENTITY_NAME}\" \"$folder/client.up.eduvpn.sh\"\nfi\n\nsigneddown=$( codesign -d -vv $folder/client.down.eduvpn.sh 2>&1 >/dev/null | grep \"${EXPANDED_CODE_SIGN_IDENTITY_NAME}\" )\necho $signeddown\nif [ -n \"$signeddown\" ]\nthen\n    echo \"Already signed down script for ${EXPANDED_CODE_SIGN_IDENTITY_NAME}, skipping\"\nelse\n    echo \"Signing down script for ${EXPANDED_CODE_SIGN_IDENTITY_NAME}\"\n    codesign -f -s \"${EXPANDED_CODE_SIGN_IDENTITY_NAME}\" \"$folder/client.down.eduvpn.sh\"\nfi\n";
 		};
 		C77C7DB02029C7C70029F90E /* Set SMPrivilegedExecutables */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -860,7 +864,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
-			shellScript = "signed=$( codesign -d -vv ${SOURCE_ROOT}/openvpn-2.4.6-openssl-1.1.0h/openvpn 2>&1 >/dev/null | grep \"${EXPANDED_CODE_SIGN_IDENTITY_NAME}\" )\necho $signed\nif [ -n \"$signed\" ]\nthen\n    echo \"Already signed for ${EXPANDED_CODE_SIGN_IDENTITY_NAME}, skipping\"\nelse\n    echo \"Signing for ${EXPANDED_CODE_SIGN_IDENTITY_NAME}\"\n    codesign -f -s \"${EXPANDED_CODE_SIGN_IDENTITY_NAME}\" \"${SOURCE_ROOT}/openvpn-2.4.6-openssl-1.1.0h/openvpn\"\nfi\n";
+			shellScript = "folder=${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/${OPENVPN_FOLDER}\necho \"Verifying signatures in $folder\"\n\nsigned=$( codesign -d -vv $folder/openvpn 2>&1 >/dev/null | grep \"${EXPANDED_CODE_SIGN_IDENTITY_NAME}\" )\necho $signed\nif [ -n \"$signed\" ]\nthen\n    echo \"Already signed openvpn for ${EXPANDED_CODE_SIGN_IDENTITY_NAME}, skipping\"\nelse\n    echo \"Signing openvpn for ${EXPANDED_CODE_SIGN_IDENTITY_NAME}\"\n    codesign -f -s \"${EXPANDED_CODE_SIGN_IDENTITY_NAME}\" \"$folder/openvpn\"\nfi\n\nsignedup=$( codesign -d -vv $folder/client.up.eduvpn.sh 2>&1 >/dev/null | grep \"${EXPANDED_CODE_SIGN_IDENTITY_NAME}\" )\necho $signedup\nif [ -n \"$signedup\" ]\nthen\n    echo \"Already signed up script for ${EXPANDED_CODE_SIGN_IDENTITY_NAME}, skipping\"\nelse\n    echo \"Signing up script for ${EXPANDED_CODE_SIGN_IDENTITY_NAME}\"\n    codesign -f -s \"${EXPANDED_CODE_SIGN_IDENTITY_NAME}\" \"$folder/client.up.eduvpn.sh\"\nfi\n\nsigneddown=$( codesign -d -vv $folder/client.down.eduvpn.sh 2>&1 >/dev/null | grep \"${EXPANDED_CODE_SIGN_IDENTITY_NAME}\" )\necho $signeddown\nif [ -n \"$signeddown\" ]\nthen\n    echo \"Already signed down script for ${EXPANDED_CODE_SIGN_IDENTITY_NAME}, skipping\"\nelse\n    echo \"Signing down script for ${EXPANDED_CODE_SIGN_IDENTITY_NAME}\"\n    codesign -f -s \"${EXPANDED_CODE_SIGN_IDENTITY_NAME}\" \"$folder/client.down.eduvpn.sh\"\nfi\n";
 		};
 		C7C494D8208484120056D5E4 /* Set SMPrivilegedExecutables */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -1154,6 +1158,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
+				OPENVPN_FOLDER = "openvpn-2.4.6-openssl-1.1.0h";
 				SDKROOT = macosx;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -1197,6 +1202,7 @@
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = "";
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
@@ -1205,6 +1211,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				MTL_ENABLE_DEBUG_INFO = NO;
+				OPENVPN_FOLDER = "openvpn-2.4.6-openssl-1.1.0h";
 				SDKROOT = macosx;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
 			};

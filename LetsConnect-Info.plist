@@ -44,5 +44,7 @@
 	<string>https://app.eduvpn.nl/mac/home-appcast.xml</string>
 	<key>SUPublicDSAKeyFile</key>
 	<string>dsa_pub.pem</string>
+	<key>OpenVPNVersion</key>
+	<string>$(OPENVPN_FOLDER)</string>
 </dict>
 </plist>

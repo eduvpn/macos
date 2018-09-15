@@ -35,6 +35,8 @@
 	<string>Main</string>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
+	<key>OpenVPNVersion</key>
+	<string>$(OPENVPN_FOLDER)</string>
 	<key>SMPrivilegedExecutables</key>
 	<dict>
 		<key>org.eduvpn.app.openvpnhelper</key>

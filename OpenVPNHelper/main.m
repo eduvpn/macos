@@ -20,8 +20,7 @@ int main(int argc, const char * argv[]) {
     
     // We just create and start an instance of the main helper tool object and then
     // have it run the run loop forever.
-    syslog(LOG_NOTICE, "Hello world! uid = %d, euid = %d, pid = %d\n", (int) getuid(), (int) geteuid(), (int) getpid());
-
+ 
     @autoreleasepool {
         OpenVPNHelper *helper;
         
