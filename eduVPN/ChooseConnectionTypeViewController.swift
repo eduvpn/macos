@@ -21,7 +21,7 @@ class ChooseConnectionTypeViewController: NSViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do view setup here.
-        view.layer?.backgroundColor = NSColor.white.cgColor
+//        view.layer?.backgroundColor = NSColor.white.cgColor
         closeButton.isHidden = !allowClose
         
         // Change title color
