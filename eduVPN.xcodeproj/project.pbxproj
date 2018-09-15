@@ -339,6 +339,8 @@
 		C775F5F021397FF70092D09A /* SecurityInterface.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SecurityInterface.framework; path = System/Library/Frameworks/SecurityInterface.framework; sourceTree = SDKROOT; };
 		C77EF61220876B5A0097DEB2 /* String+Random.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Random.swift"; sourceTree = "<group>"; };
 		C78250A51FC7291000B33892 /* Message.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Message.swift; path = eduVPN/Message.swift; sourceTree = SOURCE_ROOT; };
+		C784BAF1214C768E00F5A01F /* eduVPN.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = eduVPN.entitlements; path = EduVPN/Targets/eduVPN/eduVPN.entitlements; sourceTree = SOURCE_ROOT; };
+		C784BAF2214C76C000F5A01F /* Let's Connect!.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Let's Connect!.entitlements"; sourceTree = "<group>"; };
 		C789DCC920C7E3CA00A0668E /* Socket.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Socket.framework; path = Carthage/Build/Mac/Socket.framework; sourceTree = "<group>"; };
 		C789DCCA20C7E3CB00A0668E /* Socket.framework.dSYM */ = {isa = PBXFileReference; lastKnownFileType = wrapper.dsym; name = Socket.framework.dSYM; path = Carthage/Build/Mac/Socket.framework.dSYM; sourceTree = "<group>"; };
 		C789DCD520C8227000A0668E /* KeychainService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = KeychainService.swift; path = eduVPN/KeychainService.swift; sourceTree = SOURCE_ROOT; };
@@ -484,6 +486,7 @@
 		C774BCFB21466B8B003FF7C8 /* eduVPN */ = {
 			isa = PBXGroup;
 			children = (
+				C784BAF1214C768E00F5A01F /* eduVPN.entitlements */,
 				C774BCFD21466BAD003FF7C8 /* AppConfig.swift */,
 			);
 			path = eduVPN;
@@ -492,6 +495,7 @@
 		C774BCFC21466B99003FF7C8 /* LetsConnect */ = {
 			isa = PBXGroup;
 			children = (
+				C784BAF2214C76C000F5A01F /* Let's Connect!.entitlements */,
 				C774BCFF21466BB8003FF7C8 /* AppConfig.swift */,
 			);
 			path = LetsConnect;
@@ -719,6 +723,9 @@
 						LastSwiftMigration = 1000;
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
+							com.apple.HardenedRuntime = {
+								enabled = 1;
+							};
 							com.apple.Sandbox = {
 								enabled = 0;
 							};
@@ -726,6 +733,11 @@
 					};
 					C7C494D2208484120056D5E4 = {
 						DevelopmentTeam = ZYJ4TZX4UU;
+						SystemCapabilities = {
+							com.apple.HardenedRuntime = {
+								enabled = 1;
+							};
+						};
 					};
 				};
 			};
@@ -1206,6 +1218,7 @@
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = ZYJ4TZX4UU;
+				ENABLE_HARDENED_RUNTIME = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/Mac",
@@ -1229,6 +1242,7 @@
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = ZYJ4TZX4UU;
+				ENABLE_HARDENED_RUNTIME = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/Mac",
@@ -1251,6 +1265,7 @@
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = ZYJ4TZX4UU;
+				ENABLE_HARDENED_RUNTIME = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/Mac",
@@ -1275,6 +1290,7 @@
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = ZYJ4TZX4UU;
+				ENABLE_HARDENED_RUNTIME = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/Mac",
