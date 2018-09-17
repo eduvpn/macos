@@ -21,15 +21,7 @@ class ChooseConnectionTypeViewController: NSViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do view setup here.
-        view.layer?.backgroundColor = NSColor.white.cgColor
         closeButton.isHidden = !allowClose
-        
-        // Change title color
-        let paragraphStyle = NSMutableParagraphStyle()
-        paragraphStyle.alignment = .center
-        let attributes = [NSAttributedString.Key.font: NSFont.systemFont(ofSize: 17), NSAttributedString.Key.foregroundColor : NSColor.white, NSAttributedString.Key.paragraphStyle : paragraphStyle]
-        enterProviderButton.attributedTitle = NSAttributedString(string: enterProviderButton.title, attributes: attributes)
-        chooseConfigFileButton.attributedTitle = NSAttributedString(string: chooseConfigFileButton.title, attributes: attributes)
     }
     
     override func viewWillAppear() {

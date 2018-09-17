@@ -31,7 +31,7 @@ class MainWindowController: NSWindowController {
     override func windowDidLoad() {
         super.windowDidLoad()
         
-        window?.backgroundColor = .white
+//        window?.backgroundColor = .white
         
         // Disabled, clips
 //        window?.titlebarAppearsTransparent = true

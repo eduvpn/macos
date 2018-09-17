@@ -36,14 +36,7 @@ class ConnectionViewController: NSViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        // Change title color
-        let paragraphStyle = NSMutableParagraphStyle()
-        paragraphStyle.alignment = .center
-        let attributes = [NSAttributedString.Key.font: NSFont.systemFont(ofSize: 17), NSAttributedString.Key.foregroundColor : NSColor.white, NSAttributedString.Key.paragraphStyle : paragraphStyle]
-        connectButton.attributedTitle = NSAttributedString(string: connectButton.title, attributes: attributes)
-        disconnectButton.attributedTitle = NSAttributedString(string: disconnectButton.title, attributes: attributes)
-        
+                
         locationImageView?.kf.setImage(with: profile.info.provider.logoURL)
         profileLabel.stringValue = profile.displayName
     }
