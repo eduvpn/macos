@@ -59,28 +59,46 @@
     reply([NSString stringWithFormat:@"%@-%@", version, buildVersion]);
 }
 
-- (void)startOpenVPNAtURL:(NSURL *_Nonnull)launchURL withConfig:(NSURL *_Nonnull)config upScript:(NSURL *_Nullable)upScript downScript:(NSURL *_Nullable)downScript scriptOptions:(NSArray <NSString *>*_Nullable)scriptOptions reply:(void(^_Nonnull)(BOOL))reply {
-    // Verify that binary at URL is signed by me
+- (BOOL)verify:(NSString *)identifier atURL:(NSURL *)fileURL {
     SecStaticCodeRef staticCodeRef = 0;
-    OSStatus status = SecStaticCodeCreateWithPath((__bridge CFURLRef _Nonnull)(launchURL), kSecCSDefaultFlags, &staticCodeRef);
+    OSStatus status = SecStaticCodeCreateWithPath((__bridge CFURLRef _Nonnull)(fileURL), kSecCSDefaultFlags, &staticCodeRef);
     if (status != errSecSuccess) {
         syslog(LOG_ERR, "Static code error %d", status);
-        reply(NO);
-        return;
+        return NO;
     }
-
-    NSString *requirement = @"anchor apple generic and identifier openvpn and certificate leaf[subject.OU] = ZYJ4TZX4UU";
+    
+    NSString *requirement = [NSString stringWithFormat:@"anchor apple generic and identifier %@ and certificate leaf[subject.OU] = %@", identifier, TEAM];
     SecRequirementRef requirementRef = 0;
     status = SecRequirementCreateWithString((__bridge CFStringRef _Nonnull)requirement, kSecCSDefaultFlags, &requirementRef);
     if (status != errSecSuccess) {
         syslog(LOG_ERR, "Requirement error %d", status);
-        reply(NO);
-        return;
+        return NO;
     }
     
     status = SecStaticCodeCheckValidity(staticCodeRef, kSecCSDefaultFlags, requirementRef);
     if (status != errSecSuccess) {
         syslog(LOG_ERR, "Validity error %d", status);
+        return NO;
+    }
+    
+    return YES;
+}
+
+- (void)startOpenVPNAtURL:(NSURL *_Nonnull)launchURL withConfig:(NSURL *_Nonnull)config upScript:(NSURL *_Nullable)upScript downScript:(NSURL *_Nullable)downScript scriptOptions:(NSArray <NSString *>*_Nullable)scriptOptions reply:(void(^_Nonnull)(BOOL))reply {
+    // Verify that binary at URL is signed by us
+    if (![self verify:@"openvpn" atURL:launchURL]) {
+        reply(NO);
+        return;
+    }
+    
+    // Verify that up script at URL is signed by us
+    if (upScript && ![self verify:@"client.up.eduvpn" atURL:upScript]) {
+        reply(NO);
+        return;
+    }
+    
+    // Verify that down script at URL is signed by us
+    if (downScript && ![self verify:@"client.down.eduvpn" atURL:downScript]) {
         reply(NO);
         return;
     }

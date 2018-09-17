@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="14113" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="14313.18" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14113"/>
-        <capability name="box content view" minToolsVersion="7.0"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14313.18"/>
         <capability name="cells containing NSDateComponentsFormatter" minSystemVersion="10.12"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -878,7 +877,7 @@
                                             <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                                             <color key="gridColor" name="gridColor" catalog="System" colorSpace="catalog"/>
                                             <tableColumns>
-                                                <tableColumn identifier="" width="435" minWidth="40" maxWidth="1000" id="vEX-nM-780">
+                                                <tableColumn width="435" minWidth="40" maxWidth="1000" id="vEX-nM-780">
                                                     <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" title="Provider">
                                                         <font key="font" metaFont="smallSystem"/>
                                                         <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
@@ -984,7 +983,7 @@ DQ
                                             <tableViewGridLines key="gridStyleMask" horizontal="YES"/>
                                             <color key="gridColor" red="0.89325373406680131" green="0.93220771770814059" blue="0.94392754695714298" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                                             <tableColumns>
-                                                <tableColumn identifier="" width="335" minWidth="40" maxWidth="1000" id="Gls-PW-Y62">
+                                                <tableColumn width="335" minWidth="40" maxWidth="1000" id="Gls-PW-Y62">
                                                     <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border">
                                                         <font key="font" metaFont="smallSystem"/>
                                                         <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
@@ -1519,7 +1518,7 @@ CA
                                             <tableViewGridLines key="gridStyleMask" horizontal="YES"/>
                                             <color key="gridColor" red="0.89325373409999997" green="0.93220771769999999" blue="0.94392754700000003" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                                             <tableColumns>
-                                                <tableColumn identifier="" width="335" minWidth="40" maxWidth="1000" id="15T-aJ-TcM">
+                                                <tableColumn width="335" minWidth="40" maxWidth="1000" id="15T-aJ-TcM">
                                                     <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border">
                                                         <font key="font" metaFont="smallSystem"/>
                                                         <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
@@ -1626,7 +1625,7 @@ CA
                                             <tableViewGridLines key="gridStyleMask" horizontal="YES"/>
                                             <color key="gridColor" red="0.89325373409999997" green="0.93220771769999999" blue="0.94392754700000003" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                                             <tableColumns>
-                                                <tableColumn identifier="" width="335" minWidth="40" maxWidth="1000" id="eQe-hu-mpC">
+                                                <tableColumn width="335" minWidth="40" maxWidth="1000" id="eQe-hu-mpC">
                                                     <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border">
                                                         <font key="font" metaFont="smallSystem"/>
                                                         <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
