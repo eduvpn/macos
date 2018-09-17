@@ -46,11 +46,11 @@ class Enroll2FAViewController: NSViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // Change title color
-        let paragraphStyle = NSMutableParagraphStyle()
-        paragraphStyle.alignment = .center
-        let attributes = [NSAttributedString.Key.font: NSFont.systemFont(ofSize: 17), NSAttributedString.Key.foregroundColor : NSColor.white, NSAttributedString.Key.paragraphStyle : paragraphStyle]
-        doneButton.attributedTitle = NSAttributedString(string: doneButton.title, attributes: attributes)
+//        // Change title color
+//        let paragraphStyle = NSMutableParagraphStyle()
+//        paragraphStyle.alignment = .center
+//        let attributes = [NSAttributedString.Key.font: NSFont.systemFont(ofSize: 17), NSAttributedString.Key.foregroundColor : NSColor.white, NSAttributedString.Key.paragraphStyle : paragraphStyle]
+//        doneButton.attributedTitle = NSAttributedString(string: doneButton.title, attributes: attributes)
         
         // TOTP preparations
         let twoFactorService = ServiceContainer.twoFactorService

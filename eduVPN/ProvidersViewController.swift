@@ -50,14 +50,7 @@ class ProvidersViewController: NSViewController {
   
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        // Change title color
-        let paragraphStyle = NSMutableParagraphStyle()
-        paragraphStyle.alignment = .center
-        let attributes = [NSAttributedString.Key.font: NSFont.systemFont(ofSize: 17), NSAttributedString.Key.foregroundColor : NSColor.white, NSAttributedString.Key.paragraphStyle : paragraphStyle]
-        otherProviderButton.attributedTitle = NSAttributedString(string: otherProviderButton.title, attributes: attributes)
-        connectButton.attributedTitle = NSAttributedString(string: connectButton.title, attributes: attributes)
-        
+                
         // Close orphaned connection
         busy = true
         ServiceContainer.connectionService.closeOrphanedConnectionIfNeeded { _ in
@@ -307,7 +300,7 @@ class ProvidersViewController: NSViewController {
         }
     
         unreachableLabel.isHidden = reachable
-        tableView.isHidden = !reachable
+        tableView.superview?.superview?.isHidden = !reachable
         tableView.isEnabled = !busy
         otherProviderButton.isHidden = providerSelected || !reachable
         otherProviderButton.isEnabled = !busy
