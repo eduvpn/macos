@@ -1,14 +1,21 @@
-![macOS](https://img.shields.io/badge/os-macOS-green.svg?style=flat)
-![iOS](https://img.shields.io/badge/os-iOS-green.svg?style=flat)
-![Linux](https://img.shields.io/badge/os-linux-green.svg?style=flat)
-![Apache 2](https://img.shields.io/badge/license-Apache2-blue.svg?style=flat)
-![](https://img.shields.io/badge/Swift-3.0-orange.svg?style=flat)
-![](https://img.shields.io/badge/Swift-4.0-orange.svg?style=flat)
-[![Build Status - Master](https://travis-ci.org/IBM-Swift/BlueSocket.svg?branch=master)](https://travis-ci.org/IBM-Swift/BlueSocket)
+<p align="center">
+    <a href="https://www.kitura.io/packages.html#all">
+    <img src="https://img.shields.io/badge/docs-kitura.io-1FBCE4.svg" alt="APIDoc">
+    </a>
+    <a href="https://travis-ci.org/IBM-Swift/BlueSocket">
+    <img src="https://travis-ci.org/IBM-Swift/BlueSocket.svg?branch=master" alt="Build Status - Master">
+    </a>
+    <img src="https://img.shields.io/badge/os-macOS-green.svg?style=flat" alt="macOS">
+    <img src="https://img.shields.io/badge/os-iOS-green.svg?style=flat" alt="iOS">
+    <img src="https://img.shields.io/badge/os-linux-green.svg?style=flat" alt="Linux">
+    <img src="https://img.shields.io/badge/license-Apache2-blue.svg?style=flat" alt="Apache 2">
+    <a href="http://swift-at-ibm-slack.mybluemix.net/">
+    <img src="http://swift-at-ibm-slack.mybluemix.net/badge.svg" alt="Slack Status">
+    </a>
+</p>
 
 # BlueSocket
 
-## Overview
 Socket framework for Swift using the Swift Package Manager. Works on iOS, macOS, and Linux.
 
 ## Prerequisites
@@ -16,8 +23,8 @@ Socket framework for Swift using the Swift Package Manager. Works on iOS, macOS,
 ### Swift
 
 * Swift Open Source `swift-4.0.0-RELEASE` toolchain (**Minimum REQUIRED for latest release**)
-* Swift Open Source `swift-4.1-RELEASE` toolchain (**Recommended**)
-* Swift toolchain included in *Xcode Version 9.3 (9E145) or higher*.
+* Swift Open Source `swift-4.1.2-RELEASE` toolchain (**Recommended**)
+* Swift toolchain included in *Xcode Version 9.4 (9E145) or higher*.
 
 ### macOS
 
@@ -44,6 +51,8 @@ Socket framework for Swift using the Swift Package Manager. Works on iOS, macOS,
 ### Add-ins
 
 * [BlueSSLService](https://github.com/IBM-Swift/BlueSSLService.git) can be used to add **SSL/TLS** support.
+	- If using this package, please note that the  **libssl-dev** package is required to be installed when building on Linux.
+
 
 ## Build
 
@@ -284,7 +293,7 @@ class EchoServer {
                     let newSocket = try socket.acceptClientConnection()
 
                     print("Accepted connection from: \(newSocket.remoteHostname) on port \(newSocket.remotePort)")
-                    print("Socket Signature: \(newSocket.signature?.description)")
+                    print("Socket Signature: \(String(describing: newSocket.signature?.description))")
 
                     self.addNewConnection(socket: newSocket)
 
@@ -422,11 +431,17 @@ This server can be built by specifying the following `Package.swift` file using 
 import PackageDescription
 
 let package = Package(
-    name: "EchoServer",
+	name: "EchoServer",
 	dependencies: [
-		.package(url: "https://github.com/IBM-Swift/BlueSocket.git", .upToNextMinor(from: "0.12.76")),
-		],
-	exclude: ["EchoServer.xcodeproj"]
+		.package(url: "https://github.com/IBM-Swift/BlueSocket.git", from:"1.0.8"),
+	],
+	targets: [
+	.target(
+		name: "EchoServer",
+		dependencies: [
+			"Socket"
+		]),
+	]
 )
 ```
 Or if you are still using Swift 3, by specifying the following `Package.swift` file.
@@ -450,3 +465,11 @@ Swift Echo Server Sample
 Connect with a command line window by entering 'telnet ::1 1337'
 Listening on port: 1337
 ```
+
+## Community
+
+We love to talk server-side Swift and Kitura. Join our [Slack](http://swift-at-ibm-slack.mybluemix.net/) to meet the team!
+
+## License
+
+This library is licensed under Apache 2.0. Full license text is available in [LICENSE](https://github.com/IBM-Swift/BlueSocket/blob/master/LICENSE).

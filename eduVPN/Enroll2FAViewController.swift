@@ -49,7 +49,7 @@ class Enroll2FAViewController: NSViewController {
         // Change title color
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.alignment = .center
-        let attributes = [NSAttributedStringKey.font: NSFont.systemFont(ofSize: 17), NSAttributedStringKey.foregroundColor : NSColor.white, NSAttributedStringKey.paragraphStyle : paragraphStyle]
+        let attributes = [NSAttributedString.Key.font: NSFont.systemFont(ofSize: 17), NSAttributedString.Key.foregroundColor : NSColor.white, NSAttributedString.Key.paragraphStyle : paragraphStyle]
         doneButton.attributedTitle = NSAttributedString(string: doneButton.title, attributes: attributes)
         
         // TOTP preparations
@@ -137,7 +137,7 @@ class Enroll2FAViewController: NSViewController {
 
 extension Enroll2FAViewController: NSTextFieldDelegate {
     
-    override func controlTextDidChange(_ obj: Notification) {
+    func controlTextDidChange(_ obj: Notification) {
         doneButton.isEnabled = validToken() != nil
     }
     
