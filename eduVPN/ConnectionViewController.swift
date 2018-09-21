@@ -44,6 +44,7 @@ class ConnectionViewController: NSViewController {
     override func viewWillAppear() {
         super.viewWillAppear()
         updateForStateChange()
+        updateMessages()
         NotificationCenter.default.addObserver(self, selector: #selector(stateChanged(notification:)), name: ConnectionService.stateChanged, object: ServiceContainer.connectionService)
         
         // Fetch messages

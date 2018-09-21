@@ -134,6 +134,22 @@ class ProvidersViewController: NSViewController {
         }
     }
     
+    @IBAction func connectProviderUsingDoubleClick(_ sender: Any) {
+        let row = tableView.clickedRow
+        guard row >= 0 else {
+            return
+        }
+        
+        let tableRow = rows[row]
+        switch tableRow {
+        case .section:
+            // Ignore
+            break
+        case .provider(let provider):
+            authenticateAndConnect(to: provider)
+        }
+    }
+    
     @IBAction func removeProvider(_ sender: Any) {
         let row = tableView.selectedRow
         guard row >= 0 else {
