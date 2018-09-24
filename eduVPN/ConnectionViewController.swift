@@ -36,14 +36,25 @@ class ConnectionViewController: NSViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-                
-        locationImageView?.kf.setImage(with: profile.info.provider.logoURL)
+        
+        let provider = profile.info.provider
+        
+        switch provider.connectionType {
+        case .instituteAccess, .secureInternet:
+            locationImageView?.kf.setImage(with: provider.logoURL)
+        case .custom:
+            locationImageView?.image = NSWorkspace.shared.icon(forFileType: NSFileTypeForHFSTypeCode(OSType(kGenericNetworkIcon)))
+        case .localConfig:
+            locationImageView?.image = NSWorkspace.shared.icon(forFileType: NSFileTypeForHFSTypeCode(OSType(kGenericDocumentIcon)))
+        }
+        
         profileLabel.stringValue = profile.displayName
     }
     
     override func viewWillAppear() {
         super.viewWillAppear()
         updateForStateChange()
+        updateMessages()
         NotificationCenter.default.addObserver(self, selector: #selector(stateChanged(notification:)), name: ConnectionService.stateChanged, object: ServiceContainer.connectionService)
         
         // Fetch messages
@@ -192,9 +203,12 @@ class ConnectionViewController: NSViewController {
         notificationsBox.isHidden = messages.isEmpty
         
         notificationsField.attributedStringValue = messages.reduce(into: NSMutableAttributedString()) { (notifications, message) in
+            if notifications.length > 0 {
+                notifications.append(NSAttributedString(string: "\n\n", attributes: [.font: NSFont.systemFont(ofSize: NSFont.systemFontSize(for: .small))]))
+            }
             let date =  DateFormatter.localizedString(from: message.date, dateStyle: .short, timeStyle: .short)
             notifications.append(NSAttributedString(string: date + ": ", attributes: [.font: NSFont.boldSystemFont(ofSize: NSFont.systemFontSize(for: .small))]))
-            notifications.append(NSAttributedString(string: message.message + "\n\n", attributes: [.font: NSFont.systemFont(ofSize: NSFont.systemFontSize(for: .small))]))
+            notifications.append(NSAttributedString(string: message.message, attributes: [.font: NSFont.systemFont(ofSize: NSFont.systemFontSize(for: .small))]))
         }
     }
     

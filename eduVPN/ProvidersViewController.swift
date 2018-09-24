@@ -134,6 +134,22 @@ class ProvidersViewController: NSViewController {
         }
     }
     
+    @IBAction func connectProviderUsingDoubleClick(_ sender: Any) {
+        let row = tableView.clickedRow
+        guard row >= 0 else {
+            return
+        }
+        
+        let tableRow = rows[row]
+        switch tableRow {
+        case .section:
+            // Ignore
+            break
+        case .provider(let provider):
+            authenticateAndConnect(to: provider)
+        }
+    }
+    
     @IBAction func removeProvider(_ sender: Any) {
         let row = tableView.selectedRow
         guard row >= 0 else {
@@ -330,7 +346,15 @@ extension ProvidersViewController: NSTableViewDelegate {
             return result
         case .provider(let provider):
             let result = tableView.makeView(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: "ProfileCell"), owner: self) as? NSTableCellView
-            result?.imageView?.kf.setImage(with: provider.logoURL)
+            switch provider.connectionType {
+            case .instituteAccess, .secureInternet:
+                result?.imageView?.kf.setImage(with: provider.logoURL)
+            case .custom:
+                result?.imageView?.image = NSWorkspace.shared.icon(forFileType: NSFileTypeForHFSTypeCode(OSType(kGenericNetworkIcon)))
+            case .localConfig:
+                result?.imageView?.image = NSWorkspace.shared.icon(forFileType: NSFileTypeForHFSTypeCode(OSType(kGenericDocumentIcon)))
+            }
+            
             result?.textField?.stringValue = provider.displayName
             return result
         }
