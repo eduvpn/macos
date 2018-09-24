@@ -58,6 +58,8 @@ class ProvidersViewController: NSViewController {
             self.updateInterface()
         }
         
+        tableView.registerForDraggedTypes([kUTTypeFileURL as NSPasteboard.PasteboardType, kUTTypeURL as NSPasteboard.PasteboardType])
+        
         // Handle internet connection state
         if let reachability = reachability {
             reachability.whenReachable = { [weak self] reachability in
@@ -364,6 +366,71 @@ extension ProvidersViewController: NSTableViewDelegate {
     
     func tableViewSelectionDidChange(_ notification: Notification) {
         updateInterface()
+    }
+    
+    func tableView(_ tableView: NSTableView, validateDrop info: NSDraggingInfo, proposedRow row: Int, proposedDropOperation dropOperation: NSTableView.DropOperation) -> NSDragOperation {
+        tableView.setDropRow(-1, dropOperation: .on)
+        return .copy
+    }
+    
+    func tableView(_ tableView: NSTableView, acceptDrop info: NSDraggingInfo, row: Int, dropOperation: NSTableView.DropOperation) -> Bool {
+        guard let url = NSURL(from: info.draggingPasteboard) else {
+            return false
+        }
+        
+        if url.isFileURL {
+            chooseConfigFile(configFileURL: url as URL)
+        } else {
+            addURL(baseURL: url as URL)
+        }
+        return true
+    }
+    
+    private func chooseConfigFile(configFileURL: URL, recover: Bool = false) {
+        ServiceContainer.providerService.addProvider(configFileURL: configFileURL, recover: recover) { result in
+            DispatchQueue.main.async {
+                switch result {
+                case .success:
+                    self.discoverAccessibleProviders()
+                case .failure(let error):
+                    let alert = NSAlert(customizedError: error)
+                    if let error = error as? ProviderService.Error, !error.recoveryOptions.isEmpty {
+                        error.recoveryOptions.forEach {
+                            alert?.addButton(withTitle: $0)
+                        }
+                    }
+                    
+                    alert?.beginSheetModal(for: self.view.window!) { (response) in
+                        switch response.rawValue {
+                        case 1000:
+                            self.chooseConfigFile(configFileURL: configFileURL, recover: true)
+                        default:
+                            break
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    private func addURL(baseURL: URL) {
+        let provider = Provider(displayName: baseURL.host ?? "", baseURL: baseURL, logoURL: nil, publicKey: nil, connectionType: .custom, authorizationType: .local)
+        ServiceContainer.providerService.fetchInfo(for: provider) { result in
+            switch result {
+            case .success(let info):
+                DispatchQueue.main.async {
+                    ServiceContainer.providerService.storeProvider(provider: info.provider)
+                     self.discoverAccessibleProviders()
+                }
+            case .failure(let error):
+                DispatchQueue.main.async {
+                    let alert = NSAlert(customizedError: error)
+                    alert?.beginSheetModal(for: self.view.window!) { (_) in
+                        
+                    }
+                }
+            }
+        }
     }
     
 }

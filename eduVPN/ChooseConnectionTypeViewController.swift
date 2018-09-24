@@ -112,18 +112,18 @@ class ChooseConnectionTypeViewController: NSViewController {
                     self.mainWindowController?.dismiss()
                 case .failure(let error):
                     let alert = NSAlert(customizedError: error)
-                    if let alert = alert, let error = error as? ProviderService.Error, !error.recoveryOptions.isEmpty {
+                    if let error = error as? ProviderService.Error, !error.recoveryOptions.isEmpty {
                         error.recoveryOptions.forEach {
-                            alert.addButton(withTitle: $0)
+                            alert?.addButton(withTitle: $0)
                         }
-                        
-                        alert.beginSheetModal(for: self.view.window!) { (response) in
-                            switch response.rawValue {
-                            case 1000:
-                                self.chooseConfigFile(configFileURL: configFileURL, recover: true)
-                            default:
-                                break
-                            }
+                    }
+                    
+                    alert?.beginSheetModal(for: self.view.window!) { (response) in
+                        switch response.rawValue {
+                        case 1000:
+                            self.chooseConfigFile(configFileURL: configFileURL, recover: true)
+                        default:
+                            break
                         }
                     }
                 }
