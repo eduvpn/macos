@@ -414,7 +414,7 @@ extension ProvidersViewController: NSTableViewDelegate {
     }
     
     private func addURL(baseURL: URL) {
-        let provider = Provider(displayName: baseURL.host ?? "", baseURL: baseURL, logoURL: nil, publicKey: nil, connectionType: .custom, authorizationType: .local)
+        let provider = Provider(displayName: baseURL.host ?? "", baseURL: baseURL, logoURL: nil, publicKey: nil, username: nil, connectionType: .custom, authorizationType: .local)
         ServiceContainer.providerService.fetchInfo(for: provider) { result in
             switch result {
             case .success(let info):

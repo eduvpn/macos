@@ -95,6 +95,9 @@ struct Provider: Codable {
     /// The public key of the API, or for connection type `.localConfig`: the common name of the associated certificate
     var publicKey: String?
     
+    /// The user name for connection type `.localConfig`, not used for other providers
+    var username: String?
+    
     let connectionType: ConnectionType
     let authorizationType: AuthorizationType
     

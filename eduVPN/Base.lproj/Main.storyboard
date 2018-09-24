@@ -1552,7 +1552,7 @@ Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor 
                                     <rect key="frame" x="-100" y="-100" width="376" height="16"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                 </scroller>
-                                <scroller key="verticalScroller" verticalHuggingPriority="750" doubleValue="0.16666666666666663" horizontal="NO" id="Cn4-RS-Fjf">
+                                <scroller key="verticalScroller" verticalHuggingPriority="750" doubleValue="1" horizontal="NO" id="Cn4-RS-Fjf">
                                     <rect key="frame" x="484" y="0.0" width="16" height="383"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                 </scroller>
@@ -2143,7 +2143,7 @@ Gw
         <!--Enter Credentials View Controller-->
         <scene sceneID="kU9-LA-Gwx">
             <objects>
-                <viewController storyboardIdentifier="EnterCredentials" id="uq9-CJ-wT3" customClass="EnterCredentialsViewController" customModule="eduVPN" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="EnterCredentials" id="uq9-CJ-wT3" customClass="EnterCredentialsViewController" customModule="LetsConnect" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" wantsLayer="YES" id="f3e-f3-Qip">
                         <rect key="frame" x="0.0" y="0.0" width="420" height="168"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -2215,7 +2215,7 @@ Gw
                                     <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
-                            <button hidden="YES" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="BzY-X2-jIl">
+                            <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="BzY-X2-jIl">
                                 <rect key="frame" x="96" y="47" width="124" height="18"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <buttonCell key="cell" type="check" title="Save in Keychain" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="Va4-FU-UAP">
@@ -2546,11 +2546,11 @@ DQ
         <image name="NSLeftFacingTriangleTemplate" width="9" height="12"/>
         <image name="NSRemoveTemplate" width="11" height="11"/>
         <image name="NSStopProgressTemplate" width="11" height="11"/>
-        <image name="disconnected" width="44" height="37"/>
+        <image name="disconnected" width="44" height="55"/>
         <image name="secure_access" width="212" height="130"/>
         <image name="secure_internet" width="212" height="130"/>
         <namedColor name="Primary Color">
-            <color red="0.31799998879432678" green="0.6940000057220459" blue="0.80800002813339233" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.31764705882352939" green="0.69411764705882351" blue="0.80784313725490198" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>
     </resources>
 </document>
