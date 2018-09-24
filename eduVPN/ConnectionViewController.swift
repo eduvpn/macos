@@ -171,8 +171,8 @@ class ConnectionViewController: NSViewController {
                     } else if let error = error as? Socket.Error, [1, -9974].contains(error.errorCode) {
                         return
                     }
-                    let alert = NSAlert(error: error)
-                    alert.beginSheetModal(for: self.view.window!) { (_) in
+                    let alert = NSAlert(customizedError: error)
+                    alert?.beginSheetModal(for: self.view.window!) { (_) in
                         self.updateForStateChange()
                     }
                 }
@@ -188,8 +188,8 @@ class ConnectionViewController: NSViewController {
                 case .success:
                     break
                 case .failure(let error):
-                    let alert = NSAlert(error: error)
-                    alert.beginSheetModal(for: self.view.window!) { (_) in
+                    let alert = NSAlert(customizedError: error)
+                    alert?.beginSheetModal(for: self.view.window!) { (_) in
                         self.updateForStateChange()
                     }
                 }
@@ -303,8 +303,8 @@ extension ConnectionViewController: Enroll2FAViewControllerDelegate {
                         self.userInfo = userInfo
                         self.connect()
                     case .failure(let error):
-                        let alert = NSAlert(error: error)
-                        alert.beginSheetModal(for: self.view.window!) { (_) in
+                        let alert = NSAlert(customizedError: error)
+                        alert?.beginSheetModal(for: self.view.window!) { (_) in
                             
                         }
                     }

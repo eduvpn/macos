@@ -65,8 +65,8 @@ extension ChooseProviderViewController: NSTableViewDelegate {
                 }
             case .failure(let error):
                 DispatchQueue.main.async {
-                    let alert = NSAlert(error: error)
-                    alert.beginSheetModal(for: self.view.window!) { (_) in
+                    let alert = NSAlert(customizedError: error)
+                    alert?.beginSheetModal(for: self.view.window!) { (_) in
                         self.tableView.isEnabled = true
                     }
                 }
@@ -82,18 +82,11 @@ extension ChooseProviderViewController: NSTableViewDelegate {
                     ServiceContainer.providerService.storeProvider(provider: info.provider)
                     self.mainWindowController?.dismiss()
                 case .failure(let error):
-                    // User knows he cancelled, no alert needed
-                    if (error as NSError).domain == "org.openid.appauth.general" && (error as NSError).code == -4 {
-                        self.mainWindowController?.dismiss()
-                        return
-                    }
-                    // User knows he rejected, no alert needed
-                    if (error as NSError).domain == "org.openid.appauth.oauth_authorization" && (error as NSError).code == -4 {
-                        self.mainWindowController?.dismiss()
-                        return
-                    }
-                    let alert = NSAlert(error: error)
-                    alert.beginSheetModal(for: self.view.window!) { (_) in
+                    if let alert = NSAlert(customizedError: error) {
+                        alert.beginSheetModal(for: self.view.window!) { (_) in
+                            self.mainWindowController?.dismiss()
+                        }
+                    } else {
                         self.mainWindowController?.dismiss()
                     }
                 }

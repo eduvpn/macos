@@ -67,14 +67,17 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                     case .success:
                         NSApp.reply(toApplicationShouldTerminate: true)
                     case .failure(let error):
-                        NSApp.reply(toApplicationShouldTerminate: false)
-                        let alert = NSAlert(error: error)
-                        if let window = self.mainWindowController.window {
-                            alert.beginSheetModal(for: window) { (_) in
-                                
+                        if let alert = NSAlert(customizedError: error) {
+                            NSApp.reply(toApplicationShouldTerminate: false)
+                            if let window = self.mainWindowController.window {
+                                alert.beginSheetModal(for: window) { (_) in
+                                    
+                                }
+                            } else {
+                                alert.runModal()
                             }
                         } else {
-                            alert.runModal()
+                            NSApp.reply(toApplicationShouldTerminate: true)
                         }
                     }
                 }

@@ -87,8 +87,8 @@ class Enter2FAViewController: NSViewController {
         doneButton.isEnabled = false
         
         guard let token = validToken() else {
-            let alert = NSAlert(error: Error.invalidToken)
-            alert.beginSheetModal(for: self.view.window!) { (_) in
+            let alert = NSAlert(customizedError: Error.invalidToken)
+            alert?.beginSheetModal(for: self.view.window!) { (_) in
                 self.segmentedControl.isEnabled = true
                 self.textField.isEnabled = true
             }
