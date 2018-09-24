@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Security
 
 class KeychainService {
     
@@ -18,6 +19,11 @@ class KeychainService {
         case unsupportedAlgorithm
         case signingFailed
         case certificateReadFailed
+        case passwordEncoding
+        case updatePassword(OSStatus)
+        case removePassword(OSStatus)
+        case savePassword(OSStatus)
+        case loadPassword(OSStatus)
         
         var errorDescription: String? {
             switch self {
@@ -33,6 +39,16 @@ class KeychainService {
                 return NSLocalizedString("Failed to fulfill sign request", comment: "")
             case .certificateReadFailed:
                 return NSLocalizedString("Failed to read certificate", comment: "")
+            case .passwordEncoding:
+                return NSLocalizedString("Failed to encode password", comment: "")
+            case .updatePassword:
+                return NSLocalizedString("Failed to update password", comment: "")
+            case .removePassword:
+                return NSLocalizedString("Failed to remove password", comment: "")
+            case .savePassword:
+                return NSLocalizedString("Failed to save password", comment: "")
+            case .loadPassword:
+                return NSLocalizedString("Failed to read password", comment: "")
             default:
                 return NSLocalizedString("An unknown error occurred", comment: "")
             }
@@ -42,19 +58,25 @@ class KeychainService {
             switch self {
             case .unknownCommonName:
                 return NSLocalizedString("Add the missing certificate to your keychain.", comment: "")
-            case .importError:
-                return NSLocalizedString("Try again.", comment: "")
-            case .privateKeyError:
+            case .importError, .passwordEncoding, .privateKeyError:
                 return NSLocalizedString("Try again.", comment: "")
             case .unsupportedAlgorithm:
                 return NSLocalizedString("Check for app updates.", comment: "")
             case .signingFailed, .certificateReadFailed:
                 return NSLocalizedString("Try again.", comment: "")
+            case .updatePassword(let status), .removePassword(let status), .savePassword(let status), .loadPassword(let status):
+                if let message = SecCopyErrorMessageString(status, nil) as String? {
+                    return message
+                } else {
+                    return NSLocalizedString("Try again.", comment: "")
+                }
             default:
                 return NSLocalizedString("Try again later.", comment: "")
             }
         }
     }
+    
+    // MARK: - Credentials
     
     func importKeyPair(data: Data, passphrase: String) throws -> String {
         let options: NSDictionary = [kSecImportExportPassphrase: passphrase]
@@ -144,4 +166,66 @@ class KeychainService {
 
         return signature as Data
     }
+    
+    // MARK: - Passwords
+    
+    func updatePassword(service: String, account: String, password: String) throws {
+        guard let data = password.data(using: .utf8) else {
+            throw Error.passwordEncoding
+        }
+
+        let keychainQuery: NSDictionary = [kSecClass: kSecClassGenericPassword, kSecAttrService: service, kSecAttrAccount: account, kSecReturnData: kCFBooleanTrue, kSecMatchLimit: kSecMatchLimitOne]
+        
+        let status = SecItemUpdate(keychainQuery as CFDictionary, [kSecValueData: data] as CFDictionary)
+        guard status == noErr else {
+            throw Error.updatePassword(status)
+        }
+    }
+    
+    func removePassword(service: String, account: String) throws {
+        let keychainQuery: NSDictionary = [kSecClass: kSecClassGenericPassword, kSecAttrService: service, kSecAttrAccount: account, kSecReturnData: kCFBooleanTrue, kSecMatchLimit: kSecMatchLimitOne]
+        
+        // Delete any existing items
+        let status = SecItemDelete(keychainQuery as CFDictionary)
+        guard status == noErr else {
+            throw Error.removePassword(status)
+        }
+    }
+    
+    func savePassword(service: String, account: String, password: String) throws {
+        guard let data = password.data(using: .utf8) else {
+            throw Error.passwordEncoding
+        }
+        
+        let keychainQuery: NSDictionary = [kSecClass: kSecClassGenericPassword, kSecAttrService: service, kSecAttrAccount: account, kSecValueData: data]
+        
+        // Add the new keychain item
+        let status = SecItemAdd(keychainQuery as CFDictionary, nil)
+        guard status == noErr else {
+            throw Error.savePassword(status)
+        }
+    }
+    
+    func loadPassword(service: String, account: String) throws -> String? {
+        let keychainQuery: NSDictionary = [kSecClass: kSecClassGenericPassword, kSecAttrService: service, kSecAttrAccount: account, kSecReturnData: kCFBooleanTrue, kSecMatchLimit: kSecMatchLimitOne]
+        
+        var dataTypeRef: AnyObject?
+        
+        // Search for the keychain items
+        let status = SecItemCopyMatching(keychainQuery, &dataTypeRef)
+        guard status == noErr else {
+            throw Error.loadPassword(status)
+        }
+        
+        guard let retrievedData = dataTypeRef as? Data else {
+            return nil
+        }
+        
+        guard let contentsOfKeychain = String(data: retrievedData, encoding: .utf8) else {
+            throw Error.passwordEncoding
+        }
+        
+        return contentsOfKeychain
+    }
+
 }

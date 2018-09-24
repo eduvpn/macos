@@ -9,6 +9,7 @@
 - keychain support
 - update openvpn to 2.4.6
 - support for local config files
+- adding config files and URLs using drag-n-drop
 - improved handling of DNS settings
 - improved support for IPv6
 - certificate validity check before use

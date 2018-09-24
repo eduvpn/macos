@@ -67,6 +67,13 @@ echo "Exporting"
 xcodebuild -exportArchive -archivePath $FILENAME.xcarchive -exportPath $FILENAME -exportOptionsPlist ExportOptions.plist
 
 echo ""
+echo "Re-signing up and down scripts"
+DOWN=$(find $FILENAME -name "*.down.*.sh" -print)
+codesign -f -s "$SIGNINGIDENTITY" "$DOWN"
+UP=$(find $FILENAME -name "*.up.*.sh" -print)
+codesign -f -s "$SIGNINGIDENTITY" "$UP"
+
+echo ""
 read -p "Create disk image (requires DropDMG license) (y/n)?" choice
 case "$choice" in
   y|Y ) ;;

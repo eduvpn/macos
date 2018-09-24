@@ -145,6 +145,7 @@ class ConnectionService: NSObject {
         localPort = nil
         localTUNTAPIPv6Address = nil
         currentProfile = nil
+        credentials = nil
         
         helperService.installHelperIfNeeded(client: self) { (result) in
             switch result {
@@ -180,7 +181,19 @@ class ConnectionService: NSObject {
         guard let provider = currentProfile?.info.provider, provider.connectionType == .localConfig else {
             return
         }
-        providerService.saveCommonCertificate(commonNameCertificate, for: provider)
+        let username: String?
+        if let credentials = credentials, credentials.saveInKeychain {
+            do {
+                try keychainService.savePassword(service: provider.displayName, account: credentials.username, password: credentials.password)
+                username = credentials.username
+            } catch {
+                username = nil
+                debugLog("Keychain error: \(error)")
+            }
+        } else {
+            username = nil
+        }
+        providerService.saveCommonCertificate(commonNameCertificate, username: username, for: provider)
     }
     
     private func abortConnecting(error: Swift.Error) {
@@ -315,7 +328,8 @@ class ConnectionService: NSObject {
     private var socket: Socket?
     private var managing: Bool = false
     private var commonNameCertificate: String = ""
-    
+    private var credentials: (username: String, password: String, saveInKeychain: Bool)?
+
     private func openManagingSocket() {
         let queue = DispatchQueue.global(qos: .userInteractive)
         
@@ -620,6 +634,10 @@ class ConnectionService: NSObject {
             break
          case "Verification Failed: \'Auth\'":
             if twoFactor == nil {
+                // Remove from keychain on fail
+                if let provider = currentProfile?.info.provider, let username = provider.username {
+                    try keychainService.removePassword(service: provider.displayName, account: username)
+                }
                 throw Error.invalidCredentials
             } else {
                 throw Error.invalidTwoFactorPassword
@@ -647,6 +665,19 @@ class ConnectionService: NSObject {
     }
     
     private func requestCredentials() {
+        if let provider = currentProfile?.info.provider, let username = provider.username, let password = try? keychainService.loadPassword(service: provider.displayName, account: username) {
+            guard let password = password else {
+                return
+            }
+            do {
+                let response = "username \"Auth\" \(username)\npassword \"Auth\" \(password)\n"
+                try self.write(response)
+            } catch {
+                self.abortConnecting(error: error)
+            }
+            return
+        }
+        
         DispatchQueue.main.async {
             let window = NSApp.mainWindow!
             let storyboard = NSStoryboard(name: "Main", bundle: nil)
@@ -661,8 +692,10 @@ class ConnectionService: NSObject {
                     }
                     do {
                         let response = "username \"Auth\" \(credentials.username)\npassword \"Auth\" \(credentials.password)\n"
+                        if credentials.saveInKeychain {
+                            self.credentials = credentials
+                        }
                         try self.write(response)
-                        // TODO: saveInKeychain (after successful connect) + read from keychain
                     } catch {
                         self.abortConnecting(error: error)
                     }
