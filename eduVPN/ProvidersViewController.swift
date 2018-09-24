@@ -346,7 +346,15 @@ extension ProvidersViewController: NSTableViewDelegate {
             return result
         case .provider(let provider):
             let result = tableView.makeView(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: "ProfileCell"), owner: self) as? NSTableCellView
-            result?.imageView?.kf.setImage(with: provider.logoURL)
+            switch provider.connectionType {
+            case .instituteAccess, .secureInternet:
+                result?.imageView?.kf.setImage(with: provider.logoURL)
+            case .custom:
+                result?.imageView?.image = NSWorkspace.shared.icon(forFileType: NSFileTypeForHFSTypeCode(OSType(kGenericNetworkIcon)))
+            case .localConfig:
+                result?.imageView?.image = NSWorkspace.shared.icon(forFileType: NSFileTypeForHFSTypeCode(OSType(kGenericDocumentIcon)))
+            }
+            
             result?.textField?.stringValue = provider.displayName
             return result
         }
