@@ -101,8 +101,8 @@ class ProvidersViewController: NSViewController {
                     self.tableView.reloadData()
                     self.updateInterface()
                 case .failure(let error):
-                    let alert = NSAlert(error: error)
-                    alert.beginSheetModal(for: self.view.window!) { (_) in
+                    let alert = NSAlert(customizedError: error)
+                    alert?.beginSheetModal(for: self.view.window!) { (_) in
                         
                     }
                 }
@@ -274,16 +274,8 @@ class ProvidersViewController: NSViewController {
     }
     
     private func handleError(_ error: Error) {
-        // User knows he cancelled, no alert needed
-        if (error as NSError).domain == "org.openid.appauth.general" && (error as NSError).code == -4 {
-            return
-        }
-        // User knows he rejected, no alert needed
-        if (error as NSError).domain == "org.openid.appauth.oauth_authorization" && (error as NSError).code == -4 {
-            return
-        }
-        let alert = NSAlert(error: error)
-        alert.beginSheetModal(for: self.view.window!) { (_) in
+        let alert = NSAlert(customizedError: error)
+        alert?.beginSheetModal(for: self.view.window!) { (_) in
             // Nothing
         }
     }

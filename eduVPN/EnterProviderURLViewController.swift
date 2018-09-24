@@ -62,8 +62,8 @@ class EnterProviderURLViewController: NSViewController {
         doneButton.isEnabled = false
         
         guard let url = validURL(), let _ = url.host else {
-            let alert = NSAlert(error: Error.invalidURL)
-            alert.beginSheetModal(for: self.view.window!) { (_) in
+            let alert = NSAlert(customizedError: Error.invalidURL)
+            alert?.beginSheetModal(for: self.view.window!) { (_) in
                 self.textField.isEnabled = true
             }
             return

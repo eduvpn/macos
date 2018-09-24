@@ -74,8 +74,8 @@ class ChooseConnectionTypeViewController: NSViewController {
                 }
             case .failure(let error):
                 DispatchQueue.main.async {
-                    let alert = NSAlert(error: error)
-                    alert.beginSheetModal(for: self.view.window!) { (_) in
+                    let alert = NSAlert(customizedError: error)
+                    alert?.beginSheetModal(for: self.view.window!) { (_) in
                         
                     }
                 }
@@ -111,18 +111,19 @@ class ChooseConnectionTypeViewController: NSViewController {
                 case .success:
                     self.mainWindowController?.dismiss()
                 case .failure(let error):
-                    let alert = NSAlert(error: error)
-                    if let error = error as? ProviderService.Error, !error.recoveryOptions.isEmpty {
+                    let alert = NSAlert(customizedError: error)
+                    if let alert = alert, let error = error as? ProviderService.Error, !error.recoveryOptions.isEmpty {
                         error.recoveryOptions.forEach {
                             alert.addButton(withTitle: $0)
                         }
-                    }
-                    alert.beginSheetModal(for: self.view.window!) { (response) in
-                        switch response.rawValue {
-                        case 1000:
-                            self.chooseConfigFile(configFileURL: configFileURL, recover: true)
-                        default:
-                            break
+                        
+                        alert.beginSheetModal(for: self.view.window!) { (response) in
+                            switch response.rawValue {
+                            case 1000:
+                                self.chooseConfigFile(configFileURL: configFileURL, recover: true)
+                            default:
+                                break
+                            }
                         }
                     }
                 }
@@ -141,8 +142,8 @@ class ChooseConnectionTypeViewController: NSViewController {
                 }
             case .failure(let error):
                 DispatchQueue.main.async {
-                    let alert = NSAlert(error: error)
-                    alert.beginSheetModal(for: self.view.window!) { (_) in
+                    let alert = NSAlert(customizedError: error)
+                    alert?.beginSheetModal(for: self.view.window!) { (_) in
                         self.secureInternetButton.isEnabled = true
                         self.instituteAccessButton.isEnabled = true
                     }
