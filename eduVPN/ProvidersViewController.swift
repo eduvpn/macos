@@ -50,20 +50,15 @@ class ProvidersViewController: NSViewController {
   
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        // Change title color
-        let paragraphStyle = NSMutableParagraphStyle()
-        paragraphStyle.alignment = .center
-        let attributes = [NSAttributedStringKey.font: NSFont.systemFont(ofSize: 17), NSAttributedStringKey.foregroundColor : NSColor.white, NSAttributedStringKey.paragraphStyle : paragraphStyle]
-        otherProviderButton.attributedTitle = NSAttributedString(string: otherProviderButton.title, attributes: attributes)
-        connectButton.attributedTitle = NSAttributedString(string: connectButton.title, attributes: attributes)
-        
+                
         // Close orphaned connection
         busy = true
         ServiceContainer.connectionService.closeOrphanedConnectionIfNeeded { _ in
             self.busy = false
             self.updateInterface()
         }
+        
+        tableView.registerForDraggedTypes([kUTTypeFileURL as NSPasteboard.PasteboardType, kUTTypeURL as NSPasteboard.PasteboardType])
         
         // Handle internet connection state
         if let reachability = reachability {
@@ -108,8 +103,8 @@ class ProvidersViewController: NSViewController {
                     self.tableView.reloadData()
                     self.updateInterface()
                 case .failure(let error):
-                    let alert = NSAlert(error: error)
-                    alert.beginSheetModal(for: self.view.window!) { (_) in
+                    let alert = NSAlert(customizedError: error)
+                    alert?.beginSheetModal(for: self.view.window!) { (_) in
                         
                     }
                 }
@@ -127,6 +122,22 @@ class ProvidersViewController: NSViewController {
     
     @IBAction func connectProvider(_ sender: Any) {
         let row = tableView.selectedRow
+        guard row >= 0 else {
+            return
+        }
+        
+        let tableRow = rows[row]
+        switch tableRow {
+        case .section:
+            // Ignore
+            break
+        case .provider(let provider):
+            authenticateAndConnect(to: provider)
+        }
+    }
+    
+    @IBAction func connectProviderUsingDoubleClick(_ sender: Any) {
+        let row = tableView.clickedRow
         guard row >= 0 else {
             return
         }
@@ -265,16 +276,8 @@ class ProvidersViewController: NSViewController {
     }
     
     private func handleError(_ error: Error) {
-        // User knows he cancelled, no alert needed
-        if (error as NSError).domain == "org.openid.appauth.general" && (error as NSError).code == -4 {
-            return
-        }
-        // User knows he rejected, no alert needed
-        if (error as NSError).domain == "org.openid.appauth.oauth_authorization" && (error as NSError).code == -4 {
-            return
-        }
-        let alert = NSAlert(error: error)
-        alert.beginSheetModal(for: self.view.window!) { (_) in
+        let alert = NSAlert(customizedError: error)
+        alert?.beginSheetModal(for: self.view.window!) { (_) in
             // Nothing
         }
     }
@@ -307,7 +310,7 @@ class ProvidersViewController: NSViewController {
         }
     
         unreachableLabel.isHidden = reachable
-        tableView.isHidden = !reachable
+        tableView.superview?.superview?.isHidden = !reachable
         tableView.isEnabled = !busy
         otherProviderButton.isHidden = providerSelected || !reachable
         otherProviderButton.isEnabled = !busy
@@ -337,7 +340,15 @@ extension ProvidersViewController: NSTableViewDelegate {
             return result
         case .provider(let provider):
             let result = tableView.makeView(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: "ProfileCell"), owner: self) as? NSTableCellView
-            result?.imageView?.kf.setImage(with: provider.logoURL)
+            switch provider.connectionType {
+            case .instituteAccess, .secureInternet:
+                result?.imageView?.kf.setImage(with: provider.logoURL)
+            case .custom:
+                result?.imageView?.image = NSWorkspace.shared.icon(forFileType: NSFileTypeForHFSTypeCode(OSType(kGenericNetworkIcon)))
+            case .localConfig:
+                result?.imageView?.image = NSWorkspace.shared.icon(forFileType: NSFileTypeForHFSTypeCode(OSType(kGenericDocumentIcon)))
+            }
+            
             result?.textField?.stringValue = provider.displayName
             return result
         }
@@ -355,6 +366,71 @@ extension ProvidersViewController: NSTableViewDelegate {
     
     func tableViewSelectionDidChange(_ notification: Notification) {
         updateInterface()
+    }
+    
+    func tableView(_ tableView: NSTableView, validateDrop info: NSDraggingInfo, proposedRow row: Int, proposedDropOperation dropOperation: NSTableView.DropOperation) -> NSDragOperation {
+        tableView.setDropRow(-1, dropOperation: .on)
+        return .copy
+    }
+    
+    func tableView(_ tableView: NSTableView, acceptDrop info: NSDraggingInfo, row: Int, dropOperation: NSTableView.DropOperation) -> Bool {
+        guard let url = NSURL(from: info.draggingPasteboard) else {
+            return false
+        }
+        
+        if url.isFileURL {
+            chooseConfigFile(configFileURL: url as URL)
+        } else {
+            addURL(baseURL: url as URL)
+        }
+        return true
+    }
+    
+    private func chooseConfigFile(configFileURL: URL, recover: Bool = false) {
+        ServiceContainer.providerService.addProvider(configFileURL: configFileURL, recover: recover) { result in
+            DispatchQueue.main.async {
+                switch result {
+                case .success:
+                    self.discoverAccessibleProviders()
+                case .failure(let error):
+                    let alert = NSAlert(customizedError: error)
+                    if let error = error as? ProviderService.Error, !error.recoveryOptions.isEmpty {
+                        error.recoveryOptions.forEach {
+                            alert?.addButton(withTitle: $0)
+                        }
+                    }
+                    
+                    alert?.beginSheetModal(for: self.view.window!) { (response) in
+                        switch response.rawValue {
+                        case 1000:
+                            self.chooseConfigFile(configFileURL: configFileURL, recover: true)
+                        default:
+                            break
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    private func addURL(baseURL: URL) {
+        let provider = Provider(displayName: baseURL.host ?? "", baseURL: baseURL, logoURL: nil, publicKey: nil, username: nil, connectionType: .custom, authorizationType: .local)
+        ServiceContainer.providerService.fetchInfo(for: provider) { result in
+            switch result {
+            case .success(let info):
+                DispatchQueue.main.async {
+                    ServiceContainer.providerService.storeProvider(provider: info.provider)
+                     self.discoverAccessibleProviders()
+                }
+            case .failure(let error):
+                DispatchQueue.main.async {
+                    let alert = NSAlert(customizedError: error)
+                    alert?.beginSheetModal(for: self.view.window!) { (_) in
+                        
+                    }
+                }
+            }
+        }
     }
     
 }

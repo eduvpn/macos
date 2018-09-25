@@ -18,7 +18,7 @@ typealias Config = String
 /// Connects to VPN
 class ConnectionService: NSObject {
     
-    static let openVPNSubdirectory = "openvpn-2.4.6-openssl-1.1.0h"
+    static let openVPNSubdirectory = Bundle.main.infoDictionary!["OpenVPNVersion"] as! String
     
     /// Notification posted when connection state changes
     static let stateChanged = NSNotification.Name("ConnectionService.stateChanged")
@@ -145,6 +145,7 @@ class ConnectionService: NSObject {
         localPort = nil
         localTUNTAPIPv6Address = nil
         currentProfile = nil
+        credentials = nil
         
         helperService.installHelperIfNeeded(client: self) { (result) in
             switch result {
@@ -180,7 +181,19 @@ class ConnectionService: NSObject {
         guard let provider = currentProfile?.info.provider, provider.connectionType == .localConfig else {
             return
         }
-        providerService.saveCommonCertificate(commonNameCertificate, for: provider)
+        let username: String?
+        if let credentials = credentials, credentials.saveInKeychain {
+            do {
+                try keychainService.savePassword(service: provider.displayName, account: credentials.username, password: credentials.password)
+                username = credentials.username
+            } catch {
+                username = nil
+                debugLog("Keychain error: \(error)")
+            }
+        } else {
+            username = nil
+        }
+        providerService.saveCommonCertificate(commonNameCertificate, username: username, for: provider)
     }
     
     private func abortConnecting(error: Swift.Error) {
@@ -315,7 +328,8 @@ class ConnectionService: NSObject {
     private var socket: Socket?
     private var managing: Bool = false
     private var commonNameCertificate: String = ""
-    
+    private var credentials: (username: String, password: String, saveInKeychain: Bool)?
+
     private func openManagingSocket() {
         let queue = DispatchQueue.global(qos: .userInteractive)
         
@@ -620,6 +634,10 @@ class ConnectionService: NSObject {
             break
          case "Verification Failed: \'Auth\'":
             if twoFactor == nil {
+                // Remove from keychain on fail
+                if let provider = currentProfile?.info.provider, let username = provider.username {
+                    try keychainService.removePassword(service: provider.displayName, account: username)
+                }
                 throw Error.invalidCredentials
             } else {
                 throw Error.invalidTwoFactorPassword
@@ -629,7 +647,7 @@ class ConnectionService: NSObject {
         }
         
         guard let twoFactor = twoFactor else {
-            abortConnecting(error: Error.unexpectedError)
+            requestCredentials()
             return
         }
         let username: String
@@ -644,6 +662,49 @@ class ConnectionService: NSObject {
         }
         let response = "username \"Auth\" \(username)\npassword \"Auth\" \(password)\n"
         try write(response)
+    }
+    
+    private func requestCredentials() {
+        if let provider = currentProfile?.info.provider, let username = provider.username, let password = try? keychainService.loadPassword(service: provider.displayName, account: username) {
+            guard let password = password else {
+                return
+            }
+            do {
+                let response = "username \"Auth\" \(username)\npassword \"Auth\" \(password)\n"
+                try self.write(response)
+            } catch {
+                self.abortConnecting(error: error)
+            }
+            return
+        }
+        
+        DispatchQueue.main.async {
+            let window = NSApp.mainWindow!
+            let storyboard = NSStoryboard(name: "Main", bundle: nil)
+            let enterCredentialsViewController = storyboard.instantiateController(withIdentifier: "EnterCredentials") as! EnterCredentialsViewController
+            let panel = NSPanel(contentViewController: enterCredentialsViewController)
+            window.beginSheet(panel) { (response) in
+                switch response {
+                case .OK:
+                    guard let credentials = enterCredentialsViewController.credentials else {
+                        self.abortConnecting(error: Error.unexpectedError)
+                        return
+                    }
+                    do {
+                        let response = "username \"Auth\" \(credentials.username)\npassword \"Auth\" \(credentials.password)\n"
+                        if credentials.saveInKeychain {
+                            self.credentials = credentials
+                        }
+                        try self.write(response)
+                    } catch {
+                        self.abortConnecting(error: error)
+                    }
+                default:
+                    self.abortConnecting(error: Error.userCancelled)
+                    break
+                }
+            }
+        }
     }
     
     private func rsaSign(_ stringToSign: String) throws {

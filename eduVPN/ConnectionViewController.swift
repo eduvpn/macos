@@ -37,20 +37,24 @@ class ConnectionViewController: NSViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // Change title color
-        let paragraphStyle = NSMutableParagraphStyle()
-        paragraphStyle.alignment = .center
-        let attributes = [NSAttributedStringKey.font: NSFont.systemFont(ofSize: 17), NSAttributedStringKey.foregroundColor : NSColor.white, NSAttributedStringKey.paragraphStyle : paragraphStyle]
-        connectButton.attributedTitle = NSAttributedString(string: connectButton.title, attributes: attributes)
-        disconnectButton.attributedTitle = NSAttributedString(string: disconnectButton.title, attributes: attributes)
+        let provider = profile.info.provider
         
-        locationImageView?.kf.setImage(with: profile.info.provider.logoURL)
+        switch provider.connectionType {
+        case .instituteAccess, .secureInternet:
+            locationImageView?.kf.setImage(with: provider.logoURL)
+        case .custom:
+            locationImageView?.image = NSWorkspace.shared.icon(forFileType: NSFileTypeForHFSTypeCode(OSType(kGenericNetworkIcon)))
+        case .localConfig:
+            locationImageView?.image = NSWorkspace.shared.icon(forFileType: NSFileTypeForHFSTypeCode(OSType(kGenericDocumentIcon)))
+        }
+        
         profileLabel.stringValue = profile.displayName
     }
     
     override func viewWillAppear() {
         super.viewWillAppear()
         updateForStateChange()
+        updateMessages()
         NotificationCenter.default.addObserver(self, selector: #selector(stateChanged(notification:)), name: ConnectionService.stateChanged, object: ServiceContainer.connectionService)
         
         // Fetch messages
@@ -92,7 +96,7 @@ class ConnectionViewController: NSViewController {
             self.backButton.isHidden = true
             self.stateImageView.image = #imageLiteral(resourceName: "connecting")
             self.spinner.startAnimation(self)
-            self.disconnectButton.isHidden = true
+            self.disconnectButton.isHidden = false
             self.connectButton.isHidden = true
             self.statisticsBox.isHidden = false
             self.startUpdatingStatistics()
@@ -136,7 +140,7 @@ class ConnectionViewController: NSViewController {
         // Prompt user if we need two factor authentication token
         if profile.twoFactor, twoFactor == nil {
             if userInfo.twoFactorEnrolled {
-                let enter2FAViewController = storyboard!.instantiateController(withIdentifier: NSStoryboard.SceneIdentifier(rawValue: "Enter2FA")) as! Enter2FAViewController
+                let enter2FAViewController = storyboard!.instantiateController(withIdentifier: "Enter2FA") as! Enter2FAViewController
                 if userInfo.twoFactorEnrolledWith.contains(.yubico) {
                     enter2FAViewController.initialTwoFactorType = .yubico
                 } else if userInfo.twoFactorEnrolledWith.contains(.totp) {
@@ -146,7 +150,7 @@ class ConnectionViewController: NSViewController {
                 mainWindowController?.present(viewController: enter2FAViewController)
                 return
             } else {
-                let enroll2FAViewController = storyboard!.instantiateController(withIdentifier: NSStoryboard.SceneIdentifier(rawValue: "Enroll2FA")) as! Enroll2FAViewController
+                let enroll2FAViewController = storyboard!.instantiateController(withIdentifier: "Enroll2FA") as! Enroll2FAViewController
                 enroll2FAViewController.delegate = self
                 enroll2FAViewController.providerInfo = profile.info
                 mainWindowController?.present(viewController: enroll2FAViewController)
@@ -164,11 +168,11 @@ class ConnectionViewController: NSViewController {
                         return
                     } else if (error as NSError).domain == NSOSStatusErrorDomain, (error as NSError).code == errSecUserCanceled {
                         return
-                    } else if let error = error as? Socket.Error, error.errorCode == 1 {
+                    } else if let error = error as? Socket.Error, [1, -9974].contains(error.errorCode) {
                         return
                     }
-                    let alert = NSAlert(error: error)
-                    alert.beginSheetModal(for: self.view.window!) { (_) in
+                    let alert = NSAlert(customizedError: error)
+                    alert?.beginSheetModal(for: self.view.window!) { (_) in
                         self.updateForStateChange()
                     }
                 }
@@ -184,8 +188,8 @@ class ConnectionViewController: NSViewController {
                 case .success:
                     break
                 case .failure(let error):
-                    let alert = NSAlert(error: error)
-                    alert.beginSheetModal(for: self.view.window!) { (_) in
+                    let alert = NSAlert(customizedError: error)
+                    alert?.beginSheetModal(for: self.view.window!) { (_) in
                         self.updateForStateChange()
                     }
                 }
@@ -199,9 +203,12 @@ class ConnectionViewController: NSViewController {
         notificationsBox.isHidden = messages.isEmpty
         
         notificationsField.attributedStringValue = messages.reduce(into: NSMutableAttributedString()) { (notifications, message) in
+            if notifications.length > 0 {
+                notifications.append(NSAttributedString(string: "\n\n", attributes: [.font: NSFont.systemFont(ofSize: NSFont.systemFontSize(for: .small))]))
+            }
             let date =  DateFormatter.localizedString(from: message.date, dateStyle: .short, timeStyle: .short)
             notifications.append(NSAttributedString(string: date + ": ", attributes: [.font: NSFont.boldSystemFont(ofSize: NSFont.systemFontSize(for: .small))]))
-            notifications.append(NSAttributedString(string: message.message + "\n\n", attributes: [.font: NSFont.systemFont(ofSize: NSFont.systemFontSize(for: .small))]))
+            notifications.append(NSAttributedString(string: message.message, attributes: [.font: NSFont.systemFont(ofSize: NSFont.systemFontSize(for: .small))]))
         }
     }
     
@@ -296,8 +303,8 @@ extension ConnectionViewController: Enroll2FAViewControllerDelegate {
                         self.userInfo = userInfo
                         self.connect()
                     case .failure(let error):
-                        let alert = NSAlert(error: error)
-                        alert.beginSheetModal(for: self.view.window!) { (_) in
+                        let alert = NSAlert(customizedError: error)
+                        alert?.beginSheetModal(for: self.view.window!) { (_) in
                             
                         }
                     }

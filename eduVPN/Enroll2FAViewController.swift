@@ -45,13 +45,7 @@ class Enroll2FAViewController: NSViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        // Change title color
-        let paragraphStyle = NSMutableParagraphStyle()
-        paragraphStyle.alignment = .center
-        let attributes = [NSAttributedStringKey.font: NSFont.systemFont(ofSize: 17), NSAttributedStringKey.foregroundColor : NSColor.white, NSAttributedStringKey.paragraphStyle : paragraphStyle]
-        doneButton.attributedTitle = NSAttributedString(string: doneButton.title, attributes: attributes)
-        
+                
         // TOTP preparations
         let twoFactorService = ServiceContainer.twoFactorService
         totpSecret = twoFactorService.generateSecret()
@@ -101,8 +95,8 @@ class Enroll2FAViewController: NSViewController {
         doneButton.isEnabled = false
         
         guard let token = validToken() else {
-            let alert = NSAlert(error: Error.invalidToken)
-            alert.beginSheetModal(for: self.view.window!) { (_) in
+            let alert = NSAlert(customizedError: Error.invalidToken)
+            alert?.beginSheetModal(for: self.view.window!) { (_) in
                 self.totpResponseField.isEnabled = true
                 self.yubiTextField.isEnabled = true
             }
@@ -115,8 +109,8 @@ class Enroll2FAViewController: NSViewController {
                 case .success:
                     self.delegate?.enroll2FA(controller: self, didEnrollForType: token.twoFactorType)
                 case .failure(let error):
-                    let alert = NSAlert(error: error)
-                    alert.beginSheetModal(for: self.view.window!) { (_) in
+                    let alert = NSAlert(customizedError: error)
+                    alert?.beginSheetModal(for: self.view.window!) { (_) in
                         self.segmentedControl.isEnabled = true
                         self.totpResponseField.isEnabled = true
                         self.yubiTextField.isEnabled = true
@@ -137,7 +131,7 @@ class Enroll2FAViewController: NSViewController {
 
 extension Enroll2FAViewController: NSTextFieldDelegate {
     
-    override func controlTextDidChange(_ obj: Notification) {
+    func controlTextDidChange(_ obj: Notification) {
         doneButton.isEnabled = validToken() != nil
     }
     

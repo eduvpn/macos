@@ -1,5 +1,14 @@
 # eduVPN for macOS
 
+### Requirements
+
+You need macOS 10.12 or newer to run eduVPN. 
+
+Supporting earlier versions of macOS is currently not possible due to:
+
+- usage of date formatting API introduced in 10.12 (relatively easy to fix)
+- usage of RSA signing API introduced in 10.12 (alternative needed)
+
 ### OpenVPN
 
 This app includes openvpn as a binary. It is taken from the Tunnelblick binary distributions. The current version is `openvpn-2.4.6-openssl-1.1.0h`. No patches are applied to the openvpn binary, though the up and down scripts are slightly edited to avoid namespace collisions. Note that Tunnelblick does apply some (minor) patches to the official openvpn source code.
@@ -42,6 +51,16 @@ A version for distribution can be build using the provided script `build.sh`:
     
     (etc.)
 
+
+### Building dependencies
+
+To build with Xcode 10 using Carthage use:
+
+    tee ${PWD}/Carthage/64bit.xcconfig <<-'EOF'
+    ARCHS = $(ARCHS_STANDARD_64_BIT)
+    EOF
+
+    XCODE_XCCONFIG_FILE="${PWD}/Carthage/64bit.xcconfig" carthage build --platform macOS --no-skip-current --verbose
 
 ### Uninstalling
 

@@ -50,7 +50,12 @@ FILENAME="$TARGET-$VERSION"
 
 echo ""
 echo "Bootstrapping dependencies using carthage"
-carthage bootstrap --cache-builds --platform macOS
+# This is a workaround for getting Carthage to work with Xcode 10
+tee ${PWD}/Carthage/64bit.xcconfig <<-'EOF'
+ARCHS = $(ARCHS_STANDARD_64_BIT)
+EOF
+
+XCODE_XCCONFIG_FILE="${PWD}/Carthage/64bit.xcconfig" carthage bootstrap --cache-builds --platform macOS
 
 echo ""
 echo "Building and archiving"
@@ -60,6 +65,13 @@ echo ""
 echo "Exporting"
 /usr/libexec/PlistBuddy -c "Set :teamID \"$TEAMID\"" ExportOptions.plist
 xcodebuild -exportArchive -archivePath $FILENAME.xcarchive -exportPath $FILENAME -exportOptionsPlist ExportOptions.plist
+
+echo ""
+echo "Re-signing up and down scripts"
+DOWN=$(find $FILENAME -name "*.down.*.sh" -print)
+codesign -f -s "$SIGNINGIDENTITY" "$DOWN"
+UP=$(find $FILENAME -name "*.up.*.sh" -print)
+codesign -f -s "$SIGNINGIDENTITY" "$UP"
 
 echo ""
 read -p "Create disk image (requires DropDMG license) (y/n)?" choice

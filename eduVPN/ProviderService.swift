@@ -115,13 +115,13 @@ class ProviderService {
     private let urlSession: URLSession
     private let authenticationService: AuthenticationService
     private let preferencesService: PreferencesService
-    private let appName: String
+    private let appConfig: AppConfigType
     
-    init(urlSession: URLSession, authenticationService: AuthenticationService, preferencesService: PreferencesService, appName: String) {
+    init(urlSession: URLSession, authenticationService: AuthenticationService, preferencesService: PreferencesService, appConfig: AppConfigType) {
         self.urlSession = urlSession
         self.authenticationService = authenticationService
         self.preferencesService = preferencesService
-        self.appName = appName
+        self.appConfig = appConfig
         readFromDisk()
     }
     
@@ -129,69 +129,7 @@ class ProviderService {
     ///
     /// - Parameter handler: List of providers or error
     func discoverAccessibleProviders(handler: @escaping (Result<[ConnectionType: [Provider]]>) -> ()) {
-        #if API_DISCOVERY_DISABLED
-        var accessibleProviders: [ConnectionType: [Provider]] = [:]
-        
-        func hasStoredDistributedProvider(type: ConnectionType) -> Bool {
-            guard let providers = self.storedProviders[type] else {
-                return false
-            }
-            return providers.contains { (provider) -> Bool in
-                switch provider.authorizationType {
-                case .local:
-                    return false
-                case .distributed, .federated:
-                    return true
-                }
-            }
-        }
-        
-        func addProviders(type: ConnectionType) {
-            if hasStoredDistributedProvider(type: type) {
-                // Add all providers
-                if let providers = self.availableProviders[type] {
-                    accessibleProviders[type] = providers
-                }
-            } else {
-                // Add stored providers
-                if let providers = self.storedProviders[type] {
-                    accessibleProviders[type] = providers
-                }
-            }
-        }
-        
-        addProviders(type: .custom)
-        addProviders(type: .localConfig)
-        
-        handler(.success(accessibleProviders))
-        
-        #else
-        
-        let group = DispatchGroup()
-        var error: Error? = nil
-        
-        func discoverAvailableProviders(type: ConnectionType) {
-            group.enter()
-            discoverProviders(connectionType: type) { (result) in
-                switch result {
-                case .success(let providers):
-                    self.availableProviders[type] = providers
-                case .failure(let discoverError):
-                    error = discoverError as? Error
-                }
-                group.leave()
-            }
-        }
-        
-        discoverAvailableProviders(type: .secureInternet)
-        discoverAvailableProviders(type: .instituteAccess)
-        
-        group.notify(queue: .main) {
-            if let error = error {
-                handler(.failure(error))
-                return
-            }
-            
+        if !appConfig.apiDiscoveryEnabled {
             var accessibleProviders: [ConnectionType: [Provider]] = [:]
             
             func hasStoredDistributedProvider(type: ConnectionType) -> Bool {
@@ -222,15 +160,76 @@ class ProviderService {
                 }
             }
             
-            addProviders(type: .secureInternet)
-            addProviders(type: .instituteAccess)
             addProviders(type: .custom)
             addProviders(type: .localConfig)
-
+            
             handler(.success(accessibleProviders))
+            
+        } else {
+            
+            let group = DispatchGroup()
+            var error: Error? = nil
+            
+            func discoverAvailableProviders(type: ConnectionType) {
+                group.enter()
+                discoverProviders(connectionType: type) { (result) in
+                    switch result {
+                    case .success(let providers):
+                        self.availableProviders[type] = providers
+                    case .failure(let discoverError):
+                        error = discoverError as? Error
+                    }
+                    group.leave()
+                }
+            }
+            
+            discoverAvailableProviders(type: .secureInternet)
+            discoverAvailableProviders(type: .instituteAccess)
+            
+            group.notify(queue: .main) {
+                if let error = error {
+                    handler(.failure(error))
+                    return
+                }
+                
+                var accessibleProviders: [ConnectionType: [Provider]] = [:]
+                
+                func hasStoredDistributedProvider(type: ConnectionType) -> Bool {
+                    guard let providers = self.storedProviders[type] else {
+                        return false
+                    }
+                    return providers.contains { (provider) -> Bool in
+                        switch provider.authorizationType {
+                        case .local:
+                            return false
+                        case .distributed, .federated:
+                            return true
+                        }
+                    }
+                }
+                
+                func addProviders(type: ConnectionType) {
+                    if hasStoredDistributedProvider(type: type) {
+                        // Add all providers
+                        if let providers = self.availableProviders[type] {
+                            accessibleProviders[type] = providers
+                        }
+                    } else {
+                        // Add stored providers
+                        if let providers = self.storedProviders[type] {
+                            accessibleProviders[type] = providers
+                        }
+                    }
+                }
+                
+                addProviders(type: .secureInternet)
+                addProviders(type: .instituteAccess)
+                addProviders(type: .custom)
+                addProviders(type: .localConfig)
+                
+                handler(.success(accessibleProviders))
+            }
         }
-        
-        #endif
     }
     
     /// Indicates wether at least one provider is setup
@@ -292,7 +291,7 @@ class ProviderService {
     /// - Throws: Error finding or creating directory
     private func applicationSupportDirectoryURL() throws -> URL  {
         var applicationSupportDirectory = try FileManager.default.url(for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
-        applicationSupportDirectory.appendPathComponent(appName)
+        applicationSupportDirectory.appendPathComponent(appConfig.appName)
         try FileManager.default.createDirectory(at: applicationSupportDirectory, withIntermediateDirectories: true, attributes: nil)
         return applicationSupportDirectory
     }
@@ -425,7 +424,7 @@ class ProviderService {
                         return
                     }
                     
-                    guard sodium.sign.verify(message: data, publicKey: publicKey, signature: signatureBin) else {
+                    guard sodium.sign.verify(message: Array(data), publicKey: Array(publicKey), signature: Array(signatureBin)) else {
                         handler(.failure(Error.invalidProviders))
                         return
                     }
@@ -497,7 +496,7 @@ class ProviderService {
                         
                         let publicKey = instance["public_key"] as? String
                         
-                        return Provider(displayName: displayName, baseURL: baseURL, logoURL: logoURL, publicKey: publicKey, connectionType: connectionType, authorizationType: authorizationType)
+                        return Provider(displayName: displayName, baseURL: baseURL, logoURL: logoURL, publicKey: publicKey, username: nil, connectionType: connectionType, authorizationType: authorizationType)
                     }
                     
                     guard !providers.isEmpty else {
@@ -876,7 +875,7 @@ class ProviderService {
                     let importedConfigFileURL = try localConfigsDirectoryURL.appendingPathComponent(displayName).nextUnusedFileURL()
                     displayName = importedConfigFileURL.lastPathComponent
                     try config.write(to: importedConfigFileURL, atomically: true, encoding: .utf8)
-                    let provider = Provider(displayName: displayName, baseURL: importedConfigFileURL, logoURL: nil, publicKey: commonName, connectionType: .localConfig, authorizationType: .local)
+                    let provider = Provider(displayName: displayName, baseURL: importedConfigFileURL, logoURL: nil, publicKey: commonName, username: nil, connectionType: .localConfig, authorizationType: .local)
                     if self.storedProviders[.localConfig] != nil {
                         self.storedProviders[.localConfig]?.append(provider)
                     } else {
@@ -976,12 +975,12 @@ class ProviderService {
         }
     }
     
-    func saveCommonCertificate(_ name: String, for provider: Provider) {
+    func saveCommonCertificate(_ name: String?, username: String?, for provider: Provider) {
         guard provider.connectionType == .localConfig else {
             return
         }
         
-        guard provider.publicKey != name else {
+        guard provider.publicKey != name, provider.username != username else {
             return
         }
         
@@ -990,10 +989,12 @@ class ProviderService {
         if let index = index {
             var storedProvider = providers.remove(at: index)
             storedProvider.publicKey = name
+            storedProvider.username = username
             providers.insert(storedProvider, at: index)
         } else {
             var newProvider = provider
             newProvider.publicKey = name
+            newProvider.username = username
             providers.append(newProvider)
         }
 

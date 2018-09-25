@@ -25,7 +25,7 @@
 		C72A557B1F0D9FF2001DCA24 /* AppAuth.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = C72A55791F0D9FF2001DCA24 /* AppAuth.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		C72A557F1F0DA01C001DCA24 /* AppAuth.framework.dSYM in CopyFiles */ = {isa = PBXBuildFile; fileRef = C72A557E1F0DA01C001DCA24 /* AppAuth.framework.dSYM */; };
 		C72AD6F61F0A692F006DBDA5 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = C72AD6F51F0A692F006DBDA5 /* main.m */; };
-		C72AD6FD1F0A69BF006DBDA5 /* OpenVPNHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = C72AD6FC1F0A69BF006DBDA5 /* OpenVPNHelper.m */; };
+		C72AD6FD1F0A69BF006DBDA5 /* OpenVPNHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = C72AD6FC1F0A69BF006DBDA5 /* OpenVPNHelper.m */; settings = {COMPILER_FLAGS = "-D'TEAM=@\\\"$(DEVELOPMENT_TEAM)\\\"'"; }; };
 		C72AD7021F0A6AE9006DBDA5 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C72AD7011F0A6AE9006DBDA5 /* Foundation.framework */; };
 		C72AD7041F0A6AEE006DBDA5 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C72AD7031F0A6AEE006DBDA5 /* Security.framework */; };
 		C732CEA51F0F720800698F28 /* ChooseProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C732CEA31F0F720800698F28 /* ChooseProfileViewController.swift */; };
@@ -58,6 +58,14 @@
 		C766150F2125B4F2002A8E4D /* Debug.swift in Sources */ = {isa = PBXBuildFile; fileRef = C766150D2125B4F2002A8E4D /* Debug.swift */; };
 		C766FB87212D6AF000306271 /* eduVPNAssets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C766FB86212D6AF000306271 /* eduVPNAssets.xcassets */; };
 		C766FB89212D6AF900306271 /* LetsConnectAssets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C766FB88212D6AF900306271 /* LetsConnectAssets.xcassets */; };
+		C76A83FD2158DD110017DBE1 /* NSAlert+Custom.swift in Sources */ = {isa = PBXBuildFile; fileRef = C76A83FC2158DD110017DBE1 /* NSAlert+Custom.swift */; };
+		C76A83FE2158DD110017DBE1 /* NSAlert+Custom.swift in Sources */ = {isa = PBXBuildFile; fileRef = C76A83FC2158DD110017DBE1 /* NSAlert+Custom.swift */; };
+		C774BCF921465EB2003FF7C8 /* AppConfigType.swift in Sources */ = {isa = PBXBuildFile; fileRef = C774BCF821465EB2003FF7C8 /* AppConfigType.swift */; };
+		C774BCFA21465EB2003FF7C8 /* AppConfigType.swift in Sources */ = {isa = PBXBuildFile; fileRef = C774BCF821465EB2003FF7C8 /* AppConfigType.swift */; };
+		C774BCFE21466BAD003FF7C8 /* AppConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = C774BCFD21466BAD003FF7C8 /* AppConfig.swift */; };
+		C774BD0021466BB8003FF7C8 /* AppConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = C774BCFF21466BB8003FF7C8 /* AppConfig.swift */; };
+		C774BD0221469C51003FF7C8 /* EnterCredentialsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C774BD0121469C51003FF7C8 /* EnterCredentialsViewController.swift */; };
+		C774BD0321469C51003FF7C8 /* EnterCredentialsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C774BD0121469C51003FF7C8 /* EnterCredentialsViewController.swift */; };
 		C775F5F121397FF70092D09A /* SecurityInterface.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C775F5F021397FF70092D09A /* SecurityInterface.framework */; };
 		C775F5F2213980010092D09A /* SecurityInterface.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C775F5F021397FF70092D09A /* SecurityInterface.framework */; };
 		C77EF61320876B5A0097DEB2 /* String+Random.swift in Sources */ = {isa = PBXBuildFile; fileRef = C77EF61220876B5A0097DEB2 /* String+Random.swift */; };
@@ -119,7 +127,7 @@
 		C7C49501208484120056D5E4 /* Sparkle.framework.dSYM in Resources */ = {isa = PBXBuildFile; fileRef = C741F43B1FC6DE9000B1EB83 /* Sparkle.framework.dSYM */; };
 		C7C49502208484120056D5E4 /* openvpn-2.4.6-openssl-1.1.0h in Resources */ = {isa = PBXBuildFile; fileRef = C7FA902B1F0BC83E0037FF88 /* openvpn-2.4.6-openssl-1.1.0h */; };
 		C7C49503208484120056D5E4 /* Reachability.framework.dSYM in Resources */ = {isa = PBXBuildFile; fileRef = C761E2DF2080B08200A98B90 /* Reachability.framework.dSYM */; };
-		C7C49505208484120056D5E4 /* org.eduvpn.app.openvpnhelper in CopyFiles */ = {isa = PBXBuildFile; fileRef = C72AD6F31F0A692F006DBDA5 /* org.eduvpn.app.openvpnhelper */; };
+		C7C49505208484120056D5E4 /* org.eduvpn.app.openvpnhelper in CopyFiles */ = {isa = PBXBuildFile; fileRef = C72AD6F31F0A692F006DBDA5 /* org.eduvpn.app.openvpnhelper */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		C7C49507208484120056D5E4 /* LoginItemHelper.app in CopyFiles */ = {isa = PBXBuildFile; fileRef = C75527E11F3C531B00076078 /* LoginItemHelper.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		C7C49509208484120056D5E4 /* Kingfisher.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = C71847CD1F0E7EAF00296C61 /* Kingfisher.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		C7C4950A208484120056D5E4 /* Sodium.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = C74487051F194FAB0072B472 /* Sodium.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -135,7 +143,7 @@
 		C7D15FD11F0D165900719F38 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C7D15FD01F0D165900719F38 /* Cocoa.framework */; };
 		C7D15FD21F0D166100719F38 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C72AD7031F0A6AEE006DBDA5 /* Security.framework */; };
 		C7D15FD41F0D166800719F38 /* ServiceManagement.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C7D15FD31F0D166800719F38 /* ServiceManagement.framework */; };
-		C7D15FD51F0D183600719F38 /* org.eduvpn.app.openvpnhelper in CopyFiles */ = {isa = PBXBuildFile; fileRef = C72AD6F31F0A692F006DBDA5 /* org.eduvpn.app.openvpnhelper */; };
+		C7D15FD51F0D183600719F38 /* org.eduvpn.app.openvpnhelper in CopyFiles */ = {isa = PBXBuildFile; fileRef = C72AD6F31F0A692F006DBDA5 /* org.eduvpn.app.openvpnhelper */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		C7F345171F955473002120B9 /* ProvidersViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7F345161F955473002120B9 /* ProvidersViewController.swift */; };
 		C7FA902C1F0BC83E0037FF88 /* openvpn-2.4.6-openssl-1.1.0h in Resources */ = {isa = PBXBuildFile; fileRef = C7FA902B1F0BC83E0037FF88 /* openvpn-2.4.6-openssl-1.1.0h */; };
 		C7FA902E1F0BD1A60037FF88 /* Either.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7FA902D1F0BD1A60037FF88 /* Either.swift */; };
@@ -326,9 +334,17 @@
 		C766150D2125B4F2002A8E4D /* Debug.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Debug.swift; path = eduVPN/Debug.swift; sourceTree = SOURCE_ROOT; };
 		C766FB86212D6AF000306271 /* eduVPNAssets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = eduVPNAssets.xcassets; sourceTree = "<group>"; };
 		C766FB88212D6AF900306271 /* LetsConnectAssets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = LetsConnectAssets.xcassets; sourceTree = "<group>"; };
+		C76A83FC2158DD110017DBE1 /* NSAlert+Custom.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "NSAlert+Custom.swift"; path = "eduVPN/NSAlert+Custom.swift"; sourceTree = SOURCE_ROOT; };
+		C774BCF821465EB2003FF7C8 /* AppConfigType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppConfigType.swift; path = eduVPN/AppConfigType.swift; sourceTree = SOURCE_ROOT; };
+		C774BCFD21466BAD003FF7C8 /* AppConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppConfig.swift; path = eduVPN/Targets/eduVPN/AppConfig.swift; sourceTree = SOURCE_ROOT; };
+		C774BCFF21466BB8003FF7C8 /* AppConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppConfig.swift; path = eduVPN/Targets/LetsConnect/AppConfig.swift; sourceTree = SOURCE_ROOT; };
+		C774BD0121469C51003FF7C8 /* EnterCredentialsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnterCredentialsViewController.swift; sourceTree = "<group>"; };
 		C775F5F021397FF70092D09A /* SecurityInterface.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SecurityInterface.framework; path = System/Library/Frameworks/SecurityInterface.framework; sourceTree = SDKROOT; };
 		C77EF61220876B5A0097DEB2 /* String+Random.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Random.swift"; sourceTree = "<group>"; };
+		C77FB52C214D3FED0046B887 /* LoginItemHelper.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = LoginItemHelper.entitlements; sourceTree = "<group>"; };
 		C78250A51FC7291000B33892 /* Message.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Message.swift; path = eduVPN/Message.swift; sourceTree = SOURCE_ROOT; };
+		C784BAF1214C768E00F5A01F /* eduVPN.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = eduVPN.entitlements; path = EduVPN/Targets/eduVPN/eduVPN.entitlements; sourceTree = SOURCE_ROOT; };
+		C784BAF2214C76C000F5A01F /* Let's Connect!.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Let's Connect!.entitlements"; sourceTree = "<group>"; };
 		C789DCC920C7E3CA00A0668E /* Socket.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Socket.framework; path = Carthage/Build/Mac/Socket.framework; sourceTree = "<group>"; };
 		C789DCCA20C7E3CB00A0668E /* Socket.framework.dSYM */ = {isa = PBXFileReference; lastKnownFileType = wrapper.dsym; name = Socket.framework.dSYM; path = Carthage/Build/Mac/Socket.framework.dSYM; sourceTree = "<group>"; };
 		C789DCD520C8227000A0668E /* KeychainService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = KeychainService.swift; path = eduVPN/KeychainService.swift; sourceTree = SOURCE_ROOT; };
@@ -444,6 +460,7 @@
 		C75527E21F3C531B00076078 /* LoginItemHelper */ = {
 			isa = PBXGroup;
 			children = (
+				C77FB52C214D3FED0046B887 /* LoginItemHelper.entitlements */,
 				C75527E31F3C531B00076078 /* AppDelegate.h */,
 				C75527E41F3C531B00076078 /* AppDelegate.m */,
 				C75527EC1F3C531B00076078 /* Assets.xcassets */,
@@ -460,6 +477,33 @@
 				C75527E71F3C531B00076078 /* main.m */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		C774BCF721465E78003FF7C8 /* Targets */ = {
+			isa = PBXGroup;
+			children = (
+				C774BCFB21466B8B003FF7C8 /* eduVPN */,
+				C774BCFC21466B99003FF7C8 /* LetsConnect */,
+			);
+			path = Targets;
+			sourceTree = "<group>";
+		};
+		C774BCFB21466B8B003FF7C8 /* eduVPN */ = {
+			isa = PBXGroup;
+			children = (
+				C784BAF1214C768E00F5A01F /* eduVPN.entitlements */,
+				C774BCFD21466BAD003FF7C8 /* AppConfig.swift */,
+			);
+			path = eduVPN;
+			sourceTree = "<group>";
+		};
+		C774BCFC21466B99003FF7C8 /* LetsConnect */ = {
+			isa = PBXGroup;
+			children = (
+				C784BAF2214C76C000F5A01F /* Let's Connect!.entitlements */,
+				C774BCFF21466BB8003FF7C8 /* AppConfig.swift */,
+			);
+			path = LetsConnect;
 			sourceTree = "<group>";
 		};
 		C7BEF5BC1F03E0D70038605E = {
@@ -489,6 +533,7 @@
 		C7BEF5C71F03E0D80038605E /* eduVPN */ = {
 			isa = PBXGroup;
 			children = (
+				C774BCF721465E78003FF7C8 /* Targets */,
 				C7FA90281F0BA9BD0037FF88 /* Services */,
 				C7FA90291F0BA9C50037FF88 /* Models */,
 				C7FA90271F0BA9A60037FF88 /* Controllers */,
@@ -507,6 +552,7 @@
 				C7F345161F955473002120B9 /* ProvidersViewController.swift */,
 				C71847C71F0E5E2800296C61 /* ChooseConnectionTypeViewController.swift */,
 				C7A4E1211FACD09C00B21262 /* EnterProviderURLViewController.swift */,
+				C774BD0121469C51003FF7C8 /* EnterCredentialsViewController.swift */,
 				C7BEF5D71F03E4B50038605E /* ChooseProviderViewController.swift */,
 				C7BEF5DD1F03F4020038605E /* AuthenticatingViewController.swift */,
 				C732CEA31F0F720800698F28 /* ChooseProfileViewController.swift */,
@@ -534,6 +580,7 @@
 				C77EF61220876B5A0097DEB2 /* String+Random.swift */,
 				C73690B6214267A5004AFB4E /* URL+Unused.swift */,
 				C766150D2125B4F2002A8E4D /* Debug.swift */,
+				C76A83FC2158DD110017DBE1 /* NSAlert+Custom.swift */,
 			);
 			name = Services;
 			sourceTree = "<group>";
@@ -547,6 +594,7 @@
 				C7FA902D1F0BD1A60037FF88 /* Either.swift */,
 				C732CEA71F0F7B7600698F28 /* String+URL.swift */,
 				C75C8F4720B56AF3004B028C /* IPAddress.swift */,
+				C774BCF821465EB2003FF7C8 /* AppConfigType.swift */,
 			);
 			name = Models;
 			sourceTree = "<group>";
@@ -609,7 +657,6 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = C7BEF5D41F03E0D80038605E /* Build configuration list for PBXNativeTarget "eduVPN" */;
 			buildPhases = (
-				C76E5F7A1FFF945000E6F905 /* Sign OpenVPN */,
 				C77C7DB02029C7C70029F90E /* Set SMPrivilegedExecutables */,
 				C7BEF5C11F03E0D80038605E /* Sources */,
 				C7BEF5C21F03E0D80038605E /* Frameworks */,
@@ -617,6 +664,7 @@
 				C72AD6ED1F0A6641006DBDA5 /* CopyFiles */,
 				C75527F51F3C543600076078 /* CopyFiles */,
 				C72A557C1F0D9FF2001DCA24 /* Embed Frameworks */,
+				C754E230214D2C9D00CD3A5B /* Signing OpenVPN and Sparkle */,
 				C72A557D1F0DA005001DCA24 /* CopyFiles */,
 			);
 			buildRules = (
@@ -634,7 +682,6 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = C7C49512208484120056D5E4 /* Build configuration list for PBXNativeTarget "LetsConnect" */;
 			buildPhases = (
-				C7C494D7208484120056D5E4 /* Sign OpenVPN */,
 				C7C494D8208484120056D5E4 /* Set SMPrivilegedExecutables */,
 				C7C494D9208484120056D5E4 /* Sources */,
 				C7C494F3208484120056D5E4 /* Frameworks */,
@@ -642,6 +689,7 @@
 				C7C49504208484120056D5E4 /* CopyFiles */,
 				C7C49506208484120056D5E4 /* CopyFiles */,
 				C7C49508208484120056D5E4 /* Embed Frameworks */,
+				C7C494D7208484120056D5E4 /* Signing OpenVPN and Sparkle */,
 				C7C4950E208484120056D5E4 /* CopyFiles */,
 			);
 			buildRules = (
@@ -662,7 +710,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0830;
-				LastUpgradeCheck = 0940;
+				LastUpgradeCheck = 1000;
 				ORGANIZATIONNAME = EduVPN;
 				TargetAttributes = {
 					C72AD6F21F0A692F006DBDA5 = {
@@ -674,13 +722,21 @@
 						CreatedOnToolsVersion = 8.3.3;
 						DevelopmentTeam = ZYJ4TZX4UU;
 						ProvisioningStyle = Automatic;
+						SystemCapabilities = {
+							com.apple.HardenedRuntime = {
+								enabled = 1;
+							};
+						};
 					};
 					C7BEF5C41F03E0D80038605E = {
 						CreatedOnToolsVersion = 8.3.3;
 						DevelopmentTeam = ZYJ4TZX4UU;
-						LastSwiftMigration = 0900;
+						LastSwiftMigration = 1000;
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
+							com.apple.HardenedRuntime = {
+								enabled = 1;
+							};
 							com.apple.Sandbox = {
 								enabled = 0;
 							};
@@ -688,6 +744,11 @@
 					};
 					C7C494D2208484120056D5E4 = {
 						DevelopmentTeam = ZYJ4TZX4UU;
+						SystemCapabilities = {
+							com.apple.HardenedRuntime = {
+								enabled = 1;
+							};
+						};
 					};
 				};
 			};
@@ -767,22 +828,26 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if test \"$ACTION\" == \"install\"\nthen\n    /usr/libexec/PlistBuddy -c \"Set :SMAuthorizedClients:0 \\\"anchor apple generic and identifier \\\\\\\"org.eduvpn.app\\\\\\\" and (certificate leaf[field.1.2.840.113635.100.6.1.9] /* exists */ or certificate 1[field.1.2.840.113635.100.6.2.6] /* exists */ and certificate leaf[field.1.2.840.113635.100.6.1.13] /* exists */ and certificate leaf[subject.OU] = ${DEVELOPMENT_TEAM})\\\"\" ${SOURCE_ROOT}/OpenVPNHelper/OpenVPNHelper-Info.plist\n    /usr/libexec/PlistBuddy -c \"Set :SMAuthorizedClients:1 \\\"anchor apple generic and identifier \\\\\\\"org.eduvpn.app.home\\\\\\\" and (certificate leaf[field.1.2.840.113635.100.6.1.9] /* exists */ or certificate 1[field.1.2.840.113635.100.6.2.6] /* exists */ and certificate leaf[field.1.2.840.113635.100.6.1.13] /* exists */ and certificate leaf[subject.OU] = ${DEVELOPMENT_TEAM})\\\"\" ${SOURCE_ROOT}/OpenVPNHelper/OpenVPNHelper-Info.plist\nelse\n    /usr/libexec/PlistBuddy -c \"Set :SMAuthorizedClients:0 \\\"identifier \\\\\\\"org.eduvpn.app\\\\\\\" and anchor apple generic and certificate leaf[subject.CN] = \\\\\\\"${EXPANDED_CODE_SIGN_IDENTITY_NAME}\\\\\\\" and certificate 1[field.1.2.840.113635.100.6.2.1] /* exists */\\\"\" ${SOURCE_ROOT}/OpenVPNHelper/OpenVPNHelper-Info.plist\n    /usr/libexec/PlistBuddy -c \"Set :SMAuthorizedClients:1 \\\"identifier \\\\\\\"org.eduvpn.app.home\\\\\\\" and anchor apple generic and certificate leaf[subject.CN] = \\\\\\\"${EXPANDED_CODE_SIGN_IDENTITY_NAME}\\\\\\\" and certificate 1[field.1.2.840.113635.100.6.2.1] /* exists */\\\"\" ${SOURCE_ROOT}/OpenVPNHelper/OpenVPNHelper-Info.plist\nfi";
+			shellScript = "if test \"$ACTION\" == \"install\"\nthen\n    /usr/libexec/PlistBuddy -c \"Set :SMAuthorizedClients:0 \\\"anchor apple generic and identifier \\\\\\\"org.eduvpn.app\\\\\\\" and (certificate leaf[field.1.2.840.113635.100.6.1.9] /* exists */ or certificate 1[field.1.2.840.113635.100.6.2.6] /* exists */ and certificate leaf[field.1.2.840.113635.100.6.1.13] /* exists */ and certificate leaf[subject.OU] = ${DEVELOPMENT_TEAM})\\\"\" \"${SOURCE_ROOT}/OpenVPNHelper/OpenVPNHelper-Info.plist\"\n    /usr/libexec/PlistBuddy -c \"Set :SMAuthorizedClients:1 \\\"anchor apple generic and identifier \\\\\\\"org.eduvpn.app.home\\\\\\\" and (certificate leaf[field.1.2.840.113635.100.6.1.9] /* exists */ or certificate 1[field.1.2.840.113635.100.6.2.6] /* exists */ and certificate leaf[field.1.2.840.113635.100.6.1.13] /* exists */ and certificate leaf[subject.OU] = ${DEVELOPMENT_TEAM})\\\"\" \"${SOURCE_ROOT}/OpenVPNHelper/OpenVPNHelper-Info.plist\"\nelse\n    /usr/libexec/PlistBuddy -c \"Set :SMAuthorizedClients:0 \\\"identifier \\\\\\\"org.eduvpn.app\\\\\\\" and anchor apple generic and certificate leaf[subject.CN] = \\\\\\\"${EXPANDED_CODE_SIGN_IDENTITY_NAME}\\\\\\\" and certificate 1[field.1.2.840.113635.100.6.2.1] /* exists */\\\"\" \"${SOURCE_ROOT}/OpenVPNHelper/OpenVPNHelper-Info.plist\"\n    /usr/libexec/PlistBuddy -c \"Set :SMAuthorizedClients:1 \\\"identifier \\\\\\\"org.eduvpn.app.home\\\\\\\" and anchor apple generic and certificate leaf[subject.CN] = \\\\\\\"${EXPANDED_CODE_SIGN_IDENTITY_NAME}\\\\\\\" and certificate 1[field.1.2.840.113635.100.6.2.1] /* exists */\\\"\" \"${SOURCE_ROOT}/OpenVPNHelper/OpenVPNHelper-Info.plist\"\nfi\n";
 			showEnvVarsInLog = 0;
 		};
-		C76E5F7A1FFF945000E6F905 /* Sign OpenVPN */ = {
+		C754E230214D2C9D00CD3A5B /* Signing OpenVPN and Sparkle */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
+			inputFileListPaths = (
+			);
 			inputPaths = (
 			);
-			name = "Sign OpenVPN";
+			name = "Signing OpenVPN and Sparkle";
+			outputFileListPaths = (
+			);
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
-			shellScript = "signed=$( codesign -d -vv ${SOURCE_ROOT}/openvpn-2.4.6-openssl-1.1.0h/openvpn 2>&1 >/dev/null | grep \"${EXPANDED_CODE_SIGN_IDENTITY_NAME}\" )\necho $signed\nif [ -n \"$signed\" ]\nthen\n    echo \"Already signed for ${EXPANDED_CODE_SIGN_IDENTITY_NAME}, skipping\"\nelse\n    echo \"Signing for ${EXPANDED_CODE_SIGN_IDENTITY_NAME}\"\n    codesign -f -s \"${EXPANDED_CODE_SIGN_IDENTITY_NAME}\" \"${SOURCE_ROOT}/openvpn-2.4.6-openssl-1.1.0h/openvpn\"\nfi\n\n";
+			shellScript = "folder=\"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/${OPENVPN_FOLDER}\"\necho \"Verifying signatures in $folder\"\n\necho \"Signing openvpn for ${EXPANDED_CODE_SIGN_IDENTITY_NAME}\"\ncodesign -f -s \"${EXPANDED_CODE_SIGN_IDENTITY_NAME}\" -o runtime \"$folder/openvpn\"\n\necho \"Signing up script for ${EXPANDED_CODE_SIGN_IDENTITY_NAME}\"\ncodesign -f -s \"${EXPANDED_CODE_SIGN_IDENTITY_NAME}\" \"$folder/client.up.eduvpn.sh\"\n\necho \"Signing down script for ${EXPANDED_CODE_SIGN_IDENTITY_NAME}\"\ncodesign -f -s \"${EXPANDED_CODE_SIGN_IDENTITY_NAME}\" \"$folder/client.down.eduvpn.sh\"\n\necho \"Signing Sparkle.framework for ${EXPANDED_CODE_SIGN_IDENTITY_NAME} and hardened runtime\"\nframeworks_folder=\"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}\"\ncodesign -f -s \"${EXPANDED_CODE_SIGN_IDENTITY_NAME}\" --deep -o runtime \"$frameworks_folder/Sparkle.framework/Versions/A/Resources/AutoUpdate.app\"\n";
 		};
 		C77C7DB02029C7C70029F90E /* Set SMPrivilegedExecutables */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -796,21 +861,21 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if test \"$ACTION\" == \"install\"\nthen\n/usr/libexec/PlistBuddy -c \"Set :SMPrivilegedExecutables:org.eduvpn.app.openvpnhelper \\\"anchor apple generic and identifier \\\\\\\"org.eduvpn.app.openvpnhelper\\\\\\\" and (certificate leaf[field.1.2.840.113635.100.6.1.9] /* exists */ or certificate 1[field.1.2.840.113635.100.6.2.6] /* exists */ and certificate leaf[field.1.2.840.113635.100.6.1.13] /* exists */ and certificate leaf[subject.OU] = ${DEVELOPMENT_TEAM})\\\"\" ${SOURCE_ROOT}/eduVPN/eduVPN-Info.plist\nelse\n/usr/libexec/PlistBuddy -c \"Set :SMPrivilegedExecutables:org.eduvpn.app.openvpnhelper \\\"identifier \\\\\\\"org.eduvpn.app.openvpnhelper\\\\\\\" and anchor apple generic and certificate leaf[subject.CN] = \\\\\\\"${EXPANDED_CODE_SIGN_IDENTITY_NAME}\\\\\\\" and certificate 1[field.1.2.840.113635.100.6.2.1] /* exists */\\\"\" ${SOURCE_ROOT}/eduVPN/eduVPN-Info.plist\nfi";
+			shellScript = "if test \"$ACTION\" == \"install\"\nthen\n/usr/libexec/PlistBuddy -c \"Set :SMPrivilegedExecutables:org.eduvpn.app.openvpnhelper \\\"anchor apple generic and identifier \\\\\\\"org.eduvpn.app.openvpnhelper\\\\\\\" and (certificate leaf[field.1.2.840.113635.100.6.1.9] /* exists */ or certificate 1[field.1.2.840.113635.100.6.2.6] /* exists */ and certificate leaf[field.1.2.840.113635.100.6.1.13] /* exists */ and certificate leaf[subject.OU] = ${DEVELOPMENT_TEAM})\\\"\" \"${SOURCE_ROOT}/eduVPN/eduVPN-Info.plist\"\nelse\n/usr/libexec/PlistBuddy -c \"Set :SMPrivilegedExecutables:org.eduvpn.app.openvpnhelper \\\"identifier \\\\\\\"org.eduvpn.app.openvpnhelper\\\\\\\" and anchor apple generic and certificate leaf[subject.CN] = \\\\\\\"${EXPANDED_CODE_SIGN_IDENTITY_NAME}\\\\\\\" and certificate 1[field.1.2.840.113635.100.6.2.1] /* exists */\\\"\" \"${SOURCE_ROOT}/eduVPN/eduVPN-Info.plist\"\nfi\n";
 		};
-		C7C494D7208484120056D5E4 /* Sign OpenVPN */ = {
+		C7C494D7208484120056D5E4 /* Signing OpenVPN and Sparkle */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "Sign OpenVPN";
+			name = "Signing OpenVPN and Sparkle";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
-			shellScript = "signed=$( codesign -d -vv ${SOURCE_ROOT}/openvpn-2.4.6-openssl-1.1.0h/openvpn 2>&1 >/dev/null | grep \"${EXPANDED_CODE_SIGN_IDENTITY_NAME}\" )\necho $signed\nif [ -n \"$signed\" ]\nthen\n    echo \"Already signed for ${EXPANDED_CODE_SIGN_IDENTITY_NAME}, skipping\"\nelse\n    echo \"Signing for ${EXPANDED_CODE_SIGN_IDENTITY_NAME}\"\n    codesign -f -s \"${EXPANDED_CODE_SIGN_IDENTITY_NAME}\" \"${SOURCE_ROOT}/openvpn-2.4.6-openssl-1.1.0h/openvpn\"\nfi\n";
+			shellScript = "folder=\"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/${OPENVPN_FOLDER}\"\necho \"Verifying signatures in $folder\"\n\necho \"Signing openvpn for ${EXPANDED_CODE_SIGN_IDENTITY_NAME}\"\ncodesign -f -s \"${EXPANDED_CODE_SIGN_IDENTITY_NAME}\" -o runtime \"$folder/openvpn\"\n\necho \"Signing up script for ${EXPANDED_CODE_SIGN_IDENTITY_NAME}\"\ncodesign -f -s \"${EXPANDED_CODE_SIGN_IDENTITY_NAME}\" \"$folder/client.up.eduvpn.sh\"\n\necho \"Signing down script for ${EXPANDED_CODE_SIGN_IDENTITY_NAME}\"\ncodesign -f -s \"${EXPANDED_CODE_SIGN_IDENTITY_NAME}\" \"$folder/client.down.eduvpn.sh\"\n\necho \"Signing Sparkle.framework for ${EXPANDED_CODE_SIGN_IDENTITY_NAME} and hardened runtime\"\nframeworks_folder=\"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}\"\ncodesign -f -s \"${EXPANDED_CODE_SIGN_IDENTITY_NAME}\" --deep -o runtime \"$frameworks_folder/Sparkle.framework/Versions/A/Resources/AutoUpdate.app\"\n";
 		};
 		C7C494D8208484120056D5E4 /* Set SMPrivilegedExecutables */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -824,7 +889,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if test \"$ACTION\" == \"install\"\nthen\n/usr/libexec/PlistBuddy -c \"Set :SMPrivilegedExecutables:org.eduvpn.app.openvpnhelper \\\"anchor apple generic and identifier \\\\\\\"org.eduvpn.app.openvpnhelper\\\\\\\" and (certificate leaf[field.1.2.840.113635.100.6.1.9] /* exists */ or certificate 1[field.1.2.840.113635.100.6.2.6] /* exists */ and certificate leaf[field.1.2.840.113635.100.6.1.13] /* exists */ and certificate leaf[subject.OU] = ${DEVELOPMENT_TEAM})\\\"\" ${SOURCE_ROOT}/eduVPN/eduVPN-Info.plist\nelse\n/usr/libexec/PlistBuddy -c \"Set :SMPrivilegedExecutables:org.eduvpn.app.openvpnhelper \\\"identifier \\\\\\\"org.eduvpn.app.openvpnhelper\\\\\\\" and anchor apple generic and certificate leaf[subject.CN] = \\\\\\\"${EXPANDED_CODE_SIGN_IDENTITY_NAME}\\\\\\\" and certificate 1[field.1.2.840.113635.100.6.2.1] /* exists */\\\"\" ${SOURCE_ROOT}/eduVPN/eduVPN-Info.plist\nfi";
+			shellScript = "if test \"$ACTION\" == \"install\"\nthen\n/usr/libexec/PlistBuddy -c \"Set :SMPrivilegedExecutables:org.eduvpn.app.openvpnhelper \\\"anchor apple generic and identifier \\\\\\\"org.eduvpn.app.openvpnhelper\\\\\\\" and (certificate leaf[field.1.2.840.113635.100.6.1.9] /* exists */ or certificate 1[field.1.2.840.113635.100.6.2.6] /* exists */ and certificate leaf[field.1.2.840.113635.100.6.1.13] /* exists */ and certificate leaf[subject.OU] = ${DEVELOPMENT_TEAM})\\\"\" \"${SOURCE_ROOT}/eduVPN/eduVPN-Info.plist\"\nelse\n/usr/libexec/PlistBuddy -c \"Set :SMPrivilegedExecutables:org.eduvpn.app.openvpnhelper \\\"identifier \\\\\\\"org.eduvpn.app.openvpnhelper\\\\\\\" and anchor apple generic and certificate leaf[subject.CN] = \\\\\\\"${EXPANDED_CODE_SIGN_IDENTITY_NAME}\\\\\\\" and certificate 1[field.1.2.840.113635.100.6.2.1] /* exists */\\\"\" \"${SOURCE_ROOT}/eduVPN/eduVPN-Info.plist\"\nfi\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -853,6 +918,7 @@
 			files = (
 				C7C4951820849DF20056D5E4 /* User.swift in Sources */,
 				C7A4E1221FACD09C00B21262 /* EnterProviderURLViewController.swift in Sources */,
+				C76A83FD2158DD110017DBE1 /* NSAlert+Custom.swift in Sources */,
 				C732CEA81F0F7B7600698F28 /* String+URL.swift in Sources */,
 				C7BEF5DA1F03E4FD0038605E /* Provider.swift in Sources */,
 				C71847C01F0E49F100296C61 /* HelperService.swift in Sources */,
@@ -863,6 +929,7 @@
 				C7FA902E1F0BD1A60037FF88 /* Either.swift in Sources */,
 				C732CEA51F0F720800698F28 /* ChooseProfileViewController.swift in Sources */,
 				C71847C81F0E5E2800296C61 /* ChooseConnectionTypeViewController.swift in Sources */,
+				C774BD0221469C51003FF7C8 /* EnterCredentialsViewController.swift in Sources */,
 				C766150E2125B4F2002A8E4D /* Debug.swift in Sources */,
 				C75527FA1F3C55F100076078 /* PreferencesService.swift in Sources */,
 				C795BAA220616C9300304431 /* AppDelegate.swift in Sources */,
@@ -875,8 +942,10 @@
 				C75527DC1F3B55B700076078 /* MainViewController.swift in Sources */,
 				C7F345171F955473002120B9 /* ProvidersViewController.swift in Sources */,
 				C75C8F4820B56AF4004B028C /* IPAddress.swift in Sources */,
+				C774BCF921465EB2003FF7C8 /* AppConfigType.swift in Sources */,
 				C7C4951F2084BE600056D5E4 /* Enroll2FAViewController.swift in Sources */,
 				C7C495212084DE230056D5E4 /* TwoFactorService.swift in Sources */,
+				C774BCFE21466BAD003FF7C8 /* AppConfig.swift in Sources */,
 				C78250A61FC7291000B33892 /* Message.swift in Sources */,
 				C761DF071FE4002A009F0154 /* Enter2FAViewController.swift in Sources */,
 				C7BEF5DE1F03F4020038605E /* AuthenticatingViewController.swift in Sources */,
@@ -892,6 +961,7 @@
 			files = (
 				C7251FC7208A2DDC000CE404 /* User.swift in Sources */,
 				C7C494DA208484120056D5E4 /* EnterProviderURLViewController.swift in Sources */,
+				C76A83FE2158DD110017DBE1 /* NSAlert+Custom.swift in Sources */,
 				C7C494DB208484120056D5E4 /* String+URL.swift in Sources */,
 				C7C494DC208484120056D5E4 /* Provider.swift in Sources */,
 				C7C494DD208484120056D5E4 /* HelperService.swift in Sources */,
@@ -902,6 +972,7 @@
 				C7251FC9208A2DF4000CE404 /* String+Random.swift in Sources */,
 				C7C494E2208484120056D5E4 /* Either.swift in Sources */,
 				C7C494E3208484120056D5E4 /* ChooseProfileViewController.swift in Sources */,
+				C774BD0321469C51003FF7C8 /* EnterCredentialsViewController.swift in Sources */,
 				C7C494E4208484120056D5E4 /* ChooseConnectionTypeViewController.swift in Sources */,
 				C766150F2125B4F2002A8E4D /* Debug.swift in Sources */,
 				C7251FCA208A2DF8000CE404 /* Enroll2FAViewController.swift in Sources */,
@@ -914,8 +985,10 @@
 				C7C494EB208484120056D5E4 /* ConnectionViewController.swift in Sources */,
 				C7C494EC208484120056D5E4 /* ServiceContainer.swift in Sources */,
 				C75C8F4920B56AF4004B028C /* IPAddress.swift in Sources */,
+				C774BCFA21465EB2003FF7C8 /* AppConfigType.swift in Sources */,
 				C7C494ED208484120056D5E4 /* MainViewController.swift in Sources */,
 				C7C494EE208484120056D5E4 /* ProvidersViewController.swift in Sources */,
+				C774BD0021466BB8003FF7C8 /* AppConfig.swift in Sources */,
 				C7C494EF208484120056D5E4 /* Message.swift in Sources */,
 				C7C494F0208484120056D5E4 /* Enter2FAViewController.swift in Sources */,
 				C7C494F1208484120056D5E4 /* AuthenticatingViewController.swift in Sources */,
@@ -975,6 +1048,7 @@
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				DEVELOPMENT_TEAM = ZYJ4TZX4UU;
+				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = "OpenVPNHelper/OpenVPNHelper-Info.plist";
 				OTHER_LDFLAGS = (
 					"-sectcreate",
@@ -997,6 +1071,7 @@
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				DEVELOPMENT_TEAM = ZYJ4TZX4UU;
+				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = "OpenVPNHelper/OpenVPNHelper-Info.plist";
 				OTHER_LDFLAGS = (
 					"-sectcreate",
@@ -1021,6 +1096,7 @@
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = ZYJ4TZX4UU;
+				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = LoginItemHelper/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = org.eduvpn.app.LoginItemHelper;
@@ -1037,6 +1113,7 @@
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = ZYJ4TZX4UU;
+				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = LoginItemHelper/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = org.eduvpn.app.LoginItemHelper;
@@ -1098,9 +1175,11 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
+				OPENVPN_FOLDER = "openvpn-2.4.6-openssl-1.1.0h";
 				SDKROOT = macosx;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 4.2;
 			};
 			name = Debug;
 		};
@@ -1141,6 +1220,7 @@
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = "";
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
@@ -1149,8 +1229,10 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				MTL_ENABLE_DEBUG_INFO = NO;
+				OPENVPN_FOLDER = "openvpn-2.4.6-openssl-1.1.0h";
 				SDKROOT = macosx;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+				SWIFT_VERSION = 4.2;
 			};
 			name = Release;
 		};
@@ -1162,6 +1244,7 @@
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = ZYJ4TZX4UU;
+				ENABLE_HARDENED_RUNTIME = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/Mac",
@@ -1173,7 +1256,7 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "eduVPN/eduVPN-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 4.2;
 			};
 			name = Debug;
 		};
@@ -1185,6 +1268,7 @@
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = ZYJ4TZX4UU;
+				ENABLE_HARDENED_RUNTIME = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/Mac",
@@ -1195,7 +1279,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "eduVPN/eduVPN-Bridging-Header.h";
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 4.2;
 			};
 			name = Release;
 		};
@@ -1207,20 +1291,19 @@
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = ZYJ4TZX4UU;
+				ENABLE_HARDENED_RUNTIME = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/Mac",
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/LetsConnect-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
-				OTHER_SWIFT_FLAGS = "-DAPI_DISCOVERY_DISABLED";
 				PRODUCT_BUNDLE_IDENTIFIER = org.eduvpn.app.home;
 				PRODUCT_MODULE_NAME = LetsConnect;
 				PRODUCT_NAME = "Let's Connect!";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "eduVPN/eduVPN-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 4.0;
 			};
 			name = Debug;
 		};
@@ -1232,19 +1315,18 @@
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = ZYJ4TZX4UU;
+				ENABLE_HARDENED_RUNTIME = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/Mac",
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/LetsConnect-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
-				OTHER_SWIFT_FLAGS = "-DAPI_DISCOVERY_DISABLED";
 				PRODUCT_BUNDLE_IDENTIFIER = org.eduvpn.app.home;
 				PRODUCT_MODULE_NAME = LetsConnect;
 				PRODUCT_NAME = "Let's Connect!";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "eduVPN/eduVPN-Bridging-Header.h";
-				SWIFT_VERSION = 4.0;
 			};
 			name = Release;
 		};

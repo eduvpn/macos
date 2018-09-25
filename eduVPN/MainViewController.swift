@@ -26,7 +26,7 @@ class MainViewController: NSViewController {
     
     func show(viewController: NSViewController, options: NSViewController.TransitionOptions = [], animated: Bool = true, completionHandler: (() -> ())?) {
         let currentViewController = self.currentViewController
-        addChildViewController(viewController)
+        addChild(viewController)
         
         // Ensure the layer is available
         currentViewController.view.superview?.wantsLayer = true
@@ -34,7 +34,7 @@ class MainViewController: NSViewController {
         if animated {
             assert(currentViewController.view.superview != nil)
             transition(from: currentViewController, to: viewController, options: options) {
-                currentViewController.removeFromParentViewController()
+                currentViewController.removeFromParent()
                 completionHandler?()
             }
         } else {
@@ -42,7 +42,7 @@ class MainViewController: NSViewController {
             NSAnimationContext.runAnimationGroup({ (context) in
                 context.duration = 0
                 transition(from: currentViewController, to: viewController, options: options) {
-                    currentViewController.removeFromParentViewController()
+                    currentViewController.removeFromParent()
                     completionHandler?()
                 }
             }, completionHandler: nil)
@@ -50,7 +50,7 @@ class MainViewController: NSViewController {
     }
     
     var currentViewController: NSViewController {
-        return childViewControllers[0]
+        return children[0]
     }
     
 }

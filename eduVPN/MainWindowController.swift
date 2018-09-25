@@ -31,7 +31,7 @@ class MainWindowController: NSWindowController {
     override func windowDidLoad() {
         super.windowDidLoad()
         
-        window?.backgroundColor = .white
+//        window?.backgroundColor = .white
         
         // Disabled, clips
 //        window?.titlebarAppearsTransparent = true
@@ -112,7 +112,7 @@ class MainWindowController: NSWindowController {
     
     // MARK: - Authenticating
     @objc private func didStartAuthenticating(notification: NSNotification) {
-        let authenticatingViewController = storyboard!.instantiateController(withIdentifier: NSStoryboard.SceneIdentifier(rawValue: "Authenticating")) as! AuthenticatingViewController
+        let authenticatingViewController = storyboard!.instantiateController(withIdentifier: "Authenticating") as! AuthenticatingViewController
         present(viewController: authenticatingViewController)
     }
     
@@ -132,7 +132,7 @@ class MainWindowController: NSWindowController {
     ///   - allowClose: Wether user may close screen
     ///   - animated: Wether to show with animation
     func showChooseConnectionType(allowClose: Bool, animated: Bool = true) {
-        let chooseConnectionTypeViewController = storyboard!.instantiateController(withIdentifier: NSStoryboard.SceneIdentifier(rawValue: "ChooseConnectionType")) as! ChooseConnectionTypeViewController
+        let chooseConnectionTypeViewController = storyboard!.instantiateController(withIdentifier: "ChooseConnectionType") as! ChooseConnectionTypeViewController
         chooseConnectionTypeViewController.allowClose = allowClose
         present(viewController: chooseConnectionTypeViewController, animated: animated)
     }
@@ -144,7 +144,7 @@ class MainWindowController: NSWindowController {
     ///   - providers: Providers to chose from
     ///   - animated: Wether to show with animation
     func showChooseProvider(for connectionType: ConnectionType, from providers: [Provider], animated: Bool = true) {
-        let chooseProviderViewController = storyboard!.instantiateController(withIdentifier: NSStoryboard.SceneIdentifier(rawValue: "ChooseProvider")) as! ChooseProviderViewController
+        let chooseProviderViewController = storyboard!.instantiateController(withIdentifier: "ChooseProvider") as! ChooseProviderViewController
         chooseProviderViewController.connectionType = connectionType
         chooseProviderViewController.providers = providers
         push(viewController: chooseProviderViewController, animated: animated)
@@ -157,7 +157,7 @@ class MainWindowController: NSWindowController {
     ///   - userInfo: User info
     ///   - animated: Wether to show with animation
     func showChooseProfile(from profiles: [Profile], userInfo: UserInfo, animated: Bool = true) {
-        let chooseProfileViewController = storyboard!.instantiateController(withIdentifier: NSStoryboard.SceneIdentifier(rawValue: "ChooseProfile")) as! ChooseProfileViewController
+        let chooseProfileViewController = storyboard!.instantiateController(withIdentifier: "ChooseProfile") as! ChooseProfileViewController
         chooseProfileViewController.profiles = profiles
         chooseProfileViewController.userInfo = userInfo
         push(viewController: chooseProfileViewController, animated: animated)
@@ -170,7 +170,7 @@ class MainWindowController: NSWindowController {
     ///   - userInfo: User info
     ///   - animated: Wether to show with animation
     func showConnection(for profile: Profile, userInfo: UserInfo, animated: Bool = true) {
-        let connectionViewController = storyboard!.instantiateController(withIdentifier: NSStoryboard.SceneIdentifier(rawValue: "Connection")) as! ConnectionViewController
+        let connectionViewController = storyboard!.instantiateController(withIdentifier: "Connection") as! ConnectionViewController
         connectionViewController.profile = profile
         connectionViewController.userInfo = userInfo
         push(viewController: connectionViewController, animated: animated) {

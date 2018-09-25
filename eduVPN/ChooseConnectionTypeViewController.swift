@@ -21,15 +21,7 @@ class ChooseConnectionTypeViewController: NSViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do view setup here.
-        view.layer?.backgroundColor = NSColor.white.cgColor
         closeButton.isHidden = !allowClose
-        
-        // Change title color
-        let paragraphStyle = NSMutableParagraphStyle()
-        paragraphStyle.alignment = .center
-        let attributes = [NSAttributedStringKey.font: NSFont.systemFont(ofSize: 17), NSAttributedStringKey.foregroundColor : NSColor.white, NSAttributedStringKey.paragraphStyle : paragraphStyle]
-        enterProviderButton.attributedTitle = NSAttributedString(string: enterProviderButton.title, attributes: attributes)
-        chooseConfigFileButton.attributedTitle = NSAttributedString(string: chooseConfigFileButton.title, attributes: attributes)
     }
     
     override func viewWillAppear() {
@@ -37,10 +29,8 @@ class ChooseConnectionTypeViewController: NSViewController {
         secureInternetButton.isEnabled = true
         instituteAccessButton.isEnabled = true
         
-        #if API_DISCOVERY_DISABLED
-        secureInternetButton.isHidden = true
-        instituteAccessButton.isHidden = true
-        #endif
+        secureInternetButton.isHidden = !ServiceContainer.appConfig.apiDiscoveryEnabled
+        instituteAccessButton.isHidden = !ServiceContainer.appConfig.apiDiscoveryEnabled
     }
     
     @IBAction func chooseSecureInternet(_ sender: Any) {
@@ -59,7 +49,7 @@ class ChooseConnectionTypeViewController: NSViewController {
         guard let window = view.window else {
             return
         }
-        let enterProviderURLViewController = storyboard!.instantiateController(withIdentifier: NSStoryboard.SceneIdentifier(rawValue: "EnterProviderURL")) as! EnterProviderURLViewController
+        let enterProviderURLViewController = storyboard!.instantiateController(withIdentifier: "EnterProviderURL") as! EnterProviderURLViewController
         let panel = NSPanel(contentViewController: enterProviderURLViewController)
         window.beginSheet(panel) { (response) in
             switch response {
@@ -74,7 +64,7 @@ class ChooseConnectionTypeViewController: NSViewController {
     }
     
     private func addURL(baseURL: URL) {
-        let provider = Provider(displayName: baseURL.host ?? "", baseURL: baseURL, logoURL: nil, publicKey: nil, connectionType: .custom, authorizationType: .local)
+        let provider = Provider(displayName: baseURL.host ?? "", baseURL: baseURL, logoURL: nil, publicKey: nil, username: nil, connectionType: .custom, authorizationType: .local)
         ServiceContainer.providerService.fetchInfo(for: provider) { result in
             switch result {
             case .success(let info):
@@ -84,8 +74,8 @@ class ChooseConnectionTypeViewController: NSViewController {
                 }
             case .failure(let error):
                 DispatchQueue.main.async {
-                    let alert = NSAlert(error: error)
-                    alert.beginSheetModal(for: self.view.window!) { (_) in
+                    let alert = NSAlert(customizedError: error)
+                    alert?.beginSheetModal(for: self.view.window!) { (_) in
                         
                     }
                 }
@@ -121,13 +111,14 @@ class ChooseConnectionTypeViewController: NSViewController {
                 case .success:
                     self.mainWindowController?.dismiss()
                 case .failure(let error):
-                    let alert = NSAlert(error: error)
+                    let alert = NSAlert(customizedError: error)
                     if let error = error as? ProviderService.Error, !error.recoveryOptions.isEmpty {
                         error.recoveryOptions.forEach {
-                            alert.addButton(withTitle: $0)
+                            alert?.addButton(withTitle: $0)
                         }
                     }
-                    alert.beginSheetModal(for: self.view.window!) { (response) in
+                    
+                    alert?.beginSheetModal(for: self.view.window!) { (response) in
                         switch response.rawValue {
                         case 1000:
                             self.chooseConfigFile(configFileURL: configFileURL, recover: true)
@@ -151,8 +142,8 @@ class ChooseConnectionTypeViewController: NSViewController {
                 }
             case .failure(let error):
                 DispatchQueue.main.async {
-                    let alert = NSAlert(error: error)
-                    alert.beginSheetModal(for: self.view.window!) { (_) in
+                    let alert = NSAlert(customizedError: error)
+                    alert?.beginSheetModal(for: self.view.window!) { (_) in
                         self.secureInternetButton.isEnabled = true
                         self.instituteAccessButton.isEnabled = true
                     }
