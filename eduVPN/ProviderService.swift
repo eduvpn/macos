@@ -980,7 +980,7 @@ class ProviderService {
             return
         }
         
-        guard provider.publicKey != name, provider.username != username else {
+        if provider.publicKey == name && provider.username == username {
             return
         }
         
