@@ -20,7 +20,7 @@ class ConfigurationService {
         case invalidConfiguration
         case certificateCheckFailed
         case certificateMissing // CN never exist, was deleted by the user, or the server was reinstalled and the certificate is no longer there
-        case userDisabled // The user account was disabled by an administrator
+        case userIsDisabled // The user account was disabled by an administrator
         case certificateNotYetValid // The certificate is not yet valid
         case certificateExpired // The certificate is no longer valid (expired)
         
@@ -40,7 +40,7 @@ class ConfigurationService {
                 return NSLocalizedString("Could not check certificate", comment: "")
             case .certificateMissing:
                 return NSLocalizedString("No certificate available", comment: "")
-            case .userDisabled:
+            case .userIsDisabled:
                 return NSLocalizedString("This user account is disabled", comment: "")
             case .certificateNotYetValid:
                 return NSLocalizedString("The certificate is not yet valid", comment: "")
@@ -65,8 +65,8 @@ class ConfigurationService {
                 return NSLocalizedString("Try to connect again.", comment: "")
             case .certificateMissing:
                 return NSLocalizedString("Try to connect again.", comment: "")
-            case .userDisabled:
-                return NSLocalizedString("Contact your provider for further details", comment: "")
+            case .userIsDisabled:
+                return NSLocalizedString("Contact your administrator for further details", comment: "")
             case .certificateNotYetValid:
                 return NSLocalizedString("Try to connect again.", comment: "")
             case .certificateExpired:
@@ -197,7 +197,7 @@ class ConfigurationService {
                     case Error.certificateNotYetValid, Error.certificateExpired, Error.certificateMissing:
                         forgetKeyPair(certificateCommonName: certificateCommonName)
                         createKeyPair()
-                    case Error.userDisabled:
+                    case Error.userIsDisabled:
                         // Inform user
                         handler(.failure(error))
                     default:
@@ -353,7 +353,7 @@ class ConfigurationService {
                     case "certificate_missing":
                         error = Error.certificateMissing
                     case "user_disabled":
-                        error = Error.userDisabled
+                        error = Error.userIsDisabled
                     case "certificate_not_yet_valid":
                         error = Error.certificateNotYetValid
                     case "certificate_expired":

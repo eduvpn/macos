@@ -76,7 +76,7 @@ class ProviderService {
             case .invalidProviderURL:
                 return NSLocalizedString("Verify URL.", comment: "")
             case .userIsDisabled:
-                return NSLocalizedString("Contact administrator.", comment: "")
+                return NSLocalizedString("Contact your administrator for further details", comment: "")
             case .invalidConfigFile(_, let containsCert, let containsKey):
                 switch (containsCert, containsKey) {
                 case (true, true):

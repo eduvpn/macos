@@ -47,6 +47,7 @@ class ConnectionService: NSObject {
         case unexpectedError
         case userCancelled
         case tlsError
+        case userIsDisabled
         
         var errorDescription: String? {
             switch self {
@@ -70,6 +71,8 @@ class ConnectionService: NSObject {
                 return NSLocalizedString("Signing failed", comment: "")
             case .userCancelled:
                 return nil
+            case .userIsDisabled:
+                return NSLocalizedString("User account is disabled", comment: "")
             }
         }
 
@@ -89,6 +92,8 @@ class ConnectionService: NSObject {
                 return NSLocalizedString("Try again.", comment: "")
             case .userCancelled:
                 return nil
+            case .userIsDisabled:
+                return NSLocalizedString("Contact your administrator for further details", comment: "")
             }
         }
     }
@@ -160,18 +165,36 @@ class ConnectionService: NSObject {
                             self.currentProfile = profile
                             self.activateConfig(at: configURL, handler: handler)
                         } catch(let error) {
-                            self.state = .disconnected
+                            self.coolDown()
                             handler(.failure(error))
                         }
                     case .failure(let error):
-                        self.state = .disconnected
+                        self.coolDown()
                         handler(.failure(error))
                     }
                 }
             case .failure(let error):
-                self.state = .disconnected
+                self.coolDown()
                 handler(.failure(error))
             }
+        }
+    }
+    
+    /// Sets state to disconnected after a cool down perios
+    ///
+    /// Some actions are still going on when disconnecting, going directly to disconnected state allows user to immediately reconnect, which can get the app the behave unexpectedly.
+    private func coolDown(_ handler: ((Result<Void>) -> ())? = nil) {
+        guard state != .disconnected else {
+            handler?(.success(Void()))
+            return
+        }
+        
+        self.state = .disconnecting
+        
+        // Wait 6s before actually marking connection as disconnected
+        DispatchQueue.main.asyncAfter(deadline: .now() + 6.0) {
+            self.state = .disconnected
+            handler?(.success(Void()))
         }
     }
     
@@ -198,6 +221,10 @@ class ConnectionService: NSObject {
     
     private func abortConnecting(error: Swift.Error) {
         handler?(.failure(error))
+        guard state == .connected || state == .connecting else {
+            // Already disconnecting or disconnected
+            return
+        }
         disconnect { _ in
             // Nothing
         }
@@ -260,7 +287,7 @@ class ConnectionService: NSObject {
                 self.handler = handler
                 handler(.success(Void()))
             } else {
-                self.state = .disconnected
+                self.coolDown()
                 self.configURL = nil
                 handler(.failure(Error.helperRejected))
             }
@@ -301,8 +328,7 @@ class ConnectionService: NSObject {
             self.twoFactor = nil
             self.handler = nil
             self.closeManagingSocket(force: false)
-            self.state = .disconnected
-            handler(.success(Void()))
+            self.coolDown(handler)
         }
     }
     
@@ -495,7 +521,7 @@ class ConnectionService: NSObject {
             case .reconnecting:
                 state = .connecting
             case .exiting:
-                state = .disconnected
+                coolDown()
             default:
                 break
             }
@@ -638,7 +664,11 @@ class ConnectionService: NSObject {
                 if let provider = currentProfile?.info.provider, let username = provider.username {
                     try keychainService.removePassword(service: provider.displayName, account: username)
                 }
-                throw Error.invalidCredentials
+                if let provider = currentProfile?.info.provider, provider.connectionType == .custom {
+                    throw Error.invalidCredentials
+                } else {
+                    throw Error.userIsDisabled
+                }
             } else {
                 throw Error.invalidTwoFactorPassword
             }
@@ -768,7 +798,7 @@ extension ConnectionService: ClientProtocol {
     func taskTerminated(reply: @escaping () -> Void) {
         state = .disconnecting
         reply()
-        state = .disconnected
+        coolDown()
         configURL = nil
         handler = nil
     }
