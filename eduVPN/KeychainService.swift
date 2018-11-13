@@ -100,6 +100,15 @@ class KeychainService {
         return try commonName(for: secIdentity)
     }
     
+    func removeIdentity(for commonName: String) throws {
+        // TODO: This removes the public key, yet the certificate remains, however repeating this query with kSecClassCertificate gives errSecItemNotFound
+        let query: NSDictionary = [kSecClass: kSecClassIdentity, kSecMatchSubjectWholeString: commonName]
+        let queryError = SecItemDelete(query)
+        guard queryError == noErr else {
+            throw Error.unknownCommonName(commonName)
+        }
+    }
+    
     private func identity(for commonName: String) throws -> SecIdentity {
         var secureItemValue: AnyObject? = nil
         let query: NSDictionary = [kSecClass: kSecClassIdentity, kSecMatchSubjectWholeString: commonName]

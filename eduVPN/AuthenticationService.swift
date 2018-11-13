@@ -241,7 +241,7 @@ class AuthenticationService {
     /// Stores an authentication token
     ///
     /// - Parameters:
-    ///   - info: Provider info
+    ///   - provider: Provider
     ///   - authState: Authentication token
     private func store(for provider: Provider, authState: OIDAuthState) {
         switch provider.authorizationType {
@@ -253,6 +253,20 @@ class AuthenticationService {
         saveToDisk()
     }
     
+    /// Removes an authentication token
+    ///
+    /// - Parameters:
+    ///   - provider: Provider
+    func deauthenticate(for provider: Provider) {
+        switch provider.authorizationType {
+        case .local:
+            authStatesByProviderId.removeValue(forKey: provider.id)
+        case .distributed, .federated:
+            authStatesByConnectionType.removeValue(forKey: provider.connectionType)
+        }
+        saveToDisk()
+    }
+
     /// URL for saving authentication tokens to disk
     ///
     /// - Returns: URL

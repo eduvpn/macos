@@ -169,21 +169,7 @@ class ConfigurationService {
             }
         }
         
-        func forgetKeyPair(certificateCommonName: String) {
-            var keyPairs = UserDefaults.standard.array(forKey: "keyPairs") ?? []
-            keyPairs = keyPairs.filter { keyPair -> Bool in
-                guard let keyPair = keyPair as? [String: AnyObject] else {
-                    return false
-                }
-                
-                guard let currentCertificateCommonName = keyPair["certificateCommonName"] as? String else {
-                    return false
-                }
-                
-                return currentCertificateCommonName != certificateCommonName
-            }
-            UserDefaults.standard.set(keyPairs, forKey: "keyPairs")
-        }
+
         
         if let certificateCommonName = certificateCommonNames.first {
             // Check if still valid
@@ -195,7 +181,7 @@ class ConfigurationService {
                     // Certain errors -> create new keypair
                     switch error {
                     case Error.certificateNotYetValid, Error.certificateExpired, Error.certificateMissing:
-                        forgetKeyPair(certificateCommonName: certificateCommonName)
+                        self.forgetKeyPair(certificateCommonName: certificateCommonName)
                         createKeyPair()
                     case Error.userIsDisabled:
                         // Inform user
@@ -208,6 +194,76 @@ class ConfigurationService {
         } else {
             // No key pair found, create new one and store it
             createKeyPair()
+        }
+    }
+    
+    private func forgetKeyPair(certificateCommonName: String) {
+        try? keychainService.removeIdentity(for: certificateCommonName)
+        
+        var keyPairs = UserDefaults.standard.array(forKey: "keyPairs") ?? []
+        keyPairs = keyPairs.filter { keyPair -> Bool in
+            guard let keyPair = keyPair as? [String: AnyObject] else {
+                return false
+            }
+            
+            guard let currentCertificateCommonName = keyPair["certificateCommonName"] as? String else {
+                return false
+            }
+            
+            return currentCertificateCommonName != certificateCommonName
+        }
+        UserDefaults.standard.set(keyPairs, forKey: "keyPairs")
+    }
+    
+    /// Lists common names for certificates used by provider
+    ///
+    /// - Parameters:
+    ///   - provider: Provider
+    /// - Returns: List of common names
+    private func certificateCommonNames(for provider: Provider) -> [String] {
+        guard provider.connectionType != .localConfig else {
+            if let commonName = provider.publicKey {
+                return [commonName]
+            } else {
+                return []
+            }
+        }
+        
+        let keyPairs = UserDefaults.standard.array(forKey: "keyPairs") ?? []
+        
+        let certificateCommonNames = keyPairs.compactMap { keyPair -> String? in
+            guard let keyPair = keyPair as? [String: AnyObject] else {
+                return nil
+            }
+            
+            guard let providerBaseURL = keyPair["providerBaseURL"] as? String, provider.baseURL.absoluteString == providerBaseURL else {
+                return nil
+            }
+            
+            guard let certificateCommonName = keyPair["certificateCommonName"] as? String else {
+                return nil
+            }
+            
+            return certificateCommonName
+        }
+        
+        return certificateCommonNames
+    }
+
+    /// Removes any known stored identities for a provider
+    ///
+    /// Does not delete selected certificate/identity for local configs, since that is under users control.
+    ///
+    /// - Parameter provider: Provider
+    func removeIdentity(for provider: Provider) {
+        guard provider.connectionType != .localConfig else {
+            // Do NOT delete selected certificate/identity for local configs
+            return
+        }
+        
+        let commonNames = certificateCommonNames(for: provider)
+        for commonName in commonNames {
+            forgetKeyPair(certificateCommonName: commonName)
         }
     }
     
