@@ -120,7 +120,7 @@ class ConfigurationService {
         }
 
         
-        var keyPairs = UserDefaults.standard.array(forKey: "keyPairs") ?? []
+        var keyPairs = UserDefaults.standard.array(forKey: .keyPairs) ?? []
         
         let certificateCommonNames = keyPairs.lazy.compactMap { keyPair -> String? in
             guard let keyPair = keyPair as? [String: AnyObject] else {
@@ -154,7 +154,7 @@ class ConfigurationService {
                                 
                                 let keyPair = ["provider": info.provider.displayName, "providerBaseURL": info.provider.baseURL.absoluteString, "certificateCommonName": certificateCommonName]
                                 keyPairs.append(keyPair)
-                                UserDefaults.standard.set(keyPairs, forKey: "keyPairs")
+                                UserDefaults.standard.set(keyPairs, forKey: .keyPairs)
                                 handler(.success(certificateCommonName))
                             } catch {
                                 handler(.failure(error))
@@ -200,7 +200,7 @@ class ConfigurationService {
     private func forgetKeyPair(certificateCommonName: String) {
         try? keychainService.removeIdentity(for: certificateCommonName)
         
-        var keyPairs = UserDefaults.standard.array(forKey: "keyPairs") ?? []
+        var keyPairs = UserDefaults.standard.array(forKey: .keyPairs) ?? []
         keyPairs = keyPairs.filter { keyPair -> Bool in
             guard let keyPair = keyPair as? [String: AnyObject] else {
                 return false
@@ -212,7 +212,7 @@ class ConfigurationService {
             
             return currentCertificateCommonName != certificateCommonName
         }
-        UserDefaults.standard.set(keyPairs, forKey: "keyPairs")
+        UserDefaults.standard.set(keyPairs, forKey: .keyPairs)
     }
     
     /// Lists common names for certificates used by provider
@@ -229,7 +229,7 @@ class ConfigurationService {
             }
         }
         
-        let keyPairs = UserDefaults.standard.array(forKey: "keyPairs") ?? []
+        let keyPairs = UserDefaults.standard.array(forKey: .keyPairs) ?? []
         
         let certificateCommonNames = keyPairs.compactMap { keyPair -> String? in
             guard let keyPair = keyPair as? [String: AnyObject] else {
@@ -560,4 +560,6 @@ private extension String {
     var spacesEscaped: String {
         return replacingOccurrences(of: " ", with: "\\ ")
     }
+    
+    static let keyPairs = "keyPairs"
 }
