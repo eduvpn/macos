@@ -1523,20 +1523,23 @@ readonly TB_RESOURCES_PATH="${ARG_TB_PATH}/Contents/Resources"
 #
 #     LEASEWATCHER_PLIST_PATH and REMOVE_LEASEWATCHER_PLIST are passed to the other scripts via the scutil State:/Network/OpenVPN mechanism
 
-if [ "${ARG_IGNORE_OPTION_FLAGS:0:2}" = "-p" ] ; then
-    readonly LEASEWATCHER_PLIST="ProcessNetworkChanges.plist"
-else
+# NOT! The functionality from the above comment is disabled
+
+#if [ "${ARG_IGNORE_OPTION_FLAGS:0:2}" = "-p" ] ; then
+#    readonly LEASEWATCHER_PLIST="ProcessNetworkChanges.plist"
+#else
     readonly LEASEWATCHER_PLIST="LeaseWatch.plist"
-fi
-if [ "${ARG_TB_PATH}" = "/Applications/eduVPN.app" ] ; then
-    readonly LEASEWATCHER_PLIST_PATH="${TB_RESOURCES_PATH}/${LEASEWATCHER_PLIST}"
+#fi
+#if [ "${ARG_TB_PATH}" = "/Applications/eduVPN.app" ] ; then
+# readonly LEASEWATCHER_PLIST_PATH="${TB_RESOURCES_PATH}/${LEASEWATCHER_PLIST}"
+    readonly LEASEWATCHER_PLIST_PATH="/Library/Application Support/eduVPN/LeaseWatch.plist"
     readonly LEASEWATCHER_TEMPLATE_PATH=""
     readonly REMOVE_LEASEWATCHER_PLIST="false"
-else
-    readonly LEASEWATCHER_PLIST_PATH="/Library/Application Support/eduVPN/${LEASEWATCHER_PLIST}"
-    readonly LEASEWATCHER_TEMPLATE_PATH="${TB_RESOURCES_PATH}/${LEASEWATCHER_PLIST}"
-    readonly REMOVE_LEASEWATCHER_PLIST="true"
-fi
+#else
+#    readonly LEASEWATCHER_PLIST_PATH="/Library/Application Support/eduVPN/${LEASEWATCHER_PLIST}"
+#    readonly LEASEWATCHER_TEMPLATE_PATH="${TB_RESOURCES_PATH}/${LEASEWATCHER_PLIST}"
+#    readonly REMOVE_LEASEWATCHER_PLIST="true"
+#fi
 
 set +e # "grep" will return error status (1) if no matches are found, so don't fail on individual errors
 readonly OSVER="$( sw_vers | grep 'ProductVersion:' | grep -o '10\.[0-9]*' )"

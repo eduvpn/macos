@@ -64,7 +64,7 @@ class AuthenticationService {
     /// - Parameters:
     ///   - info: Provider info
     ///   - handler: Auth state or error
-    func authenticate(using info: ProviderInfo, handler: @escaping (Result<Void>) -> ()) {
+    func authenticate(using info: ProviderInfo, force: Bool = false, handler: @escaping (Result<Void>) -> ()) {
         // No need to authenticate for local config
         guard info.provider.connectionType != .localConfig else {
             handler(.success(Void()))
@@ -72,7 +72,7 @@ class AuthenticationService {
         }
         
         handlersAfterAuthenticating.append(handler)
-        if isAuthenticating {
+        if isAuthenticating && !force {
             return
         }
         isAuthenticating = true
@@ -133,6 +133,7 @@ class AuthenticationService {
             os_signpost(.event, log: log, name: "Cancel Authentication")
         }
         redirectHTTPHandler?.cancelHTTPListener()
+        isAuthenticating = false
     }
     
     /// Authentication tokens
@@ -177,7 +178,7 @@ class AuthenticationService {
             if #available(OSX 10.14, *) {
                 os_signpost(.event, log: log, name: "Reauthenticate for Perform Authenticated Action", signpostID: performActionID as! OSSignpostID)
             }
-            authenticate(using: info, handler: { (result) in
+            authenticate(using: info, force: false, handler: { (result) in
                 switch result {
                 case .success:
                     self.performAction(for: info, authenticationBehavior: .never, action: action)
