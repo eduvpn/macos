@@ -116,13 +116,17 @@ class ProviderService {
     private let urlSession: URLSession
     private let authenticationService: AuthenticationService
     private let preferencesService: PreferencesService
+    private let keychainService: KeychainService
+    private let configurationService: ConfigurationService
     private let appConfig: AppConfigType
     private let log: OSLog
     
-    init(urlSession: URLSession, authenticationService: AuthenticationService, preferencesService: PreferencesService, appConfig: AppConfigType) {
+    init(urlSession: URLSession, authenticationService: AuthenticationService, preferencesService: PreferencesService, keychainService: KeychainService, configurationService: ConfigurationService, appConfig: AppConfigType) {
         self.urlSession = urlSession
         self.authenticationService = authenticationService
         self.preferencesService = preferencesService
+        self.keychainService = keychainService
+        self.configurationService = configurationService
         self.appConfig = appConfig
         
         if ProcessInfo.processInfo.environment.keys.contains("SIGNPOSTS") {
@@ -295,15 +299,24 @@ class ProviderService {
     func deleteProvider(provider: Provider) {
         let connectionType = provider.connectionType
         
-        // For local config: delete config
-        if connectionType == .localConfig {
+        switch connectionType {
+        case .localConfig:
+            // For local config: delete config
             try? FileManager.default.removeItem(at: provider.baseURL)
+            // Do NOT delete selected certificate/identity
+        case .instituteAccess, .secureInternet, .custom:
+            // Remove identity
+            configurationService.removeIdentity(for: provider)
         }
+        
+        // Remove tokens
+        authenticationService.deauthenticate(for: provider)
         
         var providers = storedProviders[connectionType] ?? []
         let index = providers.index(where: { (otherProvider) -> Bool in
             return otherProvider.id == provider.id
         })
+        
         if let index = index {
             providers.remove(at: index)
             storedProviders[connectionType] = providers
@@ -1039,10 +1052,10 @@ class ProviderService {
                     if let certificate = certificate, let privateKey = privateKey {
                         // Import into Keychain
                         let passphrase = String.random()
-                        ServiceContainer.configurationService.createPKCS12(certificate: certificate, privateKey: privateKey, passphrase: passphrase) { result in
+                        configurationService.createPKCS12(certificate: certificate, privateKey: privateKey, passphrase: passphrase) { result in
                             switch result {
                             case .success(let data):
-                                let commonName = try? ServiceContainer.keychainService.importKeyPair(data: data, passphrase: passphrase)
+                                let commonName = try? self.keychainService.importKeyPair(data: data, passphrase: passphrase)
                                 // Remove Certificate and Private Key
                                 handler(.success((remove(from: config), commonName)))
                                 break

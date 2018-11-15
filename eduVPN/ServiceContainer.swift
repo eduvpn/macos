@@ -26,7 +26,7 @@ struct ServiceContainer {
     static let helperService = HelperService()
     
     /// Discovers providers
-    static let providerService = ProviderService(urlSession: urlSession, authenticationService: authenticationService, preferencesService: preferencesService, appConfig: appConfig)
+    static let providerService = ProviderService(urlSession: urlSession, authenticationService: authenticationService, preferencesService: preferencesService, keychainService: keychainService, configurationService: configurationService, appConfig: appConfig)
     
     /// Registers 2FA
     static let twoFactorService = TwoFactorService(urlSession: urlSession, authenticationService: authenticationService)

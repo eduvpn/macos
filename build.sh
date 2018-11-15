@@ -49,7 +49,7 @@ esac
 FILENAME="$TARGET-$VERSION"
 
 echo ""
-echo "Bootstrapping dependencies using carthage"
+echo "$(tput setaf 2)Bootstrapping dependencies using carthage$(tput sgr 0)"
 # This is a workaround for getting Carthage to work with Xcode 10
 tee ${PWD}/Carthage/64bit.xcconfig <<-'EOF'
 ARCHS = $(ARCHS_STANDARD_64_BIT)
@@ -58,16 +58,16 @@ EOF
 XCODE_XCCONFIG_FILE="${PWD}/Carthage/64bit.xcconfig" carthage bootstrap --cache-builds --platform macOS
 
 echo ""
-echo "Building and archiving"
+echo "$(tput setaf 2)Building and archiving$(tput sgr 0)"
 xcodebuild archive -project eduVPN.xcodeproj -scheme $TARGET -archivePath $FILENAME.xcarchive DEVELOPMENT_TEAM=$TEAMID
 
 echo ""
-echo "Exporting"
+echo "$(tput setaf 2)Exporting$(tput sgr 0)"
 /usr/libexec/PlistBuddy -c "Set :teamID \"$TEAMID\"" ExportOptions.plist
 xcodebuild -exportArchive -archivePath $FILENAME.xcarchive -exportPath $FILENAME -exportOptionsPlist ExportOptions.plist
 
 echo ""
-echo "Re-signing up and down scripts"
+echo "$(tput setaf 2)Re-signing up and down scripts$(tput sgr 0)"
 DOWN=$(find $FILENAME -name "*.down.*.sh" -print)
 codesign -f -s "$SIGNINGIDENTITY" "$DOWN"
 UP=$(find $FILENAME -name "*.up.*.sh" -print)
@@ -82,13 +82,13 @@ case "$choice" in
 esac
 
 echo ""
-echo "Creating a disk image"
+echo "$(tput setaf 2)Creating a disk image$(tput sgr 0)"
 # The configuration eduVPN can be used for all products
 echo "Using: dropdmg --config-name \"eduVPN\" --signing-identity=\"$SIGNINGIDENTITY\" \"$FILENAME/$PRODUCT\""
 dropdmg --config-name "eduVPN" --signing-identity="$SIGNINGIDENTITY" "$FILENAME/$PRODUCT"
 
 echo ""
-echo "Creating app cast XML"
+echo "$(tput setaf 2)Creating app cast XML$(tput sgr 0)"
 DISTRIBUTIONPATH="../eduvpn-macos-distrib"
 # Assumptions are being made about the location of this script
 # Also, this often fails due to extended attribute
