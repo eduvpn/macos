@@ -261,17 +261,22 @@ class ConnectionService: NSObject {
             handler(.failure(Error.noHelperConnection))
             return
         }
-        
+
         let bundle = Bundle.init(for: ConnectionService.self)
         let openvpnURL = bundle.url(forResource: "openvpn", withExtension: nil, subdirectory: ConnectionService.openVPNSubdirectory)!
         let upScript = bundle.url(forResource: "client.up.eduvpn", withExtension: "sh", subdirectory: ConnectionService.openVPNSubdirectory)!
         let downScript = bundle.url(forResource: "client.down.eduvpn", withExtension: "sh", subdirectory: ConnectionService.openVPNSubdirectory)!
+        let leasewatchPlist = URL(fileURLWithPath: "/Library/Application Support/eduVPN/LeaseWatch.plist")
+        let leasewatchScript = bundle.url(forResource: "leasewatch", withExtension: "sh", subdirectory: ConnectionService.openVPNSubdirectory)!
         var scriptOptions = [
             "-6" /* ARG_ENABLE_IPV6_ON_TAP */,
             "-f" /* ARG_FLUSH_DNS_CACHE */,
             "-o" /* ARG_OVERRIDE_MANUAL_NETWORK_SETTINGS */,
             "-r" /* ARG_RESET_PRIMARY_INTERFACE_ON_DISCONNECT */,
-            "-w" /* ARG_RESTORE_ON_WINS_RESET */
+            "-w" /* ARG_RESTORE_ON_WINS_RESET */,
+            "-m" /* ARG_MONITOR_NETWORK_CONFIGURATION */,
+            "-t" /* ARG_TB_PATH */,
+            bundle.bundlePath
         ]
         let developerMode = preferencesService.developerMode
         if developerMode {
@@ -279,7 +284,7 @@ class ConnectionService: NSObject {
         }
        
         self.configURL = configURL
-        helper.startOpenVPN(at: openvpnURL, withConfig: configURL, upScript: upScript, downScript: downScript, scriptOptions: scriptOptions) { (success) in
+        helper.startOpenVPN(at: openvpnURL, withConfig: configURL, upScript: upScript, downScript: downScript, leasewatchPlist: leasewatchPlist, leasewatchScript: leasewatchScript, scriptOptions: scriptOptions) { (success) in
             if success {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
                     self.openManagingSocket()
