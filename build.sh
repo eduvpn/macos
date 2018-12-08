@@ -1,11 +1,18 @@
 #!/bin/bash
 echo "Build Script for eduVPN (and derivatives)"
+# Check if the Carthage is installed
+if ! [ -x "$(command -v carthage)" ]; then
+  echo 'Error: Carthage is not installed.' >&2
+  python -mwebbrowser https://github.com/Carthage/Carthage
+  exit 1
+fi
+
 
 echo ""
 echo "Which target do you want to build?"
 echo "1. eduVPN"
 echo "2. Let's Connect!"
-read -p "0-9?" choice
+read -p "1-2?" choice
 case "$choice" in
   1 ) TARGET="eduVPN"; PRODUCT="eduVPN.app";;
   2 ) TARGET="LetsConnect"; PRODUCT="Let's Connect!.app";;
@@ -16,12 +23,30 @@ echo ""
 echo "Which signing identity do you want to use?"
 echo "1. SURFnet B.V. (ZYJ4TZX4UU)"
 echo "2. Egeniq (E85CT7ZDJC)"
-echo "3. Other"
-read -p "0-9?" choice
+echo "3. Enter own Team ID: "
+read -p "1-3?" choice
+
+
+# Enter custom Team ID.
+
+if [ "$choice" == 3  ]
+then
+read -p "Enter Team ID: " CUSTOMTEAMID
+fi
+
+#Simple TeamID Validation. Apple Team ID always consists of 10 Character
+
+if  ! [ "${#CUSTOMTEAMID}" == 10  ]
+then
+echo "Error: Team ID is not valid"
+fi
+
+
+
 case "$choice" in
   1 ) TEAMID="ZYJ4TZX4UU"; SIGNINGIDENTITY="Developer ID Application: SURFnet B.V. ($TEAMID)";;
   2 ) TEAMID="E85CT7ZDJC"; SIGNINGIDENTITY="Developer ID Application: Egeniq ($TEAMID)";;
-  3 ) echo "Please adjust the build script to add your signing identity."; exit 0;;
+  3 ) TEAMID="$CUSTOMTEAMID"; SIGNINGIDENTITY="Developer ID Application: Custom ($TEAMID)";;
   * ) echo "Invalid response."; exit 0;;
 esac
 
