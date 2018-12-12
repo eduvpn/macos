@@ -7,7 +7,7 @@ for MacOS.
 
 ## launchd
 
-The application is started on demand via launchd.
+The helper is started on demand via launchd.
 
 ## eduVPN app
 
