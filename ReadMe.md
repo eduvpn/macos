@@ -78,3 +78,6 @@ and in a temporary folder as provided by macOS, usually somewhere under `/privat
 
 You need to logout or even restart your computer to complete the uninstall.
 
+### Documentation
+
+Please refer to [ARCH.md](ARCH.md) for an overview of the application architecture.
