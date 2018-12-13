@@ -343,7 +343,7 @@
 		C77EF61220876B5A0097DEB2 /* String+Random.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Random.swift"; sourceTree = "<group>"; };
 		C77FB52C214D3FED0046B887 /* LoginItemHelper.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = LoginItemHelper.entitlements; sourceTree = "<group>"; };
 		C78250A51FC7291000B33892 /* Message.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Message.swift; path = eduVPN/Message.swift; sourceTree = SOURCE_ROOT; };
-		C784BAF1214C768E00F5A01F /* eduVPN.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = eduVPN.entitlements; path = EduVPN/Targets/eduVPN/eduVPN.entitlements; sourceTree = SOURCE_ROOT; };
+		C784BAF1214C768E00F5A01F /* eduVPN.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = eduVPN.entitlements; path = eduVPN/Targets/eduVPN/eduVPN.entitlements; sourceTree = SOURCE_ROOT; };
 		C784BAF2214C76C000F5A01F /* Let's Connect!.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Let's Connect!.entitlements"; sourceTree = "<group>"; };
 		C789DCC920C7E3CA00A0668E /* Socket.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Socket.framework; path = Carthage/Build/Mac/Socket.framework; sourceTree = "<group>"; };
 		C789DCCA20C7E3CB00A0668E /* Socket.framework.dSYM */ = {isa = PBXFileReference; lastKnownFileType = wrapper.dsym; name = Socket.framework.dSYM; path = Carthage/Build/Mac/Socket.framework.dSYM; sourceTree = "<group>"; };
@@ -540,7 +540,7 @@
 				C7FA902A1F0BA9F30037FF88 /* Resources */,
 			);
 			name = eduVPN;
-			path = EduVPN;
+			path = eduVPN;
 			sourceTree = "<group>";
 		};
 		C7FA90271F0BA9A60037FF88 /* Controllers */ = {
@@ -847,7 +847,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
-			shellScript = "folder=\"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/${OPENVPN_FOLDER}\"\necho \"Verifying signatures in $folder\"\n\necho \"Signing openvpn for ${EXPANDED_CODE_SIGN_IDENTITY_NAME}\"\ncodesign -f -s \"${EXPANDED_CODE_SIGN_IDENTITY_NAME}\" -o runtime \"$folder/openvpn\"\n\necho \"Signing up script for ${EXPANDED_CODE_SIGN_IDENTITY_NAME}\"\ncodesign -f -s \"${EXPANDED_CODE_SIGN_IDENTITY_NAME}\" \"$folder/client.up.eduvpn.sh\"\n\necho \"Signing down script for ${EXPANDED_CODE_SIGN_IDENTITY_NAME}\"\ncodesign -f -s \"${EXPANDED_CODE_SIGN_IDENTITY_NAME}\" \"$folder/client.down.eduvpn.sh\"\n\necho \"Signing Sparkle.framework for ${EXPANDED_CODE_SIGN_IDENTITY_NAME} and hardened runtime\"\nframeworks_folder=\"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}\"\ncodesign -f -s \"${EXPANDED_CODE_SIGN_IDENTITY_NAME}\" --deep -o runtime \"$frameworks_folder/Sparkle.framework/Versions/A/Resources/AutoUpdate.app\"\n";
+			shellScript = "folder=\"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/${OPENVPN_FOLDER}\"\necho \"Verifying signatures in $folder\"\n\necho \"Signing openvpn for ${EXPANDED_CODE_SIGN_IDENTITY_NAME}\"\ncodesign -f -s \"${EXPANDED_CODE_SIGN_IDENTITY_NAME}\" -o runtime \"$folder/openvpn\"\n\necho \"Signing up script for ${EXPANDED_CODE_SIGN_IDENTITY_NAME}\"\ncodesign -f -s \"${EXPANDED_CODE_SIGN_IDENTITY_NAME}\" \"$folder/client.up.eduvpn.sh\"\n\necho \"Signing down script for ${EXPANDED_CODE_SIGN_IDENTITY_NAME}\"\ncodesign -f -s \"${EXPANDED_CODE_SIGN_IDENTITY_NAME}\" \"$folder/client.down.eduvpn.sh\"\n\necho \"Signing Sparkle.framework for ${EXPANDED_CODE_SIGN_IDENTITY_NAME} and hardened runtime\"\nframeworks_folder=\"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}\"\ncodesign -f -s \"${EXPANDED_CODE_SIGN_IDENTITY_NAME}\" --deep -o runtime \"$frameworks_folder/Sparkle.framework/Versions/A/Resources/Autoupdate.app\"\n";
 		};
 		C77C7DB02029C7C70029F90E /* Set SMPrivilegedExecutables */ = {
 			isa = PBXShellScriptBuildPhase;
