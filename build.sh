@@ -37,7 +37,7 @@ echo ""
 echo "Which signing identity do you want to use?"
 echo "1. SURFnet B.V. (ZYJ4TZX4UU)"
 echo "2. Egeniq (E85CT7ZDJC)"
-echo "3. Enter own Team: "
+echo "3. Enter own Team(This isn't just a random name, but it must be exact as in their signing identity): "
 read -p "1-3?" choice
 
 
