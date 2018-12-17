@@ -14,7 +14,7 @@ echo "Deleting /Library/PrivilegedHelperTools/org.eduvpn.app.openvpnhelper"
 sudo rm -f /Library/PrivilegedHelperTools/org.eduvpn.app.openvpnhelper
 
 echo "Deleting ~/Library/Application Support/eduVPN/"
-rm -rf ~/Library/Application Support/eduVPN/
+rm -rf ~/Library/Application\ Support/eduVPN/
 
 echo "Deleting ~/Library/Caches/org.eduvpn.app/"
 rm -rf ~/Library/Caches/org.eduvpn.app/
