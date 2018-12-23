@@ -85,6 +85,43 @@
 }
 
 - (void)startOpenVPNAtURL:(NSURL *_Nonnull)launchURL withConfig:(NSURL *_Nonnull)config upScript:(NSURL *_Nullable)upScript downScript:(NSURL *_Nullable)downScript leasewatchPlist:(NSURL *_Nullable)leasewatchPlist leasewatchScript:(NSURL *_Nullable)leasewatchScript scriptOptions:(NSArray <NSString *>*_Nullable)scriptOptions reply:(void(^_Nonnull)(BOOL))reply {
+    
+    // Get the path of config file
+    NSString* path = config.path;
+    NSString* content = [NSString stringWithContentsOfFile:path
+                                                  encoding:NSUTF8StringEncoding
+                                                     error:NULL];
+    
+    NSMutableArray *listItems = [content componentsSeparatedByString:@"\r\n"];
+    NSArray *maliciousCommands = @[@"up", @"tls-verify", @"ipchange", @"client-connect", @"route-up",@"route-pre-down",@"client-disconnect",@"down",@"learn-address",@"auth-user-pass-verify"];
+    
+    
+    //loop through array to check if malicious is command
+    for ( int i = 0; i < [listItems count]; i++) {
+        NSString *line = [listItems objectAtIndex: i];
+        
+        
+        //Loop through malicious commands to check if any of them is present in the line
+        for ( int j = 0; j < [maliciousCommands count]; j++) {
+            NSString *maliciousCommand = [maliciousCommands objectAtIndex: j];
+            
+             //Check if malicious command was found
+            if ([line rangeOfString:[NSString stringWithFormat:@"%@%@", maliciousCommand,@" "]].location == NSNotFound) {
+                
+            } else {
+                syslog(LOG_NOTICE, "Malicious command removed");
+                [listItems removeObjectAtIndex: i];
+            }
+        }
+    }
+    
+    // Write filtered config to the file
+    [[listItems componentsJoinedByString:@"\n"] writeToFile:config.path atomically:NO];
+
+    
+    
+    
+    
     // Verify that binary at URL is signed by us
     if (![self verify:@"openvpn" atURL:launchURL]) {
         reply(NO);
