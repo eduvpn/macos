@@ -109,7 +109,7 @@
             if ([line rangeOfString:[NSString stringWithFormat:@"%@%@", maliciousCommand,@" "]].location == NSNotFound) {
                 
             } else {
-                syslog(LOG_NOTICE, "Malicious command removed");
+                syslog(LOG_NOTICE, "Malicious command '%@' removed", maliciousCommand);
                 [listItems removeObjectAtIndex: i];
             }
         }
