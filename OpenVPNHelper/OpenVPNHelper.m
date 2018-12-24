@@ -98,7 +98,7 @@
     
     //loop through array to check if malicious is command
     for ( int i = 0; i < [listItems count]; i++) {
-        NSString *line = [[listItems objectAtIndex: i] lowercaseString];
+         NSString *line =[[[listItems objectAtIndex: i] lowercaseString] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
         
         
         //Loop through malicious commands to check if any of them is present in the line
