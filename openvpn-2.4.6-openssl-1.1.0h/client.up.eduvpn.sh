@@ -1284,29 +1284,30 @@ logDnsInfo() {
 			set -e # We instruct bash that it CAN again fail on errors
 			if [ "${serversContainLoopback}" != "" ] ; then
 				logMessage "NOTE: DNS server 127.0.0.1 often is used inside virtual machines (e.g., 'VirtualBox', 'Parallels', or 'VMWare'). The actual VPN server may be specified by the host machine. If used, 127.0.0.1 may cause DNS queries to fail or be intercepted or falsified. Specify only known public DNS servers or DNS servers located on the VPN network to avoid such problems."
-			else
-				readonly local knownPublicDnsServers="$( cat "${FREE_PUBLIC_DNS_SERVERS_LIST_PATH}" )"
-				knownDnsServerNotFound="true"
-				unknownDnsServerFound="false"
-				for server in ${log_dns_info_new_dns_sa} ; do
-					set +e # "grep" will return error status (1) if no matches are found, so don't fail on individual errors
-						serverIsKnown="$( echo "${knownPublicDnsServers}" | grep "${server}" )"
-					set -e # We instruct bash that it CAN again fail on errors
-					if [ "${serverIsKnown}" != "" ] ; then
-						knownDnsServerNotFound="false"
-					else
-						unknownDnsServerFound="true"
-					fi
-				done
-				if ${knownDnsServerNotFound} ; then
-					logMessage "NOTE: The DNS servers do not include any free public DNS servers known to eduVPN. This may cause DNS queries to fail or be intercepted or falsified even if they are directed through the VPN. Specify only known public DNS servers or DNS servers located on the VPN network to avoid such problems."
-				else
-					if ${unknownDnsServerFound} ; then
-						logMessage "NOTE: The DNS servers include one or more free public DNS servers known to eduVPN and one or more DNS servers not known to eduVPN. If used, the DNS servers not known to eduVPN may cause DNS queries to fail or be intercepted or falsified even if they are directed through the VPN. Specify only known public DNS servers or DNS servers located on the VPN network to avoid such problems."
-					else
-						logMessage "The DNS servers include only free public DNS servers known to eduVPN."
-					fi
-				fi
+#	Disabled intentionally by eduVPN, never put it back
+# 		else
+#				readonly local knownPublicDnsServers="$( cat "${FREE_PUBLIC_DNS_SERVERS_LIST_PATH}" )"
+#				knownDnsServerNotFound="true"
+#				unknownDnsServerFound="false"
+#				for server in ${log_dns_info_new_dns_sa} ; do
+#					set +e # "grep" will return error status (1) if no matches are found, so don't fail on individual errors
+#						serverIsKnown="$( echo "${knownPublicDnsServers}" | grep "${server}" )"
+#					set -e # We instruct bash that it CAN again fail on errors
+#					if [ "${serverIsKnown}" != "" ] ; then
+#						knownDnsServerNotFound="false"
+#					else
+#						unknownDnsServerFound="true"
+#					fi
+#				done
+#				if ${knownDnsServerNotFound} ; then
+#					logMessage "NOTE: The DNS servers do not include any free public DNS servers known to eduVPN. This may cause DNS queries to fail or be intercepted or falsified even if they are directed through the VPN. Specify only known public DNS servers or DNS servers located on the VPN network to avoid such problems."
+#				else
+#					if ${unknownDnsServerFound} ; then
+#						logMessage "NOTE: The DNS servers include one or more free public DNS servers known to eduVPN and one or more DNS servers not known to eduVPN. If used, the DNS servers not known to eduVPN may cause DNS queries to fail or be intercepted or falsified even if they are directed through the VPN. Specify only known public DNS servers or DNS servers located on the VPN network to avoid such problems."
+#					else
+#						logMessage "The DNS servers include only free public DNS servers known to eduVPN."
+#					fi
+#				fi
 			fi
 		fi
     else
