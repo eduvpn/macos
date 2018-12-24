@@ -116,9 +116,11 @@
     }
     
     // Write filtered config to the file
-    [[listItems componentsJoinedByString:@"\n"] writeToFile:config.path atomically:NO];
+    BOOL success = [[listItems componentsJoinedByString:@"\n"] writeToFile:config.path atomically:YES];
 
-    
+    if (!success) {
+        syslog(LOG_WARNING, "Could not write openvpn config file");
+    }
     
     
     
