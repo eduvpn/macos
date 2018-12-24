@@ -1,12 +1,19 @@
 #!/bin/bash
-echo "Build Script for eduVPN (and derivatives)"
+
+APPNAME = "eduVPN"
+
+echo "Build Script for $APPNAME (and derivatives)"
+
+# Some variables
+
+
+
 
 #Check if HomeBrew Installed
 if ! [ -x "$(command -v brew)" ]; then
   echo 'Error: Homebrew is not installed. Install Homebrew Manually please ' >&2
   python -mwebbrowser https://brew.sh
   exit 1
-
 fi
 
 
@@ -24,11 +31,11 @@ fi
 
 
 echo "Which target do you want to build?"
-echo "1. eduVPN"
+echo "1. $APPNAME"
 echo "2. Let's Connect!"
 read -p "1-2?" choice
 case "$choice" in
-  1 ) TARGET="eduVPN"; PRODUCT="eduVPN.app";;
+  1 ) TARGET="$APPNAME"; PRODUCT="$APPNAME.app";;
   2 ) TARGET="LetsConnect"; PRODUCT="Let's Connect!.app";;
   * ) echo "Invalid response."; exit 0;;
 esac
@@ -37,13 +44,17 @@ echo ""
 echo "Which signing identity do you want to use?"
 echo "1. SURFnet B.V. (ZYJ4TZX4UU)"
 echo "2. Egeniq (E85CT7ZDJC)"
-echo "3. Enter own Team(This isn't just a random name, but it must be exact as in their signing identity): "
+echo "3. Other "
 read -p "1-3?" choice
+
+
 
 
 # Enter custom Team ID and Team Name.
 if [ "$choice" == 3  ]
 then
+echo "Your Team ID and Team Name must match exactly with the signing identity in your keychain."
+
 read -p "Enter Team ID: " CUSTOMTEAMID
 read -p "Enter Team Name: " CUSTOMTEAMNAME
 fi
@@ -114,21 +125,22 @@ codesign -f -s "$SIGNINGIDENTITY" "$UP"
 
 echo ""
 
-INSTALLERFILENAME="eduVPN-Installer$(date +"%Y-%m-%d-%H:%M:%S.")dmg"
+INSTALLERFILENAME="$APPNAME-Installer$(date +"%Y-%m-%d-%H:%M:%S.")dmg"
 
 
 create-dmg \
---volname "eduVPN" \
+--volname "$APPNAME" \
 --volicon "icon.icns" \
 --background "background.png" \
 --window-pos 490 350 \
 --window-size 490 350 \
 --icon-size 100 \
---icon "eduVPN.app" 100 155 \
---hide-extension "eduVPN.app" \
+--icon "$APPNAME.app" 100 155 \
+--hide-extension "$APPNAME.app" \
 --app-drop-link 370 155 \
  $INSTALLERFILENAME \
-$FILENAME"/eduVPN.app"
+$FILENAME"/$APPNAME.app"
+codesign -f -s "$SIGNINGIDENTITY" $INSTALLERFILENAME
 codesign -f -s "$SIGNINGIDENTITY" $INSTALLERFILENAME
 
 echo ""
