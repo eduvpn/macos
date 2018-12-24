@@ -1,6 +1,6 @@
 #!/bin/bash
 
-APPNAME = "eduVPN"
+APPNAME="eduVPN"
 
 echo "Build Script for $APPNAME (and derivatives)"
 
@@ -129,18 +129,17 @@ INSTALLERFILENAME="$APPNAME-Installer$(date +"%Y-%m-%d-%H:%M:%S.")dmg"
 
 
 create-dmg \
---volname "$APPNAME" \
+--volname "$TARGET" \
 --volicon "icon.icns" \
 --background "background.png" \
 --window-pos 490 350 \
 --window-size 490 350 \
 --icon-size 100 \
---icon "$APPNAME.app" 100 155 \
---hide-extension "$APPNAME.app" \
+--icon "$PRODUCT" 100 155 \
+--hide-extension "$PRODUCT" \
 --app-drop-link 370 155 \
  $INSTALLERFILENAME \
-$FILENAME"/$APPNAME.app"
-codesign -f -s "$SIGNINGIDENTITY" $INSTALLERFILENAME
+$FILENAME"/$PRODUCT"
 codesign -f -s "$SIGNINGIDENTITY" $INSTALLERFILENAME
 
 echo ""
