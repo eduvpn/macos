@@ -95,29 +95,40 @@
     NSMutableArray *listItems = [content componentsSeparatedByString:@"\r\n"];
     NSArray *maliciousCommands = @[@"up", @"tls-verify", @"ipchange", @"client-connect", @"route-up",@"route-pre-down",@"client-disconnect",@"down",@"learn-address",@"auth-user-pass-verify"];
     
+    // Malicious command index set variable declarion
+    NSMutableIndexSet *indexes = [[NSMutableIndexSet alloc] init];
+    
     
     //loop through array to check if malicious is command
     for ( int i = 0; i < [listItems count]; i++) {
-         NSString *line =[[[listItems objectAtIndex: i] lowercaseString] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+        NSString *line =[[[listItems objectAtIndex: i] lowercaseString] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+        
+        // Filter out comment from line
+        line =  [line componentsSeparatedByString:@"#"].firstObject;
+        line =  [line componentsSeparatedByString:@";"].firstObject;
         
         
         //Loop through malicious commands to check if any of them is present in the line
         for ( int j = 0; j < [maliciousCommands count]; j++) {
             NSString *maliciousCommand = [maliciousCommands objectAtIndex: j];
             
-             //Check if malicious command was found
+            //Check if malicious command was found
             if ([line rangeOfString:[NSString stringWithFormat:@"%@%@", maliciousCommand,@" "]].location == NSNotFound) {
                 
             } else {
                 syslog(LOG_NOTICE, "Malicious command '%@' removed", maliciousCommand);
-                [listItems removeObjectAtIndex: i];
+                //Add malicious command in index
+                [indexes addIndex:i];
             }
         }
     }
     
+    //remove all malicious command from index
+    [listItems removeObjectsAtIndexes:indexes];
+    
     // Write filtered config to the file
     BOOL success = [[listItems componentsJoinedByString:@"\n"] writeToFile:config.path atomically:YES];
-
+    
     if (!success) {
         syslog(LOG_WARNING, "Could not write openvpn config file");
     }
@@ -141,14 +152,14 @@
         reply(NO);
         return;
     }
-
+    
     // Monitoring is enabled
     if ([scriptOptions containsObject:@"-m"]) {
         // Write plist to leasewatch
         NSDictionary *leasewatchPlistContents = @{@"Label": @"org.eduvpn.app.leasewatch",
-                                          @"ProgramArguments": @[leasewatchScript.path],
-                                          @"WatchPaths": @[@"/Library/Preferences/SystemConfiguration"]
-                                          };
+                                                  @"ProgramArguments": @[leasewatchScript.path],
+                                                  @"WatchPaths": @[@"/Library/Preferences/SystemConfiguration"]
+                                                  };
         NSError *error;
         NSString *leasewatchPlistDirectory = leasewatchPlist.path.stringByDeletingLastPathComponent;
         if (![[NSFileManager defaultManager] createDirectoryAtPath:leasewatchPlistDirectory withIntermediateDirectories:YES attributes:nil error:&error]) {
@@ -161,7 +172,7 @@
         if (![leasewatchPlistContents writeToURL:leasewatchPlist atomically:YES]) {
             syslog(LOG_WARNING, "Error writing watch plist contents to %s", leasewatchPlist.path.UTF8String);
         }
-
+        
         // Make lease watch file readable
         if (![[NSFileManager defaultManager] setAttributes:@{NSFilePosixPermissions: [NSNumber numberWithShort:0744]} ofItemAtPath:leasewatchPlist.path error:&error]) {
             syslog(LOG_WARNING, "Error making lease watch plist %s exeutable (chmod 744): %s", leasewatchPlist.path.UTF8String, error.description.UTF8String);
@@ -176,12 +187,12 @@
     NSString *socketPath = @"/private/tmp/eduvpn.socket";
     
     NSMutableArray *arguments = [NSMutableArray arrayWithArray:@[@"--config", [self pathWithSpacesEscaped:config.path],
-                       @"--log", [self pathWithSpacesEscaped:logFilePath],
-                       @"--management", [self pathWithSpacesEscaped:socketPath], @"unix",
-                       @"--management-external-key",
-                       @"--management-external-cert", @"macosx-keychain",
-                       @"--management-query-passwords",
-                       @"--management-forget-disconnect"]];
+                                                                 @"--log", [self pathWithSpacesEscaped:logFilePath],
+                                                                 @"--management", [self pathWithSpacesEscaped:socketPath], @"unix",
+                                                                 @"--management-external-key",
+                                                                 @"--management-external-cert", @"macosx-keychain",
+                                                                 @"--management-query-passwords",
+                                                                 @"--management-forget-disconnect"]];
     
     if (upScript.path) {
         [arguments addObjectsFromArray:@[@"--up", [self scriptPath:upScript.path withOptions:scriptOptions]]];
@@ -224,7 +235,7 @@
 - (NSString *)pathWithSpacesEscaped:(NSString *)path {
     return [path stringByReplacingOccurrencesOfString:@" " withString:@"\\ "];
 }
-    
+
 - (NSString *)scriptPath:(NSString *)path withOptions:(NSArray <NSString *>*)scriptOptions {
     if (scriptOptions && [scriptOptions count] > 0) {
         NSString *escapedPath = [self pathWithSpacesEscaped:path];
