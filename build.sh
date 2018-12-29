@@ -1,7 +1,4 @@
 #!/bin/bash
-
-APPNAME="eduVPN"
-
 echo "Build Script for $APPNAME (and derivatives)"
 
 # Some variables
@@ -31,11 +28,11 @@ fi
 
 
 echo "Which target do you want to build?"
-echo "1. $APPNAME"
+echo "1. eduVPN"
 echo "2. Let's Connect!"
 read -p "1-2?" choice
 case "$choice" in
-  1 ) TARGET="$APPNAME"; PRODUCT="$APPNAME.app";;
+  1 ) TARGET="eduVPN"; PRODUCT="eduVPN.app";;
   2 ) TARGET="LetsConnect"; PRODUCT="Let's Connect!.app";;
   * ) echo "Invalid response."; exit 0;;
 esac
@@ -79,12 +76,12 @@ BRANCH=$(git rev-parse --abbrev-ref HEAD)
 echo ""
 echo "You are currently on branch $BRANCH."
 
-if [[ $BRANCH != "release/"* ]]
-then
-    echo ""
-    echo "You must always build from a release branch. Switch to the correct branch or ask the developer to create it for you."
-    exit
-fi
+#if [[ $BRANCH != "release/"* ]]
+#then
+#    echo ""
+#    echo "You must always build from a release branch. Switch to the correct branch or ask the developer to create it for you."
+#    exit
+#fi
 
 VERSION=$(git rev-parse --abbrev-ref HEAD | cut -d "/" -f 2)
 
@@ -125,7 +122,7 @@ codesign -f -s "$SIGNINGIDENTITY" "$UP"
 
 echo ""
 
-INSTALLERFILENAME="$APPNAME-Installer$(date +"%Y-%m-%d-%H:%M:%S.")dmg"
+INSTALLERFILENAME="$TARGET-Installer$(date +"%Y-%m-%d-%H:%M:%S.")dmg"
 
 
 create-dmg \
