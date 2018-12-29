@@ -127,8 +127,8 @@ INSTALLERFILENAME="$TARGET-Installer$(date +"%Y-%m-%d-%H:%M:%S.")dmg"
 
 create-dmg \
 --volname "$TARGET" \
---volicon "icon.icns" \
---background "background.png" \
+--volicon "icon-$TARGET.icns" \
+--background "background-$TARGET.png" \
 --window-pos 490 350 \
 --window-size 490 350 \
 --icon-size 100 \
