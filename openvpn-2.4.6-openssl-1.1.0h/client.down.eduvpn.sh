@@ -10,8 +10,6 @@
 #
 # Created by: Nick Williams (using original code and parts of old Tblk scripts)
 #
-# Modified by eduVPN to avoid filename collisions: tunnelblick -> eduvpn, Tunnelblick -> eduVPN, TUNNELBLICK -> EDUVPN
-#
 # ******************************************************************************************************************
 
 # @param String message - The message to log
@@ -31,6 +29,63 @@ trim()
 echo ${@}
 }
 
+##########################################################################################
+restore_networksetup_setting() {
+
+# Restore the networksetup setting named $1 using data in $2.
+#
+# $1 must be either "dnsservers" or "searchdomains". (Those are the only two settings
+#    that can be modified by "networksetup".)
+#
+# $2 is a string containing the information needed to restore the settings for each active
+# network service. The "up" script that corresponds to this "down" script stores the string
+# in the scutil data item "NetworkSetupRestore$1Info". For a description of the format for $2,
+# see the get_networksetup_setting() routine in the "up" script.
+#
+# This routine outputs log messages describing its activities.
+
+	if [ "$1" != "dnsservers" ] && [ "$1" != "searchdomains" ] ; then
+		logMessage "restore_networksetup_setting: Unknown setting name '$1'"
+		exit 1
+	fi
+
+	if [ -z "$2" ] ; then
+		logMessage "restore_networksetup_setting: Second argument = ''. Not restoring $1."
+		return
+	fi
+
+	if [ ! -f "/usr/sbin/networksetup" ] ; then
+		logMessage "restore_networksetup_setting: Cannot restore setting for $1: /usr/sbin/networksetup does not exist"
+		exit 1
+	fi
+
+	# Process each line separately. Add \n to end of input to make sure partial lines are processed.
+
+	local saved_IFS="$IFS"
+
+	printf %s "$2$LF"  |  while IFS= read -r line ; do
+
+		if [ -n "$line" ] ; then
+
+			# "setting" is everything BEFORE the first space in the line
+			# "service" is everything AFTER  the first space in the line
+			#              because "setting" can't contain spaces, but "service" can
+			setting="$( echo "$line"  |  sed -e 's/ .*//' )"
+            service="$( echo "$line"  |  sed -e 's/[^ ]* \(.*\)/\1/' )"
+
+			# Translate commas in "setting" to spaces for networksetup
+            /usr/sbin/networksetup -set$1 "$service" ${setting//,/ }
+
+			logMessage "Used networksetup to restore $service $1 to $setting"
+
+        fi
+
+	done
+
+	IFS="$saved_IFS"
+}
+
+##########################################################################################
 # @param String list - list of network service names, output from disable_ipv6()
 restore_ipv6() {
 
@@ -45,11 +100,11 @@ restore_ipv6() {
         return
     fi
 
-    printf %s "$1
-" | \
-    while IFS= read -r ripv6_service ; do
-        networksetup -setv6automatic "$ripv6_service"
-        logMessage "Re-enabled IPv6 (automatic) for '$ripv6_service'"
+    printf %s "$1$LF"  |   while IFS= read -r ripv6_service ; do
+		if [ -n "$ripv6_service" ] ; then
+			/usr/sbin/networksetup -setv6automatic "$ripv6_service"
+			logMessage "Re-enabled IPv6 (automatic) for '$ripv6_service'"
+		fi
     done
 }
 
@@ -57,41 +112,21 @@ restore_ipv6() {
 flushDNSCache()
 {
     if ${ARG_FLUSH_DNS_CACHE} ; then
-        set +e # "grep" will return error status (1) if no matches are found, so don't fail on individual errors
-        readonly OSVER="$(sw_vers | grep 'ProductVersion:' | grep -o '10\.[0-9]*')"
-        set -e # We instruct bash that it CAN again fail on errors
-	    if [ "${OSVER}" = "10.4" ] ; then
-
-			if [ -f /usr/sbin/lookupd ] ; then
-				set +e # we will catch errors from lookupd
-				/usr/sbin/lookupd -flushcache
-				if [ $? != 0 ] ; then
-					logMessage "WARNING: Unable to flush the DNS cache via lookupd"
-				else
-					logMessage "Flushed the DNS cache via lookupd"
-				fi
-				set -e # bash should again fail on errors
-			else
-				logMessage "WARNING: /usr/sbin/lookupd not present. Not flushing the DNS cache"
-			fi
-
-		else
-
-			if [ -f /usr/bin/dscacheutil ] ; then
-				set +e # we will catch errors from dscacheutil
+		if [ -f /usr/bin/dscacheutil ] ; then
+			set +e # we will catch errors from dscacheutil
 				/usr/bin/dscacheutil -flushcache
 				if [ $? != 0 ] ; then
 					logMessage "WARNING: Unable to flush the DNS cache via dscacheutil"
 				else
 					logMessage "Flushed the DNS cache via dscacheutil"
 				fi
-				set -e # bash should again fail on errors
-			else
-				logMessage "WARNING: /usr/bin/dscacheutil not present. Not flushing the DNS cache via dscacheutil"
-			fi
+			set -e # bash should again fail on errors
+		else
+			logMessage "WARNING: /usr/bin/dscacheutil not present. Not flushing the DNS cache via dscacheutil"
+		fi
 
-			if [ -f /usr/sbin/discoveryutil ] ; then
-				set +e # we will catch errors from discoveryutil
+		if [ -f /usr/sbin/discoveryutil ] ; then
+			set +e # we will catch errors from discoveryutil
 				/usr/sbin/discoveryutil udnsflushcaches
 				if [ $? != 0 ] ; then
 					logMessage "WARNING: Unable to flush the DNS cache via discoveryutil udnsflushcaches"
@@ -104,31 +139,29 @@ flushDNSCache()
 				else
 					logMessage "Flushed the DNS cache via discoveryutil mdnsflushcache"
 				fi
+			set -e # bash should again fail on errors
+		else
+			logMessage "/usr/sbin/discoveryutil not present. Not flushing the DNS cache via discoveryutil"
+		fi
+
+		set +e # "grep" will return error status (1) if no matches are found, so don't fail on individual errors
+		readonly local hands_off_ps="$( ps -ax | grep HandsOffDaemon | grep -v grep.HandsOffDaemon )"
+		set -e # We instruct bash that it CAN again fail on errors
+		if [ "${hands_off_ps}" = "" ] ; then
+			if [ -f /usr/bin/killall ] ; then
+				set +e # ignore errors if mDNSResponder isn't currently running
+				/usr/bin/killall -HUP mDNSResponder
+				if [ $? != 0 ] ; then
+					logMessage "mDNSResponder not running. Not notifying it that the DNS cache was flushed"
+				else
+					logMessage "Notified mDNSResponder that the DNS cache was flushed"
+				fi
 				set -e # bash should again fail on errors
 			else
-				logMessage "/usr/sbin/discoveryutil not present. Not flushing the DNS cache via discoveryutil"
+				logMessage "WARNING: /usr/bin/killall not present. Not notifying mDNSResponder that the DNS cache was flushed"
 			fi
-
-			set +e # "grep" will return error status (1) if no matches are found, so don't fail on individual errors
-			hands_off_ps="$( ps -ax | grep HandsOffDaemon | grep -v grep.HandsOffDaemon )"
-			set -e # We instruct bash that it CAN again fail on errors
-			if [ "${hands_off_ps}" = "" ] ; then
-				if [ -f /usr/bin/killall ] ; then
-					set +e # ignore errors if mDNSResponder isn't currently running
-					/usr/bin/killall -HUP mDNSResponder
-					if [ $? != 0 ] ; then
-						logMessage "mDNSResponder not running. Not notifying it that the DNS cache was flushed"
-					else
-						logMessage "Notified mDNSResponder that the DNS cache was flushed"
-					fi
-					set -e # bash should again fail on errors
-				else
-					logMessage "WARNING: /usr/bin/killall not present. Not notifying mDNSResponder that the DNS cache was flushed"
-				fi
-			else
-				logMessage "WARNING: Hands Off is running.  Not notifying mDNSResponder that the DNS cache was flushed"
-			fi
-
+		else
+			logMessage "WARNING: Hands Off is running.  Not notifying mDNSResponder that the DNS cache was flushed"
 		fi
     fi
 }
@@ -143,9 +176,9 @@ resetPrimaryInterface()
 
 	if [ -e "$expected_path" ] ; then
 		rm -f "$expected_path"
-		should_reset="$1"
+		readonly local should_reset="$1"
 	else
-		should_reset="$2"
+		readonly local should_reset="$2"
 	fi
 
 	if [ "$should_reset" != "true" ] ; then
@@ -153,11 +186,11 @@ resetPrimaryInterface()
 	fi
 
 	set +e # "grep" will return error status (1) if no matches are found, so don't fail on individual errors
-		WIFI_INTERFACE="$(networksetup -listallhardwareports | awk '$3=="Wi-Fi" {getline; print $2}')"
+		readonly local WIFI_INTERFACE="$(/usr/sbin/networksetup -listallhardwareports | awk '$3=="Wi-Fi" {getline; print $2}')"
 		if [ "${WIFI_INTERFACE}" == "" ] ; then
-			WIFI_INTERFACE="$(networksetup -listallhardwareports | awk '$3=="AirPort" {getline; print $2}')"
+			WIFI_INTERFACE="$(/usr/sbin/networksetup -listallhardwareports | awk '$3=="AirPort" {getline; print $2}')"
 		fi
-		PINTERFACE="$( scutil <<-EOF |
+		readonly local PINTERFACE="$( scutil <<-EOF |
 			open
 			show State:/Network/Global/IPv4
 			quit
@@ -167,18 +200,11 @@ EOF
     set -e # resume abort on error
 
     if [ "${PINTERFACE}" != "" ] ; then
-	    if [ "${PINTERFACE}" == "${WIFI_INTERFACE}" -a "${OSVER}" != "10.4" -a -f /usr/sbin/networksetup ] ; then
-		    if [ "${OSVER}" == "10.5" ] ; then
-			    logMessage "Resetting primary interface '${PINTERFACE}' via networksetup -setairportpower off/on..."
-				/usr/sbin/networksetup -setairportpower off
-				sleep 2
-				/usr/sbin/networksetup -setairportpower on
-			else
-				logMessage "Resetting primary interface '${PINTERFACE}' via networksetup -setairportpower ${PINTERFACE} off/on..."
-				/usr/sbin/networksetup -setairportpower "${PINTERFACE}" off
-				sleep 2
-				/usr/sbin/networksetup -setairportpower "${PINTERFACE}" on
-			fi
+	    if [ "${PINTERFACE}" == "${WIFI_INTERFACE}" -a -f /usr/sbin/networksetup ] ; then
+			logMessage "Resetting primary interface '${PINTERFACE}' via networksetup -setairportpower ${PINTERFACE} off/on..."
+			/usr/sbin/networksetup -setairportpower "${PINTERFACE}" off
+			sleep 2
+			/usr/sbin/networksetup -setairportpower "${PINTERFACE}" on
 		else
 		    if [ -f /sbin/ifconfig ] ; then
 			    logMessage "Resetting primary interface '${PINTERFACE}' via ifconfig ${PINTERFACE} down/up..."
@@ -199,6 +225,9 @@ trap "" TSTP
 trap "" HUP
 trap "" INT
 export PATH="/bin:/sbin:/usr/sbin:/usr/bin"
+
+readonly LF="
+"
 
 readonly OUR_NAME=$(basename "${0}")
 
@@ -239,7 +268,7 @@ while [ {$#} ] ; do
     shift                                       # Shift arguments to examine the next option (if there is one)
 done
 
-readonly ARG_DISABLE_INTERNET_ACCESS_AFTER_DISCONNECTING ARG_DISABLE_INTERNET_ACCESS_AFTER_DISCONNECTING_UNEXPECTED ARG_FLUSH_DNS_CACHE
+readonly ARG_RESET_PRIMARY_INTERFACE_ON_DISCONNECT ARG_RESET_PRIMARY_INTERFACE_ON_DISCONNECT_UNEXPECTED ARG_FLUSH_DNS_CACHE
 
 # Quick check - is the configuration there?
 if ! scutil -w State:/Network/OpenVPN &>/dev/null -t 1 ; then
@@ -256,31 +285,28 @@ if ! scutil -w State:/Network/OpenVPN &>/dev/null -t 1 ; then
 fi
 
 # Get info saved by the up script
-EDUVPN_CONFIG="$( scutil <<-EOF
+TUNNELBLICK_CONFIG="$( scutil <<-EOF
 	open
 	show State:/Network/OpenVPN
 	quit
 EOF
 )"
 
-ARG_MONITOR_NETWORK_CONFIGURATION="$(echo "${EDUVPN_CONFIG}" | grep -i '^[[:space:]]*MonitorNetwork :' | sed -e 's/^.*: //g')"
-LEASEWATCHER_PLIST_PATH="$(echo "${EDUVPN_CONFIG}" | grep -i '^[[:space:]]*LeaseWatcherPlistPath :' | sed -e 's/^.*: //g')"
-REMOVE_LEASEWATCHER_PLIST="$(echo "${EDUVPN_CONFIG}" | grep -i '^[[:space:]]*RemoveLeaseWatcherPlist :' | sed -e 's/^.*: //g')"
-PSID="$(echo "${EDUVPN_CONFIG}" | grep -i '^[[:space:]]*Service :' | sed -e 's/^.*: //g')"
-VPN_SID="$(echo "${EDUVPN_CONFIG}" | grep -i '^[[:space:]]*VpnService :' | sed -e 's/^.*: //g')"
-# Don't need: SCRIPT_LOG_FILE="$(echo "${EDUVPN_CONFIG}" | grep -i '^[[:space:]]*ScriptLogFile :' | sed -e 's/^.*: //g')"
-# Don't need: ARG_RESTORE_ON_DNS_RESET="$(echo "${EDUVPN_CONFIG}" | grep -i '^[[:space:]]*RestoreOnDNSReset :' | sed -e 's/^.*: //g')"
-# Don't need: ARG_RESTORE_ON_WINS_RESET="$(echo "${EDUVPN_CONFIG}" | grep -i '^[[:space:]]*RestoreOnWINSReset :' | sed -e 's/^.*: //g')"
-# Don't need: PROCESS="$(echo "${EDUVPN_CONFIG}" | grep -i '^[[:space:]]*PID :' | sed -e 's/^.*: //g')"
-# Don't need: ARG_IGNORE_OPTION_FLAGS="$(echo "${EDUVPN_CONFIG}" | grep -i '^[[:space:]]*IgnoreOptionFlags :' | sed -e 's/^.*: //g')"
-ARG_TAP="$(echo "${EDUVPN_CONFIG}" | grep -i '^[[:space:]]*IsTapInterface :' | sed -e 's/^.*: //g')"
-bRouteGatewayIsDhcp="$(echo "${EDUVPN_CONFIG}" | grep -i '^[[:space:]]*RouteGatewayIsDhcp :' | sed -e 's/^.*: //g')"
-bTapDeviceHasBeenSetNone="$(echo "${EDUVPN_CONFIG}" | grep -i '^[[:space:]]*TapDeviceHasBeenSetNone :' | sed -e 's/^.*: //g')"
-bAlsoUsingSetupKeys="$(echo "${EDUVPN_CONFIG}" | grep -i '^[[:space:]]*bAlsoUsingSetupKeys :' | sed -e 's/^.*: //g')"
-sTunnelDevice="$(echo "${EDUVPN_CONFIG}" | grep -i '^[[:space:]]*TunnelDevice :' | sed -e 's/^.*: //g')"
+readonly ARG_MONITOR_NETWORK_CONFIGURATION="$(       echo "${TUNNELBLICK_CONFIG}" | grep -i '^[[:space:]]*MonitorNetwork :'                       | sed -e 's/^.*: //g')"
+readonly LEASEWATCHER_PLIST_PATH="$(                 echo "${TUNNELBLICK_CONFIG}" | grep -i '^[[:space:]]*LeaseWatcherPlistPath :'                | sed -e 's/^.*: //g')"
+readonly REMOVE_LEASEWATCHER_PLIST="$(               echo "${TUNNELBLICK_CONFIG}" | grep -i '^[[:space:]]*RemoveLeaseWatcherPlist :'              | sed -e 's/^.*: //g')"
+readonly PSID="$(                                    echo "${TUNNELBLICK_CONFIG}" | grep -i '^[[:space:]]*Service :'                              | sed -e 's/^.*: //g')"
+readonly ARG_TAP="$(                                 echo "${TUNNELBLICK_CONFIG}" | grep -i '^[[:space:]]*IsTapInterface :'                       | sed -e 's/^.*: //g')"
+readonly bRouteGatewayIsDhcp="$(                     echo "${TUNNELBLICK_CONFIG}" | grep -i '^[[:space:]]*RouteGatewayIsDhcp :'                   | sed -e 's/^.*: //g')"
+readonly bTapDeviceHasBeenSetNone="$(                echo "${TUNNELBLICK_CONFIG}" | grep -i '^[[:space:]]*TapDeviceHasBeenSetNone :'              | sed -e 's/^.*: //g')"
+readonly bAlsoUsingSetupKeys="$(                     echo "${TUNNELBLICK_CONFIG}" | grep -i '^[[:space:]]*bAlsoUsingSetupKeys :'                  | sed -e 's/^.*: //g')"
+readonly sTunnelDevice="$(                           echo "${TUNNELBLICK_CONFIG}" | grep -i '^[[:space:]]*TunnelDevice :'                         | sed -e 's/^.*: //g')"
 
-# Note: '\n' was translated into '\t', so we translate it back (it was done because grep and sed only work with single lines)
-sRestoreIpv6Services="$(echo "${EDUVPN_CONFIG}" | grep -i '^[[:space:]]*RestoreIpv6Services :' | sed -e 's/^.*: //g' | tr '\t' '\n')"
+# The following entries may have multiple lines, so every '\n' was translated into '\t' by the up script because grep and sed only
+# work with single lines, they are translated back here. A \n is appended to each entry to make sure all lines are processed.
+readonly network_setup_restore_dnsservers_info="$(   echo "${TUNNELBLICK_CONFIG}" | grep -i '^[[:space:]]*NetworkSetupRestorednsserversInfo :'    | sed -e 's/^.*: //g' | tr '\t' '\n' )$LF"
+readonly network_setup_restore_searchdomains_info="$(echo "${TUNNELBLICK_CONFIG}" | grep -i '^[[:space:]]*NetworkSetupRestoresearchdomainsInfo :' | sed -e 's/^.*: //g' | tr '\t' '\n' )$LF"
+readonly sRestoreIpv6Services="$(                    echo "${TUNNELBLICK_CONFIG}" | grep -i '^[[:space:]]*RestoreIpv6Services :'                  | sed -e 's/^.*: //g' | tr '\t' '\n' )$LF"
 
 # Remove leasewatcher
 if ${ARG_MONITOR_NETWORK_CONFIGURATION} ; then
@@ -326,8 +352,8 @@ EOF
 grep 'Service : ' | sed -e 's/.*Service : //'
 )"
 set -e # resume abort on error
-if [ "${VPN_SID}" != "${PSID_CURRENT}" ] ; then
-	logMessage "Ignoring change of Network Primary Service from ${VPN_SID} to ${PSID_CURRENT}"
+if [ "${PSID}" != "${PSID_CURRENT}" ] ; then
+	logMessage "Ignoring change of Network Primary Service from ${PSID} to ${PSID_CURRENT}"
 fi
 
 # Restore configurations
@@ -408,43 +434,18 @@ else
 EOF
 fi
 
-GLOBAL_IPv4_OLD="$( scutil <<-EOF
-	open
-	show State:/Network/Global/PreVPNIPv4
-	quit
-EOF
-)"
-
-GLOBAL_IPv6_OLD="$( scutil <<-EOF
-	open
-	show State:/Network/Global/PreVPNIPv6
-	quit
-EOF
-)"
-
-if [ "${GLOBAL_IPv4_OLD}" = "${TB_NO_SUCH_KEY}" ] ; then
-	scutil > /dev/null <<-EOF
-		open
-		get State:/Network/Global/PreVPNIPv4
-		set State:/Network/Global/IPv4
-		quit
-	EOF
-fi
-
-if [ "${GLOBAL_IPv6_OLD}" = "${TB_NO_SUCH_KEY}" ] ; then
-	scutil > /dev/null <<-EOF
-		open
-		get State:/Network/Global/PreVPNIPv6
-		set State:/Network/Global/IPv6
-		quit
-	EOF
-fi
-
 logMessage "Restored the DNS and SMB configurations"
 
-set +e # "grep" will return error status (1) if no matches are found, so don't fail if not found
-new_resolver_contents="$( grep -v '#' < /etc/resolv.conf )"
-set -e # resume abort on error
+restore_networksetup_setting dnsservers    "$network_setup_restore_dnsservers_info"
+restore_networksetup_setting searchdomains "$network_setup_restore_searchdomains_info"
+
+if [ -e /etc/resolv.conf ] ; then
+	set +e # "grep" will return error status (1) if no matches are found, so don't fail if not found
+	new_resolver_contents="$( grep -v '#' < /etc/resolv.conf )"
+	set -e # resume abort on error
+else
+	new_resolver_contents="(unavailable)"
+fi
 logDebugMessage "DEBUG:"
 logDebugMessage "DEBUG: /etc/resolve = ${new_resolver_contents}"
 
@@ -468,15 +469,6 @@ scutil <<-EOF
 	remove State:/Network/OpenVPN/DNS
 	remove State:/Network/OpenVPN/SMB
 	remove State:/Network/OpenVPN
-
-	remove State:/Network/Global/PreVPNIPv4
-	remove State:/Network/Global/PreVPNIPv6
-
-	remove State:/Network/Service/${VPN_SID}/DNS
-	remove Setup:/Network/Service/${VPN_SID}/DNS
-	remove State:/Network/Service/${VPN_SID}/SMB
-	remove State:/Network/Service/${VPN_SID}/IPv4
-	remove State:/Network/Service/${VPN_SID}/IPv6
 	quit
 EOF
 
