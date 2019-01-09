@@ -71,8 +71,16 @@ class AuthenticationService {
         let configuration = OIDServiceConfiguration(authorizationEndpoint: info.authorizationURL, tokenEndpoint: info.tokenURL)
         
         redirectHTTPHandler = OIDRedirectHTTPHandler(successURL: nil)
-        let redirectURL = URL(string: "callback", relativeTo: redirectHTTPHandler!.startHTTPListener(nil))!
-        let request = OIDAuthorizationRequest(configuration: configuration, clientId: "org.eduvpn.app.macos", clientSecret: nil, scopes: ["config"], redirectURL: redirectURL, responseType: OIDResponseTypeCode, additionalParameters: nil)
+        var redirectURL: URL?
+        if Thread.isMainThread {
+            redirectURL = redirectHTTPHandler!.startHTTPListener(nil)
+        } else {
+            DispatchQueue.main.sync {
+                redirectURL = redirectHTTPHandler!.startHTTPListener(nil)
+            }
+        }
+        redirectURL = URL(string: "callback", relativeTo: redirectURL!)!
+        let request = OIDAuthorizationRequest(configuration: configuration, clientId: "org.eduvpn.app.macos", clientSecret: nil, scopes: ["config"], redirectURL: redirectURL!, responseType: OIDResponseTypeCode, additionalParameters: nil)
       
         redirectHTTPHandler!.currentAuthorizationFlow = OIDAuthState.authState(byPresenting: request) { (authState, error) in
             NSRunningApplication.current.activate(options: [.activateAllWindows, .activateIgnoringOtherApps])
@@ -97,8 +105,9 @@ class AuthenticationService {
                 self.handlersAfterAuthenticating.removeAll()
             }
         }
-        
-        NotificationCenter.default.post(name: AuthenticationService.authenticationStarted, object: self)
+        DispatchQueue.main.async {
+            NotificationCenter.default.post(name: AuthenticationService.authenticationStarted, object: self)
+        }
     }
     
     private var isAuthenticating = false
