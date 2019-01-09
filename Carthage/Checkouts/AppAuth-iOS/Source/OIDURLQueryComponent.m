@@ -26,7 +26,11 @@ BOOL gOIDURLQueryComponentForceIOS7Handling = NO;
  */
 static NSString *const kQueryStringParamAdditionalDisallowedCharacters = @"=&+";
 
-@implementation OIDURLQueryComponent
+@implementation OIDURLQueryComponent {
+  /*! @brief A dictionary of parameter names and values representing the contents of the query.
+   */
+  NSMutableDictionary<NSString *, NSMutableArray<NSString *> *> *_parameters;
+}
 
 - (nullable instancetype)init {
   self = [super init];
@@ -44,6 +48,12 @@ static NSString *const kQueryStringParamAdditionalDisallowedCharacters = @"=&+";
       if (!gOIDURLQueryComponentForceIOS7Handling) {
         NSURLComponents *components =
             [NSURLComponents componentsWithURL:URL resolvingAgainstBaseURL:NO];
+        // As OAuth uses application/x-www-form-urlencoded encoding, interprets '+' as a space
+        // in addition to regular percent decoding. https://url.spec.whatwg.org/#urlencoded-parsing
+        components.percentEncodedQuery =
+            [components.percentEncodedQuery stringByReplacingOccurrencesOfString:@"+"
+                                                                      withString:@"%20"];
+        // NB. @c queryItems are already percent decoded
         NSArray<NSURLQueryItem *> *queryItems = components.queryItems;
         for (NSURLQueryItem *queryItem in queryItems) {
           [self addParameter:queryItem.name value:queryItem.value];
@@ -54,6 +64,10 @@ static NSString *const kQueryStringParamAdditionalDisallowedCharacters = @"=&+";
     
     // Fallback for iOS 7
     NSString *query = URL.query;
+    // As OAuth uses application/x-www-form-urlencoded encoding, interprets '+' as a space
+    // in addition to regular percent decoding. https://url.spec.whatwg.org/#urlencoded-parsing
+    query = [query stringByReplacingOccurrencesOfString:@"+" withString:@"%20"];
+
     NSArray<NSString *> *queryParts = [query componentsSeparatedByString:@"&"];
     for (NSString *queryPart in queryParts) {
       NSRange equalsRange = [queryPart rangeOfString:@"="];

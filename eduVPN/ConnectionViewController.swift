@@ -164,13 +164,6 @@ class ConnectionViewController: NSViewController {
                 case .success:
                     break
                 case .failure(let error):
-                    if let error = error as? ConnectionService.Error, error == ConnectionService.Error.userCancelled {
-                        return
-                    } else if (error as NSError).domain == NSOSStatusErrorDomain, (error as NSError).code == errSecUserCanceled {
-                        return
-                    } else if let error = error as? Socket.Error, [1, -9974].contains(error.errorCode) {
-                        return
-                    }
                     let alert = NSAlert(customizedError: error)
                     alert?.beginSheetModal(for: self.view.window!) { (_) in
                         self.updateForStateChange()

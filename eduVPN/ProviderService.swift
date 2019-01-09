@@ -9,6 +9,7 @@
 import Foundation
 import AppAuth
 import Sodium
+import os
 
 /// Discovers providers
 class ProviderService {
@@ -76,7 +77,7 @@ class ProviderService {
             case .invalidProviderURL:
                 return NSLocalizedString("Verify URL.", comment: "")
             case .userIsDisabled:
-                return NSLocalizedString("Contact administrator.", comment: "")
+                return NSLocalizedString("Contact your administrator for further details", comment: "")
             case .invalidConfigFile(_, let containsCert, let containsKey):
                 switch (containsCert, containsKey) {
                 case (true, true):
@@ -115,13 +116,25 @@ class ProviderService {
     private let urlSession: URLSession
     private let authenticationService: AuthenticationService
     private let preferencesService: PreferencesService
+    private let keychainService: KeychainService
+    private let configurationService: ConfigurationService
     private let appConfig: AppConfigType
+    private let log: OSLog
     
-    init(urlSession: URLSession, authenticationService: AuthenticationService, preferencesService: PreferencesService, appConfig: AppConfigType) {
+    init(urlSession: URLSession, authenticationService: AuthenticationService, preferencesService: PreferencesService, keychainService: KeychainService, configurationService: ConfigurationService, appConfig: AppConfigType) {
         self.urlSession = urlSession
         self.authenticationService = authenticationService
         self.preferencesService = preferencesService
+        self.keychainService = keychainService
+        self.configurationService = configurationService
         self.appConfig = appConfig
+        
+        if ProcessInfo.processInfo.environment.keys.contains("SIGNPOSTS") {
+            log = OSLog(subsystem: "org.eduvpn.app.home", category: "ProviderService")
+        } else {
+            log = .disabled
+        }
+        
         readFromDisk()
     }
     
@@ -129,6 +142,14 @@ class ProviderService {
     ///
     /// - Parameter handler: List of providers or error
     func discoverAccessibleProviders(handler: @escaping (Result<[ConnectionType: [Provider]]>) -> ()) {
+        let discoverID: Any?
+        if #available(OSX 10.14, *) {
+            discoverID = OSSignpostID(log: log)
+            os_signpost(.begin, log: log, name: "Discover Accessible Providers", signpostID: discoverID as! OSSignpostID)
+        } else {
+            discoverID = nil
+        }
+        
         if !appConfig.apiDiscoveryEnabled {
             var accessibleProviders: [ConnectionType: [Provider]] = [:]
             
@@ -165,6 +186,9 @@ class ProviderService {
             
             handler(.success(accessibleProviders))
             
+            if #available(OSX 10.14, *) {
+                os_signpost(.end, log: log, name: "Discover Accessible Providers", signpostID: discoverID as! OSSignpostID, "API Discovery Disabled")
+            }
         } else {
             
             let group = DispatchGroup()
@@ -189,6 +213,9 @@ class ProviderService {
             group.notify(queue: .main) {
                 if let error = error {
                     handler(.failure(error))
+                    if #available(OSX 10.14, *) {
+                        os_signpost(.end, log: self.log, name: "Discover Accessible Providers", signpostID: discoverID as! OSSignpostID, "Error")
+                    }
                     return
                 }
                 
@@ -228,6 +255,9 @@ class ProviderService {
                 addProviders(type: .localConfig)
                 
                 handler(.success(accessibleProviders))
+                if #available(OSX 10.14, *) {
+                    os_signpost(.end, log: self.log, name: "Discover Accessible Providers", signpostID: discoverID as! OSSignpostID, "Success")
+                }
             }
         }
     }
@@ -269,15 +299,24 @@ class ProviderService {
     func deleteProvider(provider: Provider) {
         let connectionType = provider.connectionType
         
-        // For local config: delete config
-        if connectionType == .localConfig {
+        switch connectionType {
+        case .localConfig:
+            // For local config: delete config
             try? FileManager.default.removeItem(at: provider.baseURL)
+            // Do NOT delete selected certificate/identity
+        case .instituteAccess, .secureInternet, .custom:
+            // Remove identity
+            configurationService.removeIdentity(for: provider)
         }
+        
+        // Remove tokens
+        authenticationService.deauthenticate(for: provider)
         
         var providers = storedProviders[connectionType] ?? []
         let index = providers.index(where: { (otherProvider) -> Bool in
             return otherProvider.id == provider.id
         })
+        
         if let index = index {
             providers.remove(at: index)
             storedProviders[connectionType] = providers
@@ -531,8 +570,21 @@ class ProviderService {
             return
         }
         
+        let fetchInfoID: Any?
+        if #available(OSX 10.14, *) {
+            fetchInfoID = OSSignpostID(log: log)
+            os_signpost(.begin, log: log, name: "Fetch Provider Info", signpostID: fetchInfoID as! OSSignpostID, "%{public}s", provider.displayName)
+        } else {
+            fetchInfoID = nil
+        }
+        
         let request = URLRequest(url:url)
         let task = urlSession.dataTask(with: request) { (data, response, error) in
+            defer {
+                if #available(OSX 10.14, *) {
+                    os_signpost(.end, log: self.log, name: "Fetch Provider Info", signpostID: fetchInfoID as! OSSignpostID)
+                }
+            }
             guard let data = data, let response = response as? HTTPURLResponse, 200..<300 ~= response.statusCode else {
                 switch provider.connectionType {
                 case .secureInternet, .instituteAccess:
@@ -585,6 +637,13 @@ class ProviderService {
             return
         }
 
+        let fetchInfoID: Any?
+        if #available(OSX 10.14, *) {
+            fetchInfoID = OSSignpostID(log: log)
+            os_signpost(.begin, log: log, name: "Fetch User Info and Profiles", signpostID: fetchInfoID as! OSSignpostID, "%{public}s", info.provider.displayName)
+        } else {
+            fetchInfoID = nil
+        }
         
         let group = DispatchGroup()
         var userInfo: UserInfo? = nil
@@ -614,6 +673,11 @@ class ProviderService {
         }
         
         group.notify(queue: .main) {
+            defer {
+                if #available(OSX 10.14, *) {
+                    os_signpost(.end, log: self.log, name: "Fetch User Info and Profiles", signpostID: fetchInfoID as! OSSignpostID)
+                }
+            }
             if let error = error {
                 handler(.failure(error))
                 return
@@ -636,15 +700,31 @@ class ProviderService {
             return
         }
         
+        let fetchInfoID: Any?
+        if #available(OSX 10.14, *) {
+            fetchInfoID = OSSignpostID(log: log)
+            os_signpost(.begin, log: log, name: "Fetch User Info", signpostID: fetchInfoID as! OSSignpostID, "%{public}s", info.provider.displayName)
+        } else {
+            fetchInfoID = nil
+        }
+        
         authenticationService.performAction(for: info, authenticationBehavior: authenticationBehavior) { (accessToken, idToken, error) in
             guard let accessToken = accessToken else {
                 handler(.failure(error ?? Error.missingToken))
+                if #available(OSX 10.14, *) {
+                    os_signpost(.end, log: self.log, name: "Fetch User Info", signpostID: fetchInfoID as! OSSignpostID, "Failure")
+                }
                 return
             }
             var request = URLRequest(url: url)
             request.setValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
             
             let task = self.urlSession.dataTask(with: request) { (data, response, error) in
+                defer {
+                    if #available(OSX 10.14, *) {
+                        os_signpost(.end, log: self.log, name: "Fetch User Info", signpostID: fetchInfoID as! OSSignpostID)
+                    }
+                }
                 guard let data = data, let response = response as? HTTPURLResponse else {
                     handler(.failure(error ?? Error.unknown))
                     return
@@ -716,16 +796,32 @@ class ProviderService {
             return
         }
         
+        let fetchInfoID: Any?
+        if #available(OSX 10.14, *) {
+            fetchInfoID = OSSignpostID(log: log)
+            os_signpost(.begin, log: log, name: "Fetch Profiles", signpostID: fetchInfoID as! OSSignpostID, "%{public}s", info.provider.displayName)
+        } else {
+            fetchInfoID = nil
+        }
+        
         authenticationService.performAction(for: info, authenticationBehavior: authenticationBehavior) { (accessToken, idToken, error) in
             guard let accessToken = accessToken else {
-                
                 handler(.failure(error ?? Error.missingToken))
+                if #available(OSX 10.14, *) {
+                    os_signpost(.end, log: self.log, name: "Fetch Profiles", signpostID: fetchInfoID as! OSSignpostID, "Failure")
+                }
                 return
             }
             var request = URLRequest(url: url)
             request.setValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
             
             let task = self.urlSession.dataTask(with: request) { (data, response, error) in
+                defer {
+                    if #available(OSX 10.14, *) {
+                        os_signpost(.end, log: self.log, name: "Fetch Profiles", signpostID: fetchInfoID as! OSSignpostID)
+                    }
+                }
+                
                 guard let data = data, let response = response as? HTTPURLResponse else {
                     handler(.failure(error ?? Error.unknown))
                     return
@@ -800,15 +896,34 @@ class ProviderService {
             return
         }
         
+        let fetchInfoID: Any?
+        if #available(OSX 10.14, *) {
+            fetchInfoID = OSSignpostID(log: log)
+            os_signpost(.begin, log: log, name: "Fetch Messages", signpostID: fetchInfoID as! OSSignpostID, "%{public}s %{public}s", info.provider.displayName, path)
+        } else {
+            fetchInfoID = nil
+        }
+        
         authenticationService.performAction(for: info, authenticationBehavior: authenticationBehavior) { (accessToken, idToken, error) in
             guard let accessToken = accessToken else {
                 handler(.failure(error ?? Error.missingToken))
+                defer {
+                    if #available(OSX 10.14, *) {
+                        os_signpost(.end, log: self.log, name: "Fetch Messages", signpostID: fetchInfoID as! OSSignpostID, "Failure")
+                    }
+                }
                 return
             }
             var request = URLRequest(url: url)
             request.setValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
             
             let task = self.urlSession.dataTask(with: request) { (data, response, error) in
+                defer {
+                    if #available(OSX 10.14, *) {
+                        os_signpost(.end, log: self.log, name: "Fetch Messages", signpostID: fetchInfoID as! OSSignpostID)
+                    }
+                }
+                
                 guard let data = data, let response = response as? HTTPURLResponse else {
                     handler(.failure(error ?? Error.unknown))
                     return
@@ -937,10 +1052,10 @@ class ProviderService {
                     if let certificate = certificate, let privateKey = privateKey {
                         // Import into Keychain
                         let passphrase = String.random()
-                        ServiceContainer.configurationService.createPKCS12(certificate: certificate, privateKey: privateKey, passphrase: passphrase) { result in
+                        configurationService.createPKCS12(certificate: certificate, privateKey: privateKey, passphrase: passphrase) { result in
                             switch result {
                             case .success(let data):
-                                let commonName = try? ServiceContainer.keychainService.importKeyPair(data: data, passphrase: passphrase)
+                                let commonName = try? self.keychainService.importKeyPair(data: data, passphrase: passphrase)
                                 // Remove Certificate and Private Key
                                 handler(.success((remove(from: config), commonName)))
                                 break

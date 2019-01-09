@@ -9,6 +9,7 @@
 import Foundation
 import AppKit
 import AppAuth
+import os
 
 /// Authorizes user with provider
 class AuthenticationService {
@@ -45,7 +46,15 @@ class AuthenticationService {
     private var redirectHTTPHandler: OIDRedirectHTTPHandler?
     private let appConfig: AppConfigType
     
+    private let log: OSLog
+    
     init(appConfig: AppConfigType) {
+        if ProcessInfo.processInfo.environment.keys.contains("SIGNPOSTS") {
+            log = OSLog(subsystem: "org.eduvpn.app.home", category: "AuthenticationService")
+        } else {
+            log = .disabled
+        }
+    
         self.appConfig = appConfig
         readFromDisk()
     }
@@ -55,7 +64,7 @@ class AuthenticationService {
     /// - Parameters:
     ///   - info: Provider info
     ///   - handler: Auth state or error
-    func authenticate(using info: ProviderInfo, handler: @escaping (Result<Void>) -> ()) {
+    func authenticate(using info: ProviderInfo, force: Bool = false, handler: @escaping (Result<Void>) -> ()) {
         // No need to authenticate for local config
         guard info.provider.connectionType != .localConfig else {
             handler(.success(Void()))
@@ -63,7 +72,7 @@ class AuthenticationService {
         }
         
         handlersAfterAuthenticating.append(handler)
-        if isAuthenticating {
+        if isAuthenticating && !force {
             return
         }
         isAuthenticating = true
@@ -82,6 +91,14 @@ class AuthenticationService {
         redirectURL = URL(string: "callback", relativeTo: redirectURL!)!
         let request = OIDAuthorizationRequest(configuration: configuration, clientId: "org.eduvpn.app.macos", clientSecret: nil, scopes: ["config"], redirectURL: redirectURL!, responseType: OIDResponseTypeCode, additionalParameters: nil)
       
+        let authenticateID: Any?
+        if #available(OSX 10.14, *) {
+            authenticateID = OSSignpostID(log: log)
+            os_signpost(.begin, log: log, name: "Authenticate", signpostID: authenticateID as! OSSignpostID, "%{public}s", info.provider.displayName)
+        } else {
+            authenticateID = nil
+        }
+       
         redirectHTTPHandler!.currentAuthorizationFlow = OIDAuthState.authState(byPresenting: request) { (authState, error) in
             NSRunningApplication.current.activate(options: [.activateAllWindows, .activateIgnoringOtherApps])
          
@@ -103,8 +120,13 @@ class AuthenticationService {
                     }
                 }
                 self.handlersAfterAuthenticating.removeAll()
+                
+                if #available(OSX 10.14, *) {
+                    os_signpost(.end, log: self.log, name: "Authenticate", signpostID: authenticateID as! OSSignpostID, success ? "Success" : "Fail")
+                }
             }
         }
+
         DispatchQueue.main.async {
             NotificationCenter.default.post(name: AuthenticationService.authenticationStarted, object: self)
         }
@@ -115,7 +137,11 @@ class AuthenticationService {
     
     /// Cancel authentication
     func cancelAuthentication() {
+        if #available(OSX 10.14, *) {
+            os_signpost(.event, log: log, name: "Cancel Authentication")
+        }
         redirectHTTPHandler?.cancelHTTPListener()
+        isAuthenticating = false
     }
     
     /// Authentication tokens
@@ -148,8 +174,19 @@ class AuthenticationService {
     ///   - authenticationBehavior: Whether authentication should be retried when token is revoked or expired
     ///   - action: The action to perform
     func performAction(for info: ProviderInfo, authenticationBehavior: Behavior = .ifNeeded, action: @escaping OIDAuthStateAction) {
+        let performActionID: Any?
+        if #available(OSX 10.14, *) {
+            performActionID = OSSignpostID(log: log)
+            os_signpost(.begin, log: log, name: "Perform Authenticated Action", signpostID: performActionID as! OSSignpostID)
+        } else {
+            performActionID = nil
+        }
+        
         func reauthenticate() {
-            authenticate(using: info, handler: { (result) in
+            if #available(OSX 10.14, *) {
+                os_signpost(.event, log: log, name: "Reauthenticate for Perform Authenticated Action", signpostID: performActionID as! OSSignpostID)
+            }
+            authenticate(using: info, force: false, handler: { (result) in
                 switch result {
                 case .success:
                     self.performAction(for: info, authenticationBehavior: .never, action: action)
@@ -160,11 +197,19 @@ class AuthenticationService {
         }
         
         guard let authState = authState(for: info.provider) else {
+            defer {
+                if #available(OSX 10.14, *) {
+                    os_signpost(.end, log: log, name: "Perform Authenticated Action", signpostID: performActionID as! OSSignpostID)
+                }
+            }
             switch authenticationBehavior {
             case .always, .ifNeeded:
-                 reauthenticate()
+                reauthenticate()
             case .never:
                 action(nil, nil, Error.noToken)
+                if #available(OSX 10.14, *) {
+                    os_signpost(.event, log: log, name: "Perform Authenticated Action Failed: Never Refresh Behavior", signpostID: performActionID as! OSSignpostID)
+                }
             }
             return
         }
@@ -172,18 +217,29 @@ class AuthenticationService {
         switch authenticationBehavior {
         case .always:
             reauthenticate()
+            if #available(OSX 10.14, *) {
+                os_signpost(.end, log: log, name: "Perform Authenticated Action", signpostID: performActionID as! OSSignpostID)
+            }
             return
         case .ifNeeded, .never:
             break
         }
         
         authState.performAction { (accessToken, idToken, error) in
+            defer {
+                if #available(OSX 10.14, *) {
+                    os_signpost(.end, log: self.log, name: "Perform Authenticated Action", signpostID: performActionID as! OSSignpostID)
+                }
+            }
             guard let accessToken = accessToken else {
                 switch authenticationBehavior {
                 case .always, .ifNeeded:
                     reauthenticate()
                 case .never:
                     action(nil, idToken, error)
+                    if #available(OSX 10.14, *) {
+                        os_signpost(.event, log: self.log, name: "Perform Authenticated Action Failed: Never Refresh Behavior", signpostID: performActionID as! OSSignpostID)
+                    }
                 }
                 return
             }
@@ -194,7 +250,7 @@ class AuthenticationService {
     /// Stores an authentication token
     ///
     /// - Parameters:
-    ///   - info: Provider info
+    ///   - provider: Provider
     ///   - authState: Authentication token
     private func store(for provider: Provider, authState: OIDAuthState) {
         switch provider.authorizationType {
@@ -206,6 +262,20 @@ class AuthenticationService {
         saveToDisk()
     }
     
+    /// Removes an authentication token
+    ///
+    /// - Parameters:
+    ///   - provider: Provider
+    func deauthenticate(for provider: Provider) {
+        switch provider.authorizationType {
+        case .local:
+            authStatesByProviderId.removeValue(forKey: provider.id)
+        case .distributed, .federated:
+            authStatesByConnectionType.removeValue(forKey: provider.connectionType)
+        }
+        saveToDisk()
+    }
+
     /// URL for saving authentication tokens to disk
     ///
     /// - Returns: URL
