@@ -84,15 +84,32 @@
     return YES;
 }
 
-- (void)startOpenVPNAtURL:(NSURL *_Nonnull)launchURL withConfig:(NSURL *_Nonnull)config upScript:(NSURL *_Nullable)upScript downScript:(NSURL *_Nullable)downScript leasewatchPlist:(NSURL *_Nullable)leasewatchPlist leasewatchScript:(NSURL *_Nullable)leasewatchScript scriptOptions:(NSArray <NSString *>*_Nullable)scriptOptions reply:(void(^_Nonnull)(BOOL))reply {
+- (void)startOpenVPNAtURL:(NSURL *_Nonnull)launchURL withConfig:(NSURL *_Nonnull)config upScript:(NSURL *_Nullable)upScript downScript:(NSURL *_Nullable)downScript scriptOptions:(NSArray <NSString *>*_Nullable)scriptOptions reply:(void(^_Nonnull)(NSArray*))reply  {
     
+    
+    
+    
+    NSMutableArray *status = [[NSMutableArray alloc]init];
+    
+    // stores value if the call is successful
+    [status insertObject:[NSNumber numberWithBool: false] atIndex:0];
+    
+    //Store value of any comments
+    [status insertObject:@"Secured Config File" atIndex:1];
+    
+    //Store value of problem type
+    [status insertObject:@"clean" atIndex:2];
+    
+    
+    
+    
+    syslog(LOG_NOTICE, "Starting filtering file");
     // Get the path of config file
     NSString* path = config.path;
     NSString* content = [NSString stringWithContentsOfFile:path
                                                   encoding:NSUTF8StringEncoding
                                                      error:NULL];
-    
-    NSMutableArray *listItems = [content componentsSeparatedByString:@"\r\n"];
+    NSMutableArray *listItems = [content componentsSeparatedByString:@"\n"];
     NSArray *maliciousCommands = @[@"up", @"tls-verify", @"ipchange", @"client-connect", @"route-up",@"route-pre-down",@"client-disconnect",@"down",@"learn-address",@"auth-user-pass-verify"];
     
     // Malicious command index set variable declarion
@@ -116,70 +133,54 @@
             if ([line rangeOfString:[NSString stringWithFormat:@"%@%@", maliciousCommand,@" "]].location == NSNotFound) {
                 
             } else {
-                syslog(LOG_NOTICE, "Malicious command '%@' removed", maliciousCommand);
+                syslog( LOG_NOTICE, "malicious command %s removed", [maliciousCommand UTF8String] );
+                
+                [status insertObject:[NSNumber numberWithBool: false] atIndex:0];
+                [status insertObject:line atIndex:1];
+                [status insertObject: @"virus" atIndex:2];
+                reply(status);
                 //Add malicious command in index
                 [indexes addIndex:i];
             }
         }
     }
     
+    
+    
     //remove all malicious command from index
-    [listItems removeObjectsAtIndexes:indexes];
+    //    [listItems removeObjectsAtIndexes:indexes];
     
-    // Write filtered config to the file
-    BOOL success = [[listItems componentsJoinedByString:@"\n"] writeToFile:config.path atomically:YES];
-    
-    if (!success) {
-        syslog(LOG_WARNING, "Could not write openvpn config file");
-    }
+    //    // Write filtered config to the file
+    //    BOOL success = [[listItems componentsJoinedByString:@"\n"] writeToFile:config.path atomically:YES];
+    //    if (!success) {
+    //        syslog(LOG_WARNING, "Could not write openvpn config file");
+    //    }
+    //
     
     
     
     // Verify that binary at URL is signed by us
     if (![self verify:@"openvpn" atURL:launchURL]) {
-        reply(NO);
+        [status insertObject:[NSNumber numberWithBool: false] atIndex:0];
+        reply(status);
         return;
     }
     
     // Verify that up script at URL is signed by us
     if (upScript && ![self verify:@"client.up.eduvpn" atURL:upScript]) {
-        reply(NO);
+        [status insertObject:[NSNumber numberWithBool: false] atIndex:0];
+        reply(status);
         return;
     }
     
     // Verify that down script at URL is signed by us
     if (downScript && ![self verify:@"client.down.eduvpn" atURL:downScript]) {
-        reply(NO);
+        [status insertObject:[NSNumber numberWithBool: false] atIndex:0];
+        reply(status);
         return;
     }
     
-    // Monitoring is enabled
-    if ([scriptOptions containsObject:@"-m"]) {
-        // Write plist to leasewatch
-        NSDictionary *leasewatchPlistContents = @{@"Label": @"org.eduvpn.app.leasewatch",
-                                                  @"ProgramArguments": @[leasewatchScript.path],
-                                                  @"WatchPaths": @[@"/Library/Preferences/SystemConfiguration"]
-                                                  };
-        NSError *error;
-        NSString *leasewatchPlistDirectory = leasewatchPlist.path.stringByDeletingLastPathComponent;
-        if (![[NSFileManager defaultManager] createDirectoryAtPath:leasewatchPlistDirectory withIntermediateDirectories:YES attributes:nil error:&error]) {
-            syslog(LOG_WARNING, "Error creating directory for leasewatch plist at %s: %s", leasewatchPlistDirectory.UTF8String, error.description.UTF8String);
-        }
-        NSString *leasewatchPlistLogsDirectory = [leasewatchPlistDirectory stringByAppendingPathComponent:@"Logs"];;
-        if (![[NSFileManager defaultManager] createDirectoryAtPath:leasewatchPlistLogsDirectory withIntermediateDirectories:YES attributes:nil error:&error]) {
-            syslog(LOG_WARNING, "Error creating directory for leasewatch Logs at %s: %s", leasewatchPlistLogsDirectory.UTF8String, error.description.UTF8String);
-        }
-        if (![leasewatchPlistContents writeToURL:leasewatchPlist atomically:YES]) {
-            syslog(LOG_WARNING, "Error writing watch plist contents to %s", leasewatchPlist.path.UTF8String);
-        }
-        
-        // Make lease watch file readable
-        if (![[NSFileManager defaultManager] setAttributes:@{NSFilePosixPermissions: [NSNumber numberWithShort:0744]} ofItemAtPath:leasewatchPlist.path error:&error]) {
-            syslog(LOG_WARNING, "Error making lease watch plist %s exeutable (chmod 744): %s", leasewatchPlist.path.UTF8String, error.description.UTF8String);
-        }
-    }
-    
-    syslog(LOG_NOTICE, "Launching task");
+    syslog(LOG_NOTICE, "Launching task 2");
     
     NSTask *task = [[NSTask alloc] init];
     task.launchPath = launchURL.path;
@@ -222,8 +223,16 @@
     
     self.openVPNTask = task;
     self.logFilePath = logFilePath;
+    if(task.isRunning){
+        [status insertObject:[NSNumber numberWithBool: true] atIndex:0];
+    }
+    else{
+        [status insertObject:[NSNumber numberWithBool: false] atIndex:0];
+    }
     
-    reply(task.isRunning);
+    
+    reply(status);
+    
 }
 
 - (void)closeWithReply:(void(^)(void))reply {
