@@ -76,12 +76,12 @@ BRANCH=$(git rev-parse --abbrev-ref HEAD)
 echo ""
 echo "You are currently on branch $BRANCH."
 
-#if [[ $BRANCH != "release/"* ]]
-#then
-#    echo ""
-#    echo "You must always build from a release branch. Switch to the correct branch or ask the developer to create it for you."
-#    exit
-#fi
+if [[ $BRANCH != "release/"* ]]
+then
+    echo ""
+    echo "You must always build from a release branch. Switch to the correct branch or ask the developer to create it for you."
+    exit
+fi
 
 VERSION=$(git rev-parse --abbrev-ref HEAD | cut -d "/" -f 2)
 
