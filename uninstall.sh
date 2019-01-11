@@ -22,6 +22,9 @@ rm -rf ~/Library/Caches/org.eduvpn.app/
 echo "Deleting ~/Library/Preferences/org.eduvpn.app.plist"
 rm -f ~/Library/Preferences/org.eduvpn.app.plist
 
+echo "Removing helper process, you can now reinstall openvpn helper tool without restarting the MAC"
+sudo launchctl remove org.eduvpn.app.openvpnhelper
+
 echo "Uninstall completed. Reboot your machine for the uninstall to complete."
 echo ""
 echo "Do you want to reboot now?"
