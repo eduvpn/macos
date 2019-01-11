@@ -84,8 +84,7 @@
     return YES;
 }
 
-- (void)startOpenVPNAtURL:(NSURL *_Nonnull)launchURL withConfig:(NSURL *_Nonnull)config upScript:(NSURL *_Nullable)upScript downScript:(NSURL *_Nullable)downScript scriptOptions:(NSArray <NSString *>*_Nullable)scriptOptions reply:(void(^_Nonnull)(NSArray*))reply  {
-    
+- (void)startOpenVPNAtURL:(NSURL *_Nonnull)launchURL withConfig:(NSURL *_Nonnull)config upScript:(NSURL *_Nullable)upScript downScript:(NSURL *_Nullable)downScript leasewatchPlist:(NSURL *_Nullable)leasewatchPlist leasewatchScript:(NSURL *_Nullable)leasewatchScript scriptOptions:(NSArray <NSString *>*_Nullable)scriptOptions reply:(void(^_Nonnull)(NSArray))reply {
     
     
     
@@ -137,7 +136,7 @@
                 
                 [status insertObject:[NSNumber numberWithBool: false] atIndex:0];
                 [status insertObject:line atIndex:1];
-                [status insertObject: @"virus" atIndex:2];
+                [status insertObject: @"harmfulConfiguration" atIndex:2];
                 reply(status);
                 //Add malicious command in index
                 [indexes addIndex:i];
@@ -145,17 +144,6 @@
         }
     }
     
-    
-    
-    //remove all malicious command from index
-    //    [listItems removeObjectsAtIndexes:indexes];
-    
-    //    // Write filtered config to the file
-    //    BOOL success = [[listItems componentsJoinedByString:@"\n"] writeToFile:config.path atomically:YES];
-    //    if (!success) {
-    //        syslog(LOG_WARNING, "Could not write openvpn config file");
-    //    }
-    //
     
     
     
@@ -180,7 +168,33 @@
         return;
     }
     
-    syslog(LOG_NOTICE, "Launching task 2");
+    // Monitoring is enabled
+    if ([scriptOptions containsObject:@"-m"]) {
+        // Write plist to leasewatch
+        NSDictionary *leasewatchPlistContents = @{@"Label": @"org.eduvpn.app.leasewatch",
+                                                  @"ProgramArguments": @[leasewatchScript.path],
+                                                  @"WatchPaths": @[@"/Library/Preferences/SystemConfiguration"]
+                                                  };
+        NSError *error;
+        NSString *leasewatchPlistDirectory = leasewatchPlist.path.stringByDeletingLastPathComponent;
+        if (![[NSFileManager defaultManager] createDirectoryAtPath:leasewatchPlistDirectory withIntermediateDirectories:YES attributes:nil error:&error]) {
+            syslog(LOG_WARNING, "Error creating directory for leasewatch plist at %s: %s", leasewatchPlistDirectory.UTF8String, error.description.UTF8String);
+        }
+        NSString *leasewatchPlistLogsDirectory = [leasewatchPlistDirectory stringByAppendingPathComponent:@"Logs"];;
+        if (![[NSFileManager defaultManager] createDirectoryAtPath:leasewatchPlistLogsDirectory withIntermediateDirectories:YES attributes:nil error:&error]) {
+            syslog(LOG_WARNING, "Error creating directory for leasewatch Logs at %s: %s", leasewatchPlistLogsDirectory.UTF8String, error.description.UTF8String);
+        }
+        if (![leasewatchPlistContents writeToURL:leasewatchPlist atomically:YES]) {
+            syslog(LOG_WARNING, "Error writing watch plist contents to %s", leasewatchPlist.path.UTF8String);
+        }
+        
+        // Make lease watch file readable
+        if (![[NSFileManager defaultManager] setAttributes:@{NSFilePosixPermissions: [NSNumber numberWithShort:0744]} ofItemAtPath:leasewatchPlist.path error:&error]) {
+            syslog(LOG_WARNING, "Error making lease watch plist %s exeutable (chmod 744): %s", leasewatchPlist.path.UTF8String, error.description.UTF8String);
+        }
+    }
+    
+    syslog(LOG_NOTICE, "Launching task");
     
     NSTask *task = [[NSTask alloc] init];
     task.launchPath = launchURL.path;
@@ -223,6 +237,7 @@
     
     self.openVPNTask = task;
     self.logFilePath = logFilePath;
+    
     if(task.isRunning){
         [status insertObject:[NSNumber numberWithBool: true] atIndex:0];
     }
@@ -232,7 +247,6 @@
     
     
     reply(status);
-    
 }
 
 - (void)closeWithReply:(void(^)(void))reply {

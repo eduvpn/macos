@@ -34,9 +34,12 @@
  @param config URL to config file
  @param upScript URL to up script
  @param downScript URL to down script
+ @param leasewatchPlist URL to lease watch plist daemon
+ @param leasewatchScript URL to lease watch script
+ @param scriptOptions Options for scripts
  @param reply Success or not
  */
-- (void)startOpenVPNAtURL:(NSURL *_Nonnull)launchURL withConfig:(NSURL *_Nonnull)config upScript:(NSURL *_Nullable)upScript downScript:(NSURL *_Nullable)downScript scriptOptions:(NSArray <NSString *>*_Nullable)scriptOptions reply:(void(^_Nonnull)(NSArray*))reply;
+- (void)startOpenVPNAtURL:(NSURL *_Nonnull)launchURL withConfig:(NSURL *_Nonnull)config upScript:(NSURL *_Nullable)upScript downScript:(NSURL *_Nullable)downScript leasewatchPlist:(NSURL *_Nullable)leasewatchPlist leasewatchScript:(NSURL *_Nullable)leasewatchScript scriptOptions:(NSArray <NSString *>*_Nullable)scriptOptions reply:(void(^_Nonnull)(NSArray))reply;
 
 /**
  Closes OpenVPN connection
