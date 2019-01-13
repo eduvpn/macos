@@ -83,11 +83,7 @@ extension ChooseProviderViewController: NSTableViewDelegate {
                     self.mainWindowController?.dismiss()
                 case .failure(let error):
                     if let alert = NSAlert(customizedError: error) {
-                        alert.beginSheetModal(for: self.view.window!) { (_) in
-                            self.mainWindowController?.dismiss()
-                        }
-                    } else {
-                        self.mainWindowController?.dismiss()
+                        alert.beginSheetModal(for: self.view.window!)
                     }
                 }
             }
