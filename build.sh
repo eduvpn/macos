@@ -1,31 +1,5 @@
 #!/bin/bash
-echo "Build Script for $APPNAME (and derivatives)"
-
-# Some variables
-
-
-
-
-#Check if HomeBrew Installed
-if ! [ -x "$(command -v brew)" ]; then
-  echo 'Error: Homebrew is not installed. Install Homebrew Manually please ' >&2
-  python -mwebbrowser https://brew.sh
-  exit 1
-fi
-
-
-# Check if the Carthage is installed
-if ! [ -x "$(command -v carthage)" ]; then
-  echo 'Carthage is not installed. Installing Carthage' >&2
-  brew install carthage
-fi
-
-
-# Install create dmg
-if ! [ -x "$(command -v create-dmg)" ]; then
-  brew install create-dmg
-fi
-
+echo "Build Script for eduVPN (and derivatives)"
 
 echo "Which target do you want to build?"
 echo "1. eduVPN"
@@ -44,10 +18,7 @@ echo "2. Egeniq (E85CT7ZDJC)"
 echo "3. Other "
 read -p "1-3?" choice
 
-
-
-
-# Enter custom Team ID and Team Name.
+# Enter custom Team ID and Team Name
 if [ "$choice" == 3  ]
 then
 echo "Your Team ID and Team Name must match exactly with the signing identity in your keychain."
@@ -56,14 +27,12 @@ read -p "Enter Team ID: " CUSTOMTEAMID
 read -p "Enter Team Name: " CUSTOMTEAMNAME
 fi
 
-#Simple TeamID Validation. Apple Team ID always consists of 10 Characters
+# Simple Team ID Validation. Apple Team ID always consists of 10 characters
 if  ! [ "${#CUSTOMTEAMID}" == 10  ]
 then
 echo "Error: Team ID is not valid"
 exit 1
 fi
-
-
 
 case "$choice" in
   1 ) TEAMID="ZYJ4TZX4UU"; SIGNINGIDENTITY="Developer ID Application: SURFnet B.V. ($TEAMID)";;
@@ -97,6 +66,20 @@ FILENAME="$TARGET-$VERSION"
 
 echo ""
 echo "$(tput setaf 2)Bootstrapping dependencies using carthage$(tput sgr 0)"
+
+# Check if Carthage is installed
+if ! [ -x "$(command -v carthage)" ]; then
+  echo 'Carthage is not installed. Installing Carthage' >&2
+  
+  # Check if Homebrew is installed
+  if ! [ -x "$(command -v brew)" ]; then
+    echo 'Error: Homebrew is not installed. Install Homebrew manually please from https://brew.sh' >&2
+    exit 1
+  fi
+  
+  brew install carthage
+fi
+
 # This is a workaround for getting Carthage to work with Xcode 10
 tee ${PWD}/Carthage/64bit.xcconfig <<-'EOF'
 ARCHS = $(ARCHS_STANDARD_64_BIT)
@@ -116,7 +99,6 @@ xcodebuild -exportArchive -archivePath $FILENAME.xcarchive -exportPath $FILENAME
 echo ""
 echo "$(tput setaf 2)Re-signing up and down scripts$(tput sgr 0)"
 
-
 DOWN=$(find $FILENAME -name "*.down.*.sh" -print)
 codesign -f -s "$SIGNINGIDENTITY" "$DOWN"
 UP=$(find $FILENAME -name "*.up.*.sh" -print)
@@ -125,8 +107,18 @@ codesign -f -s "$SIGNINGIDENTITY" "$UP"
 echo ""
 echo "$(tput setaf 2)Creating a disk image$(tput sgr 0)"
 
-INSTALLERFILENAME="$TARGET-Installer$(date +"%Y-%m-%d-%H:%M:%S.")dmg"
+# Check if create-dmg is installed
+if ! [ -x "$(command -v create-dmg)" ]; then
+    # Check if HomeBrew is installed
+    if ! [ -x "$(command -v brew)" ]; then
+      echo 'Error: Homebrew is not installed. Install Homebrew manually please from https://brew.sh' >&2
+      exit 1
+    fi
+    
+  brew install create-dmg
+fi
 
+INSTALLERFILENAME="$TARGET-Installer$(date +"%Y-%m-%d-%H:%M:%S.")dmg"
 
 create-dmg \
 --volname "$TARGET" \
