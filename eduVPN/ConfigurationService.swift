@@ -20,7 +20,7 @@ class ConfigurationService {
         case invalidConfiguration
         case certificateCheckFailed
         case certificateMissing // CN never exist, was deleted by the user, or the server was reinstalled and the certificate is no longer there
-        case userDisabled // The user account was disabled by an administrator
+        case userIsDisabled // The user account was disabled by an administrator
         case certificateNotYetValid // The certificate is not yet valid
         case certificateExpired // The certificate is no longer valid (expired)
         
@@ -40,7 +40,7 @@ class ConfigurationService {
                 return NSLocalizedString("Could not check certificate", comment: "")
             case .certificateMissing:
                 return NSLocalizedString("No certificate available", comment: "")
-            case .userDisabled:
+            case .userIsDisabled:
                 return NSLocalizedString("This user account is disabled", comment: "")
             case .certificateNotYetValid:
                 return NSLocalizedString("The certificate is not yet valid", comment: "")
@@ -65,8 +65,8 @@ class ConfigurationService {
                 return NSLocalizedString("Try to connect again.", comment: "")
             case .certificateMissing:
                 return NSLocalizedString("Try to connect again.", comment: "")
-            case .userDisabled:
-                return NSLocalizedString("Contact your provider for further details", comment: "")
+            case .userIsDisabled:
+                return NSLocalizedString("Contact your administrator for further details", comment: "")
             case .certificateNotYetValid:
                 return NSLocalizedString("Try to connect again.", comment: "")
             case .certificateExpired:
@@ -120,7 +120,7 @@ class ConfigurationService {
         }
 
         
-        var keyPairs = UserDefaults.standard.array(forKey: "keyPairs") ?? []
+        var keyPairs = UserDefaults.standard.array(forKey: .keyPairs) ?? []
         
         let certificateCommonNames = keyPairs.lazy.compactMap { keyPair -> String? in
             guard let keyPair = keyPair as? [String: AnyObject] else {
@@ -154,7 +154,7 @@ class ConfigurationService {
                                 
                                 let keyPair = ["provider": info.provider.displayName, "providerBaseURL": info.provider.baseURL.absoluteString, "certificateCommonName": certificateCommonName]
                                 keyPairs.append(keyPair)
-                                UserDefaults.standard.set(keyPairs, forKey: "keyPairs")
+                                UserDefaults.standard.set(keyPairs, forKey: .keyPairs)
                                 handler(.success(certificateCommonName))
                             } catch {
                                 handler(.failure(error))
@@ -169,21 +169,7 @@ class ConfigurationService {
             }
         }
         
-        func forgetKeyPair(certificateCommonName: String) {
-            var keyPairs = UserDefaults.standard.array(forKey: "keyPairs") ?? []
-            keyPairs = keyPairs.filter { keyPair -> Bool in
-                guard let keyPair = keyPair as? [String: AnyObject] else {
-                    return false
-                }
-                
-                guard let currentCertificateCommonName = keyPair["certificateCommonName"] as? String else {
-                    return false
-                }
-                
-                return currentCertificateCommonName != certificateCommonName
-            }
-            UserDefaults.standard.set(keyPairs, forKey: "keyPairs")
-        }
+
         
         if let certificateCommonName = certificateCommonNames.first {
             // Check if still valid
@@ -195,9 +181,9 @@ class ConfigurationService {
                     // Certain errors -> create new keypair
                     switch error {
                     case Error.certificateNotYetValid, Error.certificateExpired, Error.certificateMissing:
-                        forgetKeyPair(certificateCommonName: certificateCommonName)
+                        self.forgetKeyPair(certificateCommonName: certificateCommonName)
                         createKeyPair()
-                    case Error.userDisabled:
+                    case Error.userIsDisabled:
                         // Inform user
                         handler(.failure(error))
                     default:
@@ -208,6 +194,76 @@ class ConfigurationService {
         } else {
             // No key pair found, create new one and store it
             createKeyPair()
+        }
+    }
+    
+    private func forgetKeyPair(certificateCommonName: String) {
+        try? keychainService.removeIdentity(for: certificateCommonName)
+        
+        var keyPairs = UserDefaults.standard.array(forKey: .keyPairs) ?? []
+        keyPairs = keyPairs.filter { keyPair -> Bool in
+            guard let keyPair = keyPair as? [String: AnyObject] else {
+                return false
+            }
+            
+            guard let currentCertificateCommonName = keyPair["certificateCommonName"] as? String else {
+                return false
+            }
+            
+            return currentCertificateCommonName != certificateCommonName
+        }
+        UserDefaults.standard.set(keyPairs, forKey: .keyPairs)
+    }
+    
+    /// Lists common names for certificates used by provider
+    ///
+    /// - Parameters:
+    ///   - provider: Provider
+    /// - Returns: List of common names
+    private func certificateCommonNames(for provider: Provider) -> [String] {
+        guard provider.connectionType != .localConfig else {
+            if let commonName = provider.publicKey {
+                return [commonName]
+            } else {
+                return []
+            }
+        }
+        
+        let keyPairs = UserDefaults.standard.array(forKey: .keyPairs) ?? []
+        
+        let certificateCommonNames = keyPairs.compactMap { keyPair -> String? in
+            guard let keyPair = keyPair as? [String: AnyObject] else {
+                return nil
+            }
+            
+            guard let providerBaseURL = keyPair["providerBaseURL"] as? String, provider.baseURL.absoluteString == providerBaseURL else {
+                return nil
+            }
+            
+            guard let certificateCommonName = keyPair["certificateCommonName"] as? String else {
+                return nil
+            }
+            
+            return certificateCommonName
+        }
+        
+        return certificateCommonNames
+    }
+
+    /// Removes any known stored identities for a provider
+    ///
+    /// Does not delete selected certificate/identity for local configs, since that is under users control.
+    ///
+    /// - Parameter provider: Provider
+    func removeIdentity(for provider: Provider) {
+        guard provider.connectionType != .localConfig else {
+            // Do NOT delete selected certificate/identity for local configs
+            return
+        }
+        
+        let commonNames = certificateCommonNames(for: provider)
+        for commonName in commonNames {
+            forgetKeyPair(certificateCommonName: commonName)
         }
     }
     
@@ -353,7 +409,7 @@ class ConfigurationService {
                     case "certificate_missing":
                         error = Error.certificateMissing
                     case "user_disabled":
-                        error = Error.userDisabled
+                        error = Error.userIsDisabled
                     case "certificate_not_yet_valid":
                         error = Error.certificateNotYetValid
                     case "certificate_expired":
@@ -504,4 +560,6 @@ private extension String {
     var spacesEscaped: String {
         return replacingOccurrences(of: " ", with: "\\ ")
     }
+    
+    static let keyPairs = "keyPairs"
 }
