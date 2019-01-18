@@ -333,7 +333,8 @@ class ConnectionService: NSObject {
             self.twoFactor = nil
             self.handler = nil
             self.closeManagingSocket(force: false)
-            self.coolDown(handler)
+            // When disconnect button is pressed , taskTerminated function is being called. which already calling cooldown function. Calling cooldown two times for single button click causes bug
+            //self.coolDown(handler)
         }
     }
     
