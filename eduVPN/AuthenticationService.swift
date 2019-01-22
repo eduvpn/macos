@@ -105,13 +105,14 @@ class AuthenticationService {
             self.isAuthenticating = false
            
             let success = authState != nil
+            if let authState = authState {
+                self.store(for: info.provider, authState: authState)
+            }
             NotificationCenter.default.post(name: AuthenticationService.authenticationFinished, object: self, userInfo: ["success": success])
-            
             // Little delay to make sure authentication screen is dismissed
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
                 self.handlersAfterAuthenticating.forEach { handler in
-                    if let authState = authState {
-                        self.store(for: info.provider, authState: authState)
+                    if authState != nil {
                         handler(.success(Void()))
                     } else if let error = error {
                         handler(.failure(error))
@@ -120,7 +121,7 @@ class AuthenticationService {
                     }
                 }
                 self.handlersAfterAuthenticating.removeAll()
-                
+
                 if #available(OSX 10.14, *) {
                     os_signpost(.end, log: self.log, name: "Authenticate", signpostID: authenticateID as! OSSignpostID, success ? "Success" : "Fail")
                 }
