@@ -97,12 +97,20 @@ class ConnectionService: NSObject {
             }
         }
     }
- 
+
+    private var pendingDisconnectHandlers: [((Result<Void>) -> ())] = []
+
     /// Describes current connection state
     private(set) var state: State = .disconnected {
         didSet {
             if state == .connected {
                 didConnect()
+            }
+            if oldValue == .disconnecting && state == .disconnected && !pendingDisconnectHandlers.isEmpty {
+                for handler in pendingDisconnectHandlers {
+                    handler(.success(Void()))
+                }
+                pendingDisconnectHandlers = []
             }
             if oldValue != state {
                 NotificationCenter.default.post(name: ConnectionService.stateChanged, object: self)
@@ -188,13 +196,20 @@ class ConnectionService: NSObject {
             handler?(.success(Void()))
             return
         }
-        
+
+        if let handler = handler {
+            pendingDisconnectHandlers.append(handler)
+        }
+
+        if self.state == .disconnecting {
+            return
+        }
+
         self.state = .disconnecting
         
         // Wait 6s before actually marking connection as disconnected
         DispatchQueue.main.asyncAfter(deadline: .now() + 6.0) {
             self.state = .disconnected
-            handler?(.success(Void()))
         }
     }
     
@@ -320,8 +335,6 @@ class ConnectionService: NSObject {
             return
         }
         
-        state = .disconnecting
-
         guard let helper = helperService.connection?.remoteObjectProxy as? OpenVPNHelperProtocol else {
             self.state = .connected
             handler(.failure(Error.noHelperConnection))
@@ -333,8 +346,7 @@ class ConnectionService: NSObject {
             self.twoFactor = nil
             self.handler = nil
             self.closeManagingSocket(force: false)
-            // When disconnect button is pressed , taskTerminated function is being called. which already calling cooldown function. Calling cooldown two times for single button click causes bug
-            //self.coolDown(handler)
+            self.coolDown(handler)
         }
     }
     
@@ -802,7 +814,6 @@ class ConnectionService: NSObject {
 extension ConnectionService: ClientProtocol {
     
     func taskTerminated(reply: @escaping () -> Void) {
-        state = .disconnecting
         reply()
         coolDown()
         configURL = nil
