@@ -99,6 +99,7 @@ class ConnectionService: NSObject {
     }
 
     private var pendingDisconnectHandlers: [((Result<Void>) -> ())] = []
+    private var taskTerminated:Bool = false
 
     /// Describes current connection state
     private(set) var state: State = .disconnected {
@@ -196,7 +197,7 @@ class ConnectionService: NSObject {
             handler?(.success(Void()))
             return
         }
-
+        
         if let handler = handler {
             pendingDisconnectHandlers.append(handler)
         }
@@ -204,12 +205,20 @@ class ConnectionService: NSObject {
         if self.state == .disconnecting {
             return
         }
+        
+
 
         self.state = .disconnecting
         
         // Wait 6s before actually marking connection as disconnected
         DispatchQueue.main.asyncAfter(deadline: .now() + 6.0) {
-            self.state = .disconnected
+            // if the task was terminated already  before 6 sec , then it will not show disconnected again
+            if(!self.taskTerminated){
+                self.state = .disconnected
+            }
+            
+            // Reset the taskterminated value
+           self.taskTerminated = false
         }
     }
     
@@ -815,7 +824,9 @@ extension ConnectionService: ClientProtocol {
     
     func taskTerminated(reply: @escaping () -> Void) {
         reply()
-        coolDown()
+        self.state = .disconnected
+// Task terminated in case, VPN is disconnected before 6 sec, the app stills wait 6 sec to show the user that it needs to wait for more to get disconnected, in this variable we are passing the value to taskTerminated to let the app know the task was terminated when 6-sec timer will finish.
+        taskTerminated = true
         configURL = nil
         handler = nil
     }
