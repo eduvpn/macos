@@ -1,5 +1,7 @@
 # eduVPN for macOS
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/c9c52c2087eb4d5aa0e4997008aa8376)](https://app.codacy.com/app/theNerdFromSiliconValley/macos?utm_source=github.com&utm_medium=referral&utm_content=eduvpn/macos&utm_campaign=Badge_Grade_Dashboard)
+
 ### Requirements
 
 You need macOS 10.12 or newer to run eduVPN. 
