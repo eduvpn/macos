@@ -47,6 +47,9 @@
     newConnection.exportedInterface = [NSXPCInterface interfaceWithProtocol:@protocol(OpenVPNHelperProtocol)];
     newConnection.exportedObject = self;
     newConnection.remoteObjectInterface = [NSXPCInterface interfaceWithProtocol:@protocol(ClientProtocol)];
+    newConnection.invalidationHandler = ^ {
+        [self closeWithReply:nil];
+    };
     self.remoteObject = newConnection.remoteObjectProxy;
     [newConnection resume];
     
@@ -179,7 +182,9 @@
 - (void)closeWithReply:(void(^)(void))reply {
     [self.openVPNTask interrupt];
     self.openVPNTask = nil;
-    reply();
+    if (reply != nil) {
+        reply();
+    }
 }
 
 - (NSString *)pathWithSpacesEscaped:(NSString *)path {

@@ -46,7 +46,7 @@
 
  @param reply Success
  */
-- (void)closeWithReply:(void(^_Nonnull)(void))reply;
+- (void)closeWithReply:(void(^_Nullable)(void))reply;
 
 @end
 
