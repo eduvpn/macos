@@ -146,7 +146,7 @@ class ConfigurationService {
                     // debugLog( "<<config here>" + "\n<cert>\n" + certificate + "\n</cert>\n<key>\n" + privateKey + "\n</key>")
                     
                     let passphrase = String.random()
-                    self.createPKCS12(certificate: certificate, privateKey: privateKey, passphrase: passphrase) { result in
+                    self.createPKCS12(certificate: certificate, privateKey: privateKey, passphrase: passphrase, friendlyName: info.provider.baseURL.absoluteString) { result in
                         switch result {
                         case .success(let data):
                             do {
@@ -506,8 +506,9 @@ class ConfigurationService {
     ///   - certificate: Certificate as PEM string
     ///   - privateKey: Private key as PEM string
     ///   - passphrase: Passphrase to set on PKCS#12 file
+    ///   - friendlyName: String containing the "BaseURL"
     ///   - handler: PKCS#12 file as data or error
-    func createPKCS12(certificate: String, privateKey: String, passphrase: String, handler: @escaping ((Result<Data>) -> ())) {
+    func createPKCS12(certificate: String, privateKey: String, passphrase: String, friendlyName: String, handler: @escaping ((Result<Data>) -> ())) {
         do {
             let process = Process()
             process.launchPath = "/usr/bin/openssl"
@@ -520,7 +521,7 @@ class ConfigurationService {
             
             let outPath = try temporaryPath(for: "out.p12")
             
-            process.arguments = ["pkcs12", "-export", "-out", outPath.spacesEscaped, "-inkey", inkeyPath.spacesEscaped, "-in", inPath.spacesEscaped, "-passout", "pass:\(passphrase)"]
+            process.arguments = ["pkcs12", "-export", "-out", outPath.spacesEscaped, "-inkey", inkeyPath.spacesEscaped, "-in", inPath.spacesEscaped, "-passout", "pass:\(passphrase)", "-name", friendlyName.spacesEscaped]
             
             process.terminationHandler = { _ in
                 do {
