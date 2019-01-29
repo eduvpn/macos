@@ -13,7 +13,7 @@ extension NSAlert {
     
     convenience init?(customizedError error: Error) {
         // TODO: Clean up and include in switch statement below
-        if let error = error as? ConnectionService.Error, (error == ConnectionService.Error.userCancelled || error == ConnectionService.Error.unexpectedState) {
+        if let error = error as? ConnectionService.Error, (error.errorDescription == ConnectionService.Error.userCancelled.errorDescription || error.errorDescription == ConnectionService.Error.unexpectedState.errorDescription) {
             NSLog("Ignored error: \(error)")
             return nil
         } else if (error as NSError).domain == NSOSStatusErrorDomain, (error as NSError).code == errSecUserCanceled {

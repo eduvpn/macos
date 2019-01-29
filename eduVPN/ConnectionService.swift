@@ -48,6 +48,7 @@ class ConnectionService: NSObject {
         case userCancelled
         case tlsError
         case userIsDisabled
+        case configFileStatusError(commands: String)
         
         var errorDescription: String? {
             switch self {
@@ -70,9 +71,11 @@ class ConnectionService: NSObject {
             case .tlsError:
                 return NSLocalizedString("Signing failed", comment: "")
             case .userCancelled:
-                return nil
+                return NSLocalizedString("User cancelled", comment: "")
             case .userIsDisabled:
                 return NSLocalizedString("User account is disabled", comment: "")
+            case .configFileStatusError(let commands):
+                return NSLocalizedString("The file contains malicious commands", comment: "")
             }
         }
         
@@ -91,18 +94,28 @@ class ConnectionService: NSObject {
             case .unexpectedState, .unexpectedError:
                 return NSLocalizedString("Try again.", comment: "")
             case .userCancelled:
-                return nil
+                return NSLocalizedString("User has cancelled", comment: "")
             case .userIsDisabled:
                 return NSLocalizedString("Contact your administrator for further details", comment: "")
+            case .configFileStatusError(let commands):
+                return NSLocalizedString(" \(commands)", comment: "")
             }
         }
     }
+    
+    private var pendingDisconnectHandlers: [((Result<Void>) -> ())] = []
     
     /// Describes current connection state
     private(set) var state: State = .disconnected {
         didSet {
             if state == .connected {
                 didConnect()
+            }
+            if oldValue == .disconnecting && state == .disconnected && !pendingDisconnectHandlers.isEmpty {
+                for handler in pendingDisconnectHandlers {
+                    handler(.success(Void()))
+                }
+                pendingDisconnectHandlers = []
             }
             if oldValue != state {
                 NotificationCenter.default.post(name: ConnectionService.stateChanged, object: self)
@@ -189,12 +202,19 @@ class ConnectionService: NSObject {
             return
         }
         
+        if let handler = handler {
+            pendingDisconnectHandlers.append(handler)
+        }
+        
+        if self.state == .disconnecting {
+            return
+        }
+        
         self.state = .disconnecting
         
         // Wait 6s before actually marking connection as disconnected
         DispatchQueue.main.asyncAfter(deadline: .now() + 6.0) {
             self.state = .disconnected
-            handler?(.success(Void()))
         }
     }
     
@@ -286,10 +306,12 @@ class ConnectionService: NSObject {
         self.configURL = configURL
         helper.startOpenVPN(at: openvpnURL, withConfig: configURL, upScript: upScript, downScript: downScript, leasewatchPlist: leasewatchPlist, leasewatchScript: leasewatchScript, scriptOptions: scriptOptions) { (status) in
             
+            
             var data:Array? = status
             let success = data?[0] as! Bool
             let message = data?[1] as! String
             let error = data?[2] as! String
+            
             
             
             if success {
@@ -301,10 +323,13 @@ class ConnectionService: NSObject {
             } else {
                 self.coolDown()
                 self.configURL = nil
+                self.configURL = nil
                 if(error == "harmfulConfiguration" ){
-                    print("Malicious command found: "+message)
-                    handler(.failure(Error.test))
-                    // Need to pass the error message in thee current Alert Box
+                    
+                    print("Configuration file is malicious")
+                    handler(.failure(Error.configFileStatusError(commands: message )))
+                    
+                    
                 }
                 else{
                     handler(.failure(Error.helperRejected))
@@ -333,8 +358,6 @@ class ConnectionService: NSObject {
             handler(.failure(Error.unexpectedState))
             return
         }
-        
-        state = .disconnecting
         
         guard let helper = helperService.connection?.remoteObjectProxy as? OpenVPNHelperProtocol else {
             self.state = .connected
@@ -815,7 +838,6 @@ class ConnectionService: NSObject {
 extension ConnectionService: ClientProtocol {
     
     func taskTerminated(reply: @escaping () -> Void) {
-        state = .disconnecting
         reply()
         coolDown()
         configURL = nil

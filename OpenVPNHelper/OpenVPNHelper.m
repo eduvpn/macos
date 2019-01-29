@@ -47,6 +47,9 @@
     newConnection.exportedInterface = [NSXPCInterface interfaceWithProtocol:@protocol(OpenVPNHelperProtocol)];
     newConnection.exportedObject = self;
     newConnection.remoteObjectInterface = [NSXPCInterface interfaceWithProtocol:@protocol(ClientProtocol)];
+    newConnection.invalidationHandler = ^ {
+        [self closeWithReply:nil];
+    };
     self.remoteObject = newConnection.remoteObjectProxy;
     [newConnection resume];
     
@@ -84,7 +87,7 @@
     return YES;
 }
 
-- (void)startOpenVPNAtURL:(NSURL *_Nonnull)launchURL withConfig:(NSURL *_Nonnull)config upScript:(NSURL *_Nullable)upScript downScript:(NSURL *_Nullable)downScript leasewatchPlist:(NSURL *_Nullable)leasewatchPlist leasewatchScript:(NSURL *_Nullable)leasewatchScript scriptOptions:(NSArray <NSString *>*_Nullable)scriptOptions reply:(void(^_Nonnull)(NSArray))reply {
+- (void)startOpenVPNAtURL:(NSURL *_Nonnull)launchURL withConfig:(NSURL *_Nonnull)config upScript:(NSURL *_Nullable)upScript downScript:(NSURL *_Nullable)downScript leasewatchPlist:(NSURL *_Nullable)leasewatchPlist leasewatchScript:(NSURL *_Nullable)leasewatchScript scriptOptions:(NSArray <NSString *>*_Nullable)scriptOptions reply:(void(^_Nonnull)(NSArray*))reply {
     
     
     
@@ -111,8 +114,8 @@
     NSMutableArray *listItems = [content componentsSeparatedByString:@"\n"];
     NSArray *maliciousCommands = @[@"up", @"tls-verify", @"ipchange", @"client-connect", @"route-up",@"route-pre-down",@"client-disconnect",@"down",@"learn-address",@"auth-user-pass-verify"];
     
-    // Malicious command index set variable declarion
-    NSMutableIndexSet *indexes = [[NSMutableIndexSet alloc] init];
+    
+    NSString *maliciousLines = @"";
     
     
     //loop through array to check if malicious is command
@@ -132,18 +135,23 @@
             if ([line rangeOfString:[NSString stringWithFormat:@"%@%@", maliciousCommand,@" "]].location == NSNotFound) {
                 
             } else {
-                syslog( LOG_NOTICE, "malicious command %s removed", [maliciousCommand UTF8String] );
+                syslog( LOG_NOTICE, "malicious command %s found", [maliciousCommand UTF8String] );
                 
-                [status insertObject:[NSNumber numberWithBool: false] atIndex:0];
-                [status insertObject:line atIndex:1];
-                [status insertObject: @"harmfulConfiguration" atIndex:2];
-                reply(status);
-                //Add malicious command in index
-                [indexes addIndex:i];
+                
+                [status replaceObjectAtIndex:2 withObject:@"harmfulConfiguration"];
+                [status replaceObjectAtIndex:0 withObject:[NSNumber numberWithBool: false]];
+                maliciousLines = [NSString stringWithFormat:@"%@\n\n%@",maliciousLines,line];
+                
             }
         }
     }
     
+    
+    
+    if( maliciousLines != @""){
+        [status replaceObjectAtIndex:1 withObject:maliciousLines];
+        reply(status);
+    }
     
     
     
@@ -244,15 +252,14 @@
     else{
         [status insertObject:[NSNumber numberWithBool: false] atIndex:0];
     }
-    
-    
-    reply(status);
 }
 
 - (void)closeWithReply:(void(^)(void))reply {
     [self.openVPNTask interrupt];
     self.openVPNTask = nil;
-    reply();
+    if (reply != nil) {
+        reply();
+    }
 }
 
 - (NSString *)pathWithSpacesEscaped:(NSString *)path {
