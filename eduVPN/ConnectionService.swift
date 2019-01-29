@@ -75,7 +75,7 @@ class ConnectionService: NSObject {
             case .userIsDisabled:
                 return NSLocalizedString("User account is disabled", comment: "")
             case .configFileStatusError(let commands):
-                return NSLocalizedString("The file contains malicious commands", comment: "")
+                return NSLocalizedString("The file contains dangerous commands", comment: "")
             }
         }
         
@@ -324,12 +324,8 @@ class ConnectionService: NSObject {
                 self.coolDown()
                 self.configURL = nil
                 self.configURL = nil
-                if(error == "harmfulConfiguration" ){
-                    
-                    print("Configuration file is malicious")
+                if(error == "dangerousConfiguration" ){
                     handler(.failure(Error.configFileStatusError(commands: message )))
-                    
-                    
                 }
                 else{
                     handler(.failure(Error.helperRejected))

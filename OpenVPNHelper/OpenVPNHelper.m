@@ -112,13 +112,13 @@
                                                   encoding:NSUTF8StringEncoding
                                                      error:NULL];
     NSMutableArray *listItems = [content componentsSeparatedByString:@"\n"];
-    NSArray *maliciousCommands = @[@"up", @"tls-verify", @"ipchange", @"client-connect", @"route-up",@"route-pre-down",@"client-disconnect",@"down",@"learn-address",@"auth-user-pass-verify"];
+    NSArray *dangerousCommands = @[@"up", @"tls-verify", @"ipchange", @"client-connect", @"route-up",@"route-pre-down",@"client-disconnect",@"down",@"learn-address",@"auth-user-pass-verify"];
     
     
-    NSString *maliciousLines = @"";
+    NSString *dangerousLines = @"";
     
     
-    //loop through array to check if malicious is command
+    //loop through array to check if dangerous is command
     for ( int i = 0; i < [listItems count]; i++) {
         NSString *line =[[[listItems objectAtIndex: i] lowercaseString] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
         
@@ -127,20 +127,20 @@
         line =  [line componentsSeparatedByString:@";"].firstObject;
         
         
-        //Loop through malicious commands to check if any of them is present in the line
-        for ( int j = 0; j < [maliciousCommands count]; j++) {
-            NSString *maliciousCommand = [maliciousCommands objectAtIndex: j];
+        //Loop through dangerous commands to check if any of them is present in the line
+        for ( int j = 0; j < [dangerousCommands count]; j++) {
+            NSString *dangerousCommand = [dangerousCommands objectAtIndex: j];
             
-            //Check if malicious command was found
-            if ([line rangeOfString:[NSString stringWithFormat:@"%@%@", maliciousCommand,@" "]].location == NSNotFound) {
+            //Check if dangerous command was found
+            if ([line rangeOfString:[NSString stringWithFormat:@"%@%@", dangerousCommand,@" "]].location == NSNotFound) {
                 
             } else {
-                syslog( LOG_NOTICE, "malicious command %s found", [maliciousCommand UTF8String] );
+                syslog( LOG_NOTICE, "dangerous command %s found", [dangerousCommand UTF8String] );
                 
                 
-                [status replaceObjectAtIndex:2 withObject:@"harmfulConfiguration"];
+                [status replaceObjectAtIndex:2 withObject:@"dangerousConfiguration"];
                 [status replaceObjectAtIndex:0 withObject:[NSNumber numberWithBool: false]];
-                maliciousLines = [NSString stringWithFormat:@"%@\n\n%@",maliciousLines,line];
+                dangerousLines = [NSString stringWithFormat:@"%@\n\n%@",dangerousLines,line];
                 
             }
         }
@@ -148,8 +148,8 @@
     
     
     
-    if( maliciousLines != @""){
-        [status replaceObjectAtIndex:1 withObject:maliciousLines];
+    if( dangerousLines != @""){
+        [status replaceObjectAtIndex:1 withObject:dangerousLines];
         reply(status);
     }
     
