@@ -97,12 +97,20 @@ class ConnectionService: NSObject {
             }
         }
     }
- 
+
+    private var pendingDisconnectHandlers: [((Result<Void>) -> ())] = []
+
     /// Describes current connection state
     private(set) var state: State = .disconnected {
         didSet {
             if state == .connected {
                 didConnect()
+            }
+            if oldValue == .disconnecting && state == .disconnected && !pendingDisconnectHandlers.isEmpty {
+                for handler in pendingDisconnectHandlers {
+                    handler(.success(Void()))
+                }
+                pendingDisconnectHandlers = []
             }
             if oldValue != state {
                 NotificationCenter.default.post(name: ConnectionService.stateChanged, object: self)
@@ -188,13 +196,20 @@ class ConnectionService: NSObject {
             handler?(.success(Void()))
             return
         }
-        
+
+        if let handler = handler {
+            pendingDisconnectHandlers.append(handler)
+        }
+
+        if self.state == .disconnecting {
+            return
+        }
+
         self.state = .disconnecting
         
         // Wait 6s before actually marking connection as disconnected
         DispatchQueue.main.asyncAfter(deadline: .now() + 6.0) {
             self.state = .disconnected
-            handler?(.success(Void()))
         }
     }
     
@@ -320,8 +335,6 @@ class ConnectionService: NSObject {
             return
         }
         
-        state = .disconnecting
-
         guard let helper = helperService.connection?.remoteObjectProxy as? OpenVPNHelperProtocol else {
             self.state = .connected
             handler(.failure(Error.noHelperConnection))
@@ -801,7 +814,6 @@ class ConnectionService: NSObject {
 extension ConnectionService: ClientProtocol {
     
     func taskTerminated(reply: @escaping () -> Void) {
-        state = .disconnecting
         reply()
         coolDown()
         configURL = nil
