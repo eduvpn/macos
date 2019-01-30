@@ -1052,7 +1052,8 @@ class ProviderService {
                     if let certificate = certificate, let privateKey = privateKey {
                         // Import into Keychain
                         let passphrase = String.random()
-                        configurationService.createPKCS12(certificate: certificate, privateKey: privateKey, passphrase: passphrase) { result in
+                        let friendlyName = configFileURL.lastPathComponent
+                        configurationService.createPKCS12(certificate: certificate, privateKey: privateKey, passphrase: passphrase, friendlyName: friendlyName) { result in
                             switch result {
                             case .success(let data):
                                 let commonName = try? self.keychainService.importKeyPair(data: data, passphrase: passphrase)
