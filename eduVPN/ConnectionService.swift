@@ -71,7 +71,7 @@ class ConnectionService: NSObject {
             case .tlsError:
                 return NSLocalizedString("Signing failed", comment: "")
             case .userCancelled:
-                return NSLocalizedString("User cancelled", comment: "")
+                return nil
             case .userIsDisabled:
                 return NSLocalizedString("User account is disabled", comment: "")
             case .configFileStatusError(let commands):
@@ -94,7 +94,7 @@ class ConnectionService: NSObject {
             case .unexpectedState, .unexpectedError:
                 return NSLocalizedString("Try again.", comment: "")
             case .userCancelled:
-                return NSLocalizedString("User has cancelled", comment: "")
+                return nil
             case .userIsDisabled:
                 return NSLocalizedString("Contact your administrator for further details", comment: "")
             case .configFileStatusError(let commands):
@@ -201,15 +201,15 @@ class ConnectionService: NSObject {
             handler?(.success(Void()))
             return
         }
-        
+
         if let handler = handler {
             pendingDisconnectHandlers.append(handler)
         }
-        
+
         if self.state == .disconnecting {
             return
         }
-        
+
         self.state = .disconnecting
         
         // Wait 6s before actually marking connection as disconnected

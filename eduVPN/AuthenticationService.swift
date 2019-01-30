@@ -80,8 +80,16 @@ class AuthenticationService {
         let configuration = OIDServiceConfiguration(authorizationEndpoint: info.authorizationURL, tokenEndpoint: info.tokenURL)
         
         redirectHTTPHandler = OIDRedirectHTTPHandler(successURL: nil)
-        let redirectURL = URL(string: "callback", relativeTo: redirectHTTPHandler!.startHTTPListener(nil))!
-        let request = OIDAuthorizationRequest(configuration: configuration, clientId: "org.eduvpn.app.macos", clientSecret: nil, scopes: ["config"], redirectURL: redirectURL, responseType: OIDResponseTypeCode, additionalParameters: nil)
+        var redirectURL: URL?
+        if Thread.isMainThread {
+            redirectURL = redirectHTTPHandler!.startHTTPListener(nil)
+        } else {
+            DispatchQueue.main.sync {
+                redirectURL = redirectHTTPHandler!.startHTTPListener(nil)
+            }
+        }
+        redirectURL = URL(string: "callback", relativeTo: redirectURL!)!
+        let request = OIDAuthorizationRequest(configuration: configuration, clientId: "org.eduvpn.app.macos", clientSecret: nil, scopes: ["config"], redirectURL: redirectURL!, responseType: OIDResponseTypeCode, additionalParameters: nil)
       
         let authenticateID: Any?
         if #available(OSX 10.14, *) {
@@ -97,13 +105,14 @@ class AuthenticationService {
             self.isAuthenticating = false
            
             let success = authState != nil
+            if let authState = authState {
+                self.store(for: info.provider, authState: authState)
+            }
             NotificationCenter.default.post(name: AuthenticationService.authenticationFinished, object: self, userInfo: ["success": success])
-            
             // Little delay to make sure authentication screen is dismissed
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
                 self.handlersAfterAuthenticating.forEach { handler in
-                    if let authState = authState {
-                        self.store(for: info.provider, authState: authState)
+                    if authState != nil {
                         handler(.success(Void()))
                     } else if let error = error {
                         handler(.failure(error))
@@ -112,13 +121,13 @@ class AuthenticationService {
                     }
                 }
                 self.handlersAfterAuthenticating.removeAll()
-                
+
                 if #available(OSX 10.14, *) {
                     os_signpost(.end, log: self.log, name: "Authenticate", signpostID: authenticateID as! OSSignpostID, success ? "Success" : "Fail")
                 }
             }
         }
-        
+
         DispatchQueue.main.async {
             NotificationCenter.default.post(name: AuthenticationService.authenticationStarted, object: self)
         }

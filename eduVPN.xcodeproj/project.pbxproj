@@ -539,7 +539,6 @@
 				C7FA90271F0BA9A60037FF88 /* Controllers */,
 				C7FA902A1F0BA9F30037FF88 /* Resources */,
 			);
-			name = eduVPN;
 			path = eduVPN;
 			sourceTree = "<group>";
 		};
