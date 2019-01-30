@@ -48,7 +48,7 @@ class ConnectionService: NSObject {
         case userCancelled
         case tlsError
         case userIsDisabled
-        case configFileStatusError(commands: String)
+        case dangerousCommands(commands: [String])
         
         var errorDescription: String? {
             switch self {
@@ -74,8 +74,8 @@ class ConnectionService: NSObject {
                 return nil
             case .userIsDisabled:
                 return NSLocalizedString("User account is disabled", comment: "")
-            case .configFileStatusError(let commands):
-                return NSLocalizedString("The file contains dangerous commands", comment: "")
+            case .dangerousCommands:
+                return NSLocalizedString("Potentially dangerous commands were found in the OpenVPN configuration file", comment: "")
             }
         }
         
@@ -97,8 +97,8 @@ class ConnectionService: NSObject {
                 return nil
             case .userIsDisabled:
                 return NSLocalizedString("Contact your administrator for further details", comment: "")
-            case .configFileStatusError(let commands):
-                return NSLocalizedString(" \(commands)", comment: "")
+            case .dangerousCommands(let commands):
+                return NSLocalizedString("These commands should not be used:\n\n\(commands.prefix(5).joined(separator: "\n"))", comment: "")
             }
         }
     }
@@ -306,15 +306,16 @@ class ConnectionService: NSObject {
         self.configURL = configURL
         helper.startOpenVPN(at: openvpnURL, withConfig: configURL, upScript: upScript, downScript: downScript, leasewatchPlist: leasewatchPlist, leasewatchScript: leasewatchScript, scriptOptions: scriptOptions) { (status) in
             
+//            guard let status = status else {
+//                fatalError()
+//            }
+//            var data:Array? = status
+//            let success = data?[0] as! Bool
+//            let message = data?[1] as! String
+//            let error = data?[2] as! String
+
             
-            var data:Array? = status
-            let success = data?[0] as! Bool
-            let message = data?[1] as! String
-            let error = data?[2] as! String
-            
-            
-            
-            if success {
+            if status.success {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
                     self.openManagingSocket()
                 }
@@ -323,13 +324,12 @@ class ConnectionService: NSObject {
             } else {
                 self.coolDown()
                 self.configURL = nil
-                self.configURL = nil
-                if(error == "dangerousConfiguration" ){
-                    handler(.failure(Error.configFileStatusError(commands: message )))
-                }
-                else{
+
+//                if (error == "dangerousConfiguration"){
+//                    handler(.failure(Error.dangerousCommands(commands: [message])))
+//                } else {
                     handler(.failure(Error.helperRejected))
-                }
+//                }
             }
         }
     }

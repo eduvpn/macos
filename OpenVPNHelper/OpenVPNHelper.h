@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "OpenVPNStatus.h"
 
 // kHelperToolMachServiceName is the Mach service name of the helper tool.  Note that the value
 // here has to match the value in the MachServices dictionary in "HelperTool-Launchd.plist".
@@ -39,7 +40,7 @@
  @param scriptOptions Options for scripts
  @param reply Success or not
  */
-- (void)startOpenVPNAtURL:(NSURL *_Nonnull)launchURL withConfig:(NSURL *_Nonnull)config upScript:(NSURL *_Nullable)upScript downScript:(NSURL *_Nullable)downScript leasewatchPlist:(NSURL *_Nullable)leasewatchPlist leasewatchScript:(NSURL *_Nullable)leasewatchScript scriptOptions:(NSArray <NSString *>*_Nullable)scriptOptions reply:(void(^_Nonnull)(NSArray*))reply;
+- (void)startOpenVPNAtURL:(NSURL *_Nonnull)launchURL withConfig:(NSURL *_Nonnull)config upScript:(NSURL *_Nullable)upScript downScript:(NSURL *_Nullable)downScript leasewatchPlist:(NSURL *_Nullable)leasewatchPlist leasewatchScript:(NSURL *_Nullable)leasewatchScript scriptOptions:(NSArray <NSString *>*_Nullable)scriptOptions reply:(void(^ _Nonnull)(OpenVPNStatus *_Nonnull))reply;
 
 /**
  Closes OpenVPN connection

@@ -87,23 +87,21 @@
     return YES;
 }
 
-- (void)startOpenVPNAtURL:(NSURL *_Nonnull)launchURL withConfig:(NSURL *_Nonnull)config upScript:(NSURL *_Nullable)upScript downScript:(NSURL *_Nullable)downScript leasewatchPlist:(NSURL *_Nullable)leasewatchPlist leasewatchScript:(NSURL *_Nullable)leasewatchScript scriptOptions:(NSArray <NSString *>*_Nullable)scriptOptions reply:(void(^_Nonnull)(NSArray*))reply {
+- (void)startOpenVPNAtURL:(NSURL *_Nonnull)launchURL withConfig:(NSURL *_Nonnull)config upScript:(NSURL *_Nullable)upScript downScript:(NSURL *_Nullable)downScript leasewatchPlist:(NSURL *_Nullable)leasewatchPlist leasewatchScript:(NSURL *_Nullable)leasewatchScript scriptOptions:(NSArray <NSString *>*_Nullable)scriptOptions reply:(void(^_Nonnull)(OpenVPNStatus *))reply {
     
+    OpenVPNStatus *status = [[OpenVPNStatus alloc] init];
     
-    
-    NSMutableArray *status = [[NSMutableArray alloc]init];
-    
-    // stores value if the call is successful
-    [status insertObject:[NSNumber numberWithBool: false] atIndex:0];
-    
-    //Store value of any comments
-    [status insertObject:@"Secured Config File" atIndex:1];
-    
-    //Store value of problem type
-    [status insertObject:@"clean" atIndex:2];
-    
-    
-    
+//    NSMutableArray *status = [[NSMutableArray alloc]init];
+//
+//    // stores value if the call is successful
+//    [status insertObject:[NSNumber numberWithBool: false] atIndex:0];
+//
+//    //Store value of any comments
+//    [status insertObject:@"Secured Config File" atIndex:1];
+//
+//    //Store value of problem type
+//    [status insertObject:@"clean" atIndex:2];
+
     
     syslog(LOG_NOTICE, "Starting filtering file");
     // Get the path of config file
@@ -111,11 +109,10 @@
     NSString* content = [NSString stringWithContentsOfFile:path
                                                   encoding:NSUTF8StringEncoding
                                                      error:NULL];
-    NSMutableArray *listItems = [content componentsSeparatedByString:@"\n"];
-    NSArray *dangerousCommands = @[@"up", @"tls-verify", @"ipchange", @"client-connect", @"route-up",@"route-pre-down",@"client-disconnect",@"down",@"learn-address",@"auth-user-pass-verify"];
-    
-    
-    NSString *dangerousLines = @"";
+    NSArray *listItems = [content componentsSeparatedByString:@"\n"];
+    NSArray *dangerousCommands = @[@"up", @"tls-verify", @"ipchange", @"client-connect", @"route-up", @"route-pre-down", @"client-disconnect", @"down", @"learn-address", @"auth-user-pass-verify"];
+
+    NSMutableSet *dangerousCommandsFound = [NSMutableSet set];
     
     
     //loop through array to check if dangerous is command
@@ -138,40 +135,41 @@
                 syslog( LOG_NOTICE, "dangerous command %s found", [dangerousCommand UTF8String] );
                 
                 
-                [status replaceObjectAtIndex:2 withObject:@"dangerousConfiguration"];
-                [status replaceObjectAtIndex:0 withObject:[NSNumber numberWithBool: false]];
+//                [status replaceObjectAtIndex:2 withObject:@"dangerousConfiguration"];
+//                [status replaceObjectAtIndex:0 withObject:[NSNumber numberWithBool: false]];
                 dangerousLines = [NSString stringWithFormat:@"%@\n\n%@",dangerousLines,line];
                 
+                [dangerousCommandsFound addObject:dangerousCommand];
             }
         }
     }
-    
-    
-    
-    if( dangerousLines != @""){
-        [status replaceObjectAtIndex:1 withObject:dangerousLines];
+
+    if (dangerousCommandsFound.count > 0){
+//        [status replaceObjectAtIndex:1 withObject:dangerousLines];
+        status.success = NO;
         reply(status);
     }
-    
-    
-    
+
     // Verify that binary at URL is signed by us
     if (![self verify:@"openvpn" atURL:launchURL]) {
-        [status insertObject:[NSNumber numberWithBool: false] atIndex:0];
+       // [status insertObject:[NSNumber numberWithBool: false] atIndex:0];
+        status.success = NO;
         reply(status);
         return;
     }
     
     // Verify that up script at URL is signed by us
     if (upScript && ![self verify:@"client.up.eduvpn" atURL:upScript]) {
-        [status insertObject:[NSNumber numberWithBool: false] atIndex:0];
+      //  [status insertObject:[NSNumber numberWithBool: false] atIndex:0];
+        status.success = NO;
         reply(status);
         return;
     }
     
     // Verify that down script at URL is signed by us
     if (downScript && ![self verify:@"client.down.eduvpn" atURL:downScript]) {
-        [status insertObject:[NSNumber numberWithBool: false] atIndex:0];
+      //  [status insertObject:[NSNumber numberWithBool: false] atIndex:0];
+        status.success = NO;
         reply(status);
         return;
     }
@@ -246,12 +244,14 @@
     self.openVPNTask = task;
     self.logFilePath = logFilePath;
     
-    if(task.isRunning){
-        [status insertObject:[NSNumber numberWithBool: true] atIndex:0];
+    if (task.isRunning){
+        status.success = YES;
+      //  [status insertObject:[NSNumber numberWithBool: true] atIndex:0];
+    } else{
+        status.success = NO;
+      //  [status insertObject:[NSNumber numberWithBool: false] atIndex:0];
     }
-    else{
-        [status insertObject:[NSNumber numberWithBool: false] atIndex:0];
-    }
+    reply(status);
 }
 
 - (void)closeWithReply:(void(^)(void))reply {
