@@ -98,7 +98,7 @@ class ConnectionService: NSObject {
             case .userIsDisabled:
                 return NSLocalizedString("Contact your administrator for further details", comment: "")
             case .dangerousCommands(let commands):
-                return NSLocalizedString("These commands should not be used:\n\n\(commands.prefix(5).joined(separator: "\n"))", comment: "")
+                return NSLocalizedString("These commands should not be used: \(commands.joined(separator: ", "))", comment: "")
             }
         }
     }
@@ -305,16 +305,7 @@ class ConnectionService: NSObject {
         
         self.configURL = configURL
         helper.startOpenVPN(at: openvpnURL, withConfig: configURL, upScript: upScript, downScript: downScript, leasewatchPlist: leasewatchPlist, leasewatchScript: leasewatchScript, scriptOptions: scriptOptions) { (status) in
-            
-//            guard let status = status else {
-//                fatalError()
-//            }
-//            var data:Array? = status
-//            let success = data?[0] as! Bool
-//            let message = data?[1] as! String
-//            let error = data?[2] as! String
 
-            
             if status.success {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
                     self.openManagingSocket()
@@ -325,11 +316,11 @@ class ConnectionService: NSObject {
                 self.coolDown()
                 self.configURL = nil
 
-//                if (error == "dangerousConfiguration"){
-//                    handler(.failure(Error.dangerousCommands(commands: [message])))
-//                } else {
+                if let dangerousCommands = status.dangerousCommands {
+                    handler(.failure(Error.dangerousCommands(commands: dangerousCommands)))
+                } else {
                     handler(.failure(Error.helperRejected))
-//                }
+                }
             }
         }
     }

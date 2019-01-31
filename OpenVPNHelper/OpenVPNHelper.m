@@ -88,89 +88,57 @@
 }
 
 - (void)startOpenVPNAtURL:(NSURL *_Nonnull)launchURL withConfig:(NSURL *_Nonnull)config upScript:(NSURL *_Nullable)upScript downScript:(NSURL *_Nullable)downScript leasewatchPlist:(NSURL *_Nullable)leasewatchPlist leasewatchScript:(NSURL *_Nullable)leasewatchScript scriptOptions:(NSArray <NSString *>*_Nullable)scriptOptions reply:(void(^_Nonnull)(OpenVPNStatus *))reply {
-    
-    OpenVPNStatus *status = [[OpenVPNStatus alloc] init];
-    
-//    NSMutableArray *status = [[NSMutableArray alloc]init];
-//
-//    // stores value if the call is successful
-//    [status insertObject:[NSNumber numberWithBool: false] atIndex:0];
-//
-//    //Store value of any comments
-//    [status insertObject:@"Secured Config File" atIndex:1];
-//
-//    //Store value of problem type
-//    [status insertObject:@"clean" atIndex:2];
 
-    
-    syslog(LOG_NOTICE, "Starting filtering file");
-    // Get the path of config file
-    NSString* path = config.path;
-    NSString* content = [NSString stringWithContentsOfFile:path
-                                                  encoding:NSUTF8StringEncoding
-                                                     error:NULL];
-    NSArray *listItems = [content componentsSeparatedByString:@"\n"];
+    syslog(LOG_NOTICE, "Validating configuration file");
+
+    NSData *configFileData = [NSData dataWithContentsOfURL:config];
+    if (configFileData == nil) {
+        reply([OpenVPNStatus errorStatus:@"OpenVPN configuration file could not be read"]);
+        return;
+    }
+
+    NSString *configFileString = [[NSString alloc] initWithData:configFileData encoding:NSUTF8StringEncoding];
+    if (configFileString == nil) {
+        reply([OpenVPNStatus errorStatus:@"OpenVPN configuration file had unexpected encoding"]);
+        return;
+    }
+
+    NSArray *configLines = [configFileString componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]];
     NSArray *dangerousCommands = @[@"up", @"tls-verify", @"ipchange", @"client-connect", @"route-up", @"route-pre-down", @"client-disconnect", @"down", @"learn-address", @"auth-user-pass-verify"];
-
     NSMutableSet *dangerousCommandsFound = [NSMutableSet set];
-    
-    
-    //loop through array to check if dangerous is command
-    for ( int i = 0; i < [listItems count]; i++) {
-        NSString *line =[[[listItems objectAtIndex: i] lowercaseString] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
-        
-        // Filter out comment from line
-        line =  [line componentsSeparatedByString:@"#"].firstObject;
-        line =  [line componentsSeparatedByString:@";"].firstObject;
-        
-        
-        //Loop through dangerous commands to check if any of them is present in the line
-        for ( int j = 0; j < [dangerousCommands count]; j++) {
-            NSString *dangerousCommand = [dangerousCommands objectAtIndex: j];
-            
-            //Check if dangerous command was found
-            if ([line rangeOfString:[NSString stringWithFormat:@"%@%@", dangerousCommand,@" "]].location == NSNotFound) {
-                
-            } else {
-                syslog( LOG_NOTICE, "dangerous command %s found", [dangerousCommand UTF8String] );
-                
-                
-//                [status replaceObjectAtIndex:2 withObject:@"dangerousConfiguration"];
-//                [status replaceObjectAtIndex:0 withObject:[NSNumber numberWithBool: false]];
-                dangerousLines = [NSString stringWithFormat:@"%@\n\n%@",dangerousLines,line];
-                
+
+    for (NSString *line in configLines) {
+        NSString *trimmedLine = [[line stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]] lowercaseString];
+        for (NSString *dangerousCommand in dangerousCommands) {
+            if ([trimmedLine containsString:dangerousCommand]) { // componentsSeparatedByCharactersInSet: [NSCharacterSet whitespaceCharacterSet]
+                syslog( LOG_NOTICE, "Found potentially dangerous command %s", [dangerousCommand UTF8String]);
                 [dangerousCommandsFound addObject:dangerousCommand];
             }
         }
     }
 
     if (dangerousCommandsFound.count > 0){
-//        [status replaceObjectAtIndex:1 withObject:dangerousLines];
-        status.success = NO;
-        reply(status);
+        reply([OpenVPNStatus errorStatus:@"Dangerous commands found" dangerousCommands:[dangerousCommandsFound allObjects]]);
+        return;
     }
+
+    syslog(LOG_NOTICE, "Verifying signatures");
 
     // Verify that binary at URL is signed by us
     if (![self verify:@"openvpn" atURL:launchURL]) {
-       // [status insertObject:[NSNumber numberWithBool: false] atIndex:0];
-        status.success = NO;
-        reply(status);
+        reply([OpenVPNStatus errorStatus:@"OpenVPN binary is not signed by us"]);
         return;
     }
     
     // Verify that up script at URL is signed by us
     if (upScript && ![self verify:@"client.up.eduvpn" atURL:upScript]) {
-      //  [status insertObject:[NSNumber numberWithBool: false] atIndex:0];
-        status.success = NO;
-        reply(status);
+        reply([OpenVPNStatus errorStatus:@"Up script at URL is not signed by us"]);
         return;
     }
     
     // Verify that down script at URL is signed by us
     if (downScript && ![self verify:@"client.down.eduvpn" atURL:downScript]) {
-      //  [status insertObject:[NSNumber numberWithBool: false] atIndex:0];
-        status.success = NO;
-        reply(status);
+        reply([OpenVPNStatus errorStatus:@"Down script at URL is not signed by us"]);
         return;
     }
     
@@ -243,15 +211,8 @@
     
     self.openVPNTask = task;
     self.logFilePath = logFilePath;
-    
-    if (task.isRunning){
-        status.success = YES;
-      //  [status insertObject:[NSNumber numberWithBool: true] atIndex:0];
-    } else{
-        status.success = NO;
-      //  [status insertObject:[NSNumber numberWithBool: false] atIndex:0];
-    }
-    reply(status);
+
+    reply(task.isRunning ? [OpenVPNStatus successStatus] : [OpenVPNStatus errorStatus:@"Not running"]);
 }
 
 - (void)closeWithReply:(void(^)(void))reply {

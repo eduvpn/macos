@@ -8,12 +8,14 @@
 
 #import <Foundation/Foundation.h>
 
-NS_ASSUME_NONNULL_BEGIN
-
 @interface OpenVPNStatus : NSObject
 
-@property (nonatomic, assign) BOOL success;
++ (instancetype)successStatus;
++ (instancetype)errorStatus:(NSString *_Nonnull)errorTitle;
++ (instancetype)errorStatus:(NSString *_Nonnull)errorTitle dangerousCommands:(NSArray <NSString *>*_Nonnull)dangerousCommands;
+
+@property (nonatomic, assign, readonly) BOOL success;
+@property (nonatomic, copy, readonly) NSString *errorTitle;
+@property (nonatomic, copy, readonly) NSArray <NSString *>*dangerousCommands;
 
 @end
-
-NS_ASSUME_NONNULL_END
