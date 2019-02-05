@@ -865,7 +865,7 @@
                                     <font key="font" metaFont="system"/>
                                 </buttonCell>
                                 <connections>
-                                    <binding destination="cF9-Lp-W07" name="value" keyPath="values.SUAutomaticallyUpdateKey" id="1lW-lT-GFz"/>
+                                    <binding destination="xsQ-pP-BbA" name="value" keyPath="automaticallyChecksForUpdates" id="Pt5-cd-Myd"/>
                                 </connections>
                             </button>
                             <scrollView fixedFrame="YES" autohidesScrollers="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Djn-30-jlr">
@@ -962,6 +962,7 @@ DQ
                     </connections>
                 </arrayController>
                 <userDefaultsController representsSharedInstance="YES" id="cF9-Lp-W07"/>
+                <customObject id="xsQ-pP-BbA" customClass="SUUpdater"/>
             </objects>
             <point key="canvasLocation" x="1431" y="-257"/>
         </scene>
