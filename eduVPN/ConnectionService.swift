@@ -304,23 +304,18 @@ class ConnectionService: NSObject {
         }
         
         self.configURL = configURL
-        helper.startOpenVPN(at: openvpnURL, withConfig: configURL, upScript: upScript, downScript: downScript, leasewatchPlist: leasewatchPlist, leasewatchScript: leasewatchScript, scriptOptions: scriptOptions) { (status) in
+        helper.startOpenVPN(at: openvpnURL, withConfig: configURL, upScript: upScript, downScript: downScript, leasewatchPlist: leasewatchPlist, leasewatchScript: leasewatchScript, scriptOptions: scriptOptions) { (error) in
+            if let error = error as NSError? {
+                self.coolDown()
+                self.configURL = nil
 
-            if status.success {
+                handler(.failure(error))
+            } else {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
                     self.openManagingSocket()
                 }
                 self.handler = handler
                 handler(.success(Void()))
-            } else {
-                self.coolDown()
-                self.configURL = nil
-
-                if let dangerousCommands = status.dangerousCommands {
-                    handler(.failure(Error.dangerousCommands(commands: dangerousCommands)))
-                } else {
-                    handler(.failure(Error.helperRejected))
-                }
             }
         }
     }

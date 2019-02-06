@@ -7,7 +7,6 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "OpenVPNStatus.h"
 
 // kHelperToolMachServiceName is the Mach service name of the helper tool.  Note that the value
 // here has to match the value in the MachServices dictionary in "HelperTool-Launchd.plist".
@@ -38,9 +37,9 @@
  @param leasewatchPlist URL to lease watch plist daemon
  @param leasewatchScript URL to lease watch script
  @param scriptOptions Options for scripts
- @param reply Success or not
+ @param reply Success (error is nil) or not (error in `OpenVPNHelperErrorDomain`)
  */
-- (void)startOpenVPNAtURL:(NSURL *_Nonnull)launchURL withConfig:(NSURL *_Nonnull)config upScript:(NSURL *_Nullable)upScript downScript:(NSURL *_Nullable)downScript leasewatchPlist:(NSURL *_Nullable)leasewatchPlist leasewatchScript:(NSURL *_Nullable)leasewatchScript scriptOptions:(NSArray <NSString *>*_Nullable)scriptOptions reply:(void(^ _Nonnull)(OpenVPNStatus *_Nonnull))reply;
+- (void)startOpenVPNAtURL:(NSURL *_Nonnull)launchURL withConfig:(NSURL *_Nonnull)config upScript:(NSURL *_Nullable)upScript downScript:(NSURL *_Nullable)downScript leasewatchPlist:(NSURL *_Nullable)leasewatchPlist leasewatchScript:(NSURL *_Nullable)leasewatchScript scriptOptions:(NSArray <NSString *>*_Nullable)scriptOptions reply:(void(^ _Nonnull)(NSError *_Nullable))reply;
 
 /**
  Closes OpenVPN connection
@@ -68,3 +67,19 @@
 - (void)run;
 
 @end
+
+extern NSString *const OpenVPNHelperErrorDomain;
+
+extern NSString *const OpenVPNHelperErrorDangerousCommandsKey;
+
+typedef NS_ENUM(NSInteger, OpenVPNHelperErrorCode) {
+    OpenVPNHelperErrorUnknown = 0,
+    OpenVPNHelperErrorUnreadableConfigurationFile = 1,
+    OpenVPNHelperErrorUnexpectedEncodingConfigurationFile = 2,
+    OpenVPNHelperErrorDangerousCommandsInConfigurationFile = 3,
+    OpenVPNHelperErrorBinarySignatureNotSignedByUs = 4,
+    OpenVPNHelperErrorUpScriptSignatureNotSignedByUs = 5,
+    OpenVPNHelperErrorDownScriptSignatureNotSignedByUs = 6,
+    OpenVPNHelperErrorLeasewatchScriptSignatureNotSignedByUs = 7,
+    OpenVPNHelperErrorNotRunning = 8,
+};

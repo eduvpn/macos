@@ -88,9 +88,6 @@
 		C7A4E1221FACD09C00B21262 /* EnterProviderURLViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7A4E1211FACD09C00B21262 /* EnterProviderURLViewController.swift */; };
 		C7A8412221304F5E003EB3A5 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C7BEF5CE1F03E0D80038605E /* Main.storyboard */; };
 		C7AA7FBF1FE4989000845D62 /* ConnectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7BEF5DF1F03F4220038605E /* ConnectionViewController.swift */; };
-		C7BA01B52201F86E003175E8 /* OpenVPNStatus.m in Sources */ = {isa = PBXBuildFile; fileRef = C7BA01B42201F86E003175E8 /* OpenVPNStatus.m */; };
-		C7BA01B62201F86E003175E8 /* OpenVPNStatus.m in Sources */ = {isa = PBXBuildFile; fileRef = C7BA01B42201F86E003175E8 /* OpenVPNStatus.m */; };
-		C7BA01B72201F86E003175E8 /* OpenVPNStatus.m in Sources */ = {isa = PBXBuildFile; fileRef = C7BA01B42201F86E003175E8 /* OpenVPNStatus.m */; };
 		C7BEF5D81F03E4B50038605E /* ChooseProviderViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7BEF5D71F03E4B50038605E /* ChooseProviderViewController.swift */; };
 		C7BEF5DA1F03E4FD0038605E /* Provider.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7BEF5D91F03E4FD0038605E /* Provider.swift */; };
 		C7BEF5DC1F03F2CA0038605E /* MainWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7BEF5DB1F03F2CA0038605E /* MainWindowController.swift */; };
@@ -353,8 +350,6 @@
 		C789DCD520C8227000A0668E /* KeychainService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = KeychainService.swift; path = eduVPN/KeychainService.swift; sourceTree = SOURCE_ROOT; };
 		C7A4E1211FACD09C00B21262 /* EnterProviderURLViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = EnterProviderURLViewController.swift; path = eduVPN/EnterProviderURLViewController.swift; sourceTree = SOURCE_ROOT; };
 		C7A9F1D01FB3C81B007A752F /* ReadMe.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = ReadMe.md; sourceTree = "<group>"; };
-		C7BA01B32201F86E003175E8 /* OpenVPNStatus.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OpenVPNStatus.h; sourceTree = "<group>"; };
-		C7BA01B42201F86E003175E8 /* OpenVPNStatus.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = OpenVPNStatus.m; sourceTree = "<group>"; };
 		C7BEF5C51F03E0D80038605E /* eduVPN.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = eduVPN.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C7BEF5C81F03E0D80038605E /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		C7BEF5CF1F03E0D80038605E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -434,8 +429,6 @@
 				C72AD6F51F0A692F006DBDA5 /* main.m */,
 				C72AD6FB1F0A69BF006DBDA5 /* OpenVPNHelper.h */,
 				C72AD6FC1F0A69BF006DBDA5 /* OpenVPNHelper.m */,
-				C7BA01B32201F86E003175E8 /* OpenVPNStatus.h */,
-				C7BA01B42201F86E003175E8 /* OpenVPNStatus.m */,
 			);
 			path = OpenVPNHelper;
 			sourceTree = "<group>";
@@ -853,7 +846,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
-			shellScript = "folder=\"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/${OPENVPN_FOLDER}\"\necho \"Verifying signatures in $folder\"\n\necho \"Signing openvpn for ${EXPANDED_CODE_SIGN_IDENTITY_NAME}\"\ncodesign -f -s \"${EXPANDED_CODE_SIGN_IDENTITY_NAME}\" -o runtime \"$folder/openvpn\"\n\necho \"Signing up script for ${EXPANDED_CODE_SIGN_IDENTITY_NAME}\"\ncodesign -f -s \"${EXPANDED_CODE_SIGN_IDENTITY_NAME}\" \"$folder/client.up.eduvpn.sh\"\n\necho \"Signing down script for ${EXPANDED_CODE_SIGN_IDENTITY_NAME}\"\ncodesign -f -s \"${EXPANDED_CODE_SIGN_IDENTITY_NAME}\" \"$folder/client.down.eduvpn.sh\"\n\necho \"Signing Sparkle.framework for ${EXPANDED_CODE_SIGN_IDENTITY_NAME} and hardened runtime\"\nframeworks_folder=\"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}\"\ncodesign -f -s \"${EXPANDED_CODE_SIGN_IDENTITY_NAME}\" --deep -o runtime \"$frameworks_folder/Sparkle.framework/Versions/A/Resources/Autoupdate.app\"\n";
+			shellScript = "folder=\"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/${OPENVPN_FOLDER}\"\necho \"Verifying signatures in $folder\"\n\necho \"Signing openvpn for ${EXPANDED_CODE_SIGN_IDENTITY_NAME}\"\ncodesign -f -s \"${EXPANDED_CODE_SIGN_IDENTITY_NAME}\" -o runtime \"$folder/openvpn\"\n\necho \"Signing up script for ${EXPANDED_CODE_SIGN_IDENTITY_NAME}\"\ncodesign -f -s \"${EXPANDED_CODE_SIGN_IDENTITY_NAME}\" \"$folder/client.up.eduvpn.sh\"\n\necho \"Signing down script for ${EXPANDED_CODE_SIGN_IDENTITY_NAME}\"\ncodesign -f -s \"${EXPANDED_CODE_SIGN_IDENTITY_NAME}\" \"$folder/client.down.eduvpn.sh\"\n\necho \"Signing leasewatch script for ${EXPANDED_CODE_SIGN_IDENTITY_NAME}\"\ncodesign -f -s \"${EXPANDED_CODE_SIGN_IDENTITY_NAME}\" \"$folder/leasewatch.sh\"\n\necho \"Signing Sparkle.framework for ${EXPANDED_CODE_SIGN_IDENTITY_NAME} and hardened runtime\"\nframeworks_folder=\"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}\"\ncodesign -f -s \"${EXPANDED_CODE_SIGN_IDENTITY_NAME}\" --deep -o runtime \"$frameworks_folder/Sparkle.framework/Versions/A/Resources/Autoupdate.app\"\n";
 		};
 		C77C7DB02029C7C70029F90E /* Set SMPrivilegedExecutables */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -881,7 +874,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
-			shellScript = "folder=\"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/${OPENVPN_FOLDER}\"\necho \"Verifying signatures in $folder\"\n\necho \"Signing openvpn for ${EXPANDED_CODE_SIGN_IDENTITY_NAME}\"\ncodesign -f -s \"${EXPANDED_CODE_SIGN_IDENTITY_NAME}\" -o runtime \"$folder/openvpn\"\n\necho \"Signing up script for ${EXPANDED_CODE_SIGN_IDENTITY_NAME}\"\ncodesign -f -s \"${EXPANDED_CODE_SIGN_IDENTITY_NAME}\" \"$folder/client.up.eduvpn.sh\"\n\necho \"Signing down script for ${EXPANDED_CODE_SIGN_IDENTITY_NAME}\"\ncodesign -f -s \"${EXPANDED_CODE_SIGN_IDENTITY_NAME}\" \"$folder/client.down.eduvpn.sh\"\n\necho \"Signing Sparkle.framework for ${EXPANDED_CODE_SIGN_IDENTITY_NAME} and hardened runtime\"\nframeworks_folder=\"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}\"\ncodesign -f -s \"${EXPANDED_CODE_SIGN_IDENTITY_NAME}\" --deep -o runtime \"$frameworks_folder/Sparkle.framework/Versions/A/Resources/AutoUpdate.app\"\n";
+			shellScript = "folder=\"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/${OPENVPN_FOLDER}\"\necho \"Verifying signatures in $folder\"\n\necho \"Signing openvpn for ${EXPANDED_CODE_SIGN_IDENTITY_NAME}\"\ncodesign -f -s \"${EXPANDED_CODE_SIGN_IDENTITY_NAME}\" -o runtime \"$folder/openvpn\"\n\necho \"Signing up script for ${EXPANDED_CODE_SIGN_IDENTITY_NAME}\"\ncodesign -f -s \"${EXPANDED_CODE_SIGN_IDENTITY_NAME}\" \"$folder/client.up.eduvpn.sh\"\n\necho \"Signing down script for ${EXPANDED_CODE_SIGN_IDENTITY_NAME}\"\ncodesign -f -s \"${EXPANDED_CODE_SIGN_IDENTITY_NAME}\" \"$folder/client.down.eduvpn.sh\"\n\necho \"Signing leasewatch script for ${EXPANDED_CODE_SIGN_IDENTITY_NAME}\"\ncodesign -f -s \"${EXPANDED_CODE_SIGN_IDENTITY_NAME}\" \"$folder/leasewatch.sh\"\n\necho \"Signing Sparkle.framework for ${EXPANDED_CODE_SIGN_IDENTITY_NAME} and hardened runtime\"\nframeworks_folder=\"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}\"\ncodesign -f -s \"${EXPANDED_CODE_SIGN_IDENTITY_NAME}\" --deep -o runtime \"$frameworks_folder/Sparkle.framework/Versions/A/Resources/AutoUpdate.app\"\n";
 		};
 		C7C494D8208484120056D5E4 /* Set SMPrivilegedExecutables */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -906,7 +899,6 @@
 			files = (
 				C72AD6FD1F0A69BF006DBDA5 /* OpenVPNHelper.m in Sources */,
 				C72AD6F61F0A692F006DBDA5 /* main.m in Sources */,
-				C7BA01B72201F86E003175E8 /* OpenVPNStatus.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -958,7 +950,6 @@
 				C7BEF5DE1F03F4020038605E /* AuthenticatingViewController.swift in Sources */,
 				C73690B7214267A5004AFB4E /* URL+Unused.swift in Sources */,
 				C789DCD620C8227000A0668E /* KeychainService.swift in Sources */,
-				C7BA01B52201F86E003175E8 /* OpenVPNStatus.m in Sources */,
 				C7BEF5DC1F03F2CA0038605E /* MainWindowController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1002,7 +993,6 @@
 				C7C494F1208484120056D5E4 /* AuthenticatingViewController.swift in Sources */,
 				C73690B8214267A5004AFB4E /* URL+Unused.swift in Sources */,
 				C789DCD720C8227000A0668E /* KeychainService.swift in Sources */,
-				C7BA01B62201F86E003175E8 /* OpenVPNStatus.m in Sources */,
 				C7C494F2208484120056D5E4 /* MainWindowController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

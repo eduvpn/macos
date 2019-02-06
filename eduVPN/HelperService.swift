@@ -14,7 +14,7 @@ import ServiceManagement
 /// Installs and connects helper
 class HelperService {
     
-    static let helperVersion = "0.2-22"
+    static let helperVersion = "0.2-24"
     static let helperIdentifier = "org.eduvpn.app.openvpnhelper"
 
     enum Error: Swift.Error, LocalizedError {
@@ -203,7 +203,6 @@ class HelperService {
     private func connectToHelper(client: ClientProtocol, handler: @escaping (Result<Bool>) -> ()) {
         connection = NSXPCConnection(machServiceName: HelperService.helperIdentifier, options: .privileged)
         let remoteObjectInterface = NSXPCInterface(with: OpenVPNHelperProtocol.self)
-        remoteObjectInterface.set
         connection?.remoteObjectInterface = remoteObjectInterface
         connection?.exportedInterface = NSXPCInterface(with: ClientProtocol.self)
         connection?.exportedObject = client
