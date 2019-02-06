@@ -113,7 +113,7 @@ NSString *const OpenVPNHelperErrorDangerousCommandsKey = @"OpenVPNHelperErrorDan
     }
 
     NSArray *configLines = [configFileString componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]];
-    NSArray *dangerousCommands = @[@"up", @"tls-verify", @"ipchange", @"client-connect", @"route-up", @"route-pre-down", @"client-disconnect", @"down", @"learn-address", @"auth-user-pass-verify"];
+    NSArray *dangerousCommands = @[@"up", @"tls-verify", @"ipchange", @"client-connect", @"route-up", @"route-pre-down", @"client-disconnect", @"down", @"learn-address", @"auth-user-pass-verify", @"script-security"];
     NSMutableSet *dangerousCommandsFound = [NSMutableSet set];
 
     for (NSString *line in configLines) {
