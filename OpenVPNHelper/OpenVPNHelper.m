@@ -179,7 +179,7 @@ NSString *const OpenVPNHelperErrorDangerousCommandsKey = @"OpenVPNHelperErrorDan
     
     // Monitoring is enabled
     if ([scriptOptions containsObject:@"-m"]) {
-        // Verify that down script at URL is signed by us
+        // Verify that lease watch script at URL is signed by us
         if (leasewatchScript && ![self verify:@"leasewatch" atURL:leasewatchScript]) {
             reply([NSError errorWithDomain:OpenVPNHelperErrorDomain
                                       code:OpenVPNHelperErrorLeasewatchScriptSignatureNotSignedByUs
