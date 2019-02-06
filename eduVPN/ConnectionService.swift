@@ -38,7 +38,6 @@ class ConnectionService: NSObject {
     
     enum Error: Swift.Error, LocalizedError {
         case noHelperConnection
-        case helperRejected
         case statisticsUnavailable
         case unexpectedState
         case logsUnavailable
@@ -48,14 +47,11 @@ class ConnectionService: NSObject {
         case userCancelled
         case tlsError
         case userIsDisabled
-        case dangerousCommands(commands: [String])
-        
+
         var errorDescription: String? {
             switch self {
             case .noHelperConnection:
                 return NSLocalizedString("Installation failed", comment: "")
-            case .helperRejected:
-                return NSLocalizedString("Helper rejected request", comment: "")
             case .statisticsUnavailable:
                 return NSLocalizedString("No connection statistics available", comment: "")
             case .unexpectedState:
@@ -74,16 +70,12 @@ class ConnectionService: NSObject {
                 return nil
             case .userIsDisabled:
                 return NSLocalizedString("User account is disabled", comment: "")
-            case .dangerousCommands:
-                return NSLocalizedString("Potentially dangerous commands were found in the OpenVPN configuration file", comment: "")
             }
         }
         
         var recoverySuggestion: String? {
             switch self {
             case .noHelperConnection:
-                return NSLocalizedString("Try reinstalling eduVPN.", comment: "")
-            case .helperRejected:
                 return NSLocalizedString("Try reinstalling eduVPN.", comment: "")
             case .statisticsUnavailable, .logsUnavailable:
                 return NSLocalizedString("Try again later.", comment: "")
@@ -97,8 +89,6 @@ class ConnectionService: NSObject {
                 return nil
             case .userIsDisabled:
                 return NSLocalizedString("Contact your administrator for further details", comment: "")
-            case .dangerousCommands(let commands):
-                return NSLocalizedString("These commands should not be used: \(commands.joined(separator: ", "))", comment: "")
             }
         }
     }
