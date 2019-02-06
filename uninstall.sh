@@ -1,6 +1,6 @@
 #!/bin/bash
 echo "This will uninstall files related to eduVPN"
-read -p "Continue (y/n)?" choice
+read -p "Continue stopping helper process (y/n)?" choice
 case "$choice" in 
   y|Y ) ;;
   n|N ) echo "Aborting uninstall."; exit 0;;
@@ -9,6 +9,13 @@ esac
 
 echo "Removing helper process"
 sudo launchctl remove org.eduvpn.app.openvpnhelper
+
+read -p "Continue deleting files (y/n)?" choice
+case "$choice" in 
+  y|Y ) ;;
+  n|N ) echo "Aborting uninstall."; exit 0;;
+  * ) echo "Invalid response."; exit 0;;
+esac
 
 echo "Deleting /Library/LaunchDaemons/org.eduvpn.app.openvpnhelper.plist"
 sudo rm -f /Library/LaunchDaemons/org.eduvpn.app.openvpnhelper.plist
