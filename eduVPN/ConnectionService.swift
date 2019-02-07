@@ -38,7 +38,6 @@ class ConnectionService: NSObject {
     
     enum Error: Swift.Error, LocalizedError {
         case noHelperConnection
-        case helperRejected
         case statisticsUnavailable
         case unexpectedState
         case logsUnavailable
@@ -48,13 +47,11 @@ class ConnectionService: NSObject {
         case userCancelled
         case tlsError
         case userIsDisabled
-        
+
         var errorDescription: String? {
             switch self {
             case .noHelperConnection:
                 return NSLocalizedString("Installation failed", comment: "")
-            case .helperRejected:
-                return NSLocalizedString("Helper rejected request", comment: "")
             case .statisticsUnavailable:
                 return NSLocalizedString("No connection statistics available", comment: "")
             case .unexpectedState:
@@ -75,12 +72,10 @@ class ConnectionService: NSObject {
                 return NSLocalizedString("User account is disabled", comment: "")
             }
         }
-
+        
         var recoverySuggestion: String? {
             switch self {
             case .noHelperConnection:
-                return NSLocalizedString("Try reinstalling eduVPN.", comment: "")
-            case .helperRejected:
                 return NSLocalizedString("Try reinstalling eduVPN.", comment: "")
             case .statisticsUnavailable, .logsUnavailable:
                 return NSLocalizedString("Try again later.", comment: "")
@@ -97,9 +92,9 @@ class ConnectionService: NSObject {
             }
         }
     }
-
+    
     private var pendingDisconnectHandlers: [((Result<Void>) -> ())] = []
-
+    
     /// Describes current connection state
     private(set) var state: State = .disconnected {
         didSet {
@@ -131,7 +126,7 @@ class ConnectionService: NSObject {
         self.keychainService = keychainService
         self.preferencesService = preferencesService
     }
-
+    
     /// Asks helper service to start VPN connection after helper and config are ready and available
     ///
     /// - Parameters:
@@ -260,7 +255,7 @@ class ConnectionService: NSObject {
     
     private var twoFactor: TwoFactor?
     private var handler: ((Result<Void>) -> ())?
-
+    
     /// Asks helper service to start VPN connection
     ///
     /// - Parameters:
@@ -276,7 +271,7 @@ class ConnectionService: NSObject {
             handler(.failure(Error.noHelperConnection))
             return
         }
-
+        
         let bundle = Bundle.init(for: ConnectionService.self)
         let openvpnURL = bundle.url(forResource: "openvpn", withExtension: nil, subdirectory: ConnectionService.openVPNSubdirectory)!
         let upScript = bundle.url(forResource: "client.up.eduvpn", withExtension: "sh", subdirectory: ConnectionService.openVPNSubdirectory)!
@@ -297,19 +292,20 @@ class ConnectionService: NSObject {
         if developerMode {
             scriptOptions.append("-l" /* ARG_EXTRA_LOGGING */)
         }
-       
+        
         self.configURL = configURL
-        helper.startOpenVPN(at: openvpnURL, withConfig: configURL, upScript: upScript, downScript: downScript, leasewatchPlist: leasewatchPlist, leasewatchScript: leasewatchScript, scriptOptions: scriptOptions) { (success) in
-            if success {
+        helper.startOpenVPN(at: openvpnURL, withConfig: configURL, upScript: upScript, downScript: downScript, leasewatchPlist: leasewatchPlist, leasewatchScript: leasewatchScript, scriptOptions: scriptOptions) { (error) in
+            if let error = error as NSError? {
+                self.coolDown()
+                self.configURL = nil
+
+                handler(.failure(error))
+            } else {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
                     self.openManagingSocket()
                 }
                 self.handler = handler
                 handler(.success(Void()))
-            } else {
-                self.coolDown()
-                self.configURL = nil
-                handler(.failure(Error.helperRejected))
             }
         }
     }
@@ -340,7 +336,7 @@ class ConnectionService: NSObject {
             handler(.failure(Error.noHelperConnection))
             return
         }
-
+        
         helper.close {
             self.configURL = nil
             self.twoFactor = nil
@@ -373,7 +369,7 @@ class ConnectionService: NSObject {
     private var managing: Bool = false
     private var commonNameCertificate: String = ""
     private var credentials: (username: String, password: String, saveInKeychain: Bool)?
-
+    
     private func openManagingSocket() {
         let queue = DispatchQueue.global(qos: .userInteractive)
         
@@ -384,9 +380,9 @@ class ConnectionService: NSObject {
                 self.socket = socket
                 
                 try socket.connect(to: self.socketPath)
-             
+                
                 self.managing = true
-              
+                
                 try _ = Socket.wait(for: [socket], timeout: 10_000 /* ms */)
                 
                 repeat {
@@ -394,14 +390,14 @@ class ConnectionService: NSObject {
                         try self.parseRead(string)
                     }
                 } while self.managing
-               
+                
             } catch {
                 debugLog(error)
                 self.handler?(.failure(error))
             }
             
         }
-
+        
     }
     
     // See https://github.com/OpenVPN/openvpn/blob/master/doc/management-notes.txt
@@ -570,7 +566,7 @@ class ConnectionService: NSObject {
         
         // (c) optional descriptive string (used mostly on RECONNECTING and EXITING to show the reason for the disconnect)
         openVPNStateDescription = String(components[2])
-
+        
         if openVPNState == .reconnecting && openVPNStateDescription == "tls-error" {
             // Wrong certificate, signing wil fail, abort connecting
             abortConnecting(error: Error.tlsError)
@@ -676,7 +672,7 @@ class ConnectionService: NSObject {
         switch string {
         case "Need \'Auth\' username/password":
             break
-         case "Verification Failed: \'Auth\'":
+        case "Verification Failed: \'Auth\'":
             if twoFactor == nil {
                 // Remove from keychain on fail
                 if let provider = currentProfile?.info.provider, let username = provider.username {
@@ -768,7 +764,7 @@ class ConnectionService: NSObject {
             abortConnecting(error: error)
         }
     }
-
+    
     private func closeManagingSocket(force: Bool) {
         managing = false
         if force {
@@ -798,10 +794,10 @@ class ConnectionService: NSObject {
                 try _ = Socket.wait(for: [socket], timeout: 10_000 /* ms */)
                 
                 self.closeManagingSocket(force: true)
-            
+                
                 // Allow some time to close up
                 DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                   handler(true)
+                    handler(true)
                 }
             } catch {
                 debugLog(error)
@@ -819,6 +815,6 @@ extension ConnectionService: ClientProtocol {
         configURL = nil
         handler = nil
     }
-
+    
 }
 
