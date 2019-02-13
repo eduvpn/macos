@@ -46,5 +46,7 @@
 	<string>https://app.eduvpn.nl/mac/home-appcast.xml</string>
 	<key>SUPublicDSAKeyFile</key>
 	<string>dsa_pub.pem</string>
+	<key>SUPublicEDKey</key>
+	<string>OT2lbrvFRXdaWaY0UlrusOgerTXRr53xxcFSZJkmQYQ=</string>
 </dict>
 </plist>
