@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="14313.18" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14313.18"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14460.31"/>
         <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="cells containing NSDateComponentsFormatter" minSystemVersion="10.12"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -865,7 +865,7 @@
                                     <font key="font" metaFont="system"/>
                                 </buttonCell>
                                 <connections>
-                                    <binding destination="cF9-Lp-W07" name="value" keyPath="values.SUAutomaticallyUpdateKey" id="1lW-lT-GFz"/>
+                                    <binding destination="xsQ-pP-BbA" name="value" keyPath="automaticallyChecksForUpdates" id="Pt5-cd-Myd"/>
                                 </connections>
                             </button>
                             <scrollView fixedFrame="YES" autohidesScrollers="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Djn-30-jlr">
@@ -962,6 +962,7 @@ DQ
                     </connections>
                 </arrayController>
                 <userDefaultsController representsSharedInstance="YES" id="cF9-Lp-W07"/>
+                <customObject id="xsQ-pP-BbA" customClass="SUUpdater"/>
             </objects>
             <point key="canvasLocation" x="1431" y="-257"/>
         </scene>
@@ -2584,7 +2585,7 @@ DQ
         <image name="NSLeftFacingTriangleTemplate" width="9" height="12"/>
         <image name="NSRemoveTemplate" width="11" height="11"/>
         <image name="NSStopProgressTemplate" width="11" height="11"/>
-        <image name="disconnected" width="44" height="37"/>
+        <image name="disconnected" width="44" height="55"/>
         <image name="secure_access" width="212" height="130"/>
         <image name="secure_internet" width="212" height="130"/>
         <namedColor name="Primary Color">

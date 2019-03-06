@@ -103,6 +103,8 @@ DOWN=$(find $FILENAME -name "*.down.*.sh" -print)
 codesign -f -s "$SIGNINGIDENTITY" "$DOWN"
 UP=$(find $FILENAME -name "*.up.*.sh" -print)
 codesign -f -s "$SIGNINGIDENTITY" "$UP"
+LEASEWATCH=$(find $FILENAME -name "leasewatch.sh" -print)
+codesign -f -s "$SIGNINGIDENTITY" "$LEASEWATCH"
 
 echo ""
 echo "Which distribution format do you want to use?"
