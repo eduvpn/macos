@@ -58,7 +58,18 @@ class AuthenticationService {
         self.appConfig = appConfig
         readFromDisk()
     }
-    
+
+    private var clientId: String  {
+        switch Bundle.main.bundleIdentifier! {
+        case "org.eduvpn.app":
+            return "org.eduvpn.app.macos"
+        case "org.eduvpn.app.home":
+            return "org.letsconnect-vpn.app.macos"
+        default:
+            fatalError()
+        }
+    }
+
     /// Start authentication process with provider
     ///
     /// - Parameters:
@@ -89,7 +100,7 @@ class AuthenticationService {
             }
         }
         redirectURL = URL(string: "callback", relativeTo: redirectURL!)!
-        let request = OIDAuthorizationRequest(configuration: configuration, clientId: "org.eduvpn.app.macos", clientSecret: nil, scopes: ["config"], redirectURL: redirectURL!, responseType: OIDResponseTypeCode, additionalParameters: nil)
+        let request = OIDAuthorizationRequest(configuration: configuration, clientId: clientId, clientSecret: nil, scopes: ["config"], redirectURL: redirectURL!, responseType: OIDResponseTypeCode, additionalParameters: nil)
       
         let authenticateID: Any?
         if #available(OSX 10.14, *) {
