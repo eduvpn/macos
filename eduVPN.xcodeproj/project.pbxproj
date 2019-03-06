@@ -710,7 +710,7 @@
 			attributes = {
 				LastSwiftUpdateCheck = 0830;
 				LastUpgradeCheck = 1000;
-				ORGANIZATIONNAME = EduVPN;
+				ORGANIZATIONNAME = "Commons Conservancy";
 				TargetAttributes = {
 					C72AD6F21F0A692F006DBDA5 = {
 						CreatedOnToolsVersion = 8.3.3;
