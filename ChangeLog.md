@@ -2,6 +2,14 @@
 
 ## What's new?
 
+### Version 1.3
+
+- update openvpn to 2.4.7
+
+### Version 1.2
+
+- ???
+
 ### Version 1.1 (build 1)
 
 - new app icon which reflects connection state
