@@ -3,7 +3,7 @@
 //  LoginItemHelper
 //
 //  Created by Johan Kool on 10/08/2017.
-//  Copyright © 2017 EduVPN. All rights reserved.
+//  Copyright © 2017-2019 Commons Conservancy.
 //
 
 #import "AppDelegate.h"
