@@ -21,6 +21,7 @@ class ProviderService {
         case noProviders
         case invalidProviders
         case invalidProviderInfo
+        case unavailableProviderInfo
         case providerVerificationFailed
         case noProfiles
         case invalidProfiles
@@ -44,6 +45,8 @@ class ProviderService {
                 return NSLocalizedString("No valid providers were discovered", comment: "")
             case .invalidProviderInfo:
                 return NSLocalizedString("Invalid provider info", comment: "")
+            case .unavailableProviderInfo:
+                return NSLocalizedString("Provider info unavailable", comment: "")
             case .providerVerificationFailed:
                 return NSLocalizedString("Could not verify providers", comment: "")
             case .noProfiles:
@@ -588,7 +591,7 @@ class ProviderService {
             guard let data = data, let response = response as? HTTPURLResponse, 200..<300 ~= response.statusCode else {
                 switch provider.connectionType {
                 case .secureInternet, .instituteAccess:
-                    handler(.failure(error ?? Error.unknown))
+                    handler(.failure(error ?? Error.unavailableProviderInfo))
                 case .custom:
                     handler(.failure(error ?? Error.invalidProviderURL))
                 case .localConfig:
