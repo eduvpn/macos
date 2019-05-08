@@ -108,6 +108,20 @@ open class AnimatedImageView: UIImageView {
     public var needsPrescaling = true
     
     /// The animation timer's run loop mode. Default is `NSRunLoopCommonModes`. Set this property to `NSDefaultRunLoopMode` will make the animation pause during UIScrollView scrolling.
+    #if swift(>=4.2)
+    public var runLoopMode = RunLoop.Mode.common {
+        willSet {
+            if runLoopMode == newValue {
+                return
+            } else {
+                stopAnimating()
+                displayLink.remove(from: .main, forMode: runLoopMode)
+                displayLink.add(to: .main, forMode: newValue)
+                startAnimating()
+            }
+        }
+    }
+    #else
     public var runLoopMode = RunLoopMode.commonModes {
         willSet {
             if runLoopMode == newValue {
@@ -120,6 +134,7 @@ open class AnimatedImageView: UIImageView {
             }
         }
     }
+    #endif
 
     /// The repeat count.
     public var repeatCount = RepeatCount.infinite {
@@ -333,7 +348,7 @@ class Animator {
         }
     }
     
-    var contentMode = UIViewContentMode.scaleToFill
+    var contentMode = UIView.ContentMode.scaleToFill
     
     private lazy var preloadQueue: DispatchQueue = {
         return DispatchQueue(label: "com.onevcat.Kingfisher.Animator.preloadQueue")
@@ -350,7 +365,7 @@ class Animator {
      - returns: The animator object.
      */
     init(imageSource source: CGImageSource,
-         contentMode mode: UIViewContentMode,
+         contentMode mode: UIView.ContentMode,
          size: CGSize,
          framePreloadCount count: Int,
          repeatCount: AnimatedImageView.RepeatCount) {

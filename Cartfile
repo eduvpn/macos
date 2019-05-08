@@ -1,4 +1,4 @@
-github "openid/AppAuth-iOS" ~> 0.94.0
+github "openid/AppAuth-iOS" "1.0.0.beta1"
 github "onevcat/Kingfisher" ~> 4.9.0
 github "jedisct1/swift-sodium" "master" # This project doesn't tag releases
 github "sparkle-project/Sparkle" ~> 1.20.0
