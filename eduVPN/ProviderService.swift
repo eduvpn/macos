@@ -282,7 +282,7 @@ class ProviderService {
         }
         let connectionType = provider.connectionType
         var providers = storedProviders[connectionType] ?? []
-        let index = providers.index(where: { $0.id == provider.id })
+        let index = providers.firstIndex(where: { $0.id == provider.id })
         if let index = index {
             providers.remove(at: index)
             providers.insert(provider, at: index)
@@ -313,7 +313,7 @@ class ProviderService {
         authenticationService.deauthenticate(for: provider)
         
         var providers = storedProviders[connectionType] ?? []
-        let index = providers.index(where: { (otherProvider) -> Bool in
+        let index = providers.firstIndex(where: { (otherProvider) -> Bool in
             return otherProvider.id == provider.id
         })
         
@@ -1101,7 +1101,7 @@ class ProviderService {
         }
         
         var providers = storedProviders[.localConfig] ?? []
-        let index = providers.index(where: { $0.id == provider.id })
+        let index = providers.firstIndex(where: { $0.id == provider.id })
         if let index = index {
             var storedProvider = providers.remove(at: index)
             storedProvider.publicKey = name
