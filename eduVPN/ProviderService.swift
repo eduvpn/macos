@@ -365,7 +365,7 @@ class ProviderService {
             let restoredProviders = try decoder.decode([ConnectionType: [Provider]].self, from: data)
             storedProviders = restoredProviders
         } catch (let error) {
-            NSLog("Failed to read stored providers from disk at \(url): \(error)")
+            NSLog("Failed to read stored providers from disk: \(error)")
         }
     }
     
@@ -377,7 +377,7 @@ class ProviderService {
             let url = try storedProvidersFileURL()
             try data.write(to: url, options: .atomic)
         } catch (let error) {
-            NSLog("Failed to write stored providers to disk at \(url): \(error)")
+            NSLog("Failed to write stored providers to disk: \(error)")
         }
     }
     
