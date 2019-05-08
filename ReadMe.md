@@ -11,7 +11,7 @@ Supporting earlier versions of macOS is currently not possible due to:
 
 ### OpenVPN
 
-This app includes openvpn as a binary. It is taken from the Tunnelblick binary distributions. The current version is `openvpn-2.4.6-openssl-1.1.0h`. No patches are applied to the openvpn binary, though the up and down scripts are slightly edited to avoid namespace collisions. Note that Tunnelblick does apply some (minor) patches to the official openvpn source code.
+This app includes openvpn as a binary. It is taken from the Tunnelblick binary distributions. The current version is `openvpn-2.4.7-openssl-1.1.1b`. No patches are applied to the openvpn binary, though the up and down scripts are edited to fit our needs and avoid namespace collisions. Note that Tunnelblick does apply some (minor) patches to the official openvpn source code.
 
 ### Notes
 

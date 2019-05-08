@@ -3,7 +3,7 @@
 //  eduVPN
 //
 //  Created by Johan Kool on 10/09/2018.
-//  Copyright © 2018 EduVPN. All rights reserved.
+//  Copyright © 2017-2019 Commons Conservancy.
 //
 
 protocol AppConfigType {
