@@ -472,6 +472,20 @@ scutil <<-EOF
 	quit
 EOF
 
+# Remove IPv6 resolver data
+
+serviceName="ipv6-resolver-${dev}"
+scutil <<-EOF
+    open
+
+    remove State:/Network/Service/${serviceName}/IPv4
+    remove Setup:/Network/Service/${serviceName}/IPv4
+    remove State:/Network/Service/${serviceName}/IPv6
+    remove Setup:/Network/Service/${serviceName}/IPv6
+
+    quit
+EOF
+
 resetPrimaryInterface $ARG_RESET_PRIMARY_INTERFACE_ON_DISCONNECT $ARG_RESET_PRIMARY_INTERFACE_ON_DISCONNECT_UNEXPECTED
 
 logMessage "End of output from ${OUR_NAME}"
