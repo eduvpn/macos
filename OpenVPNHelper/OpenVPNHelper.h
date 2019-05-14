@@ -68,9 +68,9 @@
 
 @end
 
-extern NSString *const OpenVPNHelperErrorDomain;
+extern NSString * _Nonnull const OpenVPNHelperErrorDomain;
 
-extern NSString *const OpenVPNHelperErrorDangerousCommandsKey;
+extern NSString * _Nonnull const OpenVPNHelperErrorDangerousCommandsKey;
 
 typedef NS_ENUM(NSInteger, OpenVPNHelperErrorCode) {
     OpenVPNHelperErrorUnknown = 0,
