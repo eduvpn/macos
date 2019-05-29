@@ -21,6 +21,7 @@ class ProviderService {
         case noProviders
         case invalidProviders
         case invalidProviderInfo
+        case unavailableProviderInfo
         case providerVerificationFailed
         case noProfiles
         case invalidProfiles
@@ -44,6 +45,8 @@ class ProviderService {
                 return NSLocalizedString("No valid providers were discovered", comment: "")
             case .invalidProviderInfo:
                 return NSLocalizedString("Invalid provider info", comment: "")
+            case .unavailableProviderInfo:
+                return NSLocalizedString("Provider info unavailable", comment: "")
             case .providerVerificationFailed:
                 return NSLocalizedString("Could not verify providers", comment: "")
             case .noProfiles:
@@ -282,7 +285,7 @@ class ProviderService {
         }
         let connectionType = provider.connectionType
         var providers = storedProviders[connectionType] ?? []
-        let index = providers.index(where: { $0.id == provider.id })
+        let index = providers.firstIndex(where: { $0.id == provider.id })
         if let index = index {
             providers.remove(at: index)
             providers.insert(provider, at: index)
@@ -313,7 +316,7 @@ class ProviderService {
         authenticationService.deauthenticate(for: provider)
         
         var providers = storedProviders[connectionType] ?? []
-        let index = providers.index(where: { (otherProvider) -> Bool in
+        let index = providers.firstIndex(where: { (otherProvider) -> Bool in
             return otherProvider.id == provider.id
         })
         
@@ -365,7 +368,7 @@ class ProviderService {
             let restoredProviders = try decoder.decode([ConnectionType: [Provider]].self, from: data)
             storedProviders = restoredProviders
         } catch (let error) {
-            NSLog("Failed to read stored providers from disk at \(url): \(error)")
+            NSLog("Failed to read stored providers from disk: \(error)")
         }
     }
     
@@ -377,7 +380,7 @@ class ProviderService {
             let url = try storedProvidersFileURL()
             try data.write(to: url, options: .atomic)
         } catch (let error) {
-            NSLog("Failed to write stored providers to disk at \(url): \(error)")
+            NSLog("Failed to write stored providers to disk: \(error)")
         }
     }
     
@@ -588,7 +591,7 @@ class ProviderService {
             guard let data = data, let response = response as? HTTPURLResponse, 200..<300 ~= response.statusCode else {
                 switch provider.connectionType {
                 case .secureInternet, .instituteAccess:
-                    handler(.failure(error ?? Error.unknown))
+                    handler(.failure(error ?? Error.unavailableProviderInfo))
                 case .custom:
                     handler(.failure(error ?? Error.invalidProviderURL))
                 case .localConfig:
@@ -1101,7 +1104,7 @@ class ProviderService {
         }
         
         var providers = storedProviders[.localConfig] ?? []
-        let index = providers.index(where: { $0.id == provider.id })
+        let index = providers.firstIndex(where: { $0.id == provider.id })
         if let index = index {
             var storedProvider = providers.remove(at: index)
             storedProvider.publicKey = name

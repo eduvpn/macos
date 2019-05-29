@@ -831,6 +831,90 @@ grep PrimaryService | sed -e 's/.*PrimaryService : //'
 		quit
 EOF
 
+    ifconfigResults=()
+    while IFS= read -r line; do
+        ifconfigResults+=( "$line" )
+    done < <( ifconfig $dev )
+
+    # Parse ifconfig output
+
+    declare -a ipv4_Addresses
+    declare -a ipv4_DestAddresses
+
+    declare -a ipv6_Addresses
+    declare -a ipv6_DestAddresses
+    declare -a ipv6_Flags
+    declare -a ipv6_PrefixLength
+
+    for i in "${ifconfigResults[@]}"
+    do
+        lineTrimmed="$(echo -e "${i}" | sed -e 's/^[[:space:]]*//')"
+        lineArray=($lineTrimmed)
+
+        if [[ $lineTrimmed == inet6* ]] ; then
+            if [ "${lineArray[2]}" == "prefixlen" ] ; then
+                # Parse addresses
+                ipv6_Addresses_raw="${lineArray[1]}"
+                ipv6_Addresses_array=(${ipv6_Addresses_raw//%/ })
+                ipv6_Addresses+=(${ipv6_Addresses_array[0]})
+
+                # Determine destination addresses
+                if [[ ${lineArray[1]} == fe80* ]] ; then
+                    ipv6_DestAddresses+=("::ffff:ffff:ffff:ffff:0:0")
+                else
+                    ipv6_DestAddresses+=("::")
+                fi
+
+                # Add flags
+                ipv6_Flags+=("0")
+
+                # Add prefix length
+                ipv6_PrefixLength+=("${lineArray[3]}")
+            fi
+        else
+            if [[ $lineTrimmed == inet* ]] ; then
+                if [ "${lineArray[4]}" == "netmask" ] ; then
+                    ipv4_Addresses+=("${lineArray[1]}")
+                    ipv4_DestAddresses+=("${lineArray[3]}")
+                fi
+            fi
+        fi
+    done
+
+    serviceName="ipv6-resolver-${dev}"
+
+    function join { local IFS="$1"; shift; echo "$*"; }
+
+    ipv4_Addresses_string=$(join " " ${ipv4_Addresses[*]})
+    ipv4_DestAddresses_string=$(join " " ${ipv4_DestAddresses[*]})
+
+    ipv6_Addresses_string=$(join " " ${ipv6_Addresses[*]})
+    ipv6_DestAddresses_string=$(join " " ${ipv6_DestAddresses[*]})
+    ipv6_Flags_string=$(join " " ${ipv6_Flags[*]})
+    ipv6_PrefixLength_string=$(join " " ${ipv6_PrefixLength[*]})
+
+    scutil <<-EOF
+        open
+
+        d.init
+        d.add Addresses * ${ipv4_Addresses_string}
+        d.add DestAddresses * ${ipv4_DestAddresses_string}
+        d.add InterfaceName ${dev}
+        set State:/Network/Service/${serviceName}/IPv4
+        set Setup:/Network/Service/${serviceName}/IPv4
+
+        d.init
+        d.add Addresses * ${ipv6_Addresses_string}
+        d.add DestAddresses * ${ipv6_DestAddresses_string}
+        d.add Flags * ${ipv6_Flags_string}
+        d.add InterfaceName ${dev}
+        d.add PrefixLength * ${ipv6_PrefixLength_string}
+        set State:/Network/Service/${serviceName}/IPv6
+        set Setup:/Network/Service/${serviceName}/IPv6
+
+        quit
+EOF
+
 	logDebugMessage "DEBUG:"
 	logDebugMessage "DEBUG: Pause for configuration changes to be propagated to State:/Network/Global/DNS and .../SMB"
 	sleep 1

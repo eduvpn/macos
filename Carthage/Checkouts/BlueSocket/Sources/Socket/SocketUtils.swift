@@ -45,6 +45,10 @@ extension Socket.Address {
 		///
 		/// Internal function to call do the cast and call to the closure.
 		///
+		/// - Parameter:	Closure body.
+		///
+		///	- Returns:		Result of executing the closure.
+		///
 		func castAndCall<T>(_ address: T, _ body: (UnsafePointer<sockaddr>, socklen_t) throws -> Result) rethrows -> Result {
 			var localAddress = address // We need a `var` here for the `&`.
 			return try withUnsafePointer(to: &localAddress) {
@@ -55,12 +59,16 @@ extension Socket.Address {
 		}
 		
 		switch self {
+			
 		case .ipv4(let address):
 			return try castAndCall(address, body)
+			
 		case .ipv6(let address):
 			return try castAndCall(address, body)
+			
 		case .unix(let address):
 			return try castAndCall(address, body)
+			
 		}
 	}
 }
@@ -71,9 +79,9 @@ extension Socket.Address {
 	/// Creates a Socket.Address
 	///
 	/// - Parameters:
-	///        - addressProvider:    Tuple containing pointers to the sockaddr and its length.
+	///		- addressProvider:    Tuple containing pointers to the sockaddr and its length.
 	///
-	///    - Returns:                Newly initialized Socket.Address.
+	///	- Returns:                Newly initialized Socket.Address.
 	///
 	init?(addressProvider: (UnsafeMutablePointer<sockaddr>, UnsafeMutablePointer<socklen_t>) throws -> Void) rethrows {
 		
@@ -114,11 +122,12 @@ extension Socket.Address {
 
 #if os(Linux)
 
-#if arch(arm)
-	let __fd_set_count = 16
-#else
-	let __fd_set_count = 32
-#endif
+	/// Arm archictecture only allows for 16 fds.
+	#if arch(arm)
+		let __fd_set_count = 16
+	#else
+		let __fd_set_count = 32
+	#endif
 
 	extension fd_set {
 	
@@ -148,7 +157,7 @@ extension Socket.Address {
 
 #endif
 
-public extension fd_set {
+extension fd_set {
 	
 	@inline(__always)
 	private static func address(for fd: Int32) -> (Int, Int32) {
@@ -201,7 +210,7 @@ public extension fd_set {
 	///
 	/// - Parameter fd:	The fd to check
 	///
-	///	- Returns:	True if present, false otherwise.
+	///	- Returns:	`True` if present, `false` otherwise.
 	///
 	public mutating func isSet(_ fd: Int32) -> Bool {
 		let (index, mask) = fd_set.address(for: fd)
