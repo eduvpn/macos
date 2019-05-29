@@ -637,11 +637,34 @@ class ConnectionService: NSObject {
             }
             return
         }
+
+        func writeCertificate(_ certificate: Data) throws {
+            let certificateString = certificate.base64EncodedString(options: [.lineLength64Characters])
+            let response = "certificate\n-----BEGIN CERTIFICATE-----\n\(certificateString)\n-----END CERTIFICATE-----\nEND\n"
+            try write(response)
+        }
         
-        let certificate = try keychainService.certificate(for: commonNameCertificate)
-        let certificateString = certificate.base64EncodedString(options: [.lineLength64Characters])
-        let response = "certificate\n-----BEGIN CERTIFICATE-----\n\(certificateString)\n-----END CERTIFICATE-----\nEND\n"
-        try write(response)
+        do {
+            let certificate = try keychainService.certificate(for: commonNameCertificate)
+            try writeCertificate(certificate)
+        } catch {
+            guard let info = currentProfile?.info else {
+                throw Error.unexpectedError
+            }
+            configurationService.restoreOrCreateKeyPair(for: info) { result in
+                switch result {
+                case .success(let commonNameCertificate):
+                    do {
+                        let certificate = try self.keychainService.certificate(for: commonNameCertificate)
+                        try writeCertificate(certificate)
+                    } catch {
+                        self.abortConnecting(error: error)
+                    }
+                case .failure(let error):
+                    self.abortConnecting(error: error)
+                }
+            }
+        }
     }
     
     private var identityPanel: SFChooseIdentityPanel?
