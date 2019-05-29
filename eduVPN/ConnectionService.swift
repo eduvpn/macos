@@ -47,6 +47,7 @@ class ConnectionService: NSObject {
         case userCancelled
         case tlsError
         case userIsDisabled
+        case noWindow
 
         var errorDescription: String? {
             switch self {
@@ -70,6 +71,8 @@ class ConnectionService: NSObject {
                 return nil
             case .userIsDisabled:
                 return NSLocalizedString("User account is disabled", comment: "")
+            case .noWindow:
+                return NSLocalizedString("Couldn't prompt for password", comment: "")
             }
         }
         
@@ -89,6 +92,8 @@ class ConnectionService: NSObject {
                 return nil
             case .userIsDisabled:
                 return NSLocalizedString("Contact your administrator for further details", comment: "")
+            case .noWindow:
+                return nil
             }
         }
     }
@@ -720,7 +725,10 @@ class ConnectionService: NSObject {
         }
         
         DispatchQueue.main.async {
-            let window = NSApp.mainWindow!
+            guard let window = NSApp.mainWindow ?? NSApp.windows.first(where: { $0 is MainWindow }) ?? NSApp.windows.last else {
+                self.abortConnecting(error: Error.noWindow)
+                return
+            }
             let storyboard = NSStoryboard(name: "Main", bundle: nil)
             let enterCredentialsViewController = storyboard.instantiateController(withIdentifier: "EnterCredentials") as! EnterCredentialsViewController
             let panel = NSPanel(contentViewController: enterCredentialsViewController)
