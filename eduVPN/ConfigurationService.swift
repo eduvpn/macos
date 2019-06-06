@@ -113,7 +113,7 @@ class ConfigurationService {
     /// - Parameters:
     ///   - info: Provider info
     ///   - handler: Certificate common name or error
-    private func restoreOrCreateKeyPair(for info: ProviderInfo, handler: @escaping (Result<String>) -> ()) {
+    func restoreOrCreateKeyPair(for info: ProviderInfo, handler: @escaping (Result<String>) -> ()) {
         guard info.provider.connectionType != .localConfig else {
             handler(.success(info.provider.publicKey ?? ""))
             return
