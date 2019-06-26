@@ -2,7 +2,18 @@
 
 ## What's new?
 
-### Version 1.3
+
+### Version TBD
+
+- fixed crash when prompting for password while in background
+- a new certificate will be generated if one can't be found or expires during the connection
+
+### Version 1.2.2
+
+- IPv6 support/fixes
+- Swift 5 support
+
+### Version 1.2.1
 
 - update openvpn to 2.4.7
 
