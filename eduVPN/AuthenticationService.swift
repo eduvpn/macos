@@ -90,7 +90,128 @@ class AuthenticationService {
         
         let configuration = OIDServiceConfiguration(authorizationEndpoint: info.authorizationURL, tokenEndpoint: info.tokenURL)
         
-        redirectHTTPHandler = OIDRedirectHTTPHandler(successURL: nil)
+        redirectHTTPHandler = OIDRedirectHTTPHandler(htmlAuthorizationComplete: """
+<!DOCTYPE html>
+<html lang="en-US" xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-US">
+  <head>
+    <meta charset="utf-8" />
+    <style>
+    html, body, #wrapper {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+    }
+
+    body {
+        font-family: 'Segoe UI',Arial,sans-serif;
+        font-size: 12pt;
+        background: #eee;
+        color: #000;
+    }
+
+    a {
+        text-decoration: none;
+        color: #ed6b06;
+        font-weight: bold;
+    }
+
+    #wrapper {
+        border: none;
+        vertical-align: middle;
+        text-align: center;
+        margin: auto;
+    }
+
+    #wrapper tr td {
+        vertical-align: middle;
+        text-align: center;
+    }
+
+    #frame table {
+        border: 1pt solid #666;
+        box-shadow: rgba(0, 0, 0, 0.2) 0px 1px 4px;
+        background: #fff;
+        margin: auto;
+        min-width: 320pt;
+    }
+
+    #frame table tr td {
+        vertical-align: middle;
+        text-align: center;
+        padding: 10pt;
+    }
+
+    h2 {
+        font-family: 'Segoe UI',Arial,sans-serif;
+        font-size: 14pt;
+        font-weight: bold;
+        margin: 5pt 0pt;
+        text-align: center;
+    }
+
+    p {
+        text-align: center;
+        margin: 2pt 0pt;
+    }
+
+    pre {
+        font-family: 'Lucida Console','Courier New', Courier, monospace;
+        font-size: 10pt;
+        color: #666;
+        text-align: left;
+        max-width: 600pt;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+    }
+
+    #details {
+        visibility: hidden;
+        display: none;
+    }
+
+    body.finished {
+        background: #ccc;
+        color: #888;
+    }
+
+    body.finished #frame table {
+        border-color: #aaa;
+        background: #ddd;
+    }
+
+    body.error #frame table {
+        border-width: 3px;
+        border-color: #ed6b06;
+    }
+    </style>
+    <title>
+      The client succesfully authorized.
+    </title>
+  </head>
+  <body class="finished">
+    <table id="wrapper">
+      <tr>
+        <td>
+          <div id="frame">
+            <table>
+              <tr>
+                <td>
+                  <h2>
+                    The client succesfully authorized.
+                  </h2>
+                  <p>
+                    You can now close this tab.
+                  </p>
+                </td>
+              </tr>
+            </table>
+          </div>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>
+""")
         var redirectURL: URL?
         if Thread.isMainThread {
             redirectURL = redirectHTTPHandler!.startHTTPListener(nil)
