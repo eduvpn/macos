@@ -1,5 +1,7 @@
 # eduVPN for macOS
 
+#This code is deprecated, please go to https://github.com/eduvpn/apple"
+
 ### Requirements
 
 You need macOS 10.12 or newer to run eduVPN. 
