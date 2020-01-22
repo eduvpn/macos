@@ -32,6 +32,6 @@ rm -rf ~/Library/Caches/org.eduvpn.app/
 echo "Deleting ~/Library/Preferences/org.eduvpn.app.plist"
 rm -f ~/Library/Preferences/org.eduvpn.app.plist
 
-defaults delete org.eduvpn.app SUHasLauchedBefore
+defaults delete org.eduvpn.app SUHasLaunchedBefore
 
 echo "Uninstall completed."
